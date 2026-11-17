@@ -1,0 +1,731 @@
+{
+ "library": "VBInternal",
+ "short": "VBInternal",
+ "guid": "{6715F050-F076-11CD-9B33-08002B336F14}",
+ "version": "6.0",
+ "lcid": 9,
+ "helpfile": "z:\\__VB_HELP__",
+ "file": "VB6.EXE",
+ "types": [
+  {
+   "name": "EnumInstActiveXExe",
+   "kind": "enum",
+   "guid": "{F941D4C0-3DEA-11CE-A09B-00AA005737D0}",
+   "flags": [],
+   "helpcontext": 914000,
+   "members": [
+    {
+     "name": "Private",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 914004
+    },
+    {
+     "name": "PublicNotCreatable",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 914001
+    },
+    {
+     "name": "SingleUse",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 914002
+    },
+    {
+     "name": "GlobalSingleUse",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 914005
+    },
+    {
+     "name": "MultiUse",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 914003
+    },
+    {
+     "name": "GlobalMultiUse",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 914006
+    }
+   ]
+  },
+  {
+   "name": "EnumInstActiveXDll",
+   "kind": "enum",
+   "guid": "{54288490-C018-11CF-9F9D-00A0C90F26F9}",
+   "flags": [],
+   "helpcontext": 914000,
+   "members": [
+    {
+     "name": "Private",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 914004
+    },
+    {
+     "name": "PublicNotCreatable",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 914001
+    },
+    {
+     "name": "MultiUse",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 914003
+    },
+    {
+     "name": "GlobalMultiUse",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 914006
+    }
+   ]
+  },
+  {
+   "name": "IClassModuleEvt",
+   "kind": "interface",
+   "guid": "{FCFB3D21-A0FA-1068-A738-08002B3371B5}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IUnknown",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Initialize",
+     "memid": -6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 914007
+    },
+    {
+     "name": "Terminate",
+     "memid": -7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 914008
+    }
+   ]
+  },
+  {
+   "name": "_DClass",
+   "kind": "dispatch",
+   "guid": "{FCFB3D2B-A0FA-1068-A738-08002B3371B5}",
+   "flags": [
+    "hidden",
+    "nonextensible",
+    "dispatchable"
+   ],
+   "helpcontext": 0
+  },
+  {
+   "name": "Class",
+   "kind": "coclass",
+   "guid": "{FCFB3D2A-A0FA-1068-A738-08002B3371B5}",
+   "flags": [
+    "cancreate",
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "_DClass",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IClassModuleEvt",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "DataBindingBehavior",
+   "kind": "enum",
+   "guid": "{841F3EE0-4754-11D1-8908-00A0C9110049}",
+   "flags": [],
+   "helpcontext": 914011,
+   "members": [
+    {
+     "name": "vbNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 914012
+    },
+    {
+     "name": "vbSimpleBound",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 914013
+    },
+    {
+     "name": "vbComplexBound",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 914014
+    }
+   ]
+  },
+  {
+   "name": "DataSourceBehavior1",
+   "kind": "enum",
+   "guid": "{841F3EE2-4754-11D1-8908-00A0C9110049}",
+   "flags": [],
+   "helpcontext": 914015,
+   "members": [
+    {
+     "name": "vbNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 914016
+    },
+    {
+     "name": "vbDataSource",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 914017
+    }
+   ]
+  },
+  {
+   "name": "Persistable",
+   "kind": "enum",
+   "guid": "{841F3EE4-4754-11D1-8908-00A0C9110049}",
+   "flags": [],
+   "helpcontext": 914019,
+   "members": [
+    {
+     "name": "NotPersistable",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 914034
+    },
+    {
+     "name": "Persistable",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 914035
+    }
+   ]
+  },
+  {
+   "name": "MTSTransactionMode",
+   "kind": "enum",
+   "guid": "{841F3EE5-4754-11D1-8908-00A0C9110049}",
+   "flags": [],
+   "helpcontext": 914015,
+   "members": [
+    {
+     "name": "NotAnMTSObject",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 914036
+    },
+    {
+     "name": "NoTransactions",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 914037
+    },
+    {
+     "name": "RequiresTransaction",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 914038
+    },
+    {
+     "name": "UsesTransaction",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 914039
+    },
+    {
+     "name": "RequiresNewTransaction",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 914040
+    }
+   ]
+  },
+  {
+   "name": "_DPropStandardExe",
+   "kind": "dispatch",
+   "guid": "{EC139A91-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    },
+    {
+     "name": "DataSourceBehavior",
+     "memid": 4,
+     "kind": "var",
+     "type": "DataSourceBehavior1",
+     "helpcontext": 914015
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXExePublicClass",
+   "kind": "dispatch",
+   "guid": "{EC139A92-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXExe",
+     "helpcontext": 914000
+    },
+    {
+     "name": "Persistable",
+     "memid": 2,
+     "kind": "var",
+     "type": "Persistable",
+     "helpcontext": 914019
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXExePrivateClass",
+   "kind": "dispatch",
+   "guid": "{EC139A93-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXExe",
+     "helpcontext": 914000
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    },
+    {
+     "name": "DataSourceBehavior",
+     "memid": 4,
+     "kind": "var",
+     "type": "DataSourceBehavior1",
+     "helpcontext": 914015
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXDllPublicClass",
+   "kind": "dispatch",
+   "guid": "{EC139A94-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXDll",
+     "helpcontext": 914000
+    },
+    {
+     "name": "Persistable",
+     "memid": 2,
+     "kind": "var",
+     "type": "Persistable",
+     "helpcontext": 914019
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    },
+    {
+     "name": "DataSourceBehavior",
+     "memid": 4,
+     "kind": "var",
+     "type": "DataSourceBehavior1",
+     "helpcontext": 914015
+    },
+    {
+     "name": "MTSTransactionMode",
+     "memid": 5,
+     "kind": "var",
+     "type": "MTSTransactionMode",
+     "helpcontext": 914041
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXDllPrivateClass",
+   "kind": "dispatch",
+   "guid": "{EC139A95-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXDll",
+     "helpcontext": 914000
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    },
+    {
+     "name": "DataSourceBehavior",
+     "memid": 4,
+     "kind": "var",
+     "type": "DataSourceBehavior1",
+     "helpcontext": 914015
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXCtrlPublicClass",
+   "kind": "dispatch",
+   "guid": "{EC139A96-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXDll",
+     "helpcontext": 914000
+    },
+    {
+     "name": "Persistable",
+     "memid": 2,
+     "kind": "var",
+     "type": "Persistable",
+     "helpcontext": 914019
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    },
+    {
+     "name": "DataSourceBehavior",
+     "memid": 4,
+     "kind": "var",
+     "type": "DataSourceBehavior1",
+     "helpcontext": 914015
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXCtrlPrivateClass",
+   "kind": "dispatch",
+   "guid": "{EC139A97-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXDll",
+     "helpcontext": 914000
+    },
+    {
+     "name": "DataBindingBehavior",
+     "memid": 3,
+     "kind": "var",
+     "type": "DataBindingBehavior",
+     "helpcontext": 914011
+    },
+    {
+     "name": "DataSourceBehavior",
+     "memid": 4,
+     "kind": "var",
+     "type": "DataSourceBehavior1",
+     "helpcontext": 914015
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXExeClass_LearningEdition",
+   "kind": "dispatch",
+   "guid": "{EC139A98-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXExe",
+     "helpcontext": 914000
+    }
+   ]
+  },
+  {
+   "name": "_DPropActiveXDllClass_LearningEdition",
+   "kind": "dispatch",
+   "guid": "{EC139A99-743C-11D1-8925-00A0C9110049}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    },
+    {
+     "name": "Instancing",
+     "memid": 1,
+     "kind": "var",
+     "type": "EnumInstActiveXDll",
+     "helpcontext": 914000
+    }
+   ]
+  },
+  {
+   "name": "_DPropNameOnly",
+   "kind": "dispatch",
+   "guid": "{FCFB3D28-A0FA-1068-A738-08002B3371B5}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": -2147418112,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 914009
+    }
+   ]
+  },
+  {
+   "name": "IVBProjProps",
+   "kind": "interface",
+   "guid": "{D957C650-C491-11CF-AA68-00A0C9055A90}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Name",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Return",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 914010
+    },
+    {
+     "name": "Name",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 914010
+    }
+   ]
+  }
+ ]
+}

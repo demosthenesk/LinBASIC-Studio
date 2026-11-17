@@ -1,0 +1,10 @@
+﻿Tests του ADO Data control και της σύνδεσης δεδομένων (LinBASIC Studio, Φάση 4.4)
+
+f_ado:  φόρμα με ADO Data control (Adodc), TextBox/CheckBox/Label δεμένα σε αυτό, DataGrid,
+        DataList και DataCombo. Τρέχει μόνη της με Timer και κλείνει σε λίγα δευτερόλεπτα.
+d_bind: BindingCollection πάνω σε ADO Recordset και σε κλάση-πηγή δεδομένων (DataSourceBehavior).
+
+1. Άνοιξε το f_ado\AdoForm.vbp με το VB6 (ως διαχειριστής), πάτα F5 και περίμενε να κλείσει μόνη της.
+   Κλείσε το VB6 χωρίς αποθήκευση.
+2. Το ίδιο για το d_bind\BindTest.vbp (δεν έχει φόρμα, τελειώνει αμέσως).
+3. Πες μου «έτοιμο». Αν βγει μήνυμα (π.χ. λείπει κάποιο .ocx ή το MSBIND.DLL), στείλε μου εικόνα.

@@ -1,0 +1,1820 @@
+{
+ "library": "InetCtlsObjects",
+ "short": "InetCtlsObjects",
+ "guid": "{48E59290-9880-11CF-9754-00AA00C00908}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "INET98.CHM",
+ "file": "MSINET.Ocx",
+ "types": [
+  {
+   "name": "StateConstants",
+   "kind": "enum",
+   "guid": "{FB04EF92-988C-11CF-9754-00AA00C00908}",
+   "flags": [],
+   "helpcontext": 350012,
+   "members": [
+    {
+     "name": "icNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 350001
+    },
+    {
+     "name": "icResolvingHost",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 350002
+    },
+    {
+     "name": "icHostResolved",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 350003
+    },
+    {
+     "name": "icConnecting",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 350004
+    },
+    {
+     "name": "icConnected",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 350005
+    },
+    {
+     "name": "icRequesting",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 350006
+    },
+    {
+     "name": "icRequestSent",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 350007
+    },
+    {
+     "name": "icReceivingResponse",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 350008
+    },
+    {
+     "name": "icResponseReceived",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 350009
+    },
+    {
+     "name": "icDisconnecting",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 350010
+    },
+    {
+     "name": "icDisconnected",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 10,
+     "helpcontext": 350011
+    },
+    {
+     "name": "icError",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 11,
+     "helpcontext": 350056
+    },
+    {
+     "name": "icResponseCompleted",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 12,
+     "helpcontext": 350066
+    }
+   ]
+  },
+  {
+   "name": "AccessConstants",
+   "kind": "enum",
+   "guid": "{FB04EF96-988C-11CF-9754-00AA00C00908}",
+   "flags": [],
+   "helpcontext": 350015,
+   "members": [
+    {
+     "name": "icUseDefault",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 350016
+    },
+    {
+     "name": "icDirect",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 350017
+    },
+    {
+     "name": "icNamedProxy",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 350018
+    }
+   ]
+  },
+  {
+   "name": "ProtocolConstants",
+   "kind": "enum",
+   "guid": "{65303421-9FB8-11CF-9756-00AA00C00908}",
+   "flags": [],
+   "helpcontext": 3500046,
+   "members": [
+    {
+     "name": "icUnknown",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 350047
+    },
+    {
+     "name": "icDefault",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 350048
+    },
+    {
+     "name": "icFTP",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 350049
+    },
+    {
+     "name": "icGopher",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 350050
+    },
+    {
+     "name": "icHTTP",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 350051
+    },
+    {
+     "name": "icHTTPS",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 350052
+    }
+   ]
+  },
+  {
+   "name": "DataTypeConstants",
+   "kind": "enum",
+   "guid": "{37A465F0-C80F-11CF-95F1-0020AFC28C3B}",
+   "flags": [],
+   "helpcontext": 350061,
+   "members": [
+    {
+     "name": "icString",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 350063
+    },
+    {
+     "name": "icByteArray",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 350064
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{2B1CA200-E585-11CF-A493-0020AFC28C3B}",
+   "flags": [],
+   "helpcontext": 350065,
+   "members": [
+    {
+     "name": "icOutOfMemory",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 7
+    },
+    {
+     "name": "icTypeMismatch",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 13,
+     "helpcontext": 13
+    },
+    {
+     "name": "icInvalidPropertyValue",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 380,
+     "helpcontext": 380
+    },
+    {
+     "name": "icInetOpenFailed",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 35750,
+     "helpcontext": 35750
+    },
+    {
+     "name": "icUrlOpenFailed",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 35751,
+     "helpcontext": 35751
+    },
+    {
+     "name": "icBadUrl",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 35752,
+     "helpcontext": 35752
+    },
+    {
+     "name": "icProtMismatch",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 35753,
+     "helpcontext": 35753
+    },
+    {
+     "name": "icConnectFailed",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 35754,
+     "helpcontext": 35754
+    },
+    {
+     "name": "icNoRemoteHost",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 35755,
+     "helpcontext": 35755
+    },
+    {
+     "name": "icRequestFailed",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 35756,
+     "helpcontext": 35756
+    },
+    {
+     "name": "icNoExecute",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 35757,
+     "helpcontext": 35757
+    },
+    {
+     "name": "icBlewChunk",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 35758,
+     "helpcontext": 35758
+    },
+    {
+     "name": "icFtpCommandFailed",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 35759,
+     "helpcontext": 35759
+    },
+    {
+     "name": "icUnsupportedType",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 35760,
+     "helpcontext": 35760
+    },
+    {
+     "name": "icTimeout",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 35761,
+     "helpcontext": 35761
+    },
+    {
+     "name": "icUnsupportedCommand",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 35762,
+     "helpcontext": 35762
+    },
+    {
+     "name": "icInvalidOperation",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 35763,
+     "helpcontext": 35763
+    },
+    {
+     "name": "icExecuting",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 35764,
+     "helpcontext": 35764
+    },
+    {
+     "name": "icInvalidForFtp",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 35765,
+     "helpcontext": 35765
+    },
+    {
+     "name": "icOutOfHandles",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 35767,
+     "helpcontext": 35767
+    },
+    {
+     "name": "icInetTimeout",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 35768,
+     "helpcontext": 35768
+    },
+    {
+     "name": "icExtendedError",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 35769,
+     "helpcontext": 35769
+    },
+    {
+     "name": "icIntervalError",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 35770,
+     "helpcontext": 35770
+    },
+    {
+     "name": "icInvalidURL",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 35771,
+     "helpcontext": 35771
+    },
+    {
+     "name": "icUnrecognizedScheme",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 35772,
+     "helpcontext": 35772
+    },
+    {
+     "name": "icNameNotResolved",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 35773,
+     "helpcontext": 35773
+    },
+    {
+     "name": "icProtocolNotFound",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 35774,
+     "helpcontext": 35774
+    },
+    {
+     "name": "icInvalidOption",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 35775,
+     "helpcontext": 35775
+    },
+    {
+     "name": "icBadOptionLength",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 35776,
+     "helpcontext": 35776
+    },
+    {
+     "name": "icOptionNotSettable",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 35777,
+     "helpcontext": 35777
+    },
+    {
+     "name": "icShutDown",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 35778,
+     "helpcontext": 35778
+    },
+    {
+     "name": "icIncorrectUserName",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 35779,
+     "helpcontext": 35779
+    },
+    {
+     "name": "icIncorrectPassword",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 35780,
+     "helpcontext": 35780
+    },
+    {
+     "name": "icLoginFailure",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 35781,
+     "helpcontext": 35781
+    },
+    {
+     "name": "icInetInvalidOperation",
+     "memid": 1073741858,
+     "kind": "const",
+     "type": "Long",
+     "value": 35782,
+     "helpcontext": 35782
+    },
+    {
+     "name": "icOperationCancelled",
+     "memid": 1073741859,
+     "kind": "const",
+     "type": "Long",
+     "value": 35783,
+     "helpcontext": 35783
+    },
+    {
+     "name": "icIncorrectHandleType",
+     "memid": 1073741860,
+     "kind": "const",
+     "type": "Long",
+     "value": 35784,
+     "helpcontext": 35784
+    },
+    {
+     "name": "icIncorrectHandleState",
+     "memid": 1073741861,
+     "kind": "const",
+     "type": "Long",
+     "value": 35785,
+     "helpcontext": 35785
+    },
+    {
+     "name": "icNotProxyRequest",
+     "memid": 1073741862,
+     "kind": "const",
+     "type": "Long",
+     "value": 35786,
+     "helpcontext": 35786
+    },
+    {
+     "name": "icRegistryValueNotFound",
+     "memid": 1073741863,
+     "kind": "const",
+     "type": "Long",
+     "value": 35787,
+     "helpcontext": 35787
+    },
+    {
+     "name": "icBadRegistryParameter",
+     "memid": 1073741864,
+     "kind": "const",
+     "type": "Long",
+     "value": 35788,
+     "helpcontext": 35788
+    },
+    {
+     "name": "icNoDirectAccess",
+     "memid": 1073741865,
+     "kind": "const",
+     "type": "Long",
+     "value": 35789,
+     "helpcontext": 35789
+    },
+    {
+     "name": "icNoContext",
+     "memid": 1073741866,
+     "kind": "const",
+     "type": "Long",
+     "value": 35790,
+     "helpcontext": 35790
+    },
+    {
+     "name": "icNoCallback",
+     "memid": 1073741867,
+     "kind": "const",
+     "type": "Long",
+     "value": 35791,
+     "helpcontext": 35791
+    },
+    {
+     "name": "icRequestPending",
+     "memid": 1073741868,
+     "kind": "const",
+     "type": "Long",
+     "value": 35792,
+     "helpcontext": 35792
+    },
+    {
+     "name": "icIncorrectFormat",
+     "memid": 1073741869,
+     "kind": "const",
+     "type": "Long",
+     "value": 35793,
+     "helpcontext": 35793
+    },
+    {
+     "name": "icItemNotFound",
+     "memid": 1073741870,
+     "kind": "const",
+     "type": "Long",
+     "value": 35794,
+     "helpcontext": 35794
+    },
+    {
+     "name": "icCannotConnect",
+     "memid": 1073741871,
+     "kind": "const",
+     "type": "Long",
+     "value": 35795,
+     "helpcontext": 35795
+    },
+    {
+     "name": "icConnectionAborted",
+     "memid": 1073741872,
+     "kind": "const",
+     "type": "Long",
+     "value": 35796,
+     "helpcontext": 35796
+    },
+    {
+     "name": "icConnectionReset",
+     "memid": 1073741873,
+     "kind": "const",
+     "type": "Long",
+     "value": 35797,
+     "helpcontext": 35797
+    },
+    {
+     "name": "icForceRetry",
+     "memid": 1073741874,
+     "kind": "const",
+     "type": "Long",
+     "value": 35798,
+     "helpcontext": 35798
+    },
+    {
+     "name": "icInvalidProxyRequest",
+     "memid": 1073741875,
+     "kind": "const",
+     "type": "Long",
+     "value": 35799,
+     "helpcontext": 35799
+    },
+    {
+     "name": "icWouldBlock",
+     "memid": 1073741876,
+     "kind": "const",
+     "type": "Long",
+     "value": 35800,
+     "helpcontext": 35800
+    },
+    {
+     "name": "icHandleExists",
+     "memid": 1073741877,
+     "kind": "const",
+     "type": "Long",
+     "value": 35802,
+     "helpcontext": 35801
+    },
+    {
+     "name": "icSecCertDateInvalid",
+     "memid": 1073741878,
+     "kind": "const",
+     "type": "Long",
+     "value": 35803,
+     "helpcontext": 35802
+    },
+    {
+     "name": "icSecCertCnInvalid",
+     "memid": 1073741879,
+     "kind": "const",
+     "type": "Long",
+     "value": 35804,
+     "helpcontext": 35803
+    },
+    {
+     "name": "icHttpToHttpsOnRedir",
+     "memid": 1073741880,
+     "kind": "const",
+     "type": "Long",
+     "value": 35805,
+     "helpcontext": 35804
+    },
+    {
+     "name": "icHttpsToHttpOnRedir",
+     "memid": 1073741881,
+     "kind": "const",
+     "type": "Long",
+     "value": 35806,
+     "helpcontext": 35805
+    },
+    {
+     "name": "icMixedSecurity",
+     "memid": 1073741882,
+     "kind": "const",
+     "type": "Long",
+     "value": 35807,
+     "helpcontext": 35806
+    },
+    {
+     "name": "icChgPostIsNonSecure",
+     "memid": 1073741883,
+     "kind": "const",
+     "type": "Long",
+     "value": 35808,
+     "helpcontext": 35807
+    },
+    {
+     "name": "icPostIsNonSecure",
+     "memid": 1073741884,
+     "kind": "const",
+     "type": "Long",
+     "value": 35809,
+     "helpcontext": 35808
+    },
+    {
+     "name": "icClientAuthCertNeeded",
+     "memid": 1073741885,
+     "kind": "const",
+     "type": "Long",
+     "value": 35810,
+     "helpcontext": 35809
+    },
+    {
+     "name": "icInvalidCa",
+     "memid": 1073741886,
+     "kind": "const",
+     "type": "Long",
+     "value": 35811,
+     "helpcontext": 35810
+    },
+    {
+     "name": "icClientAuthNotSetup",
+     "memid": 1073741887,
+     "kind": "const",
+     "type": "Long",
+     "value": 35812,
+     "helpcontext": 35811
+    },
+    {
+     "name": "icAsyncThreadFailed",
+     "memid": 1073741888,
+     "kind": "const",
+     "type": "Long",
+     "value": 35813,
+     "helpcontext": 35812
+    },
+    {
+     "name": "icRedirectSchemeChange",
+     "memid": 1073741889,
+     "kind": "const",
+     "type": "Long",
+     "value": 35814,
+     "helpcontext": 35813
+    },
+    {
+     "name": "icDialogPending",
+     "memid": 1073741890,
+     "kind": "const",
+     "type": "Long",
+     "value": 35815,
+     "helpcontext": 35834
+    },
+    {
+     "name": "icRetryDialog",
+     "memid": 1073741891,
+     "kind": "const",
+     "type": "Long",
+     "value": 35816,
+     "helpcontext": 35836
+    },
+    {
+     "name": "icHttpsHttpSubmitRedir",
+     "memid": 1073741892,
+     "kind": "const",
+     "type": "Long",
+     "value": 35818,
+     "helpcontext": 35837
+    },
+    {
+     "name": "icInsertCdrom",
+     "memid": 1073741893,
+     "kind": "const",
+     "type": "Long",
+     "value": 35819,
+     "helpcontext": 35838
+    },
+    {
+     "name": "icFtpTransferInProgress",
+     "memid": 1073741894,
+     "kind": "const",
+     "type": "Long",
+     "value": 35876,
+     "helpcontext": 35814
+    },
+    {
+     "name": "icFtpDropped",
+     "memid": 1073741895,
+     "kind": "const",
+     "type": "Long",
+     "value": 35877,
+     "helpcontext": 35815
+    },
+    {
+     "name": "icFtpNoPassiveMode",
+     "memid": 1073741896,
+     "kind": "const",
+     "type": "Long",
+     "value": 35878,
+     "helpcontext": 35839
+    },
+    {
+     "name": "icGopherProtocolError",
+     "memid": 1073741897,
+     "kind": "const",
+     "type": "Long",
+     "value": 35896,
+     "helpcontext": 35816
+    },
+    {
+     "name": "icGopherNotFile",
+     "memid": 1073741898,
+     "kind": "const",
+     "type": "Long",
+     "value": 35897,
+     "helpcontext": 35817
+    },
+    {
+     "name": "icGopherDataError",
+     "memid": 1073741899,
+     "kind": "const",
+     "type": "Long",
+     "value": 35898,
+     "helpcontext": 35818
+    },
+    {
+     "name": "icGopherEndOfData",
+     "memid": 1073741900,
+     "kind": "const",
+     "type": "Long",
+     "value": 35899,
+     "helpcontext": 35819
+    },
+    {
+     "name": "icGopherInvalidLocator",
+     "memid": 1073741901,
+     "kind": "const",
+     "type": "Long",
+     "value": 35900,
+     "helpcontext": 35820
+    },
+    {
+     "name": "icGopherIncorrectLocatorType",
+     "memid": 1073741902,
+     "kind": "const",
+     "type": "Long",
+     "value": 35901,
+     "helpcontext": 35821
+    },
+    {
+     "name": "icGopherNotGopherPlus",
+     "memid": 1073741903,
+     "kind": "const",
+     "type": "Long",
+     "value": 35902,
+     "helpcontext": 35822
+    },
+    {
+     "name": "icGopherAttributeNotFound",
+     "memid": 1073741904,
+     "kind": "const",
+     "type": "Long",
+     "value": 35903,
+     "helpcontext": 35823
+    },
+    {
+     "name": "icGopherUnknownLocator",
+     "memid": 1073741905,
+     "kind": "const",
+     "type": "Long",
+     "value": 35904,
+     "helpcontext": 35824
+    },
+    {
+     "name": "icHttpHeaderNotFound",
+     "memid": 1073741906,
+     "kind": "const",
+     "type": "Long",
+     "value": 35916,
+     "helpcontext": 35825
+    },
+    {
+     "name": "icHttpDownlevelServer",
+     "memid": 1073741907,
+     "kind": "const",
+     "type": "Long",
+     "value": 35917,
+     "helpcontext": 35826
+    },
+    {
+     "name": "icHttpInvalidServerResponse",
+     "memid": 1073741908,
+     "kind": "const",
+     "type": "Long",
+     "value": 35918,
+     "helpcontext": 35827
+    },
+    {
+     "name": "icHttpInvalidHeader",
+     "memid": 1073741909,
+     "kind": "const",
+     "type": "Long",
+     "value": 35919,
+     "helpcontext": 35828
+    },
+    {
+     "name": "icHttpInvalidQueryRequest",
+     "memid": 1073741910,
+     "kind": "const",
+     "type": "Long",
+     "value": 35920,
+     "helpcontext": 35829
+    },
+    {
+     "name": "icHttpHeaderAlreadyExists",
+     "memid": 1073741911,
+     "kind": "const",
+     "type": "Long",
+     "value": 35921,
+     "helpcontext": 35830
+    },
+    {
+     "name": "icHttpRedirectFailed",
+     "memid": 1073741912,
+     "kind": "const",
+     "type": "Long",
+     "value": 35922,
+     "helpcontext": 35831
+    },
+    {
+     "name": "icHttpCookieNeedsConfirmation",
+     "memid": 1073741913,
+     "kind": "const",
+     "type": "Long",
+     "value": 35927,
+     "helpcontext": 35840
+    },
+    {
+     "name": "icHttpCookieDeclined",
+     "memid": 1073741914,
+     "kind": "const",
+     "type": "Long",
+     "value": 35928,
+     "helpcontext": 35841
+    },
+    {
+     "name": "icHttpRedirectNeedsConfirmation",
+     "memid": 1073741915,
+     "kind": "const",
+     "type": "Long",
+     "value": 35934,
+     "helpcontext": 35842
+    },
+    {
+     "name": "icSecurityChannelError",
+     "memid": 1073741916,
+     "kind": "const",
+     "type": "Long",
+     "value": 35923,
+     "helpcontext": 35832
+    },
+    {
+     "name": "icUnableToCacheFile",
+     "memid": 1073741917,
+     "kind": "const",
+     "type": "Long",
+     "value": 35924,
+     "helpcontext": 35833
+    },
+    {
+     "name": "icInternetDisconnected",
+     "memid": 1073741918,
+     "kind": "const",
+     "type": "Long",
+     "value": 35929,
+     "helpcontext": 35843
+    },
+    {
+     "name": "icServerUnreachable",
+     "memid": 1073741919,
+     "kind": "const",
+     "type": "Long",
+     "value": 35930,
+     "helpcontext": 35844
+    },
+    {
+     "name": "icProxyServerUnreachable",
+     "memid": 1073741920,
+     "kind": "const",
+     "type": "Long",
+     "value": 35931,
+     "helpcontext": 35845
+    },
+    {
+     "name": "icBadAutoProxyScript",
+     "memid": 1073741921,
+     "kind": "const",
+     "type": "Long",
+     "value": 35932,
+     "helpcontext": 35846
+    },
+    {
+     "name": "icUnableToDownloadScript",
+     "memid": 1073741922,
+     "kind": "const",
+     "type": "Long",
+     "value": 35933,
+     "helpcontext": 35847
+    },
+    {
+     "name": "icSecInvalidCert",
+     "memid": 1073741923,
+     "kind": "const",
+     "type": "Long",
+     "value": 35935,
+     "helpcontext": 35848
+    },
+    {
+     "name": "icSecCertRevoked",
+     "memid": 1073741924,
+     "kind": "const",
+     "type": "Long",
+     "value": 35936,
+     "helpcontext": 35849
+    },
+    {
+     "name": "icFailedDueToSecurityCheck",
+     "memid": 1073741925,
+     "kind": "const",
+     "type": "Long",
+     "value": 35937,
+     "helpcontext": 35850
+    }
+   ]
+  },
+  {
+   "name": "IInet",
+   "kind": "dispatch",
+   "guid": "{48E59291-9880-11CF-9754-00AA00C00908}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 350043,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Protocol",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ProtocolConstants",
+     "params": [
+      {
+       "name": "Protocol",
+       "type": "ProtocolConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350053
+    },
+    {
+     "name": "Protocol",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ProtocolConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350053
+    },
+    {
+     "name": "RemoteHost",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "RemoteHost",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350029
+    },
+    {
+     "name": "RemoteHost",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350029
+    },
+    {
+     "name": "RemotePort",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "RemotePort",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350030
+    },
+    {
+     "name": "RemotePort",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350030
+    },
+    {
+     "name": "ResponseInfo",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Response",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350032
+    },
+    {
+     "name": "ResponseCode",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Code",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350033
+    },
+    {
+     "name": "hInternet",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Handle",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350034
+    },
+    {
+     "name": "StillExecuting",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "IsBusy",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350035
+    },
+    {
+     "name": "URL",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350036
+    },
+    {
+     "name": "URL",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350036
+    },
+    {
+     "name": "Proxy",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Name",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350059
+    },
+    {
+     "name": "Proxy",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350059
+    },
+    {
+     "name": "Document",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Document",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350037
+    },
+    {
+     "name": "Document",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350037
+    },
+    {
+     "name": "AccessType",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "AccessConstants",
+     "params": [
+      {
+       "name": "Type",
+       "type": "AccessConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350041
+    },
+    {
+     "name": "AccessType",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "AccessConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350041
+    },
+    {
+     "name": "UserName",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "UserName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350054
+    },
+    {
+     "name": "UserName",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350054
+    },
+    {
+     "name": "Password",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Password",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350055
+    },
+    {
+     "name": "Password",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350055
+    },
+    {
+     "name": "RequestTimeout",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Timeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 350062
+    },
+    {
+     "name": "RequestTimeout",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 350062
+    },
+    {
+     "name": "OpenURL",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "DataType",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "pRetval",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "helpcontext": 350057
+    },
+    {
+     "name": "Execute",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Operation",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "InputData",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "InputHdrs",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 4,
+     "helpcontext": 350044
+    },
+    {
+     "name": "Cancel",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 350045
+    },
+    {
+     "name": "GetChunk",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Size",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "DataType",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "pRetval",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 350058
+    },
+    {
+     "name": "GetHeader",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "HdrName",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "pRetval",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 350060
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_URL",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_URL",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DInetEvents",
+   "kind": "dispatch",
+   "guid": "{48E59292-9880-11CF-9754-00AA00C00908}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 350042,
+   "members": [
+    {
+     "name": "StateChanged",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "State",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 350067
+    }
+   ]
+  },
+  {
+   "name": "Inet",
+   "kind": "coclass",
+   "guid": "{48E59293-9880-11CF-9754-00AA00C00908}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 350043,
+   "implements": [
+    {
+     "name": "IInet",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DInetEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "Inet2",
+   "kind": "coclass",
+   "guid": "{E2D211D5-11E4-4D9E-B6DB-1E902C851A49}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 350043,
+   "implements": [
+    {
+     "name": "IInet",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DInetEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

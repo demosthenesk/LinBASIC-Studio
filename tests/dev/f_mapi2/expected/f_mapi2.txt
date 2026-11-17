@@ -1,0 +1,292 @@
+== start
+    (394 [Mapi2Test] Get not supported (write-only property))
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:True NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:0
+-- signon: the password of the provider not given
+  SignOn ok
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:True NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:65537
+    | MAPILogon(ui=0, profile="", password="", flags=0x1001) = 0 session=0x10001
+-- signon while signed on, signoff
+    (32050 [Mapi2Test] Application-defined or object-defined error)
+  SignOn !32050
+  SignOff ok
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:True NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:0
+    | MAPILogoff(session=0x10001, ui=0, flags=0x0) = 0
+-- signon: no UI, a wrong password, then the right one
+  LogonUI = Boolean:False
+  UserName = String:tester
+  Password = String:wrong
+    (32003 [Mapi2Test] Application-defined or object-defined error)
+  SignOn !32003
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:False NewSession=Boolean:False Password=String:wrong UserName=String:tester SessionID=Long:0
+  Password = String:secret
+  SignOn ok
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:False NewSession=Boolean:False Password=String:secret UserName=String:tester SessionID=Long:65537
+    | MAPILogon(ui=0, profile="tester", password="wrong", flags=0x1000) = 3 session=0x0
+    | MAPILogon(ui=0, profile="tester", password="secret", flags=0x1000) = 0 session=0x10001
+-- signoff twice, NewSession, DownLoadMail
+  SignOff ok
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:False NewSession=Boolean:False Password=String:secret UserName=String:tester SessionID=Long:0
+    (32053 [Mapi2Test] Application-defined or object-defined error)
+  SignOff !32053
+  NewSession = Boolean:True
+  DownLoadMail = Boolean:False
+  SignOn ok
+session: Action=!394 DownLoadMail=Boolean:False LogonUI=Boolean:False NewSession=Boolean:True Password=String:secret UserName=String:tester SessionID=Long:65537
+    | MAPILogoff(session=0x10001, ui=0, flags=0x0) = 0
+    | MAPILogon(ui=0, profile="tester", password="secret", flags=0x2) = 0 session=0x10001
+-- send: a name to resolve, an address, two attachments, a receipt
+  SessionID = Long:65537
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+  MsgReceiptRequested = Boolean:True
+  AttachmentIndex = Integer:0
+  AttachmentPathName = String:<app>\att1.txt
+  AttachmentPosition = Integer:3
+  AttachmentIndex = Integer:1
+  AttachmentPathName = String:<app>\att2.dat
+  AttachmentName = String:data.bin
+  AttachmentPosition = Integer:0
+  Send ok
+after send: AddressCaption=String: AddressEditFieldCount=Integer:1 AddressLabel=String: AddressModifiable=Boolean:False AddressResolveUI=Boolean:False AttachmentCount=Long:2 AttachmentIndex=Long:1 AttachmentName=String:data.bin AttachmentPathName=String:<app>\att2.dat AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String: FetchSorted=Boolean:False FetchUnreadOnly=Boolean:False MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:-1 MsgNoteText=String:Line one
+Line two MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:True MsgReceiptRequested=Boolean:True MsgSent=Boolean:False MsgSubject=String:Hello MsgType=String: RecipAddress=String:SMTP:dave@example.com RecipCount=Long:2 RecipDisplayName=String:Dave RecipIndex=Long:1 RecipType=Integer:2 SessionID=Long:65537 Action=!394
+    | MAPISendMail(session=0x10001, ui=0, flags=0x0)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x2 recips=2 files=2
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   file(0) flags=0 position=3 path="<app>\att1.txt" name=(null) type=(null)
+    |   file(1) flags=0 position=0 path="<app>\att2.dat" name="data.bin" type=(null)
+    |   = 0
+-- send: an unknown recipient, an ambiguous one, an attachment not there, no recipients
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Nobody
+    (32014 [Mapi2Test] Application-defined or object-defined error)
+  Send !32014
+  RecipDisplayName = String:Bob
+    (32021 [Mapi2Test] Application-defined or object-defined error)
+  Send !32021
+after ambiguous: MsgIndex=Long:-1 RecipCount=Long:2 RecipIndex=Long:0 RecipDisplayName=String:Bob RecipAddress=String: RecipType=Integer:1
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+  AttachmentIndex = Integer:0
+  AttachmentPathName = String:<app>\nothere.txt
+    (32011 [Mapi2Test] Application-defined or object-defined error)
+  Send !32011
+  Compose ok
+  MsgSubject = String:Nobody to
+    (32025 [Mapi2Test] Application-defined or object-defined error)
+  Send !32025
+no recipients: MsgIndex=Long:-1 RecipCount=Long:0 RecipIndex=Long:0 RecipDisplayName=String: RecipAddress=String: RecipType=Integer:0
+    | MAPISendMail(session=0x10001, ui=0, flags=0x0)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=2 files=0
+    |   originator (null)
+    |   recip(0) class=1 name="Nobody" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 14
+    | MAPISendMail(session=0x10001, ui=0, flags=0x0)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=2 files=0
+    |   originator (null)
+    |   recip(0) class=1 name="Bob" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 21
+    | MAPISendMail(session=0x10001, ui=0, flags=0x0)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=2 files=1
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   file(0) flags=0 position=0 path="<app>\nothere.txt" name=(null) type=(null)
+    |   = 11
+    | MAPISendMail(session=0x10001, ui=0, flags=0x0)
+    |   subject="Nobody to" note=(null) type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=0 files=0
+    |   originator (null)
+    |   = 25
+-- resolve names
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Carol
+  ResolveName ok
+carol: RecipCount=Long:2 RecipIndex=Long:0 RecipDisplayName=String:Carol Jones RecipAddress=String:SMTP:carol@example.com RecipType=Integer:1
+  RecipIndex = Integer:1
+  ResolveName !32014
+dave: RecipCount=Long:2 RecipIndex=Long:1 RecipDisplayName=String:Dave RecipAddress=String:SMTP:dave@example.com RecipType=Integer:2
+  RecipDisplayName = String:Bob
+  ResolveName !32021
+bob: RecipCount=Long:2 RecipIndex=Long:1 RecipDisplayName=String:Bob RecipAddress=String:SMTP:dave@example.com RecipType=Integer:2
+  AddressResolveUI = Boolean:True
+  ResolveName ok
+bob with UI: RecipCount=Long:2 RecipIndex=Long:1 RecipDisplayName=String:Bob Smith RecipAddress=String:SMTP:bob@example.com RecipType=Integer:2
+  AddressResolveUI = Boolean:False
+  RecipDisplayName = String:x@example.org
+  RecipAddress = String:
+  ResolveName ok
+an address: RecipCount=Long:2 RecipIndex=Long:1 RecipDisplayName=String:x@example.org RecipAddress=String:SMTP:x@example.org RecipType=Integer:2
+    | MAPIResolveName(session=0x10001, ui=0, name="Carol", flags=0x400) = 0
+    |   recip class=1 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    | MAPIResolveName(session=0x10001, ui=0, name="Dave", flags=0x400) = 14
+    | MAPIResolveName(session=0x10001, ui=0, name="Bob", flags=0x400) = 21
+    | MAPIResolveName(session=0x10001, ui=0, name="Bob", flags=0x408) = 0
+    |   recip class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    | MAPIResolveName(session=0x10001, ui=0, name="x@example.org", flags=0x400) = 0
+    |   recip class=1 name="x@example.org" address="SMTP:x@example.org" eid=0
+-- send with the dialog: sent, canceled
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+  Send ok
+after dialog: MsgIndex=Long:-1 RecipCount=Long:2 MsgSubject=String:Hello
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+    (32001 [Mapi2Test] Application-defined or object-defined error)
+  Send !32001
+    | MAPISendMail(session=0x10001, ui=0, flags=0x8)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=2 files=0
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 0
+    | MAPISendMail(session=0x10001, ui=0, flags=0x8)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=2 files=0
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 1
+-- the address book, the details of a recipient (canceled, then OK)
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+  AddressCaption = String:Pick them
+  AddressEditFieldCount = Integer:3
+  AddressLabel = String:Send to
+  AddressModifiable = Boolean:True
+  Show !32001
+  Show ok
+after show: RecipCount=Long:2 RecipIndex=Long:1 RecipDisplayName=String:Dave RecipAddress=String:SMTP:dave@example.com RecipType=Integer:2
+  RecipIndex = Integer:0
+  Show ok
+  AddressEditFieldCount = Integer:0
+  Show ok
+  AddressEditFieldCount = Integer:4
+  Show ok
+after show 4: RecipCount=Long:2 RecipIndex=Long:0 RecipDisplayName=String:Bob Smith RecipAddress=String:SMTP:bob@example.com RecipType=Integer:1
+    | MAPIAddress(session=0x10001, ui=0, caption="Pick them", editfields=3, labels="Send to", recips=2, flags=0x0)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 1 new=0
+    | MAPIAddress(session=0x10001, ui=0, caption="Pick them", editfields=3, labels="Send to", recips=2, flags=0x0)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 0 new=2
+    |   new(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   new(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIDetails(session=0x10001, ui=0, flags=0x0) = 0
+    |   recip class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    | MAPIAddress(session=0x10001, ui=0, caption="Pick them", editfields=0, labels="Send to", recips=2, flags=0x0)
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 0 new=2
+    |   new(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   new(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIAddress(session=0x10001, ui=0, caption="Pick them", editfields=4, labels="Send to", recips=2, flags=0x0)
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 0 new=2
+    |   new(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   new(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+-- signoff, send without a session
+  SignOff ok
+  Compose ok
+  MsgSubject = String:Hello
+  MsgNoteText = String:Line one
+Line two
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Dave
+  RecipAddress = String:SMTP:dave@example.com
+  RecipType = Integer:2
+    (32019 [Mapi2Test] Application-defined or object-defined error)
+  Send !32019
+  SessionID = Integer:0
+  Send !32053
+session: Action=!394 DownLoadMail=Boolean:False LogonUI=Boolean:False NewSession=Boolean:True Password=String:secret UserName=String:tester SessionID=Long:0
+    | MAPILogoff(session=0x10001, ui=0, flags=0x0) = 0
+    | MAPISendMail(session=0x10001, ui=0, flags=0x0)
+    |   subject="Hello" note="Line one\r\nLine two" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=2 files=0
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address=(null) eid=0
+    |   recip(1) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   = 19
+end

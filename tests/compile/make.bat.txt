@@ -1,0 +1,31 @@
+@echo off
+rem Phase 6.8: does VB6 compile these? (Make EXE of each project, then run it)
+set "VB=C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE"
+if not exist "%VB%" set "VB=C:\Program Files (x86)\Microsoft Visual Studio\VB98\VB6.EXE"
+if not exist "%VB%" goto novb
+cd /d "%~dp0"
+del results.txt 2>nul
+del done.txt 2>nul
+for %%p in (c1_letobj c2_exitfunc_propget c3_exitsub_propget c4_clng_default c5_subcmp c6_propset_let c7_varptr_func c8_forward_enum c9_unused_undefined c10_for_each_nothing c11_erase_field c12_noarg_recursion c13_split_to_variant_array c14_const_from_string c15_stdole_color c16_error_object c17_iface_var_byval_byval c18_iface_var_byref_byref c19_iface_var_byref_byval c20_iface_var_byval_byref c21_iface_var_no_set c22_iface_obj_byval c23_iface_obj_byref c24_iface_str_byref c25_iface_str_byval c26_const_clng c27_debug_assert_paren c28_erase_variant c29_const_before_enum c30_enum_qualified_default c31_const_before_const c32_enum_later_member c33_foreach_nothing c34_default_before_enum) do call :one %%p
+echo Done > done.txt
+echo Done. See results.txt
+pause
+goto :eof
+
+:one
+del "%1\%1.exe" 2>nul
+del "%1\out.txt" 2>nul
+del "%1\make.log" 2>nul
+"%VB%" /make "%1\%1.vbp" /outdir "%1" /out "%1\make.log"
+echo ==== %1 >> results.txt
+type "%1\make.log" >> results.txt
+if not exist "%1\%1.exe" goto :eof
+pushd "%1"
+start /wait "" "%1.exe"
+popd
+type "%1\out.txt" >> results.txt 2>nul
+goto :eof
+
+:novb
+echo VB6.EXE not found: edit the path at the top of make.bat
+pause

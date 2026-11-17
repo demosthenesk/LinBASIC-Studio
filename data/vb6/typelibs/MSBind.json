@@ -1,0 +1,659 @@
+{
+ "library": "MSBind",
+ "short": "MSBind",
+ "guid": "{56BF9020-7A2F-11D0-9482-00A0C91110ED}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "",
+ "file": "MSBind.dll",
+ "types": [
+  {
+   "name": "UpdateMode",
+   "kind": "enum",
+   "guid": "{4BFADC70-4994-11D1-A3A8-00A0C90F26FA}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "vbUsePropertyAttributes",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "vbUpdateWhenPropertyChanges",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "vbUpdateWhenRowChanges",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "name": "DBinding",
+   "kind": "dispatch",
+   "guid": "{3E60C550-7BD6-11D0-9482-00A0C91110ED}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Object",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppObject",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Object",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "IUnknown",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataField",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrDataField",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataField",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PropertyName",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPropertyName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PropertyName",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataChanged",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfDataChanged",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataChanged",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataFormat",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "StdFormat.IDataFormatDisp",
+     "params": [
+      {
+       "name": "ppdf",
+       "type": "StdFormat.IDataFormatDisp",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataFormat",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "StdFormat.IDataFormatDisp",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Key",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrKey",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Binding",
+   "kind": "coclass",
+   "guid": "{3E60C551-7BD6-11D0-9482-00A0C91110ED}",
+   "flags": [],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "DBinding",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "DBindingCollection",
+   "kind": "dispatch",
+   "guid": "{57F12DA0-7A2F-11D0-9482-00A0C91110ED}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "DataSource",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "msdatsrc.tlb:{7C0FFAB3-CD84-11D0-949A-00A0C91110ED}",
+     "params": [
+      {
+       "name": "ppds",
+       "type": "msdatsrc.tlb:{7C0FFAB3-CD84-11D0-949A-00A0C91110ED}",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataSource",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "msdatsrc.tlb:{7C0FFAB3-CD84-11D0-949A-00A0C91110ED}",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataMember",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "msdatsrc.tlb:{7C0FFAB1-CD84-11D0-949A-00A0C91110ED}",
+     "params": [
+      {
+       "name": "pdm",
+       "type": "msdatsrc.tlb:{7C0FFAB1-CD84-11D0-949A-00A0C91110ED}",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DataMember",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "msdatsrc.tlb:{7C0FFAB1-CD84-11D0-949A-00A0C91110ED}",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Add",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "DBinding",
+     "params": [
+      {
+       "name": "Object",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PropertyName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      },
+      {
+       "name": "DataField",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      },
+      {
+       "name": "DataFormat",
+       "type": "StdFormat.IDataFormatDisp",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "Key",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      },
+      {
+       "name": "ppbinding",
+       "type": "DBinding",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Remove",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "DBinding",
+     "params": [
+      {
+       "name": "index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppbinding",
+       "type": "DBinding",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Count",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Count",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppNewEnum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Clear",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "UpdateMode",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "UpdateMode",
+     "params": [
+      {
+       "name": "plUM",
+       "type": "UpdateMode",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "UpdateMode",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "UpdateMode",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "UpdateControls",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    }
+   ]
+  },
+  {
+   "name": "DBindingCollectionEvents",
+   "kind": "dispatch",
+   "guid": "{2651DD90-DB42-11D1-B1CD-00A0C922E820}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Error",
+     "memid": 300,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Error",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Description",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Binding",
+       "type": "DBinding",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fCancelDisplay",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "BindingCollection",
+   "kind": "coclass",
+   "guid": "{59245250-7A2F-11D0-9482-00A0C91110ED}",
+   "flags": [
+    "cancreate",
+    "aggregatable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "DBindingCollection",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DBindingCollectionEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "BindingCollection2",
+   "kind": "coclass",
+   "guid": "{4EE74AEC-8008-455E-AEC5-9726CF1E85BB}",
+   "flags": [
+    "cancreate",
+    "hidden",
+    "aggregatable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "DBindingCollection",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DBindingCollectionEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

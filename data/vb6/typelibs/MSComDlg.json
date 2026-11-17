@@ -1,0 +1,2212 @@
+{
+ "library": "MSComDlg",
+ "short": "MSComDlg",
+ "guid": "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}",
+ "version": "1.2",
+ "lcid": 1033,
+ "helpfile": "cmdlg98.chm",
+ "file": "ComDlg32.OCX",
+ "types": [
+  {
+   "name": "PrinterConstants",
+   "kind": "enum",
+   "guid": "{05428B50-E613-11CD-A2D5-08002B336F60}",
+   "flags": [],
+   "helpcontext": 200001,
+   "members": [
+    {
+     "name": "cdlPDAllPages",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 200002
+    },
+    {
+     "name": "cdlPDCollate",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 16,
+     "helpcontext": 200003
+    },
+    {
+     "name": "cdlPDDisablePrintToFile",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 524288,
+     "helpcontext": 200004
+    },
+    {
+     "name": "cdlPDHidePrintToFile",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 1048576,
+     "helpcontext": 200005
+    },
+    {
+     "name": "cdlPDNoPageNums",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 200006
+    },
+    {
+     "name": "cdlPDNoSelection",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 200007
+    },
+    {
+     "name": "cdlPDNoWarning",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 128,
+     "helpcontext": 200008
+    },
+    {
+     "name": "cdlPDPageNums",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 200009
+    },
+    {
+     "name": "cdlPDPrintSetup",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 64,
+     "helpcontext": 200010
+    },
+    {
+     "name": "cdlPDPrintToFile",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 32,
+     "helpcontext": 200011
+    },
+    {
+     "name": "cdlPDReturnDC",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 256,
+     "helpcontext": 200012
+    },
+    {
+     "name": "cdlPDReturnDefault",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 1024,
+     "helpcontext": 200013
+    },
+    {
+     "name": "cdlPDReturnIC",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 512,
+     "helpcontext": 200014
+    },
+    {
+     "name": "cdlPDSelection",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 200015
+    },
+    {
+     "name": "cdlPDHelpButton",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 2048,
+     "helpcontext": 200016
+    },
+    {
+     "name": "cdlPDUseDevModeCopies",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 262144,
+     "helpcontext": 200017
+    }
+   ]
+  },
+  {
+   "name": "ColorConstants",
+   "kind": "enum",
+   "guid": "{05428B51-E613-11CD-A2D5-08002B336F60}",
+   "flags": [],
+   "helpcontext": 200018,
+   "members": [
+    {
+     "name": "cdlCCRGBInit",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 200019
+    },
+    {
+     "name": "cdlCCFullOpen",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 200020
+    },
+    {
+     "name": "cdlCCPreventFullOpen",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 200021
+    },
+    {
+     "name": "cdlCCHelpButton",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 200022
+    }
+   ]
+  },
+  {
+   "name": "FileOpenConstants",
+   "kind": "enum",
+   "guid": "{05428B52-E613-11CD-A2D5-08002B336F60}",
+   "flags": [],
+   "helpcontext": 200023,
+   "members": [
+    {
+     "name": "cdlOFNReadOnly",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 200024
+    },
+    {
+     "name": "cdlOFNOverwritePrompt",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 200025
+    },
+    {
+     "name": "cdlOFNHideReadOnly",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 200026
+    },
+    {
+     "name": "cdlOFNNoChangeDir",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 200027
+    },
+    {
+     "name": "cdlOFNHelpButton",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 16,
+     "helpcontext": 200028
+    },
+    {
+     "name": "cdlOFNNoValidate",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 256,
+     "helpcontext": 200029
+    },
+    {
+     "name": "cdlOFNAllowMultiselect",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 512,
+     "helpcontext": 200030
+    },
+    {
+     "name": "cdlOFNExtensionDifferent",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 1024,
+     "helpcontext": 200031
+    },
+    {
+     "name": "cdlOFNPathMustExist",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 2048,
+     "helpcontext": 200032
+    },
+    {
+     "name": "cdlOFNFileMustExist",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 4096,
+     "helpcontext": 200033
+    },
+    {
+     "name": "cdlOFNCreatePrompt",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 8192,
+     "helpcontext": 200034
+    },
+    {
+     "name": "cdlOFNShareAware",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 16384,
+     "helpcontext": 200035
+    },
+    {
+     "name": "cdlOFNNoReadOnlyReturn",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 32768,
+     "helpcontext": 200036
+    },
+    {
+     "name": "cdlOFNNoLongNames",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 262144,
+     "helpcontext": 200135
+    },
+    {
+     "name": "cdlOFNExplorer",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 524288,
+     "helpcontext": 200037
+    },
+    {
+     "name": "cdlOFNNoDereferenceLinks",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 1048576,
+     "helpcontext": 200038
+    },
+    {
+     "name": "cdlOFNLongNames",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 2097152,
+     "helpcontext": 200039
+    }
+   ]
+  },
+  {
+   "name": "FontsConstants",
+   "kind": "enum",
+   "guid": "{05428B53-E613-11CD-A2D5-08002B336F60}",
+   "flags": [],
+   "helpcontext": 200040,
+   "members": [
+    {
+     "name": "cdlCFScreenFonts",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 200041
+    },
+    {
+     "name": "cdlCFPrinterFonts",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 200042
+    },
+    {
+     "name": "cdlCFBoth",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 200043
+    },
+    {
+     "name": "cdlCFHelpButton",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 200044
+    },
+    {
+     "name": "cdlCFEffects",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 256,
+     "helpcontext": 200045
+    },
+    {
+     "name": "cdlCFApply",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 512,
+     "helpcontext": 200046
+    },
+    {
+     "name": "cdlCFANSIOnly",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 1024,
+     "helpcontext": 200047
+    },
+    {
+     "name": "cdlCFNoVectorFonts",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 2048,
+     "helpcontext": 200048
+    },
+    {
+     "name": "cdlCFNoSimulations",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 4096,
+     "helpcontext": 200049
+    },
+    {
+     "name": "cdlCFLimitSize",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 8192,
+     "helpcontext": 200050
+    },
+    {
+     "name": "cdlCFFixedPitchOnly",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 16384,
+     "helpcontext": 200051
+    },
+    {
+     "name": "cdlCFWYSIWYG",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 32768,
+     "helpcontext": 200052
+    },
+    {
+     "name": "cdlCFForceFontExist",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 65536,
+     "helpcontext": 200053
+    },
+    {
+     "name": "cdlCFScalableOnly",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 131072,
+     "helpcontext": 200054
+    },
+    {
+     "name": "cdlCFTTOnly",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 262144,
+     "helpcontext": 200055
+    },
+    {
+     "name": "cdlCFNoFaceSel",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 524288,
+     "helpcontext": 200056
+    },
+    {
+     "name": "cdlCFNoStyleSel",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 1048576,
+     "helpcontext": 200057
+    },
+    {
+     "name": "cdlCFNoSizeSel",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 2097152,
+     "helpcontext": 200058
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{05428B54-E613-11CD-A2D5-08002B336F60}",
+   "flags": [],
+   "helpcontext": 200059,
+   "members": [
+    {
+     "name": "cdlInvalidPropertyValue",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 380,
+     "helpcontext": 380
+    },
+    {
+     "name": "cdlGetNotSupported",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 394,
+     "helpcontext": 394
+    },
+    {
+     "name": "cdlSetNotSupported",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 383,
+     "helpcontext": 383
+    },
+    {
+     "name": "cdlAlloc",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 32752,
+     "helpcontext": 200060
+    },
+    {
+     "name": "cdlCancel",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 32755,
+     "helpcontext": 32755
+    },
+    {
+     "name": "cdlDialogFailure",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": -32768,
+     "helpcontext": 200184
+    },
+    {
+     "name": "cdlFindResFailure",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32761,
+     "helpcontext": 200063
+    },
+    {
+     "name": "cdlHelp",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 32751,
+     "helpcontext": 200064
+    },
+    {
+     "name": "cdlInitialization",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 32765,
+     "helpcontext": 200065
+    },
+    {
+     "name": "cdlLoadResFailure",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 32760,
+     "helpcontext": 200066
+    },
+    {
+     "name": "cdlLoadStrFailure",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 32762,
+     "helpcontext": 200067
+    },
+    {
+     "name": "cdlLockResFailure",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 32759,
+     "helpcontext": 200068
+    },
+    {
+     "name": "cdlMemAllocFailure",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 32758,
+     "helpcontext": 200069
+    },
+    {
+     "name": "cdlMemLockFailure",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 32757,
+     "helpcontext": 200070
+    },
+    {
+     "name": "cdlNoFonts",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 24574,
+     "helpcontext": 24574
+    },
+    {
+     "name": "cdlBufferTooSmall",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 20476,
+     "helpcontext": 200072
+    },
+    {
+     "name": "cdlInvalidFileName",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 20477,
+     "helpcontext": 200073
+    },
+    {
+     "name": "cdlSubclassFailure",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 20478,
+     "helpcontext": 20478
+    },
+    {
+     "name": "cdlCreateICFailure",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 28661,
+     "helpcontext": 200075
+    },
+    {
+     "name": "cdlDndmMismatch",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 28662,
+     "helpcontext": 200076
+    },
+    {
+     "name": "cdlGetDevModeFail",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 28666,
+     "helpcontext": 200077
+    },
+    {
+     "name": "cdlInitFailure",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 28665,
+     "helpcontext": 28665
+    },
+    {
+     "name": "cdlLoadDrvFailure",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 28667,
+     "helpcontext": 28667
+    },
+    {
+     "name": "cdlNoDefaultPrn",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 28663,
+     "helpcontext": 28663
+    },
+    {
+     "name": "cdlNoDevices",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 28664,
+     "helpcontext": 28664
+    },
+    {
+     "name": "cdlParseFailure",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 28669,
+     "helpcontext": 200082
+    },
+    {
+     "name": "cdlPrinterCodes",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 28671,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 200185
+    },
+    {
+     "name": "cdlPrinterNotFound",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 28660,
+     "helpcontext": 200084
+    },
+    {
+     "name": "cdlRetDefFailure",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 28668,
+     "helpcontext": 200085
+    },
+    {
+     "name": "cdlSetupFailure",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 28670,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 200186
+    },
+    {
+     "name": "cdlNoTemplate",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 32764,
+     "helpcontext": 200062
+    },
+    {
+     "name": "cdlNoInstance",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 32763,
+     "helpcontext": 200086
+    },
+    {
+     "name": "cdlInvalidSafeModeProcCall",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 680,
+     "helpcontext": 680
+    }
+   ]
+  },
+  {
+   "name": "HelpConstants",
+   "kind": "enum",
+   "guid": "{05428B55-E613-11CD-A2D5-08002B336F60}",
+   "flags": [],
+   "helpcontext": 200087,
+   "members": [
+    {
+     "name": "cdlHelpContext",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 200088
+    },
+    {
+     "name": "cdlHelpQuit",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 200089
+    },
+    {
+     "name": "cdlHelpIndex",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 200090
+    },
+    {
+     "name": "cdlHelpContents",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 200091
+    },
+    {
+     "name": "cdlHelpHelpOnHelp",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 200092
+    },
+    {
+     "name": "cdlHelpSetIndex",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 200093
+    },
+    {
+     "name": "cdlHelpSetContents",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 200094
+    },
+    {
+     "name": "cdlHelpContextPopup",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 200095
+    },
+    {
+     "name": "cdlHelpForceFile",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 200096
+    },
+    {
+     "name": "cdlHelpKey",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 257,
+     "helpcontext": 200097
+    },
+    {
+     "name": "cdlHelpCommandHelp",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 258,
+     "helpcontext": 200098
+    },
+    {
+     "name": "cdlHelpPartialKey",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 261,
+     "helpcontext": 200099
+    }
+   ]
+  },
+  {
+   "name": "PrinterOrientationConstants",
+   "kind": "enum",
+   "guid": "{DE7CF09C-0E9A-11D1-8B7A-0000F8754DA1}",
+   "flags": [],
+   "helpcontext": 200191,
+   "members": [
+    {
+     "name": "cdlPortrait",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 200192
+    },
+    {
+     "name": "cdlLandscape",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 200193
+    }
+   ]
+  },
+  {
+   "name": "ICommonDialog",
+   "kind": "dispatch",
+   "guid": "{083039C2-13F4-11D1-8B7E-0000F8754DA1}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 200000,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "_Action",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psAction",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_Action",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "FileName",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrFileName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200100
+    },
+    {
+     "name": "FileName",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200100
+    },
+    {
+     "name": "DialogTitle",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrDialogTitle",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200101
+    },
+    {
+     "name": "DialogTitle",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200101
+    },
+    {
+     "name": "Filter",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrFilter",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200102
+    },
+    {
+     "name": "Filter",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200102
+    },
+    {
+     "name": "DefaultExt",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrDefaultExt",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200103
+    },
+    {
+     "name": "DefaultExt",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200103
+    },
+    {
+     "name": "InitDir",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrInitDir",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200104
+    },
+    {
+     "name": "InitDir",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200104
+    },
+    {
+     "name": "Color",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "clrColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200105
+    },
+    {
+     "name": "Color",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200105
+    },
+    {
+     "name": "Flags",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plFlags",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200106
+    },
+    {
+     "name": "Flags",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200106
+    },
+    {
+     "name": "FontName",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrFontName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200107
+    },
+    {
+     "name": "FontName",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200107
+    },
+    {
+     "name": "FontBold",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFontBold",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200108
+    },
+    {
+     "name": "FontBold",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200108
+    },
+    {
+     "name": "FontItalic",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFontItalic",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200109
+    },
+    {
+     "name": "FontItalic",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200109
+    },
+    {
+     "name": "FontStrikeThru",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFontStrikeThru",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200110
+    },
+    {
+     "name": "FontStrikeThru",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200110
+    },
+    {
+     "name": "FontUnderLine",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFontUnderLine",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200111
+    },
+    {
+     "name": "FontUnderLine",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200111
+    },
+    {
+     "name": "FromPage",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psFromPage",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200112
+    },
+    {
+     "name": "FromPage",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200112
+    },
+    {
+     "name": "ToPage",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psToPage",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200113
+    },
+    {
+     "name": "ToPage",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200113
+    },
+    {
+     "name": "Min",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psMin",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200114
+    },
+    {
+     "name": "Min",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200114
+    },
+    {
+     "name": "Max",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psMax",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200115
+    },
+    {
+     "name": "Max",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200115
+    },
+    {
+     "name": "Copies",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCopies",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200116
+    },
+    {
+     "name": "Copies",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200116
+    },
+    {
+     "name": "CancelError",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbCancelError",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200117
+    },
+    {
+     "name": "CancelError",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200117
+    },
+    {
+     "name": "HelpFile",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrHelpFile",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200118
+    },
+    {
+     "name": "HelpFile",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200118
+    },
+    {
+     "name": "HelpCommand",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psHelpCommand",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200119
+    },
+    {
+     "name": "HelpCommand",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200119
+    },
+    {
+     "name": "HelpKey",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrHelpKey",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200120
+    },
+    {
+     "name": "HelpKey",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200120
+    },
+    {
+     "name": "PrinterDefault",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbPrinterDefault",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200121
+    },
+    {
+     "name": "PrinterDefault",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200121
+    },
+    {
+     "name": "FilterIndex",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psFilterIndex",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200122
+    },
+    {
+     "name": "FilterIndex",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200122
+    },
+    {
+     "name": "HelpContext",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plHelpContext",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200123
+    },
+    {
+     "name": "HelpContext",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200123
+    },
+    {
+     "name": "FontSize",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfFontSize",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200124
+    },
+    {
+     "name": "FontSize",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200124
+    },
+    {
+     "name": "Action",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psAction",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200125
+    },
+    {
+     "name": "Action",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200125
+    },
+    {
+     "name": "MaxFileSize",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psMaxFileSize",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200126
+    },
+    {
+     "name": "MaxFileSize",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200126
+    },
+    {
+     "name": "hDC",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pihDC",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 200127
+    },
+    {
+     "name": "hDC",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 200127
+    },
+    {
+     "name": "FileTitle",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrFileTitle",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 200128
+    },
+    {
+     "name": "FileTitle",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 200128
+    },
+    {
+     "name": "ShowOpen",
+     "memid": 30,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 200129
+    },
+    {
+     "name": "ShowSave",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 200130
+    },
+    {
+     "name": "ShowColor",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 200131
+    },
+    {
+     "name": "ShowFont",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 200132
+    },
+    {
+     "name": "ShowPrinter",
+     "memid": 34,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 200133
+    },
+    {
+     "name": "ShowHelp",
+     "memid": 35,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 200134
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Orientation",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "PrinterOrientationConstants",
+     "params": [
+      {
+       "name": "pOrientation",
+       "type": "PrinterOrientationConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 200190
+    },
+    {
+     "name": "Orientation",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "PrinterOrientationConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 200190
+    }
+   ]
+  },
+  {
+   "name": "ICommonDialogEvents",
+   "kind": "dispatch",
+   "guid": "{F9043C87-F6F2-101A-A3C9-08002B2F49FB}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 0
+  },
+  {
+   "name": "CommonDialog",
+   "kind": "coclass",
+   "guid": "{F9043C85-F6F2-101A-A3C9-08002B2F49FB}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 200000,
+   "implements": [
+    {
+     "name": "ICommonDialog",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "ICommonDialogEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "CommonDialog2",
+   "kind": "coclass",
+   "guid": "{8F0F480A-4366-4737-8265-2AD6FDAC8C31}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 200000,
+   "implements": [
+    {
+     "name": "ICommonDialog",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "ICommonDialogEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "ICommonDialog11",
+   "kind": "alias",
+   "guid": "{7FF19DC0-D9B3-11CF-8E74-00A0C90F26F8}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "ICommonDialog"
+  }
+ ]
+}

@@ -1,0 +1,2360 @@
+{
+ "library": "MSRDC",
+ "short": "MSRDC",
+ "guid": "{F6125AB1-8AB1-11CE-A77F-08002B2F4E98}",
+ "version": "2.0",
+ "lcid": 1033,
+ "helpfile": "rdo98.chm",
+ "file": "msrdc20.Ocx",
+ "types": [
+  {
+   "name": "BOFActionConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320074,
+   "members": [
+    {
+     "name": "rdMoveFirst",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320075
+    },
+    {
+     "name": "rdBOF",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320076
+    }
+   ]
+  },
+  {
+   "name": "EOFActionConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320077,
+   "members": [
+    {
+     "name": "rdMoveLast",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320078
+    },
+    {
+     "name": "rdEOF",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320079
+    },
+    {
+     "name": "rdAddNew",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 320080
+    }
+   ]
+  },
+  {
+   "name": "AppearanceConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320081,
+   "members": [
+    {
+     "name": "rdFlatBevel",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320082
+    },
+    {
+     "name": "rd3DBevel",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320083
+    }
+   ]
+  },
+  {
+   "name": "PromptConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320084,
+   "members": [
+    {
+     "name": "rdDriverPrompt",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320085
+    },
+    {
+     "name": "rdDriverNoPrompt",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320086
+    },
+    {
+     "name": "rdDriverComplete",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 320087
+    },
+    {
+     "name": "rdDriverCompleteRequired",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 320088
+    }
+   ]
+  },
+  {
+   "name": "CursorDriverConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320001,
+   "members": [
+    {
+     "name": "rdUseIfNeeded",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320002
+    },
+    {
+     "name": "rdUseOdbc",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320003
+    },
+    {
+     "name": "rdUseServer",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 320004
+    },
+    {
+     "name": "rdUseClientBatch",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 320005
+    }
+   ]
+  },
+  {
+   "name": "EditModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320006,
+   "members": [
+    {
+     "name": "rdEditNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320007
+    },
+    {
+     "name": "rdEditInProgress",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320008
+    },
+    {
+     "name": "rdEditAdd",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 320009
+    }
+   ]
+  },
+  {
+   "name": "LockTypeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320010,
+   "members": [
+    {
+     "name": "rdConcurReadOnly",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320011
+    },
+    {
+     "name": "rdConcurLock",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 320012
+    },
+    {
+     "name": "rdConcurRowver",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 320013
+    },
+    {
+     "name": "rdConcurValues",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 320014
+    },
+    {
+     "name": "rdConcurBatch",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 320015
+    }
+   ]
+  },
+  {
+   "name": "OptionConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320016,
+   "members": [
+    {
+     "name": "rdAsyncEnable",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 32,
+     "helpcontext": 320017
+    },
+    {
+     "name": "rdExecDirect",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 64,
+     "helpcontext": 320018
+    }
+   ]
+  },
+  {
+   "name": "ResultsetTypeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320019,
+   "members": [
+    {
+     "name": "rdOpenKeyset",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320020
+    },
+    {
+     "name": "rdOpenStatic",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 320021
+    }
+   ]
+  },
+  {
+   "name": "CancelDisplayConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320100,
+   "members": [
+    {
+     "name": "rdDataErrDisplay",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320101
+    },
+    {
+     "name": "rdDataErrContinue",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320102
+    }
+   ]
+  },
+  {
+   "name": "ValidateActionConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320103,
+   "members": [
+    {
+     "name": "rdActionCancel",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 320104
+    },
+    {
+     "name": "rdActionMoveFirst",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 320105
+    },
+    {
+     "name": "rdActionMovePrevious",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 320106
+    },
+    {
+     "name": "rdActionMoveNext",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 320107
+    },
+    {
+     "name": "rdActionMoveLast",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 320108
+    },
+    {
+     "name": "rdActionAddNew",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 320109
+    },
+    {
+     "name": "rdActionUpdate",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 320110
+    },
+    {
+     "name": "rdActionDelete",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 320111
+    },
+    {
+     "name": "rdActionFind",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 320112
+    },
+    {
+     "name": "rdActionBookmark",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 320113
+    },
+    {
+     "name": "rdActionClose",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 10,
+     "helpcontext": 320114
+    },
+    {
+     "name": "rdActionUnload",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 11,
+     "helpcontext": 320115
+    },
+    {
+     "name": "rdActionUpdateAddNew",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 12,
+     "helpcontext": 320116
+    },
+    {
+     "name": "rdActionUpdateModified",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 13,
+     "helpcontext": 320117
+    },
+    {
+     "name": "rdActionRefresh",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 14,
+     "helpcontext": 320118
+    },
+    {
+     "name": "rdActionCancelUpdate",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 15,
+     "helpcontext": 320119
+    },
+    {
+     "name": "rdActionBeginTransact",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 16,
+     "helpcontext": 320120
+    },
+    {
+     "name": "rdActionCommitTransact",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 17,
+     "helpcontext": 320121
+    },
+    {
+     "name": "rdActionRollbackTransact",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 18,
+     "helpcontext": 320122
+    },
+    {
+     "name": "rdActionNewParameters",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 19,
+     "helpcontext": 320123
+    },
+    {
+     "name": "rdActionNewSQL",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 20,
+     "helpcontext": 320124
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstant",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 320125,
+   "members": [
+    {
+     "name": "ERRRDC_UNEXPECTEDINTERNAL",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 24010,
+     "helpcontext": 24010
+    },
+    {
+     "name": "ERRRDC_NOINFO",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 24011,
+     "helpcontext": 24011
+    },
+    {
+     "name": "ERRRDC_ERRORINFO",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 24012,
+     "helpcontext": 24012
+    },
+    {
+     "name": "ERRRDC_CONTROLINTERNAL",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 24013,
+     "helpcontext": 24013
+    },
+    {
+     "name": "ERRRDC_CONTROLREFRESH",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 24014,
+     "helpcontext": 24014
+    },
+    {
+     "name": "ERRRDC_INVALIDPROPERTY",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 24015,
+     "helpcontext": 24015
+    },
+    {
+     "name": "ERRRDC_INVALIDOBJECT",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 24016,
+     "helpcontext": 24016
+    },
+    {
+     "name": "ERRRDC_METHOD",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 24017,
+     "helpcontext": 24017
+    },
+    {
+     "name": "ERRRDC_INVALIDARGUMENT",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 24018,
+     "helpcontext": 24018
+    },
+    {
+     "name": "ERRRDC_RESULTEMPTY",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 24019,
+     "helpcontext": 24019
+    },
+    {
+     "name": "ERRRDC_MEMORY",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 24020,
+     "helpcontext": 24020
+    },
+    {
+     "name": "ERRRDC_RESULTUNAVAILABLE",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 24021,
+     "helpcontext": 24021
+    },
+    {
+     "name": "ERRRDC_NOCONNECTION",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 24022,
+     "helpcontext": 24022
+    },
+    {
+     "name": "ERRRDC_SETPROPERTY",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 24023,
+     "helpcontext": 24023
+    },
+    {
+     "name": "ERRRDC_AVAILPROPERTY",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 24024,
+     "helpcontext": 24024
+    },
+    {
+     "name": "ERRRDC_TYPE",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 24025,
+     "helpcontext": 24025
+    },
+    {
+     "name": "ERRRDC_NORDO",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 24026,
+     "helpcontext": 24026
+    },
+    {
+     "name": "ERRRDC_DATACONV",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 24027,
+     "helpcontext": 24027
+    }
+   ]
+  },
+  {
+   "name": "IRdc",
+   "kind": "dispatch",
+   "guid": "{43478D71-78E0-11CF-8E78-00A0D100038E}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 320000,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "DataSourceName",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrDataSourceName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320022
+    },
+    {
+     "name": "DataSourceName",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320022
+    },
+    {
+     "name": "SQL",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrSQL",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320023
+    },
+    {
+     "name": "SQL",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320023
+    },
+    {
+     "name": "LoginTimeout",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plLoginTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320024
+    },
+    {
+     "name": "LoginTimeout",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320024
+    },
+    {
+     "name": "Version",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrVersion",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320025
+    },
+    {
+     "name": "Connect",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "bstrConnect",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320026
+    },
+    {
+     "name": "Connect",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320026
+    },
+    {
+     "name": "QueryTimeout",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plQueryTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320027
+    },
+    {
+     "name": "QueryTimeout",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320027
+    },
+    {
+     "name": "RowsetSize",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plRowsetSize",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320028
+    },
+    {
+     "name": "RowsetSize",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320028
+    },
+    {
+     "name": "ResultsetType",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ResultsetTypeConstants",
+     "params": [
+      {
+       "name": "pnResultsetType",
+       "type": "ResultsetTypeConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320029
+    },
+    {
+     "name": "ResultsetType",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ResultsetTypeConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320029
+    },
+    {
+     "name": "MaxRows",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plMaxRows",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320030
+    },
+    {
+     "name": "MaxRows",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320030
+    },
+    {
+     "name": "LogMessages",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrLogMessages",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320031
+    },
+    {
+     "name": "LogMessages",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320031
+    },
+    {
+     "name": "KeysetSize",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plKeysetSize",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320032
+    },
+    {
+     "name": "KeysetSize",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320032
+    },
+    {
+     "name": "EditMode",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "pnEditMode",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320033
+    },
+    {
+     "name": "EditMode",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320033
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320034
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320034
+    },
+    {
+     "name": "Resultset",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "RDO._rdoResultset",
+     "params": [
+      {
+       "name": "ppiResultset",
+       "type": "RDO._rdoResultset",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320035
+    },
+    {
+     "name": "Resultset",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "RDO._rdoResultset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320035
+    },
+    {
+     "name": "ReadOnly",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbReadOnly",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320036
+    },
+    {
+     "name": "ReadOnly",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320036
+    },
+    {
+     "name": "Options",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "pnOptions",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320037
+    },
+    {
+     "name": "Options",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320037
+    },
+    {
+     "name": "UserName",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrUserName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320038
+    },
+    {
+     "name": "UserName",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320038
+    },
+    {
+     "name": "Password",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPassword",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320039
+    },
+    {
+     "name": "Password",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320039
+    },
+    {
+     "name": "CursorDriver",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "CursorDriverConstants",
+     "params": [
+      {
+       "name": "pnCursorDriver",
+       "type": "CursorDriverConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320040
+    },
+    {
+     "name": "CursorDriver",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "CursorDriverConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320040
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#32",
+     "params": [
+      {
+       "name": "ppdispFont",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320041
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320041
+    },
+    {
+     "name": "Connection",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "RDO._rdoConnection",
+     "params": [
+      {
+       "name": "ppiConnection",
+       "type": "RDO._rdoConnection",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320042
+    },
+    {
+     "name": "Connection",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "RDO._rdoConnection",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320042
+    },
+    {
+     "name": "EOFAction",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "EOFActionConstants",
+     "params": [
+      {
+       "name": "pnEOFAction",
+       "type": "EOFActionConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320043
+    },
+    {
+     "name": "EOFAction",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "EOFActionConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320043
+    },
+    {
+     "name": "BOFAction",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "BOFActionConstants",
+     "params": [
+      {
+       "name": "pnBOFAction",
+       "type": "BOFActionConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320044
+    },
+    {
+     "name": "BOFAction",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "BOFActionConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320044
+    },
+    {
+     "name": "ErrorThreshold",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plErrorThreshold",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320045
+    },
+    {
+     "name": "ErrorThreshold",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320045
+    },
+    {
+     "name": "LockType",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "LockTypeConstants",
+     "params": [
+      {
+       "name": "pnLockType",
+       "type": "LockTypeConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320046
+    },
+    {
+     "name": "LockType",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "LockTypeConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320046
+    },
+    {
+     "name": "Prompt",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "PromptConstants",
+     "params": [
+      {
+       "name": "pnPrompt",
+       "type": "PromptConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320047
+    },
+    {
+     "name": "Prompt",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "PromptConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320047
+    },
+    {
+     "name": "Transactions",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbTransactions",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "AppearanceConstants",
+     "params": [
+      {
+       "name": "pnAppearance",
+       "type": "AppearanceConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320048
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "AppearanceConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320048
+    },
+    {
+     "name": "Environment",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "RDO._rdoEnvironment",
+     "params": [
+      {
+       "name": "ppiEnvironment",
+       "type": "RDO._rdoEnvironment",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320049
+    },
+    {
+     "name": "Environment",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "RDO._rdoEnvironment",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320049
+    },
+    {
+     "name": "StillExecuting",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbStillExecuting",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrCaption",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320050
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320050
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "pocBackColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320051
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320051
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "pocForeColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320052
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320052
+    },
+    {
+     "name": "BatchCollisionCount",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 320053
+    },
+    {
+     "name": "BatchCollisionRows",
+     "memid": 30,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pReturnValue",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 320054
+    },
+    {
+     "name": "BatchSize",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 320055
+    },
+    {
+     "name": "BatchSize",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 320055
+    },
+    {
+     "name": "UpdateOperation",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 320056
+    },
+    {
+     "name": "UpdateOperation",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 320056
+    },
+    {
+     "name": "UpdateCriteria",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 320057
+    },
+    {
+     "name": "UpdateCriteria",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 320057
+    },
+    {
+     "name": "UpdateControls",
+     "memid": 35,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320058
+    },
+    {
+     "name": "UpdateRow",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320059
+    },
+    {
+     "name": "BeginTrans",
+     "memid": 37,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320060
+    },
+    {
+     "name": "CommitTrans",
+     "memid": 38,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320061
+    },
+    {
+     "name": "RollbackTrans",
+     "memid": 39,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320062
+    },
+    {
+     "name": "Cancel",
+     "memid": 40,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320063
+    },
+    {
+     "name": "Refresh",
+     "memid": -550,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 320064
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 320065
+    }
+   ]
+  },
+  {
+   "name": "DRdcEvents",
+   "kind": "dispatch",
+   "guid": "{43478D72-78E0-11CF-8E78-00A0D100038E}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Validate",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Action",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Reserved",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 320066
+    },
+    {
+     "name": "Reposition",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320067
+    },
+    {
+     "name": "Error",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Description",
+       "type": "String",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Scode",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "HelpFile",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "HelpContext",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "CancelDisplay",
+       "type": "Boolean",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 320068
+    },
+    {
+     "name": "QueryCompleted",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 320069
+    },
+    {
+     "name": "MouseDown",
+     "memid": -605,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "x",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 320070
+    },
+    {
+     "name": "MouseMove",
+     "memid": -606,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "x",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 320071
+    },
+    {
+     "name": "MouseUp",
+     "memid": -607,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "x",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 320072
+    }
+   ]
+  },
+  {
+   "name": "MSRDC",
+   "kind": "coclass",
+   "guid": "{43478D73-78E0-11CF-8E78-00A0D100038E}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 320000,
+   "implements": [
+    {
+     "name": "IRdc",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DRdcEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "MSRDC2",
+   "kind": "coclass",
+   "guid": "{6785E9BB-087E-4772-8CA5-3331CC3B574E}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 320000,
+   "implements": [
+    {
+     "name": "IRdc",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DRdcEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

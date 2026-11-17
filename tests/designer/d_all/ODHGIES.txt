@@ -1,0 +1,10 @@
+Δοκιμή του Form Designer (LinBASIC Studio, Φάση 3, βήμα 2)
+
+Η φόρμα Form1.frm φτιάχτηκε με το LinBASIC Studio: όλα τα controls του Toolbox,
+ένα Frame με δύο OptionButton και ένας πίνακας controls (Command2(0), Command2(1)).
+
+1. ’νοιξε το Designed.vbp στο VB6.
+2. Έλεγξε ότι η φόρμα ανοίγει χωρίς μήνυμα λάθους (να μη γραφτεί αρχείο Form1.log)
+   και ότι τα controls φαίνονται σωστά.
+3. Επίλεξε τη Form1 και κάνε File > Save Form1.frm As... με το ίδιο όνομα, Yes για αντικατάσταση.
+4. Κλείσε το VB6 (No αν ρωτήσει για το .vbp).

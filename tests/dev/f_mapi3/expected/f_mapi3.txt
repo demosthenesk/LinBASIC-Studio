@@ -1,0 +1,360 @@
+== start
+-- signon; a message saved, saved again (two other messages are in the store, unread)
+  LogonUI = Boolean:False
+  SignOn ok
+  SessionID = Long:65537
+  Compose ok
+  MsgSubject = String:First
+  MsgNoteText = String:Body one
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipAddress = String:SMTP:bob@example.com
+  RecipType = Integer:1
+  AttachmentIndex = Integer:0
+  AttachmentPathName = String:<app>\att1.txt
+  AttachmentPosition = Integer:2
+  Save ok
+saved: MsgIndex=Long:-1 MsgID=String:000103 MsgCount=Long:0 MsgSubject=String:First
+  MsgSubject = String:First (2)
+  Save ok
+saved again: MsgIndex=Long:-1 MsgID=String:000103 MsgCount=Long:0 MsgSubject=String:First (2)
+    | MAPILogon(ui=0, profile="", password="", flags=0x1000) = 0 session=0x10001
+    | MAPISaveMail(session=0x10001, ui=0, flags=0x0, id="")
+    |   subject="First" note="Body one" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=1 files=1
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   file(0) flags=0 position=2 path="<app>\att1.txt" name=(null) type=(null)
+    |   = 0 id="000103"
+    | MAPISaveMail(session=0x10001, ui=0, flags=0x0, id="000103")
+    |   subject="First (2)" note="Body one" type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=1 files=1
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   file(0) flags=0 position=2 path="<app>\att1.txt" name=(null) type=(null)
+    |   = 0 id="000103"
+-- fetch: the unread ones, then all
+  FetchUnreadOnly = Boolean:True
+  Fetch ok
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x20) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x20) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000102", flags=0x20) = 16 id=""
+unread: MsgCount=2
+  MsgIndex = Long:0
+message 0: MsgIndex=Long:0 MsgID=String:000100 MsgSubject=String:From another program MsgNoteText=String:A long line that goes on, a=b
+End MsgOrigDisplayName=String:Eve Adams MsgOrigAddress=String:SMTP:eve@example.com MsgDateReceived=String:2026/01/05 10:20 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:True MsgCount=Long:2 RecipCount=Long:3 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:1 RecipDisplayName=String:Smith, Bob RecipAddress=String:SMTP:bob@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:carol@example.com RecipAddress=String:SMTP:carol@example.com
+  MsgIndex = Long:1
+message 1: MsgIndex=Long:1 MsgID=String:000102 MsgSubject=String:Custom one MsgNoteText=String:Two files MsgOrigDisplayName=String:Bob Smith MsgOrigAddress=String:SMTP:bob@example.com MsgDateReceived=String:2026/01/06 09:00 MsgType=String:IPM.Custom MsgConversationID=String:conv-42 MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:2 RecipCount=Long:3 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:2 RecipDisplayName=String:Carol Jones RecipAddress=String:SMTP:carol@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:Dave RecipAddress=String:SMTP:dave@example.com
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="From another program" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x3 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x800) = 0
+    |   subject="From another program" note="A long line that goes on, a=b\r\nEnd" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x3 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="Custom one" note=(null) type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x1 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0x800) = 0
+    |   subject="Custom one" note="Two files" type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x1 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+  FetchUnreadOnly = Boolean:False
+  Fetch ok
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000102", flags=0x0) = 0 id="000103"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000103", flags=0x0) = 16 id=""
+all: MsgCount=3
+  MsgIndex = Long:0
+message 0: MsgIndex=Long:0 MsgID=String:000100 MsgSubject=String:From another program MsgNoteText=String:A long line that goes on, a=b
+End MsgOrigDisplayName=String:Eve Adams MsgOrigAddress=String:SMTP:eve@example.com MsgDateReceived=String:2026/01/05 10:20 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:True MsgCount=Long:3 RecipCount=Long:3 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:1 RecipDisplayName=String:Smith, Bob RecipAddress=String:SMTP:bob@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:carol@example.com RecipAddress=String:SMTP:carol@example.com
+  MsgIndex = Long:1
+message 1: MsgIndex=Long:1 MsgID=String:000102 MsgSubject=String:Custom one MsgNoteText=String:Two files MsgOrigDisplayName=String:Bob Smith MsgOrigAddress=String:SMTP:bob@example.com MsgDateReceived=String:2026/01/06 09:00 MsgType=String:IPM.Custom MsgConversationID=String:conv-42 MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:3 RecipCount=Long:3 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:2 RecipDisplayName=String:Carol Jones RecipAddress=String:SMTP:carol@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:Dave RecipAddress=String:SMTP:dave@example.com
+  MsgIndex = Long:2
+message 2: MsgIndex=Long:2 MsgID=String:000103 MsgSubject=String:First (2) MsgNoteText=String:Body one MsgOrigDisplayName=String: MsgOrigAddress=String: MsgDateReceived=String:2026/01/02 03:04 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:3 RecipCount=Long:1 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Bob Smith RecipAddress=String:SMTP:bob@example.com
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="From another program" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x800) = 0
+    |   subject="From another program" note="A long line that goes on, a=b\r\nEnd" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="Custom one" note=(null) type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0x800) = 0
+    |   subject="Custom one" note="Two files" type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000103", flags=0xc0) = 0
+    |   subject="First (2)" note=(null) type=""
+    |   date="2026/01/02 03:04" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="" address="" eid=0
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000103", flags=0x800) = 0
+    |   subject="First (2)" note="Body one" type=""
+    |   date="2026/01/02 03:04" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="" address="" eid=0
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+-- fetch: sorted, of a type, none
+  FetchSorted = Boolean:True
+  Fetch ok
+sorted: MsgCount=Long:3 MsgIndex=Long:0 MsgID=String:000103 MsgSubject=String:First (2)
+  MsgIndex = Integer:2
+sorted 2: MsgIndex=Long:2 MsgID=String:000102 MsgSubject=String:Custom one MsgRead=Boolean:True
+    (380 [Mapi3Test] Invalid property value)
+  MsgIndex = Integer:3 !380
+  FetchSorted = Boolean:False
+  FetchMsgType = String:IPM.Custom
+  Fetch ok
+custom: MsgCount=Long:1 MsgIndex=Long:0 MsgID=String:000102 MsgSubject=String:Custom one MsgType=String:IPM.Custom
+  FetchMsgType = String:IPM.Nothing
+  Fetch ok
+nothing: MsgCount=Long:0 MsgIndex=Long:0 MsgID=String: MsgSubject=String:
+  FetchMsgType = String:
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x100) = 0 id="000103"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000103", flags=0x100) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x100) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000102", flags=0x100) = 16 id=""
+    | MAPIReadMail(session=0x10001, ui=0, id="000103", flags=0xc0) = 0
+    |   subject="First (2)" note=(null) type=""
+    |   date="2026/01/02 03:04" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="" address="" eid=0
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="Custom one" note=(null) type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIFindNext(session=0x10001, ui=0, type="IPM.Custom", seed="", flags=0x0) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="IPM.Custom", seed="000102", flags=0x0) = 16 id=""
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="Custom one" note=(null) type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIFindNext(session=0x10001, ui=0, type="IPM.Nothing", seed="", flags=0x0) = 16 id=""
+-- reply, reply all, forward, copy; a message read cannot change
+  Fetch ok
+  MsgIndex = Integer:0
+  Reply ok
+reply: MsgIndex=Long:-1 MsgID=String: MsgSubject=String:RE: From another program MsgNoteText=String:A long line that goes on, a=b
+End MsgOrigDisplayName=String: MsgOrigAddress=String: MsgDateReceived=String:2026/01/05 10:20 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:True MsgCount=Long:3 RecipCount=Long:1 AttachmentCount=Long:1
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Eve Adams RecipAddress=String:SMTP:eve@example.com
+  attachment 0: AttachmentName=String:note.txt AttachmentPathName=String:<store>\tmp\000100_1_note.txt AttachmentPosition=Long:-1 AttachmentType=Integer:0
+    text: Hello from Eve
+  MsgIndex = Integer:0
+  ReplyAll ok
+reply all: MsgIndex=Long:-1 MsgID=String: MsgSubject=String:RE: From another program MsgNoteText=String:A long line that goes on, a=b
+End MsgOrigDisplayName=String: MsgOrigAddress=String: MsgDateReceived=String:2026/01/05 10:20 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:True MsgCount=Long:3 RecipCount=Long:4 AttachmentCount=Long:1
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Eve Adams RecipAddress=String:SMTP:eve@example.com
+  recip 1: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 2: RecipType=Integer:1 RecipDisplayName=String:Smith, Bob RecipAddress=String:SMTP:bob@example.com
+  recip 3: RecipType=Integer:1 RecipDisplayName=String:carol@example.com RecipAddress=String:SMTP:carol@example.com
+  attachment 0: AttachmentName=String:note.txt AttachmentPathName=String:<store>\tmp\000100_1_note.txt AttachmentPosition=Long:-1 AttachmentType=Integer:0
+    text: Hello from Eve
+  MsgIndex = Integer:1
+  Forward ok
+forward: MsgIndex=Long:-1 MsgID=String: MsgSubject=String:FW: Custom one MsgNoteText=String:Two files MsgOrigDisplayName=String: MsgOrigAddress=String: MsgDateReceived=String:2026/01/06 09:00 MsgType=String:IPM.Custom MsgConversationID=String:conv-42 MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:3 RecipCount=Long:0 AttachmentCount=Long:2
+  attachment 0: AttachmentName=String:a.txt AttachmentPathName=String:<store>\tmp\000102_1_a.txt AttachmentPosition=Long:4 AttachmentType=Integer:0
+    text: AAA
+  attachment 1: AttachmentName=String:b.bin AttachmentPathName=String:<store>\tmp\000102_2_b.bin AttachmentPosition=Long:-1 AttachmentType=Integer:0
+    text: BBBB
+  MsgIndex = Integer:1
+  Copy ok
+copy: MsgIndex=Long:-1 MsgID=String:000102 MsgSubject=String:Custom one MsgNoteText=String:Two files MsgOrigDisplayName=String:Bob Smith MsgOrigAddress=String:SMTP:bob@example.com MsgDateReceived=String:2026/01/06 09:00 MsgType=String:IPM.Custom MsgConversationID=String:conv-42 MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:3 RecipCount=Long:3 AttachmentCount=Long:2
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:2 RecipDisplayName=String:Carol Jones RecipAddress=String:SMTP:carol@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:Dave RecipAddress=String:SMTP:dave@example.com
+  attachment 0: AttachmentName=String:a.txt AttachmentPathName=String:<store>\tmp\000102_1_a.txt AttachmentPosition=Long:4 AttachmentType=Integer:0
+    text: AAA
+  attachment 1: AttachmentName=String:b.bin AttachmentPathName=String:<store>\tmp\000102_2_b.bin AttachmentPosition=Long:-1 AttachmentType=Integer:0
+    text: BBBB
+  MsgIndex = Integer:0
+    (32051 [Mapi3Test] Application-defined or object-defined error)
+  MsgSubject = String:Changed !32051
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Changed !32051
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000102", flags=0x0) = 0 id="000103"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000103", flags=0x0) = 16 id=""
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="From another program" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x0) = 0
+    |   subject="From another program" note="A long line that goes on, a=b\r\nEnd" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=1
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    |   file(0) flags=0 position=4294967295 path="<store>\tmp\000100_1_note.txt" name="note.txt" type=(null)
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="Custom one" note=(null) type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0x0) = 0
+    |   subject="Custom one" note="Two files" type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=2
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   file(0) flags=0 position=4 path="<store>\tmp\000102_1_a.txt" name="a.txt" type=(null)
+    |   file(1) flags=0 position=4294967295 path="<store>\tmp\000102_2_b.bin" name="b.bin" type=(null)
+-- a copy changed and saved over its message; delete a recipient, an attachment, messages
+  MsgIndex = Integer:1
+  Copy ok
+  MsgSubject = String:Custom one, changed
+  Save ok
+  Fetch ok
+after save: MsgCount=3
+  MsgIndex = Long:0
+message 0: MsgIndex=Long:0 MsgID=String:000100 MsgSubject=String:From another program MsgNoteText=String:A long line that goes on, a=b
+End MsgOrigDisplayName=String:Eve Adams MsgOrigAddress=String:SMTP:eve@example.com MsgDateReceived=String:2026/01/05 10:20 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:True MsgCount=Long:3 RecipCount=Long:3 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:1 RecipDisplayName=String:Smith, Bob RecipAddress=String:SMTP:bob@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:carol@example.com RecipAddress=String:SMTP:carol@example.com
+  MsgIndex = Long:1
+message 1: MsgIndex=Long:1 MsgID=String:000102 MsgSubject=String:Custom one, changed MsgNoteText=String:Two files MsgOrigDisplayName=String:Bob Smith MsgOrigAddress=String:SMTP:bob@example.com MsgDateReceived=String:2026/01/06 09:00 MsgType=String:IPM.Custom MsgConversationID=String:conv-42 MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:3 RecipCount=Long:3 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Tester RecipAddress=String:SMTP:tester@example.com
+  recip 1: RecipType=Integer:2 RecipDisplayName=String:Carol Jones RecipAddress=String:SMTP:carol@example.com
+  recip 2: RecipType=Integer:2 RecipDisplayName=String:Dave RecipAddress=String:SMTP:dave@example.com
+  MsgIndex = Long:2
+message 2: MsgIndex=Long:2 MsgID=String:000103 MsgSubject=String:First (2) MsgNoteText=String:Body one MsgOrigDisplayName=String: MsgOrigAddress=String: MsgDateReceived=String:2026/01/02 03:04 MsgType=String: MsgConversationID=String: MsgRead=Boolean:True MsgSent=Boolean:False MsgReceiptRequested=Boolean:False MsgCount=Long:3 RecipCount=Long:1 AttachmentCount=Long:0
+  recip 0: RecipType=Integer:1 RecipDisplayName=String:Bob Smith RecipAddress=String:SMTP:bob@example.com
+  MsgIndex = Integer:1
+    (32052 [Mapi3Test] Application-defined or object-defined error)
+  Delete !32052
+  Delete !32052
+after delete recip: MsgIndex=Long:1 RecipCount=Long:3 AttachmentCount=Long:0
+  Delete ok
+after delete: MsgCount=Long:2 MsgIndex=Long:1 MsgID=String:000103 MsgSubject=String:First (2)
+  Delete ok
+after delete 2: MsgCount=Long:1 MsgIndex=Long:0 MsgID=String:000100 MsgSubject=String:From another program
+  Fetch ok
+fetched: MsgCount=Long:1 MsgIndex=Long:0 MsgID=String:000100 MsgSubject=String:From another program
+  MsgIndex = Integer:9 !380
+    | MAPISaveMail(session=0x10001, ui=0, flags=0x0, id="000102")
+    |   subject="Custom one, changed" note="Two files" type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=2
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    |   file(0) flags=0 position=4 path="<store>\tmp\000102_1_a.txt" name="a.txt" type=(null)
+    |   file(1) flags=0 position=4294967295 path="<store>\tmp\000102_2_b.bin" name="b.bin" type=(null)
+    |   = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000102", flags=0x0) = 0 id="000103"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000103", flags=0x0) = 16 id=""
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="From another program" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x800) = 0
+    |   subject="From another program" note="A long line that goes on, a=b\r\nEnd" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="Custom one, changed" note=(null) type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0x800) = 0
+    |   subject="Custom one, changed" note="Two files" type="IPM.Custom"
+    |   date="2026/01/06 09:00" conversation="conv-42" flags=0x0 recips=3 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=2 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   recip(2) class=2 name="Dave" address="SMTP:dave@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000103", flags=0xc0) = 0
+    |   subject="First (2)" note=(null) type=""
+    |   date="2026/01/02 03:04" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="" address="" eid=0
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000103", flags=0x800) = 0
+    |   subject="First (2)" note="Body one" type=""
+    |   date="2026/01/02 03:04" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="" address="" eid=0
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    | MAPIDeleteMail(session=0x10001, ui=0, id="000102", flags=0x0) = 0
+    | MAPIDeleteMail(session=0x10001, ui=0, id="000103", flags=0x0) = 0
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 16 id=""
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="From another program" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x2 recips=3 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Smith, Bob" address="SMTP:bob@example.com" eid=0
+    |   recip(2) class=2 name="carol@example.com" address="SMTP:carol@example.com" eid=0
+-- signoff
+  SignOff ok
+    (394 [Mapi3Test] Get not supported (write-only property))
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:False NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:0
+    | MAPILogoff(session=0x10001, ui=0, flags=0x0) = 0
+end

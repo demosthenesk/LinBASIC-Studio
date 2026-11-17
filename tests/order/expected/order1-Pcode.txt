@@ -1,0 +1,59 @@
+int + 12
+int - 12
+int * 12
+int / 21
+int \ 12
+int Mod 12
+int ^ 21
+int 1+2*3 123
+int 1*2+3 123
+int 1+2+3 123
+int (1+2)+(3+4) 1234
+int 1+5+2 12
+int k+1+2 12
+int -1+2 12
+long + 12
+long - 12
+long * 12
+long 1+2*3 123
+double + 21
+double - 21
+double * 21
+double / 21
+double 1+2*3 231
+currency + 12
+variant + 12
+variant - 12
+variant 1+2*3 123
+variant & 12
+int+double 21
+double+int 21
+int+long 12
+int+variant 12
+string & 12
+string 1&2&3 123
+string + 12
+string 1&(2&3) 123
+int < 12
+int = 12
+double > 21
+string = 12
+variant = 12
+int And 12
+int Or 12
+bool And 12
+bool Or 12
+If And 12
+If 1+2=3 123
+call ByVal 123
+call 1+2,3,4 1234
+call ByRef 13
+1+call(2,3,4) 2314
+call(1,2,3)+4 1234
+IIf 123
+Mid$ abc21
+InStr 1xy
+a(1) = 2 21
+a(1) = 2+3 231
+print 1  2  3 
+print items 123

@@ -1,0 +1,16 @@
+ 12 Hello|World|World|Wor|
+ 5  9  0  0  8 
+ 9  4 
+HELLO, WORLD hello, world
+[ab][ab  ][  ab]
+[   ][****][AAA]
+ 65  97 Ba 65 C
+cba bbbbbb acabc
+-1  1  1  0 
+aXYZef
+aXYZ12
+a1True2,5xy
+concat number 8 53
+ 0 |abc||
+ 0  2  9 
+FalseTrueTrueTrue

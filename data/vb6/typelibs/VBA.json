@@ -1,0 +1,7272 @@
+{
+ "library": "VBA",
+ "short": "VBA",
+ "guid": "{000204EF-0000-0000-C000-000000000046}",
+ "version": "6.0",
+ "lcid": 9,
+ "helpfile": "VBA.HLP",
+ "file": "msvbvm60.dll",
+ "types": [
+  {
+   "name": "VbVarType",
+   "kind": "enum",
+   "guid": "{ED822010-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113637,
+   "members": [
+    {
+     "name": "vbEmpty",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbNull",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbInteger",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbLong",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbSingle",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbDouble",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbCurrency",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbDate",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbString",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbObject",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbError",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 10,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbBoolean",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 11,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbVariant",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 12,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbDataObject",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 13,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbDecimal",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 14,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbByte",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 17,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbUserDefinedType",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 36,
+     "helpcontext": 1012527
+    },
+    {
+     "name": "vbArray",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 8192,
+     "helpcontext": 1012527
+    }
+   ]
+  },
+  {
+   "name": "VbMsgBoxStyle",
+   "kind": "enum",
+   "guid": "{ED822011-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1011389,
+   "members": [
+    {
+     "name": "vbOKOnly",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbOKCancel",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbAbortRetryIgnore",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbYesNoCancel",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbYesNo",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbRetryCancel",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbCritical",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 16,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbQuestion",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 32,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbExclamation",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 48,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbInformation",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 64,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbDefaultButton1",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbDefaultButton2",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 256,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbDefaultButton3",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 512,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbDefaultButton4",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 768,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbApplicationModal",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbSystemModal",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 4096,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbMsgBoxHelpButton",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 16384,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbMsgBoxRight",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 524288,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbMsgBoxRtlReading",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 1048576,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbMsgBoxSetForeground",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 65536,
+     "helpcontext": 1012528
+    }
+   ]
+  },
+  {
+   "name": "VbMsgBoxResult",
+   "kind": "enum",
+   "guid": "{ED822012-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113592,
+   "members": [
+    {
+     "name": "vbOK",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbCancel",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbAbort",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbRetry",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbIgnore",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbYes",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 1012528
+    },
+    {
+     "name": "vbNo",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 1012528
+    }
+   ]
+  },
+  {
+   "name": "VbFileAttribute",
+   "kind": "enum",
+   "guid": "{ED822013-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113563,
+   "members": [
+    {
+     "name": "vbNormal",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbReadOnly",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbHidden",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbSystem",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbVolume",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbDirectory",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 16,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbArchive",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32,
+     "helpcontext": 1012529
+    },
+    {
+     "name": "vbAlias",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 64,
+     "helpcontext": 1012529
+    }
+   ]
+  },
+  {
+   "name": "VbStrConv",
+   "kind": "enum",
+   "guid": "{ED822014-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113636,
+   "members": [
+    {
+     "name": "vbUpperCase",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbLowerCase",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbProperCase",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbWide",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbNarrow",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbKatakana",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 16,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbHiragana",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbUnicode",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 64,
+     "helpcontext": 1012530
+    },
+    {
+     "name": "vbFromUnicode",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 128,
+     "helpcontext": 1012530
+    }
+   ]
+  },
+  {
+   "name": "VbDayOfWeek",
+   "kind": "enum",
+   "guid": "{ED822015-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113553,
+   "members": [
+    {
+     "name": "vbUseSystemDayOfWeek",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbSunday",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbMonday",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbTuesday",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbWednesday",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbThursday",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbFriday",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbSaturday",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 1019269
+    }
+   ]
+  },
+  {
+   "name": "VbFirstWeekOfYear",
+   "kind": "enum",
+   "guid": "{ED822016-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113570,
+   "members": [
+    {
+     "name": "vbUseSystem",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbFirstJan1",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbFirstFourDays",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1019269
+    },
+    {
+     "name": "vbFirstFullWeek",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1019269
+    }
+   ]
+  },
+  {
+   "name": "VbIMEStatus",
+   "kind": "enum",
+   "guid": "{ED822017-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113583,
+   "members": [
+    {
+     "name": "vbIMENoOp",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeNoControl",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEOn",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeOn",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEOff",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeOff",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEDisable",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeDisable",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEHiragana",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeHiragana",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEKatakanaDbl",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeKatakana",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEKatakanaSng",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeKatakanaHalf",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEAlphaDbl",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeAlphaFull",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEAlphaSng",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeAlpha",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeHangulFull",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 1014630
+    },
+    {
+     "name": "vbIMEModeHangul",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 10,
+     "helpcontext": 1014630
+    }
+   ]
+  },
+  {
+   "name": "VbAppWinStyle",
+   "kind": "enum",
+   "guid": "{ED822018-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113544,
+   "members": [
+    {
+     "name": "vbHide",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1019268
+    },
+    {
+     "name": "vbNormalFocus",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1019268
+    },
+    {
+     "name": "vbMinimizedFocus",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1019268
+    },
+    {
+     "name": "vbMaximizedFocus",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1019268
+    },
+    {
+     "name": "vbNormalNoFocus",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1019268
+    },
+    {
+     "name": "vbMinimizedNoFocus",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 1019268
+    }
+   ]
+  },
+  {
+   "name": "VbCompareMethod",
+   "kind": "enum",
+   "guid": "{ED822019-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113545,
+   "members": [
+    {
+     "name": "vbBinaryCompare",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1102645
+    },
+    {
+     "name": "vbTextCompare",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1102645
+    },
+    {
+     "name": "vbDatabaseCompare",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1102645
+    }
+   ]
+  },
+  {
+   "name": "VbCalendar",
+   "kind": "enum",
+   "guid": "{ED822020-6D7F-11CF-B949-00AA004455EA}",
+   "flags": [],
+   "helpcontext": 1113364,
+   "members": [
+    {
+     "name": "vbCalGreg",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1113365
+    },
+    {
+     "name": "vbCalHijri",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1113365
+    }
+   ]
+  },
+  {
+   "name": "VbDateTimeFormat",
+   "kind": "enum",
+   "guid": "{07D7F561-A08E-11D0-9706-00A0C911004E}",
+   "flags": [],
+   "helpcontext": 1113635,
+   "members": [
+    {
+     "name": "vbGeneralDate",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012531
+    },
+    {
+     "name": "vbLongDate",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012531
+    },
+    {
+     "name": "vbShortDate",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012531
+    },
+    {
+     "name": "vbLongTime",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 1012531
+    },
+    {
+     "name": "vbShortTime",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012531
+    }
+   ]
+  },
+  {
+   "name": "VbTriState",
+   "kind": "enum",
+   "guid": "{07D7F562-A08E-11D0-9706-00A0C911004E}",
+   "flags": [],
+   "helpcontext": 1113634,
+   "members": [
+    {
+     "name": "vbUseDefault",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": -2,
+     "helpcontext": 1012532
+    },
+    {
+     "name": "vbTrue",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": -1,
+     "helpcontext": 1012532
+    },
+    {
+     "name": "vbFalse",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 1012532
+    }
+   ]
+  },
+  {
+   "name": "VbCallType",
+   "kind": "enum",
+   "guid": "{07D7F563-A08E-11D0-9706-00A0C911004E}",
+   "flags": [],
+   "helpcontext": 1113633,
+   "members": [
+    {
+     "name": "VbMethod",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 1012533
+    },
+    {
+     "name": "VbGet",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 1012533
+    },
+    {
+     "name": "VbLet",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 1012533
+    },
+    {
+     "name": "VbSet",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 1012533
+    }
+   ]
+  },
+  {
+   "name": "Constants",
+   "kind": "module",
+   "guid": "{343DB180-2BCC-1069-82D4-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011389,
+   "members": [
+    {
+     "name": "vbObjectError",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": -2147221504,
+     "helpcontext": 1014186
+    },
+    {
+     "name": "vbNullString",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbNullChar",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\u0000",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbCrLf",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\r\n",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbNewLine",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\r\n",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbCr",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\r",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbLf",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\n",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbBack",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\b",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbFormFeed",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\f",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbTab",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\t",
+     "helpcontext": 1092146
+    },
+    {
+     "name": "vbVerticalTab",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "LPSTR",
+     "value": "\u000b",
+     "helpcontext": 1092146
+    }
+   ]
+  },
+  {
+   "name": "Strings",
+   "kind": "module",
+   "guid": "{35BFBDA0-2BCC-1069-82D5-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011396,
+   "members": [
+    {
+     "name": "Asc",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcAnsiValueBstr",
+     "helpcontext": 1009247
+    },
+    {
+     "name": "_B_str_Chr",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "CharCode",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcBstrFromAnsi",
+     "helpcontext": 1011359
+    },
+    {
+     "name": "_B_var_Chr",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "CharCode",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarBstrFromAnsi",
+     "helpcontext": 1008866
+    },
+    {
+     "name": "_B_str_LCase",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLowerCaseBstr",
+     "helpcontext": 1011360
+    },
+    {
+     "name": "_B_var_LCase",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLowerCaseVar",
+     "helpcontext": 1008957
+    },
+    {
+     "name": "_B_str_Mid",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcMidCharBstr",
+     "helpcontext": 1011353
+    },
+    {
+     "name": "_B_var_Mid",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcMidCharVar",
+     "helpcontext": 1011354
+    },
+    {
+     "name": "_B_str_MidB",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcMidBstr",
+     "helpcontext": 1011355
+    },
+    {
+     "name": "_B_var_MidB",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcMidVar",
+     "helpcontext": 1011070
+    },
+    {
+     "name": "InStr",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Start",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "String1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "String2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcInStrChar",
+     "helpcontext": 1008946
+    },
+    {
+     "name": "InStrB",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Start",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "String1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "String2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcInStr",
+     "helpcontext": 1011069
+    },
+    {
+     "name": "_B_str_Left",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLeftCharBstr",
+     "helpcontext": 1011361
+    },
+    {
+     "name": "_B_var_Left",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLeftCharVar",
+     "helpcontext": 1008958
+    },
+    {
+     "name": "_B_str_LeftB",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLeftBstr",
+     "helpcontext": 1012573
+    },
+    {
+     "name": "_B_var_LeftB",
+     "memid": 1610612750,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLeftVar",
+     "helpcontext": 1011067
+    },
+    {
+     "name": "_B_str_LTrim",
+     "memid": 1610612751,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLeftTrimBstr",
+     "helpcontext": 1011363
+    },
+    {
+     "name": "_B_var_LTrim",
+     "memid": 1610612752,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLeftTrimVar",
+     "helpcontext": 1009293
+    },
+    {
+     "name": "_B_str_RightB",
+     "memid": 1610612753,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRightBstr",
+     "helpcontext": 1012574
+    },
+    {
+     "name": "_B_var_RightB",
+     "memid": 1610612754,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRightVar",
+     "helpcontext": 1011068
+    },
+    {
+     "name": "_B_str_Right",
+     "memid": 1610612755,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRightCharBstr",
+     "helpcontext": 1011365
+    },
+    {
+     "name": "_B_var_Right",
+     "memid": 1610612756,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Length",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRightCharVar",
+     "helpcontext": 1009006
+    },
+    {
+     "name": "_B_str_RTrim",
+     "memid": 1610612757,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRightTrimBstr",
+     "helpcontext": 1011366
+    },
+    {
+     "name": "_B_var_RTrim",
+     "memid": 1610612758,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRightTrimVar",
+     "helpcontext": 1008797
+    },
+    {
+     "name": "_B_str_Space",
+     "memid": 1610612759,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSpaceBstr",
+     "helpcontext": 1011368
+    },
+    {
+     "name": "_B_var_Space",
+     "memid": 1610612760,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSpaceVar",
+     "helpcontext": 1009026
+    },
+    {
+     "name": "_B_var_StrConv",
+     "memid": 1610612761,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Conversion",
+       "type": "VbStrConv",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "LocaleID",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcStrConvVar2",
+     "helpcontext": 1011063
+    },
+    {
+     "name": "_B_str_String",
+     "memid": 1610612762,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Character",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcStringBstr",
+     "helpcontext": 1011358
+    },
+    {
+     "name": "_B_var_String",
+     "memid": 1610612763,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Character",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcStringVar",
+     "helpcontext": 1011041
+    },
+    {
+     "name": "_B_str_Trim",
+     "memid": 1610612764,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcTrimBstr",
+     "helpcontext": 1011370
+    },
+    {
+     "name": "_B_var_Trim",
+     "memid": 1610612765,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcTrimVar",
+     "helpcontext": 1009293
+    },
+    {
+     "name": "_B_str_UCase",
+     "memid": 1610612766,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcUpperCaseBstr",
+     "helpcontext": 1011371
+    },
+    {
+     "name": "_B_var_UCase",
+     "memid": 1610612767,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcUpperCaseVar",
+     "helpcontext": 1009051
+    },
+    {
+     "name": "StrComp",
+     "memid": 1610612768,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "String1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "String2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcCompareBstr",
+     "helpcontext": 1009035
+    },
+    {
+     "name": "_B_str_Format",
+     "memid": 1610612769,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Format",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "FirstDayOfWeek",
+       "type": "VbDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "FirstWeekOfYear",
+       "type": "VbFirstWeekOfYear",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      }
+     ],
+     "export": "rtcBstrFromFormatVar",
+     "helpcontext": 1008925
+    },
+    {
+     "name": "_B_var_Format",
+     "memid": 1610612770,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Format",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "FirstDayOfWeek",
+       "type": "VbDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "FirstWeekOfYear",
+       "type": "VbFirstWeekOfYear",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      }
+     ],
+     "export": "rtcVarFromFormatVar",
+     "helpcontext": 1008925
+    },
+    {
+     "name": "Len",
+     "memid": 1610612771,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLenCharVar",
+     "helpcontext": 1019262
+    },
+    {
+     "name": "LenB",
+     "memid": 1610612772,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLenVar",
+     "helpcontext": 1011065
+    },
+    {
+     "name": "AscB",
+     "memid": 1610612773,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Byte",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcByteValueBstr",
+     "helpcontext": 1009247
+    },
+    {
+     "name": "_B_str_ChrB",
+     "memid": 1610612774,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "CharCode",
+       "type": "Byte",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcBstrFromByte",
+     "helpcontext": 1011359
+    },
+    {
+     "name": "_B_var_ChrB",
+     "memid": 1610612775,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "CharCode",
+       "type": "Byte",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarBstrFromByte",
+     "helpcontext": 1008866
+    },
+    {
+     "name": "AscW",
+     "memid": 1610612776,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcCharValueBstr",
+     "helpcontext": 1009247
+    },
+    {
+     "name": "_B_str_ChrW",
+     "memid": 1610612777,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "CharCode",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcBstrFromChar",
+     "helpcontext": 1011359
+    },
+    {
+     "name": "_B_var_ChrW",
+     "memid": 1610612778,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "CharCode",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarBstrFromChar",
+     "helpcontext": 1008866
+    },
+    {
+     "name": "FormatDateTime",
+     "memid": 1610612779,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NamedFormat",
+       "type": "VbDateTimeFormat",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcFormatDateTime",
+     "helpcontext": 1011367
+    },
+    {
+     "name": "FormatNumber",
+     "memid": 1610612780,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NumDigitsAfterDecimal",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "IncludeLeadingDigit",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      },
+      {
+       "name": "UseParensForNegativeNumbers",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      },
+      {
+       "name": "GroupDigits",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      }
+     ],
+     "export": "rtcFormatNumber",
+     "helpcontext": 1008937
+    },
+    {
+     "name": "FormatPercent",
+     "memid": 1610612781,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NumDigitsAfterDecimal",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "IncludeLeadingDigit",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      },
+      {
+       "name": "UseParensForNegativeNumbers",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      },
+      {
+       "name": "GroupDigits",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      }
+     ],
+     "export": "rtcFormatPercent",
+     "helpcontext": 1008936
+    },
+    {
+     "name": "FormatCurrency",
+     "memid": 1610612782,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NumDigitsAfterDecimal",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "IncludeLeadingDigit",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      },
+      {
+       "name": "UseParensForNegativeNumbers",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      },
+      {
+       "name": "GroupDigits",
+       "type": "VbTriState",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -2
+      }
+     ],
+     "export": "rtcFormatCurrency",
+     "helpcontext": 1008933
+    },
+    {
+     "name": "WeekdayName",
+     "memid": 1610612783,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Weekday",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Abbreviate",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      },
+      {
+       "name": "FirstDayOfWeek",
+       "type": "VbDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcWeekdayName",
+     "helpcontext": 1008932
+    },
+    {
+     "name": "MonthName",
+     "memid": 1610612784,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Month",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Abbreviate",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      }
+     ],
+     "export": "rtcMonthName",
+     "helpcontext": 1008931
+    },
+    {
+     "name": "Replace",
+     "memid": 1610612785,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Find",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Replace",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "Count",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcReplace",
+     "helpcontext": 1008930
+    },
+    {
+     "name": "StrReverse",
+     "memid": 1610612786,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcStrReverse",
+     "helpcontext": 1008923
+    },
+    {
+     "name": "Join",
+     "memid": 1610612787,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "SourceArray",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Delimiter",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcJoin",
+     "helpcontext": 1008915
+    },
+    {
+     "name": "Filter",
+     "memid": 1610612788,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "SourceArray",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Match",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Include",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcFilter",
+     "helpcontext": 1008912
+    },
+    {
+     "name": "InStrRev",
+     "memid": 1610612789,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "StringCheck",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "StringMatch",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcInStrRev",
+     "helpcontext": 1008911
+    },
+    {
+     "name": "Split",
+     "memid": 1610612790,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Delimiter",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Limit",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "Compare",
+       "type": "VbCompareMethod",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcSplit",
+     "helpcontext": 1008907
+    }
+   ]
+  },
+  {
+   "name": "Conversion",
+   "kind": "module",
+   "guid": "{36785F40-2BCC-1069-82D6-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011390,
+   "members": [
+    {
+     "name": "_B_str_Hex",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcHexBstrFromVar",
+     "helpcontext": 1011362
+    },
+    {
+     "name": "_B_var_Hex",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcHexVarFromVar",
+     "helpcontext": 1008938
+    },
+    {
+     "name": "_B_str_Oct",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcOctBstrFromVar",
+     "helpcontext": 1011364
+    },
+    {
+     "name": "_B_var_Oct",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcOctVarFromVar",
+     "helpcontext": 1008983
+    },
+    {
+     "name": "MacID",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Constant",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcMacId",
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 1009753
+    },
+    {
+     "name": "_B_str_Str",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcStrFromVar",
+     "helpcontext": 1011369
+    },
+    {
+     "name": "_B_var_Str",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarStrFromVar",
+     "helpcontext": 1009034
+    },
+    {
+     "name": "Val",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcR8ValFromBstr",
+     "helpcontext": 1009055
+    },
+    {
+     "name": "CStr",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtBstrFromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CByte",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Byte",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtUI1FromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CBool",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtBoolFromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CCur",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Currency",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtCyFromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CDate",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcDateFromVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CVDate",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarDateFromVar",
+     "helpcontext": 1011322
+    },
+    {
+     "name": "CInt",
+     "memid": 1610612750,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtI2FromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CLng",
+     "memid": 1610612751,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtI4FromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CSng",
+     "memid": 1610612752,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtR4FromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CDbl",
+     "memid": 1610612753,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtR8FromErrVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CVar",
+     "memid": 1610612754,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarFromVar",
+     "helpcontext": 1074266
+    },
+    {
+     "name": "CVErr",
+     "memid": 1610612755,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcCVErrFromVar",
+     "helpcontext": 1008821
+    },
+    {
+     "name": "_B_str_Error",
+     "memid": 1610612756,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "ErrorNumber",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcBstrFromError",
+     "helpcontext": 1010797
+    },
+    {
+     "name": "_B_var_Error",
+     "memid": 1610612757,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "ErrorNumber",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcVarFromError",
+     "helpcontext": 1010797
+    },
+    {
+     "name": "Fix",
+     "memid": 1610612758,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFixVar",
+     "helpcontext": 1008795
+    },
+    {
+     "name": "Int",
+     "memid": 1610612759,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIntVar",
+     "helpcontext": 1008947
+    },
+    {
+     "name": "CDec",
+     "memid": 1610612760,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "export": "rtDecFromVar",
+     "helpcontext": 1074266
+    }
+   ]
+  },
+  {
+   "name": "FileSystem",
+   "kind": "module",
+   "guid": "{3738A200-2BCC-1069-82D7-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011392,
+   "members": [
+    {
+     "name": "ChDir",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcChangeDir",
+     "helpcontext": 1008864
+    },
+    {
+     "name": "ChDrive",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Drive",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcChangeDrive",
+     "helpcontext": 1008865
+    },
+    {
+     "name": "EOF",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcEndOfFile",
+     "helpcontext": 1008908
+    },
+    {
+     "name": "FileAttr",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ReturnType",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      }
+     ],
+     "export": "rtcFileAttributes",
+     "helpcontext": 1008919
+    },
+    {
+     "name": "FileCopy",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileCopy",
+     "helpcontext": 1008920
+    },
+    {
+     "name": "FileDateTime",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileDateTime",
+     "helpcontext": 1008921
+    },
+    {
+     "name": "FileLen",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileLen",
+     "helpcontext": 1008922
+    },
+    {
+     "name": "GetAttr",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "VbFileAttribute",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetFileAttr",
+     "helpcontext": 1008929
+    },
+    {
+     "name": "Kill",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcKillFiles",
+     "helpcontext": 1008955
+    },
+    {
+     "name": "Loc",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileLocation",
+     "helpcontext": 1008963
+    },
+    {
+     "name": "LOF",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileLength",
+     "helpcontext": 1008965
+    },
+    {
+     "name": "MkDir",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcMakeDir",
+     "helpcontext": 1008975
+    },
+    {
+     "name": "Reset",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "export": "rtcFileReset",
+     "helpcontext": 1009002
+    },
+    {
+     "name": "RmDir",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRemoveDir",
+     "helpcontext": 1009007
+    },
+    {
+     "name": "Seek",
+     "memid": 1610612750,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileSeek",
+     "helpcontext": 1009012
+    },
+    {
+     "name": "SetAttr",
+     "memid": 1610612751,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Attributes",
+       "type": "VbFileAttribute",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSetFileAttr",
+     "helpcontext": 1009017
+    },
+    {
+     "name": "_B_str_CurDir",
+     "memid": 1610612752,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Drive",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcCurrentDirBstr",
+     "helpcontext": 1008881
+    },
+    {
+     "name": "_B_var_CurDir",
+     "memid": 1610612753,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Drive",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcCurrentDir",
+     "helpcontext": 1008881
+    },
+    {
+     "name": "FreeFile",
+     "memid": 1610612754,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "RangeNumber",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcFreeFile",
+     "helpcontext": 1008926
+    },
+    {
+     "name": "Dir",
+     "memid": 1610612755,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Attributes",
+       "type": "VbFileAttribute",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcDir",
+     "helpcontext": 1008898
+    }
+   ]
+  },
+  {
+   "name": "DateTime",
+   "kind": "module",
+   "guid": "{37D75300-2BCC-1069-82D8-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011391,
+   "members": [
+    {
+     "name": "_B_var_Date",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [],
+     "export": "rtcGetDateVar",
+     "helpcontext": 1011038
+    },
+    {
+     "name": "_B_str_Date",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSetDateBstr",
+     "helpcontext": 1011038
+    },
+    {
+     "name": "_B_var_Date",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSetDateVar",
+     "helpcontext": 1011038
+    },
+    {
+     "name": "_B_str_Date",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [],
+     "export": "rtcGetDateBstr",
+     "helpcontext": 1011038
+    },
+    {
+     "name": "DateSerial",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Year",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Month",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Day",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcPackDate",
+     "helpcontext": 1008888
+    },
+    {
+     "name": "DateValue",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Date",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetDateValue",
+     "helpcontext": 1008889
+    },
+    {
+     "name": "Day",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Date",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetDayOfMonth",
+     "helpcontext": 1008890
+    },
+    {
+     "name": "Hour",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Time",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetHourOfDay",
+     "helpcontext": 1008939
+    },
+    {
+     "name": "Minute",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Time",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetMinuteOfHour",
+     "helpcontext": 1008974
+    },
+    {
+     "name": "Month",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Date",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetMonthOfYear",
+     "helpcontext": 1008977
+    },
+    {
+     "name": "Now",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [],
+     "export": "rtcGetPresentDate",
+     "helpcontext": 1008982
+    },
+    {
+     "name": "Second",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Time",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetSecondOfMinute",
+     "helpcontext": 1009011
+    },
+    {
+     "name": "_B_var_Time",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [],
+     "export": "rtcGetTimeVar",
+     "helpcontext": 1011039
+    },
+    {
+     "name": "_B_str_Time",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSetTimeBstr",
+     "helpcontext": 1011039
+    },
+    {
+     "name": "_B_var_Time",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSetTimeVar",
+     "helpcontext": 1011039
+    },
+    {
+     "name": "_B_str_Time",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [],
+     "export": "rtcGetTimeBstr",
+     "helpcontext": 1011039
+    },
+    {
+     "name": "Timer",
+     "memid": 1610612752,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [],
+     "export": "rtcGetTimer",
+     "helpcontext": 1009043
+    },
+    {
+     "name": "TimeSerial",
+     "memid": 1610612753,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Hour",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Minute",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Second",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcPackTime",
+     "helpcontext": 1009044
+    },
+    {
+     "name": "TimeValue",
+     "memid": 1610612754,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Time",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetTimeValue",
+     "helpcontext": 1009045
+    },
+    {
+     "name": "Weekday",
+     "memid": 1610612755,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Date",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FirstDayOfWeek",
+       "type": "VbDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      }
+     ],
+     "export": "rtcGetDayOfWeek",
+     "helpcontext": 1009058
+    },
+    {
+     "name": "Year",
+     "memid": 1610612756,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Date",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetYear",
+     "helpcontext": 1009063
+    },
+    {
+     "name": "DateAdd",
+     "memid": 1610612757,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Interval",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Date",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcDateAdd",
+     "helpcontext": 1013094
+    },
+    {
+     "name": "DateDiff",
+     "memid": 1610612758,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Interval",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Date1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Date2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FirstDayOfWeek",
+       "type": "VbDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "FirstWeekOfYear",
+       "type": "VbFirstWeekOfYear",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      }
+     ],
+     "export": "rtcDateDiff",
+     "helpcontext": 1012950
+    },
+    {
+     "name": "DatePart",
+     "memid": 1610612759,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Interval",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Date",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FirstDayOfWeek",
+       "type": "VbDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "FirstWeekOfYear",
+       "type": "VbFirstWeekOfYear",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      }
+     ],
+     "export": "rtcDatePart",
+     "helpcontext": 1012951
+    },
+    {
+     "name": "Calendar",
+     "memid": 1610612760,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "VbCalendar",
+     "params": [],
+     "export": "rtcGetCurrentCalendar",
+     "helpcontext": 1117202
+    },
+    {
+     "name": "Calendar",
+     "memid": 1610612760,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "VbCalendar",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSetCurrentCalendar",
+     "helpcontext": 1117202
+    }
+   ]
+  },
+  {
+   "name": "Information",
+   "kind": "module",
+   "guid": "{38885380-2BCC-1069-82D9-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011393,
+   "members": [
+    {
+     "name": "Erl",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [],
+     "export": "rtcGetErl",
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 1012954
+    },
+    {
+     "name": "Err",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ErrObject",
+     "params": [],
+     "export": "rtcErrObj",
+     "helpcontext": 1012954
+    },
+    {
+     "name": "IMEStatus",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "VbIMEStatus",
+     "params": [],
+     "export": "rtcIMEStatus",
+     "helpcontext": 1011064
+    },
+    {
+     "name": "IsArray",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "VarName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsArray",
+     "helpcontext": 1008823
+    },
+    {
+     "name": "IsDate",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsDate",
+     "helpcontext": 1008951
+    },
+    {
+     "name": "IsEmpty",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsEmpty",
+     "helpcontext": 1008952
+    },
+    {
+     "name": "IsError",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsError",
+     "helpcontext": 1008824
+    },
+    {
+     "name": "IsMissing",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "ArgName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsMissing",
+     "helpcontext": 1010101
+    },
+    {
+     "name": "IsNull",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsNull",
+     "helpcontext": 1008953
+    },
+    {
+     "name": "IsNumeric",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsNumeric",
+     "helpcontext": 1008954
+    },
+    {
+     "name": "IsObject",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcIsObject",
+     "helpcontext": 1008825
+    },
+    {
+     "name": "TypeName",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "VarName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcTypeName",
+     "helpcontext": 1010100
+    },
+    {
+     "name": "VarType",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "VbVarType",
+     "params": [
+      {
+       "name": "VarName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcVarType",
+     "helpcontext": 1009057
+    },
+    {
+     "name": "QBColor",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Color",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcQBColor",
+     "helpcontext": 1012946
+    },
+    {
+     "name": "RGB",
+     "memid": 1610612750,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Red",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Green",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Blue",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcRgb",
+     "helpcontext": 1009005
+    }
+   ]
+  },
+  {
+   "name": "Interaction",
+   "kind": "module",
+   "guid": "{39302C40-2BCC-1069-82DA-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011394,
+   "members": [
+    {
+     "name": "AppActivate",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Title",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Wait",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcAppActivate",
+     "helpcontext": 1008855
+    },
+    {
+     "name": "Beep",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "export": "rtcBeep",
+     "helpcontext": 1008861
+    },
+    {
+     "name": "CreateObject",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Class",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ServerName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      }
+     ],
+     "export": "rtcCreateObject2",
+     "helpcontext": 1010851
+    },
+    {
+     "name": "DoEvents",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [],
+     "export": "rtcDoEvents",
+     "helpcontext": 1014016
+    },
+    {
+     "name": "GetObject",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Class",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcGetObject",
+     "helpcontext": 1010959
+    },
+    {
+     "name": "InputBox",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Prompt",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Title",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Default",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "XPos",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "YPos",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "HelpFile",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Context",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 6,
+     "export": "rtcInputBox",
+     "helpcontext": 1008945
+    },
+    {
+     "name": "MacScript",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Script",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcAppleScript",
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 1010848
+    },
+    {
+     "name": "MsgBox",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "VbMsgBoxResult",
+     "params": [
+      {
+       "name": "Prompt",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Buttons",
+       "type": "VbMsgBoxStyle",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "Title",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "HelpFile",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Context",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 3,
+     "export": "rtcMsgBox",
+     "helpcontext": 1008978
+    },
+    {
+     "name": "SendKeys",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "String",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Wait",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcSendKeys",
+     "helpcontext": 1009015
+    },
+    {
+     "name": "Shell",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "PathName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "WindowStyle",
+       "type": "VbAppWinStyle",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 2
+      }
+     ],
+     "export": "rtcShell",
+     "helpcontext": 1009023
+    },
+    {
+     "name": "Partition",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Start",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Stop",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Interval",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcPartition",
+     "helpcontext": 1010095
+    },
+    {
+     "name": "Choose",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Choice",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "optcount": -1,
+     "export": "rtcChoose",
+     "helpcontext": 1010091
+    },
+    {
+     "name": "_B_var_Environ",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcEnvironVar",
+     "helpcontext": 1013096
+    },
+    {
+     "name": "_B_str_Environ",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcEnvironBstr",
+     "helpcontext": 1013110
+    },
+    {
+     "name": "Switch",
+     "memid": 1610612750,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "VarExpr",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "optcount": -1,
+     "export": "rtcSwitch",
+     "helpcontext": 1010096
+    },
+    {
+     "name": "_B_var_Command",
+     "memid": 1610612751,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [],
+     "export": "rtcCommandVar",
+     "helpcontext": 1010876
+    },
+    {
+     "name": "_B_str_Command",
+     "memid": 1610612752,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [],
+     "export": "rtcCommandBstr",
+     "helpcontext": 1010876
+    },
+    {
+     "name": "IIf",
+     "memid": 1610612753,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Expression",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "TruePart",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FalsePart",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcImmediateIf",
+     "helpcontext": 1012957
+    },
+    {
+     "name": "GetSetting",
+     "memid": 1610612754,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "AppName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Section",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Key",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Default",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcGetSetting",
+     "helpcontext": 1020902
+    },
+    {
+     "name": "SaveSetting",
+     "memid": 1610612755,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "AppName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Section",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Key",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Setting",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSaveSetting",
+     "helpcontext": 1020904
+    },
+    {
+     "name": "DeleteSetting",
+     "memid": 1610612756,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "AppName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Section",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcDeleteSetting",
+     "helpcontext": 1020901
+    },
+    {
+     "name": "GetAllSettings",
+     "memid": 1610612757,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "AppName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Section",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcGetAllSettings",
+     "helpcontext": 1020903
+    },
+    {
+     "name": "CallByName",
+     "memid": 1610612758,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Object",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ProcName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "CallType",
+       "type": "VbCallType",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Args",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "lcid",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "lcid"
+       ]
+      }
+     ],
+     "optcount": -1,
+     "export": "rtcCallByName",
+     "helpcontext": 1020905
+    }
+   ]
+  },
+  {
+   "name": "Math",
+   "kind": "module",
+   "guid": "{39D67E60-2BCC-1069-82DB-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1011395,
+   "members": [
+    {
+     "name": "Abs",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcAbsVar",
+     "helpcontext": 1008850
+    },
+    {
+     "name": "Atn",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcAtn",
+     "helpcontext": 1008860
+    },
+    {
+     "name": "Cos",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcCos",
+     "helpcontext": 1008879
+    },
+    {
+     "name": "Exp",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcExp",
+     "helpcontext": 1008917
+    },
+    {
+     "name": "Log",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcLog",
+     "helpcontext": 1008966
+    },
+    {
+     "name": "Randomize",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcRandomize",
+     "helpcontext": 1008998
+    },
+    {
+     "name": "Rnd",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcRandomNext",
+     "helpcontext": 1009008
+    },
+    {
+     "name": "Sin",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSin",
+     "helpcontext": 1009024
+    },
+    {
+     "name": "Sqr",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSqr",
+     "helpcontext": 1009029
+    },
+    {
+     "name": "Tan",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcTan",
+     "helpcontext": 1009040
+    },
+    {
+     "name": "Sgn",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSgnVar",
+     "helpcontext": 1009021
+    },
+    {
+     "name": "Round",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NumDigitsAfterDecimal",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      }
+     ],
+     "export": "rtcRound",
+     "helpcontext": 1009020
+    }
+   ]
+  },
+  {
+   "name": "Financial",
+   "kind": "module",
+   "guid": "{59B600C0-1C02-101B-8D72-00DD010EDFAA}",
+   "flags": [],
+   "helpcontext": 1018936,
+   "members": [
+    {
+     "name": "SLN",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Cost",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Salvage",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Life",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSLN",
+     "helpcontext": 1009289
+    },
+    {
+     "name": "SYD",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Cost",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Salvage",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Life",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Period",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcSYD",
+     "helpcontext": 1009290
+    },
+    {
+     "name": "DDB",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Cost",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Salvage",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Life",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Period",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Factor",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcDDB",
+     "helpcontext": 1009279
+    },
+    {
+     "name": "IPmt",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Per",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NPer",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PV",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcIPMT",
+     "helpcontext": 1009281
+    },
+    {
+     "name": "PPmt",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Per",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NPer",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PV",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcPPMT",
+     "helpcontext": 1009286
+    },
+    {
+     "name": "Pmt",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NPer",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PV",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcPMT",
+     "helpcontext": 1009285
+    },
+    {
+     "name": "PV",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NPer",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Pmt",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcPV",
+     "helpcontext": 1009287
+    },
+    {
+     "name": "FV",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NPer",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Pmt",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcFV",
+     "helpcontext": 1009280
+    },
+    {
+     "name": "NPer",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Pmt",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PV",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "export": "rtcNPer",
+     "helpcontext": 1009446
+    },
+    {
+     "name": "Rate",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "NPer",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Pmt",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PV",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FV",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Due",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Guess",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 3,
+     "export": "rtcRate",
+     "helpcontext": 1009288
+    },
+    {
+     "name": "IRR",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "ValueArray",
+       "type": "Double()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Guess",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "export": "rtcIRR",
+     "helpcontext": 1009282
+    },
+    {
+     "name": "MIRR",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "ValueArray",
+       "type": "Double()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FinanceRate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ReinvestRate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcMIRR",
+     "helpcontext": 1009283
+    },
+    {
+     "name": "NPV",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Double",
+     "params": [
+      {
+       "name": "Rate",
+       "type": "Double",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ValueArray",
+       "type": "Double()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcNPV",
+     "helpcontext": 1009284
+    }
+   ]
+  },
+  {
+   "name": "_HiddenModule",
+   "kind": "module",
+   "guid": "{CF1C2C60-0D25-1069-9427-00DD0111BF30}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Array",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "ArgList",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "optcount": -1,
+     "export": "rtcArray",
+     "helpcontext": 1010845
+    },
+    {
+     "name": "_B_str_InputB",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcInputCount",
+     "helpcontext": 1012575
+    },
+    {
+     "name": "_B_var_InputB",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcInputCountVar",
+     "helpcontext": 1012575
+    },
+    {
+     "name": "_B_str_Input",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcInputCharCount",
+     "helpcontext": 1012575
+    },
+    {
+     "name": "_B_var_Input",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcInputCharCountVar",
+     "helpcontext": 1012575
+    },
+    {
+     "name": "Width",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "FileNumber",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Width",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "rtcFileWidth",
+     "helpcontext": 1009060
+    },
+    {
+     "name": "VarPtr",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Ptr",
+       "type": "Void",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "VarPtr",
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "StrPtr",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Ptr",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "VarPtr",
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "ObjPtr",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Ptr",
+       "type": "IUnknown",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "export": "VarPtr",
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "_HiddenInterface",
+   "kind": "interface",
+   "guid": "{1E196B20-1F3C-1069-996B-00DD010EF676}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "LCase",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008957
+    },
+    {
+     "name": "Left",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008958
+    },
+    {
+     "name": "LTrim",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1009293
+    },
+    {
+     "name": "Right",
+     "memid": 1610612739,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011068
+    },
+    {
+     "name": "RTrim",
+     "memid": 1610612740,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008797
+    },
+    {
+     "name": "Space",
+     "memid": 1610612741,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1009026
+    },
+    {
+     "name": "Trim",
+     "memid": 1610612742,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1009293
+    },
+    {
+     "name": "String",
+     "memid": 1610612743,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011041
+    },
+    {
+     "name": "UCase",
+     "memid": 1610612744,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1009051
+    },
+    {
+     "name": "Str",
+     "memid": 1610612745,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1009034
+    },
+    {
+     "name": "Chr",
+     "memid": 1610612746,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008866
+    },
+    {
+     "name": "Date",
+     "memid": 1610612747,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011038
+    },
+    {
+     "name": "Time",
+     "memid": 1610612748,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011039
+    },
+    {
+     "name": "Hex",
+     "memid": 1610612749,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008938
+    },
+    {
+     "name": "Oct",
+     "memid": 1610612750,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008983
+    },
+    {
+     "name": "LeftB",
+     "memid": 1610612751,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011067
+    },
+    {
+     "name": "RightB",
+     "memid": 1610612752,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011068
+    },
+    {
+     "name": "Mid",
+     "memid": 1610612753,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011354
+    },
+    {
+     "name": "MidB",
+     "memid": 1610612754,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011070
+    },
+    {
+     "name": "StrConv",
+     "memid": 1610612755,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1011063
+    },
+    {
+     "name": "Error",
+     "memid": 1610612756,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1010797
+    },
+    {
+     "name": "CurDir",
+     "memid": 1610612757,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008881
+    },
+    {
+     "name": "Format",
+     "memid": 1610612758,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008925
+    },
+    {
+     "name": "Environ",
+     "memid": 1610612759,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1013110
+    },
+    {
+     "name": "Command",
+     "memid": 1610612760,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1010876
+    },
+    {
+     "name": "ChrB",
+     "memid": 1610612761,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008866
+    },
+    {
+     "name": "ChrW",
+     "memid": 1610612762,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 1008866
+    }
+   ]
+  },
+  {
+   "name": "_ErrObject",
+   "kind": "dispatch",
+   "guid": "{A4C466B8-499F-101B-BB78-00AA00383CBB}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Number",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pi4",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014186
+    },
+    {
+     "name": "Number",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Source",
+     "memid": 1610743810,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstr",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014188
+    },
+    {
+     "name": "Source",
+     "memid": 1610743810,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Description",
+     "memid": 1610743812,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstr",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014191
+    },
+    {
+     "name": "Description",
+     "memid": 1610743812,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "HelpFile",
+     "memid": 1610743814,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstr",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014189
+    },
+    {
+     "name": "HelpFile",
+     "memid": 1610743814,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "HelpContext",
+     "memid": 1610743816,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pi4",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014190
+    },
+    {
+     "name": "HelpContext",
+     "memid": 1610743816,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Raise",
+     "memid": 1610743818,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Source",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Description",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "HelpFile",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "HelpContext",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 4,
+     "helpcontext": 1014183
+    },
+    {
+     "name": "Clear",
+     "memid": 1610743819,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 1014184
+    },
+    {
+     "name": "LastDllError",
+     "memid": 1610743820,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pi4",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1020108
+    }
+   ]
+  },
+  {
+   "name": "ErrObject",
+   "kind": "coclass",
+   "guid": "{A4C46654-499F-101B-BB78-00AA00383CBB}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 1113237,
+   "implements": [
+    {
+     "name": "_ErrObject",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "_Collection",
+   "kind": "dispatch",
+   "guid": "{A4C46780-499F-101B-BB78-00AA00383CBB}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 1013894,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarRet",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014019
+    },
+    {
+     "name": "Add",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Item",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Before",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "After",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 3,
+     "helpcontext": 1014017
+    },
+    {
+     "name": "Count",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pi4",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1014018
+    },
+    {
+     "name": "Remove",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 1014020
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppunk",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Collection",
+   "kind": "coclass",
+   "guid": "{A4C4671C-499F-101B-BB78-00AA00383CBB}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 1018983,
+   "implements": [
+    {
+     "name": "_Collection",
+     "default": true,
+     "source": false
+    }
+   ]
+  }
+ ]
+}

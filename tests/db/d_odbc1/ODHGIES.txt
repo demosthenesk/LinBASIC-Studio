@@ -1,0 +1,14 @@
+﻿Test του ADO πάνω σε ODBC (LinBASIC Studio, Φάση 4.4 - ο provider ODBC)
+
+d_odbc1: Connection με "Driver={SQLite3 ODBC Driver}", Execute (DDL, INSERT/UPDATE/DELETE),
+         recordsets (forward-only, client static, keyset), αλλαγές εγγραφών, σφάλματα ODBC,
+         transactions, Command με παραμέτρους, OpenSchema, GetRows/GetString.
+
+Χρειάζεται τον οδηγό SQLite ODBC του Christian Werner (ελεύθερο λογισμικό, άδεια τύπου BSD),
+έκδοση 0.99991 - η ίδια που έχει το Linux, ώστε τα δύο να συγκρίνονται:
+   http://www.ch-werner.de/sqliteodbc/   ->   sqliteodbc.exe (32-bit)
+1. Κατέβασέ το στον host, βάλ' το στο VMShared και εγκατάστησέ το στο VM (Next ... Finish).
+   Αν η σελίδα έχει νεότερη έκδοση, πες μου ποια είναι πριν το εγκαταστήσεις.
+2. Άνοιξε το d_odbc1\OdbcTest1.vbp με το VB6 (ως διαχειριστής) και πάτα F5. Τελειώνει μόνο του.
+   Κλείσε το VB6 χωρίς αποθήκευση.
+3. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο d_odbc1\expected\d_odbc1.txt.

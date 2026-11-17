@@ -1,0 +1,62 @@
+  box initialize
+  box readproperties Box1
+  edit initialize
+  edit readproperties Edit1 [abc]
+  edit resize Edit1 1935x495
+form load
+ghost boo Ghost1
+container Box1 Box inside 1 Text2 
+edit abc Edit
+  edit show Edit1
+form activate Text1
+text1 gotfocus
+step 1 active Text1
+  edit enterfocus Edit1
+text1 lostfocus
+edit1 gotfocus
+  edit txt gotfocus Edit1
+step 2 active Edit1
+  edit txt lostfocus Edit1
+  edit exitfocus Edit1
+edit1 lostfocus
+text2 gotfocus
+step 3 active Text2
+  box enterfocus
+text2 lostfocus
+box1 gotfocus
+  box gotfocus
+step 4 active Box1
+  box lostfocus
+  box exitfocus
+box1 lostfocus
+text1 gotfocus
+step 5 active Text1
+  box accesskeypress 98
+  box enterfocus
+text1 lostfocus
+box1 gotfocus
+  box gotfocus
+step 6 active Box1
+  edit initialize
+  edit initproperties EditX
+  edit resize EditX 1935x495
+added Edit False 7
+  edit show EditX
+step 7 active Box1
+editx new
+  edit hide EditX
+  edit terminate EditX
+removed 6
+  box lostfocus
+  box exitfocus
+box1 lostfocus
+text1 gotfocus
+step 8 active Text1
+box hidden False
+box moved 120 120
+step 9 active Text1
+form unload
+  box terminate
+  edit lostfocus Edit1
+  edit hide Edit1
+  edit terminate Edit1

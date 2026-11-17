@@ -1,0 +1,317 @@
+== NWIND.MDB version 3.0
+table Categories attr=0 fields=4 indexes=2 rows=8
+  field CategoryID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field CategoryName type=10 size=15 attr=2 req=True zl=False pos=1 def=S''
+  field Description type=12 size=0 attr=2 req=False zl=False pos=2 def=S''
+  field Picture type=11 size=0 attr=2 req=False zl=False pos=3 def=S''
+  index CategoryName primary=False unique=True req=False ignorenulls=False foreign=False : CategoryName/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : CategoryID/0
+table Customers attr=0 fields=11 indexes=5 rows=91
+  field CustomerID type=10 size=5 attr=2 req=False zl=False pos=0 def=S''
+  field CompanyName type=10 size=40 attr=2 req=True zl=False pos=1 def=S''
+  field ContactName type=10 size=30 attr=2 req=False zl=False pos=2 def=S''
+  field ContactTitle type=10 size=30 attr=2 req=False zl=False pos=3 def=S''
+  field Address type=10 size=60 attr=2 req=False zl=False pos=4 def=S''
+  field City type=10 size=15 attr=2 req=False zl=False pos=5 def=S''
+  field Region type=10 size=15 attr=2 req=False zl=False pos=6 def=S''
+  field PostalCode type=10 size=10 attr=2 req=False zl=False pos=7 def=S''
+  field Country type=10 size=15 attr=2 req=False zl=False pos=8 def=S''
+  field Phone type=10 size=24 attr=2 req=False zl=False pos=9 def=S''
+  field Fax type=10 size=24 attr=2 req=False zl=False pos=10 def=S''
+  index City primary=False unique=False req=False ignorenulls=False foreign=False : City/0
+  index CompanyName primary=False unique=False req=False ignorenulls=False foreign=False : CompanyName/0
+  index PostalCode primary=False unique=False req=False ignorenulls=False foreign=False : PostalCode/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : CustomerID/0
+  index Region primary=False unique=False req=False ignorenulls=False foreign=False : Region/0
+table Employees attr=0 fields=17 indexes=3 rows=9
+  field EmployeeID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field LastName type=10 size=20 attr=2 req=True zl=False pos=1 def=S''
+  field FirstName type=10 size=10 attr=2 req=True zl=False pos=2 def=S''
+  field Title type=10 size=30 attr=2 req=False zl=False pos=3 def=S''
+  field TitleOfCourtesy type=10 size=25 attr=2 req=False zl=False pos=4 def=S''
+  field BirthDate type=8 size=8 attr=1 req=False zl=False pos=5 def=S''
+  field HireDate type=8 size=8 attr=1 req=False zl=False pos=6 def=S''
+  field Address type=10 size=60 attr=2 req=False zl=False pos=7 def=S''
+  field City type=10 size=15 attr=2 req=False zl=False pos=8 def=S''
+  field Region type=10 size=15 attr=2 req=False zl=False pos=9 def=S''
+  field PostalCode type=10 size=10 attr=2 req=False zl=False pos=10 def=S''
+  field Country type=10 size=15 attr=2 req=False zl=False pos=11 def=S''
+  field HomePhone type=10 size=24 attr=2 req=False zl=False pos=12 def=S''
+  field Extension type=10 size=4 attr=2 req=False zl=False pos=13 def=S''
+  field Photo type=11 size=0 attr=2 req=False zl=False pos=14 def=S''
+  field Notes type=12 size=0 attr=2 req=False zl=False pos=15 def=S''
+  field ReportsTo type=4 size=4 attr=1 req=False zl=False pos=16 def=S''
+  index LastName primary=False unique=False req=False ignorenulls=False foreign=False : LastName/0
+  index PostalCode primary=False unique=False req=False ignorenulls=False foreign=False : PostalCode/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : EmployeeID/0
+table Order Details attr=0 fields=5 indexes=5 rows=2155
+  field OrderID type=4 size=4 attr=1 req=False zl=False pos=0 def=S''
+  field ProductID type=4 size=4 attr=1 req=True zl=False pos=1 def=S''
+  field UnitPrice type=5 size=8 attr=1 req=True zl=False pos=2 def=S'0'
+  field Quantity type=3 size=2 attr=1 req=True zl=False pos=3 def=S'1'
+  field Discount type=6 size=4 attr=1 req=True zl=False pos=4 def=S'0'
+  index OrderID primary=False unique=False req=False ignorenulls=False foreign=False : OrderID/0
+  index OrdersOrder Details primary=False unique=False req=False ignorenulls=False foreign=True : OrderID/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : OrderID/0 ProductID/0
+  index ProductID primary=False unique=False req=False ignorenulls=False foreign=False : ProductID/0
+  index ProductsOrder Details primary=False unique=False req=False ignorenulls=False foreign=True : ProductID/0
+table Orders attr=0 fields=14 indexes=9 rows=830
+  field OrderID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field CustomerID type=10 size=5 attr=2 req=False zl=False pos=1 def=S''
+  field EmployeeID type=4 size=4 attr=1 req=False zl=False pos=2 def=S''
+  field OrderDate type=8 size=8 attr=1 req=False zl=False pos=3 def=S''
+  field RequiredDate type=8 size=8 attr=1 req=False zl=False pos=4 def=S''
+  field ShippedDate type=8 size=8 attr=1 req=False zl=False pos=5 def=S''
+  field ShipVia type=4 size=4 attr=1 req=False zl=False pos=6 def=S''
+  field Freight type=5 size=8 attr=1 req=False zl=False pos=7 def=S'0'
+  field ShipName type=10 size=40 attr=2 req=False zl=False pos=8 def=S''
+  field ShipAddress type=10 size=60 attr=2 req=False zl=False pos=9 def=S''
+  field ShipCity type=10 size=15 attr=2 req=False zl=False pos=10 def=S''
+  field ShipRegion type=10 size=15 attr=2 req=False zl=False pos=11 def=S''
+  field ShipPostalCode type=10 size=10 attr=2 req=False zl=False pos=12 def=S''
+  field ShipCountry type=10 size=15 attr=2 req=False zl=False pos=13 def=S''
+  index CustomerID primary=False unique=False req=False ignorenulls=False foreign=False : CustomerID/0
+  index CustomersOrders primary=False unique=False req=False ignorenulls=False foreign=True : CustomerID/0
+  index EmployeeID primary=False unique=False req=False ignorenulls=False foreign=False : EmployeeID/0
+  index EmployeesOrders primary=False unique=False req=False ignorenulls=False foreign=True : EmployeeID/0
+  index OrderDate primary=False unique=False req=False ignorenulls=False foreign=False : OrderDate/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : OrderID/0
+  index ShippedDate primary=False unique=False req=False ignorenulls=False foreign=False : ShippedDate/0
+  index ShippersOrders primary=False unique=False req=False ignorenulls=False foreign=True : ShipVia/0
+  index ShipPostalCode primary=False unique=False req=False ignorenulls=False foreign=False : ShipPostalCode/0
+table Products attr=0 fields=10 indexes=6 rows=77
+  field ProductID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field ProductName type=10 size=40 attr=2 req=True zl=False pos=1 def=S''
+  field SupplierID type=4 size=4 attr=1 req=False zl=False pos=2 def=S''
+  field CategoryID type=4 size=4 attr=1 req=False zl=False pos=3 def=S''
+  field QuantityPerUnit type=10 size=20 attr=2 req=False zl=False pos=4 def=S''
+  field UnitPrice type=5 size=8 attr=1 req=False zl=False pos=5 def=S'0'
+  field UnitsInStock type=3 size=2 attr=1 req=False zl=False pos=6 def=S'0'
+  field UnitsOnOrder type=3 size=2 attr=1 req=False zl=False pos=7 def=S'0'
+  field ReorderLevel type=3 size=2 attr=1 req=False zl=False pos=8 def=S'0'
+  field Discontinued type=1 size=1 attr=1 req=False zl=False pos=9 def=S'=No'
+  index CategoriesProducts primary=False unique=False req=False ignorenulls=False foreign=True : CategoryID/0
+  index CategoryID primary=False unique=False req=False ignorenulls=False foreign=False : CategoryID/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : ProductID/0
+  index ProductName primary=False unique=False req=False ignorenulls=False foreign=False : ProductName/0
+  index SupplierID primary=False unique=False req=False ignorenulls=False foreign=False : SupplierID/0
+  index SuppliersProducts primary=False unique=False req=False ignorenulls=False foreign=True : SupplierID/0
+table Shippers attr=0 fields=3 indexes=1 rows=3
+  field ShipperID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field CompanyName type=10 size=40 attr=2 req=True zl=False pos=1 def=S''
+  field Phone type=10 size=24 attr=2 req=False zl=False pos=2 def=S''
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : ShipperID/0
+table Suppliers attr=0 fields=12 indexes=3 rows=29
+  field SupplierID type=4 size=4 attr=17 req=False zl=False pos=1 def=S''
+  field CompanyName type=10 size=40 attr=2 req=True zl=False pos=2 def=S''
+  field ContactName type=10 size=30 attr=2 req=False zl=False pos=3 def=S''
+  field ContactTitle type=10 size=30 attr=2 req=False zl=False pos=4 def=S''
+  field Address type=10 size=60 attr=2 req=False zl=False pos=5 def=S''
+  field City type=10 size=15 attr=2 req=False zl=False pos=6 def=S''
+  field Region type=10 size=15 attr=2 req=False zl=False pos=7 def=S''
+  field PostalCode type=10 size=10 attr=2 req=False zl=False pos=8 def=S''
+  field Country type=10 size=15 attr=2 req=False zl=False pos=9 def=S''
+  field Phone type=10 size=24 attr=2 req=False zl=False pos=10 def=S''
+  field Fax type=10 size=24 attr=2 req=False zl=False pos=11 def=S''
+  field HomePage type=12 size=0 attr=32770 req=False zl=False pos=12 def=S''
+  index CompanyName primary=False unique=False req=False ignorenulls=False foreign=False : CompanyName/0
+  index PostalCode primary=False unique=False req=False ignorenulls=False foreign=False : PostalCode/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : SupplierID/0
+relation CategoriesProducts Categories->Products attr=0 : CategoryID=CategoryID
+relation CustomersOrders Customers->Orders attr=256 : CustomerID=CustomerID
+relation EmployeesOrders Employees->Orders attr=0 : EmployeeID=EmployeeID
+relation OrdersOrder Details Orders->Order Details attr=4096 : OrderID=OrderID
+relation ProductsOrder Details Products->Order Details attr=0 : ProductID=ProductID
+relation ShippersOrders Shippers->Orders attr=0 : ShipperID=ShipVia
+relation SuppliersProducts Suppliers->Products attr=0 : SupplierID=SupplierID
+query Alphabetical List of Products type=0 params=0 returns=True
+[SELECT DISTINCTROW Products.*, Categories.CategoryName
+FROM Categories INNER JOIN Products ON Categories.CategoryID = Products.CategoryID
+WHERE (((Products.Discontinued)=No));
+]
+  rows 69 fields 11
+query Catalog type=0 params=0 returns=True
+[SELECT DISTINCTROW Categories.CategoryName, Categories.Description, Categories.Picture, Products.ProductID, Products.ProductName, Products.QuantityPerUnit, Products.UnitPrice
+FROM Categories INNER JOIN Products ON Categories.CategoryID = Products.CategoryID
+WHERE (((Products.Discontinued)=No));
+]
+  rows 69 fields 7
+query Category Sales for 1995 type=0 params=0 returns=True
+[SELECT DISTINCTROW [Product Sales for 1995].CategoryName, Sum([Product Sales for 1995].ProductSales) AS CategorySales
+FROM [Product Sales for 1995]
+GROUP BY [Product Sales for 1995].CategoryName;
+]
+  rows 8 fields 2
+query Current Product List type=0 params=0 returns=True
+[SELECT [Product List].ProductID, [Product List].ProductName
+FROM Products AS [Product List]
+WHERE ((([Product List].Discontinued)=No))
+ORDER BY [Product List].ProductName;
+]
+  rows 69 fields 2
+query Customers and Suppliers by City type=128 params=0 returns=True
+[SELECT City, CompanyName, ContactName, "Customers" AS [Relationship] 
+FROM Customers
+UNION SELECT City, CompanyName, ContactName, "Suppliers"
+FROM Suppliers
+ORDER BY City, CompanyName;
+]
+  rows 120 fields 4
+query Employee Sales by Country type=0 params=2 returns=True
+[PARAMETERS [Beginning Date] DateTime, [Ending Date] DateTime;
+SELECT DISTINCTROW Employees.Country, Employees.LastName, Employees.FirstName, Orders.ShippedDate, Orders.OrderID, [Order Subtotals].Subtotal AS SaleAmount
+FROM Employees INNER JOIN (Orders INNER JOIN [Order Subtotals] ON Orders.OrderID = [Order Subtotals].OrderID) ON Employees.EmployeeID = Orders.EmployeeID
+WHERE (((Orders.ShippedDate) Between [Beginning Date] And [Ending Date]));
+]
+query Invoices type=0 params=0 returns=True
+[SELECT DISTINCTROW Orders.ShipName, Orders.ShipAddress, Orders.ShipCity, Orders.ShipRegion, Orders.ShipPostalCode, Orders.ShipCountry, Orders.CustomerID, Customers.CompanyName, Customers.Address, Customers.City, Customers.Region, Customers.PostalCode, Customers.Country, [FirstName] & " " & [LastName] AS Salesperson, Orders.OrderID, Orders.OrderDate, Orders.RequiredDate, Orders.ShippedDate, Shippers.CompanyName, [Order Details].ProductID, Products.ProductName, [Order Details].UnitPrice, [Order Details].Quantity, [Order Details].Discount, CCur([Order Details].[UnitPrice]*[Quantity]*(1-[Discount])/100)*100 AS ExtendedPrice, Orders.Freight
+FROM Shippers INNER JOIN (Products INNER JOIN ((Employees INNER JOIN (Customers INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID) ON Employees.EmployeeID = Orders.EmployeeID) INNER JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID) ON Products.ProductID = [Order Details].ProductID) ON Shippers.ShipperID = Orders.ShipVia;
+]
+  rows 2155 fields 26
+query Invoices Filter type=0 params=1 returns=True
+[SELECT DISTINCTROW Invoices.*
+FROM Invoices
+WHERE (((Invoices.OrderID)=[Forms]![Orders]![OrderID]));
+]
+query Order Details Extended type=0 params=0 returns=True
+[SELECT DISTINCTROW [Order Details].OrderID, [Order Details].ProductID, Products.ProductName, [Order Details].UnitPrice, [Order Details].Quantity, [Order Details].Discount, CCur([Order Details].[UnitPrice]*[Quantity]*(1-[Discount])/100)*100 AS ExtendedPrice
+FROM Products INNER JOIN [Order Details] ON Products.ProductID = [Order Details].ProductID
+ORDER BY [Order Details].OrderID;
+]
+  rows 2155 fields 7
+query Order Subtotals type=0 params=0 returns=True
+[SELECT DISTINCTROW [Order Details].OrderID, Sum(CCur([UnitPrice]*[Quantity]*(1-[Discount])/100)*100) AS Subtotal
+FROM [Order Details]
+GROUP BY [Order Details].OrderID;
+]
+  rows 830 fields 2
+query Orders Qry type=0 params=0 returns=True
+[SELECT DISTINCTROW Orders.OrderID, Orders.CustomerID, Orders.EmployeeID, Orders.OrderDate, Orders.RequiredDate, Orders.ShippedDate, Orders.ShipVia, Orders.Freight, Orders.ShipName, Orders.ShipAddress, Orders.ShipCity, Orders.ShipRegion, Orders.ShipPostalCode, Orders.ShipCountry, Customers.CompanyName, Customers.Address, Customers.City, Customers.Region, Customers.PostalCode, Customers.Country
+FROM Customers INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+]
+  rows 830 fields 20
+query Product Sales for 1995 type=0 params=0 returns=True
+[SELECT DISTINCTROW Categories.CategoryName, Products.ProductName, Sum(CCur([Order Details].[UnitPrice]*[Quantity]*(1-[Discount])/100)*100) AS ProductSales
+FROM (Categories INNER JOIN Products ON Categories.CategoryID = Products.CategoryID) INNER JOIN (Orders INNER JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID) ON Products.ProductID = [Order Details].ProductID
+WHERE (((Orders.ShippedDate) Between #1/1/95# And #12/31/95#))
+GROUP BY Categories.CategoryName, Products.ProductName;
+]
+  rows 77 fields 3
+query Products Above Average Price type=0 params=0 returns=True
+[SELECT DISTINCTROW Products.ProductName, Products.UnitPrice
+FROM Products
+WHERE (((Products.UnitPrice)>(SELECT AVG([UnitPrice]) From Products)))
+ORDER BY Products.UnitPrice DESC;
+]
+  rows 25 fields 2
+query Products by Category type=0 params=0 returns=True
+[SELECT DISTINCTROW Categories.CategoryName, Products.ProductName, Products.QuantityPerUnit, Products.UnitsInStock, Products.Discontinued
+FROM Categories INNER JOIN Products ON Categories.CategoryID = Products.CategoryID
+WHERE (((Products.Discontinued)<>Yes))
+ORDER BY Categories.CategoryName, Products.ProductName;
+]
+  rows 69 fields 5
+query Quarterly Orders type=0 params=0 returns=True
+[SELECT DISTINCTROW Customers.CustomerID, Customers.CompanyName, Customers.City, Customers.Country
+FROM Customers RIGHT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+WHERE (((Orders.OrderDate) Between #1/1/95# And #12/31/95#));
+]
+  rows 84 fields 4
+query Quarterly Orders by Product type=16 params=0 returns=True
+[TRANSFORM Sum(CCur([Order Details].[UnitPrice]*[Quantity]*(1-[Discount])/100)*100) AS ProductAmount
+SELECT Products.ProductName, Orders.CustomerID, Year([OrderDate]) AS OrderYear
+FROM Products INNER JOIN (Orders INNER JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID) ON Products.ProductID = [Order Details].ProductID
+WHERE (((Orders.OrderDate) Between #1/1/95# And #12/31/95#))
+GROUP BY Products.ProductName, Orders.CustomerID, Year([OrderDate])
+PIVOT "Qtr " & DatePart("q",[OrderDate],1,0) In ("Qtr 1","Qtr 2","Qtr 3","Qtr 4");
+]
+query Sales by Category type=0 params=0 returns=True
+[SELECT DISTINCTROW Categories.CategoryID, Categories.CategoryName, Products.ProductName, Sum([Order Details Extended].ExtendedPrice) AS ProductSales
+FROM Categories INNER JOIN (Products INNER JOIN (Orders INNER JOIN [Order Details Extended] ON Orders.OrderID = [Order Details Extended].OrderID) ON Products.ProductID = [Order Details Extended].ProductID) ON Categories.CategoryID = Products.CategoryID
+WHERE (((Orders.OrderDate) Between #1/1/95# And #12/31/95#))
+GROUP BY Categories.CategoryID, Categories.CategoryName, Products.ProductName
+ORDER BY Products.ProductName;
+]
+  rows 77 fields 4
+query Sales by Year type=0 params=2 returns=True
+[PARAMETERS Forms![Sales by Year Dialog]!BeginningDate DateTime, Forms![Sales by Year Dialog]!EndingDate DateTime;
+SELECT DISTINCTROW Orders.ShippedDate, Orders.OrderID, [Order Subtotals].Subtotal, Format([ShippedDate],"yyyy") AS [Year]
+FROM Orders INNER JOIN [Order Subtotals] ON Orders.OrderID = [Order Subtotals].OrderID
+WHERE (((Orders.ShippedDate) Is Not Null And (Orders.ShippedDate) Between [Forms]![Sales by Year Dialog]![BeginningDate] And [Forms]![Sales by Year Dialog]![EndingDate]));
+]
+query Sales Totals by Amount type=0 params=0 returns=True
+[SELECT DISTINCTROW [Order Subtotals].Subtotal AS SaleAmount, Orders.OrderID, Customers.CompanyName, Orders.ShippedDate
+FROM Customers INNER JOIN (Orders INNER JOIN [Order Subtotals] ON Orders.OrderID = [Order Subtotals].OrderID) ON Customers.CustomerID = Orders.CustomerID
+WHERE ((([Order Subtotals].Subtotal)>2500) AND ((Orders.ShippedDate) Between #1/1/95# And #12/31/95#));
+]
+  rows 61 fields 4
+query Summary of Sales by Quarter type=0 params=0 returns=True
+[SELECT DISTINCTROW Orders.ShippedDate, Orders.OrderID, [Order Subtotals].Subtotal
+FROM Orders INNER JOIN [Order Subtotals] ON Orders.OrderID = [Order Subtotals].OrderID
+WHERE (((Orders.ShippedDate) Is Not Null))
+ORDER BY Orders.ShippedDate;
+]
+  rows 809 fields 3
+query Summary of Sales by Year type=0 params=0 returns=True
+[SELECT DISTINCTROW Orders.ShippedDate, Orders.OrderID, [Order Subtotals].Subtotal
+FROM Orders INNER JOIN [Order Subtotals] ON Orders.OrderID = [Order Subtotals].OrderID
+WHERE (((Orders.ShippedDate) Is Not Null))
+ORDER BY Orders.ShippedDate;
+]
+  rows 809 fields 3
+query Ten Most Expensive Products type=0 params=0 returns=True
+[SELECT DISTINCTROW TOP 10 Products.ProductName AS TenMostExpensiveProducts, Products.UnitPrice
+FROM Products
+ORDER BY Products.UnitPrice DESC;
+]
+  rows 10 fields 2
+== BIBLIO.MDB version 3.0
+table Authors attr=0 fields=3 indexes=2 rows=6246
+  field Au_ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field Author type=10 size=50 attr=2 req=False zl=False pos=1 def=S''
+  field Year Born type=3 size=2 attr=1 req=False zl=False pos=2 def=S'0'
+  index AuthorsAu_ID primary=False unique=False req=False ignorenulls=False foreign=False : Au_ID/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : Au_ID/0
+table Publishers attr=0 fields=10 indexes=1 rows=727
+  field PubID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field Name type=10 size=50 attr=2 req=False zl=False pos=1 def=S''
+  field Company Name type=10 size=255 attr=2 req=False zl=False pos=2 def=S''
+  field Address type=10 size=50 attr=2 req=False zl=False pos=3 def=S''
+  field City type=10 size=20 attr=2 req=False zl=False pos=4 def=S''
+  field State type=10 size=10 attr=2 req=False zl=False pos=5 def=S''
+  field Zip type=10 size=15 attr=2 req=False zl=False pos=6 def=S''
+  field Telephone type=10 size=15 attr=2 req=False zl=False pos=7 def=S''
+  field Fax type=10 size=15 attr=2 req=False zl=False pos=8 def=S''
+  field Comments type=12 size=0 attr=2 req=False zl=False pos=9 def=S''
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : PubID/0
+table Title Author attr=0 fields=2 indexes=4 rows=16056
+  field ISBN type=10 size=20 attr=2 req=True zl=False pos=0 def=S''
+  field Au_ID type=4 size=4 attr=1 req=True zl=False pos=1 def=S'0'
+  index {BD291496-E5FD-11CF-80D3-00AA00C0094F} primary=False unique=False req=False ignorenulls=False foreign=True : Au_ID/0
+  index ISBN primary=False unique=False req=False ignorenulls=False foreign=False : ISBN/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : ISBN/0 Au_ID/0
+  index Reference1 primary=False unique=False req=False ignorenulls=False foreign=False : Au_ID/0
+table Titles attr=0 fields=8 indexes=5 rows=8569
+  field Title type=10 size=255 attr=2 req=False zl=False pos=0 def=S''
+  field Year Published type=3 size=2 attr=1 req=False zl=False pos=1 def=S'0'
+  field ISBN type=10 size=20 attr=2 req=False zl=False pos=2 def=S''
+  field PubID type=4 size=4 attr=1 req=True zl=False pos=3 def=S''
+  field Description type=10 size=50 attr=2 req=False zl=False pos=4 def=S''
+  field Notes type=10 size=50 attr=2 req=False zl=False pos=5 def=S''
+  field Subject type=10 size=50 attr=2 req=False zl=False pos=6 def=S''
+  field Comments type=12 size=0 attr=2 req=False zl=False pos=7 def=S''
+  index {BD291497-E5FD-11CF-80D3-00AA00C0094F} primary=False unique=False req=False ignorenulls=False foreign=True : PubID/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : ISBN/0
+  index PubID primary=False unique=False req=False ignorenulls=False foreign=False : PubID/0
+  index Reference primary=False unique=False req=False ignorenulls=False foreign=False : PubID/0
+  index Title primary=False unique=False req=False ignorenulls=False foreign=False : Title/0
+relation {BD291496-E5FD-11CF-80D3-00AA00C0094F} Authors->Title Author attr=0 : Au_ID=Au_ID
+relation {BD291497-E5FD-11CF-80D3-00AA00C0094F} Publishers->Titles attr=0 : PubID=PubID
+relation {BD291498-E5FD-11CF-80D3-00AA00C0094F} Titles->Title Author attr=2 : ISBN=ISBN
+query All Titles type=0 params=0 returns=True
+[SELECT Titles.Title, Titles.ISBN, Authors.Author, Titles.[Year Published], Publishers.[Company Name]
+FROM (([title author] INNER JOIN Titles ON [title author].ISBN = Titles.ISBN) INNER JOIN Authors ON [title author].Au_ID = Authors.Au_ID) INNER JOIN Publishers ON Titles.PubID = Publishers.PubID
+ORDER BY Titles.Title;
+]
+  rows 16056 fields 5
+end

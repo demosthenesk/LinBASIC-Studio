@@ -1,0 +1,77 @@
+ ! -2147467259 Resultset not available.
+load before: text1=[] text2=[] check1=0 rs=Nothing ! 91 Object variable or With block variable not set
+  ev querycompleted
+load after refresh: text1=[] text2=[] check1=0 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  cn=rdoConnection env=Object
+activate: text1=[Anna] text2=[31] check1=1 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+timer: text1=[Anna] text2=[31] check1=1 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  ev validate action=3 reserved=0 text1=[Anna] changed=False
+  ev reposition text1=[Bill]
+movenext: text1=[Bill] text2=[25] check1=0 rs=Object rows=0 abs=2 edit=0 bof=False eof=False type=3 lock=2
+  ev validate action=4 reserved=0 text1=[Bill] changed=False
+  ev reposition text1=[Cleo]
+movelast: text1=[Cleo] text2=[42] check1=1 rs=Object rows=3 abs=3 edit=0 bof=False eof=False type=3 lock=2
+  ev validate action=3 reserved=0 text1=[Cleo] changed=False
+  ev reposition text1=[]
+past the end: text1=[] text2=[] check1=0 rs=Object rows=3 abs=-1 edit=0 bof=False eof=True type=3 lock=2
+  ev validate action=1 reserved=0 text1=[] changed=False
+  ev reposition text1=[Anna]
+movefirst: text1=[Anna] text2=[31] check1=1 rs=Object rows=3 abs=1 edit=0 bof=False eof=False type=3 lock=2
+changed: text1=[Anne] text2=[32] check1=1 rs=Object rows=3 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  ev validate action=13 reserved=0 text1=[Anne] changed=True
+  ev validate action=3 reserved=0 text1=[Anne] changed=False
+  ev reposition text1=[Bill]
+moved: text1=[Bill] text2=[25] check1=0 rs=Object rows=3 abs=2 edit=0 bof=False eof=False type=3 lock=2
+  db: 1:Anne:32:True 2:Bill:25:False 3:Cleo:42:True
+  ev validate action=2 reserved=0 text1=[Bill] changed=False
+  ev reposition text1=[Anne]
+updatecontrols: text1=[Anne] text2=[32] check1=1 rs=Object rows=3 abs=1 edit=0 bof=False eof=False type=3 lock=2
+updaterow: text1=[Anna] text2=[32] check1=1 rs=Object rows=3 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  db: 1:Anna:32:True 2:Bill:25:False 3:Cleo:42:True
+  ev validate action=13 reserved=0 text1=[Anna] changed=False
+  ev validate action=3 reserved=0 text1=[Anna] changed=False
+  ev validate action=15 reserved=0 text1=[Anna] changed=False
+  ev reposition text1=[Bill]
+after bad age: text1=[Bill] text2=[25] check1=0 rs=Object rows=3 abs=2 edit=0 bof=False eof=False type=3 lock=2
+updatecontrols: text1=[Bill] text2=[25] check1=0 rs=Object rows=3 abs=2 edit=0 bof=False eof=False type=3 lock=2
+  ev querycompleted
+refresh: text1=[Anna] text2=[32] check1=1 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  ev error 40527 [MSRDC1] Data Type Conversion Error scode=-2146787761 cancel=False
+  ev validate action=4 reserved=0 text1=[Anna] changed=False
+  ev reposition text1=[Cleo]
+  ev validate action=3 reserved=0 text1=[Cleo] changed=False
+  ev reposition text1=[]
+eofaction addnew: text1=[] text2=[] check1=0 rs=Object rows=3 abs=-1 edit=0 bof=False eof=True type=3 lock=2
+after new: text1=[Dino] text2=[37] check1=0 rs=Object rows=3 abs=-1 edit=0 bof=False eof=True type=3 lock=2
+  db: 1:Anna:32:True 2:Bill:25:False 3:Cleo:42:True
+  refresh ! -2147467259 Could not refresh controls.
+refresh: text1=[Dino] text2=[37] check1=0 rs=Object rows=3 abs=-1 edit=0 bof=False eof=True type=3 lock=2
+  ev error 56524 [MSRDC1] No current row. scode=-2146771764 cancel=False
+  ev error 56524 [MSRDC1] No current row. scode=-2146771764 cancel=False
+  readonly refresh ! -2147467259 Could not refresh controls.
+readonly: text1=[Dino] text2=[37] check1=0 rs=Object rows=3 abs=-1 edit=0 bof=False eof=True type=3 lock=2
+  readonly change ! 40503 A control bound to a data control using this Resultset
+canceled the operation or was unable to synchronize itself with the Resultset.
+readonly moved: text1=[Nope] text2=[37] check1=0 rs=Object rows=3 abs=-1 edit=0 bof=False eof=True type=3 lock=2
+  db: 1:Anna:32:True 2:Bill:25:False 3:Cleo:42:True
+  ev querycompleted
+refresh: text1=[Anna] text2=[32] check1=1 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  ev error 56524 [MSRDC1] No current row. scode=-2146771764 cancel=False
+  ev error 56524 [MSRDC1] No current row. scode=-2146771764 cancel=False
+  ev querycompleted
+new sql: text1=[Anna] text2=[32] check1=1 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  bad sql ! 40002 S1000: no such table: Nowhere (1)
+bad sql: text1=[Anna] text2=[32] check1=1 rs=Nothing ! 91 Object variable or With block variable not set
+  ev querycompleted
+back: text1=[Anna] text2=[32] check1=1 rs=Object rows=0 abs=1 edit=0 bof=False eof=False type=3 lock=2
+  ev error 56517 [MSRDC1] S1000: no such table: Nowhere (1) scode=-2146771771 cancel=False
+  ev validate action=3 reserved=0 text1=[Anna] changed=False
+  ev reposition text1=[Bill]
+  ev validate action=7 reserved=0 text1=[Bill] changed=False
+deleted: text1=[Bill] text2=[25] check1=0 rs=Object rows=-1 abs=2 edit=0 bof=False eof=False type=3 lock=2
+  ev validate action=3 reserved=0 text1=[Bill] changed=False
+  ev reposition text1=[Cleo]
+after delete next: text1=[Cleo] text2=[42] check1=1 rs=Object rows=-1 abs=3 edit=0 bof=False eof=False type=3 lock=2
+  db: 1:Anna:32:True 3:Cleo:42:True
+disabled: text1=[Cleo] text2=[42] check1=1 rs=Object rows=-1 abs=3 edit=0 bof=False eof=False type=3 lock=2
+end

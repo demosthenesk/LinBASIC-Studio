@@ -1,0 +1,257 @@
+== engine
+version=6.01.9839 cursor=0 login=15 user=[] pwd=[] errthr=-1 locale=1 envs=1 errs=0
+env0 name=[Default_Environment] user=[] cursor=0 login=15 cns=0
+env2 name=[Second] user=[bob] envs=2 item=Second
+after close envs=1
+== connections
+name=[rdo1.db] upd=True trans=True ver=0.99991 cursor=0 qtime=30 login=15 cns=1 exec=False connecting=False
+connect starts=True
+  bad driver ! 40002 [MicrosoftRDO.RdoConnection] IM002: [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified
+    rdoError 0 state=IM002 ret=-1 [ODBC] IM002: [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified
+cn2 nothing=True
+new cn2 name=[] connect=[] cursor=0
+established upd=False cns=1
+closed cns=1
+== execute
+create affected=0
+update affected=3
+delete affected=0
+  dup key ! 40002 [MicrosoftRDO.RdoQuery] S1000: UNIQUE constraint failed: People.ID (19)
+    rdoError 19 state=S1000 ret=-1 [ODBC] S1000: UNIQUE constraint failed: People.ID (19)
+  syntax ! 40002 [MicrosoftRDO.RdoQuery] S1000: near "SELEC": syntax error (1)
+    rdoError 1 state=S1000 ret=-1 [ODBC] S1000: near "SELEC": syntax error (1)
+  no table ! 40002 [MicrosoftRDO.RdoQuery] S1000: no such table: Nowhere (1)
+    rdoError 1 state=S1000 ret=-1 [ODBC] S1000: no such table: Nowhere (1)
+errs after=1
+== resultsets
+drv 0 type 0 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 0 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 0 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 0 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 0 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 0 type 1 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 1 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 1 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 1 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 1 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 0 type 2 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 2 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 2 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 2 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 2 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 0 type 3 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 3 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 3 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 3 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 0 type 3 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 1 type 0 lock 1 -> type=0 lock=1 rowcount=-1 upd=False bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 0 lock 4 ! 40002 S1C00: [Microsoft][ODBC Cursor Library] Cursor library not capable
+drv 1 type 0 lock 2 ! 40002 S1C00: [Microsoft][ODBC Cursor Library] Cursor library not capable
+drv 1 type 0 lock 3 ! 40002 S1C00: [Microsoft][ODBC Cursor Library] Cursor library not capable
+drv 1 type 0 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 1 type 1 lock 1 -> type=3 lock=1 rowcount=0 upd=False bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 1 lock 4 -> type=3 lock=4 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 1 lock 2 ! 40002 S1C00: [Microsoft][ODBC Cursor Library] Cursor library not capable
+drv 1 type 1 lock 3 -> type=3 lock=4 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 1 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 1 type 2 lock 1 -> type=3 lock=1 rowcount=0 upd=False bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 2 lock 4 -> type=3 lock=4 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 2 lock 2 ! 40002 S1C00: [Microsoft][ODBC Cursor Library] Cursor library not capable
+drv 1 type 2 lock 3 -> type=3 lock=4 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 2 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 1 type 3 lock 1 -> type=3 lock=1 rowcount=0 upd=False bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 3 lock 4 -> type=3 lock=4 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 3 lock 2 ! 40002 S1C00: [Microsoft][ODBC Cursor Library] Cursor library not capable
+drv 1 type 3 lock 3 -> type=3 lock=4 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 1 type 3 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 2 type 0 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 0 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 0 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 0 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 0 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 2 type 1 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 1 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 1 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 1 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 1 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 2 type 2 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 2 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 2 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 2 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 2 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 2 type 3 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 3 lock 4 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 3 lock 2 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 3 lock 3 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 2 type 3 lock 5 ! 40081 Only the rdUseClientBatch cursor driver can support
+rdConcurBatch lock type.
+drv 3 type 0 lock 1 -> type=0 lock=1 rowcount=-1 upd=False bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 0 lock 4 -> type=0 lock=4 rowcount=-1 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 0 lock 2 -> type=0 lock=2 rowcount=-1 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 0 lock 3 -> type=0 lock=3 rowcount=-1 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 0 lock 5 -> type=0 lock=5 rowcount=-1 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 1 lock 1 -> type=1 lock=1 rowcount=4 upd=False bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 1 lock 4 -> type=1 lock=4 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 1 lock 2 -> type=1 lock=2 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 1 lock 3 -> type=1 lock=3 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 1 lock 5 -> type=1 lock=5 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 2 lock 1 -> type=2 lock=1 rowcount=4 upd=False bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 2 lock 4 -> type=2 lock=4 rowcount=4 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 2 lock 2 -> type=2 lock=2 rowcount=4 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 2 lock 3 -> type=2 lock=3 rowcount=4 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 2 lock 5 -> type=2 lock=5 rowcount=4 upd=True bm=False rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 3 lock 1 -> type=3 lock=1 rowcount=4 upd=False bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 3 lock 4 -> type=3 lock=4 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 3 lock 2 -> type=3 lock=2 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 3 lock 3 -> type=3 lock=3 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 3 type 3 lock 5 -> type=3 lock=5 rowcount=4 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 4 type 0 lock 1 -> type=3 lock=2 rowcount=0 upd=True bm=True rows= 1:Anna 2:Bill 3:Cleo 4:Dino
+drv 4 type 0 lock 4 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 0 lock 2 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 0 lock 3 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 0 lock 5 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 1 lock 1 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 1 lock 4 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 1 lock 2 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 1 lock 3 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 1 lock 5 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 2 lock 1 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 2 lock 4 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 2 lock 2 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 2 lock 3 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 2 lock 5 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 3 lock 1 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 3 lock 4 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 3 lock 2 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 3 lock 3 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+drv 4 type 3 lock 5 ! 40080 Cursor type should be: rdOpenForwardOnly.
+ LockType should be: rdConcurReadOnly.
+ RowsetSize should be: 1.
+== columns and values
+keyset: type=3 lock=2 rowcount=0 upd=True bm=True restart=True trans=True edit=0 bof=False eof=False name=[SELECT * FROM People ORDER BY ID]
+  col ID type=4 size=10 attr=33 req=False zl=False ord=1 src=People.ID upd=True chunk=False key=True
+  col Name type=12 size=20 attr=34 req=False zl=True ord=2 src=People.Name upd=True chunk=False key=False
+  col Age type=5 size=5 attr=33 req=False zl=False ord=3 src=People.Age upd=True chunk=False key=False
+  col Born type=9 size=10 attr=33 req=False zl=False ord=4 src=People.Born upd=True chunk=False key=False
+  col Salary type=8 size=15 attr=33 req=False zl=False ord=5 src=People.Salary upd=True chunk=False key=False
+  col Rate type=8 size=15 attr=33 req=False zl=False ord=6 src=People.Rate upd=True chunk=False key=False
+  col Active type=-7 size=1 attr=33 req=False zl=False ord=7 src=People.Active upd=True chunk=False key=False
+  col Notes type=-1 size=65536 attr=34 req=False zl=True ord=8 src=People.Notes upd=True chunk=True key=False
+  value ID=Long:1
+  value Name=String:Anna
+  value Age=Integer:32
+  value Born=Date:5/4/1993
+  value Salary=Double:1234,5
+  value Rate=Double:0,25
+  value Active=Boolean:True
+  value Notes=String:first
+  by name=Object:Anna bang=Object:32 item=Double:1234,5
+  nope ! 40041 [MSRDO20.DLL] Object Collection: Couldn't find item indicated by text.
+    rdoError 40041 state= ret=0 [MSRDO.rdoColumns] Object Collection: Couldn't find item indicated by text.
+  col 99 ! 40041 [MSRDO20.DLL] Object Collection: Couldn't find item indicated by text.
+    rdoError 40041 state= ret=0 [MSRDO.rdoColumns] Object Collection: Couldn't find item indicated by text.
+    rdoError 40041 state= ret=0 [MSRDO.rdoColumns] Object Collection: Couldn't find item indicated by text.
+movelast: type=3 lock=2 rowcount=4 upd=True bm=True restart=True trans=True edit=0 bof=False eof=False name=[SELECT * FROM People ORDER BY ID]
+  abs=4 pct=100
+  move 2 -> Cleo abs=3
+  bookmark -> Cleo
+before first: type=3 lock=2 rowcount=4 upd=True bm=True restart=True trans=True edit=0 bof=True eof=False name=[SELECT * FROM People ORDER BY ID]
+  move before bof ! 40025 [MSRDO20.DLL] BOF already set.
+    rdoError 40025 state= ret=0 [MSRDO.rdoResultset] BOF already set.
+  closed rs ! 40011 [MSRDO20.DLL] Object is invalid or not set.
+    rdoError 40025 state= ret=0 [MSRDO.rdoResultset] BOF already set.
+== edits
+edit mode=1
+after update mode=0 age=Object:50 notes=Null
+addnew mode=2 id=Null
+lastmodified -> Object:Eve
+  update dup ! 40002 [MSRDO20.DLL] S1000: UNIQUE constraint failed: People.Name (19)
+    rdoError 19 state=S1000 ret=-1 [ODBC] S1000: UNIQUE constraint failed: People.Name (19)
+after dup mode=1
+cancelupdate age=Object:50 mode=0
+  after delete ! 40009 [MSRDO20.DLL] No current row.
+    rdoError 40009 state= ret=0 [MSRDO.rdoColumn] No current row.
+    rdoError 40009 state= ret=0 [MSRDO.rdoColumn] No current row.
+    rdoError 40009 state= ret=0 [MSRDO.rdoColumn] No current row.
+next name=Object:Cleo
+requery rows= 1:Anna 3:Cleo 4:Dino 5:Eve
+getrows ub=2,1 first=Anna second=Cleo now=Object:Dino
+clip=4;Dino;38|5;Eve;28|
+== queries
+q name=Older sql=SELECT Name FROM People WHERE Age > ? ORDER BY ID params=1 type=0 queries=1 prepared=True maxrows=0 rowset=100 cursor=0 lock=1 timeout=30
+param name=Parameter1 dir=0 type=-10
+older than 30: Anna:Anna Cleo:Cleo Dino:Dino
+older than 40: Anna:Anna Cleo:Cleo
+q2 affected=1 params=2 queries=2
+anna age=Object:77 type=3 lock=2
+after close queries=1
+  call ! 40002 [MSRDO20.DLL] S1000: near "Nothing": syntax error (1)
+    rdoError 1 state=S1000 ret=-1 [ODBC] S1000: near "Nothing": syntax error (1)
+== tables
+tables=1
+  table People type=TABLE cols=8 upd=False rowcount=0
+table rs rows= 1:Anna 3:Cleo 4:Dino 5:Eve
+== transactions
+after rollback count=Object:4
+after commit count=Object:3
+after env rollback count=Object:3
+== more results
+  multi ! 40002 [MSRDO20.DLL] S1000: only one SQL statement allowed
+    rdoError -1 state=S1000 ret=-1 [ODBC] S1000: only one SQL statement allowed
+  more ! 40011 [MSRDO20.DLL] Object is invalid or not set.
+    rdoError -1 state=S1000 ret=-1 [ODBC] S1000: only one SQL statement allowed
+== collections and close
+resultsets=1 cns=1
+  rs after cn close ! 40011 [MSRDO20.DLL] Object is invalid or not set.
+    rdoError -1 state=S1000 ret=-1 [ODBC] S1000: only one SQL statement allowed
+  closed cn ! 40011 [MicrosoftRDO.RdoConnection] Object is invalid or not set.
+    rdoError -1 state=S1000 ret=-1 [ODBC] S1000: only one SQL statement allowed
+cns=0
+== end

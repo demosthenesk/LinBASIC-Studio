@@ -1,0 +1,25 @@
+c1 16  32 [init]
+ 116  42 False
+ 117 TrueFalseCCounter
+TypeOf ok
+after d[init]
+after c[init][term c1]
+1,2,3,
+freed[node 1][node 2][node 3]
+late 3 ltCCounter
+ 4 TrueCCounter 9 
+v holds[init]
+v empty[init][term late]
+err 91 
+err 438 
+ 1 [init]False
+ 0 [init][term ][init]
+ 2  2 True
+[init][term w]
+ 3  3,5  2  2 
+ 3,5 one 2 
+ 1 one
+ 5  6  7 
+err 5 
+err 457 
+err 9 

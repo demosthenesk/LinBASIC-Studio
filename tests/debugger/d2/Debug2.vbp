@@ -1,0 +1,5 @@
+Type=Exe
+Module=Module2; Module2.bas
+Class=Class1; Class1.cls
+Startup="Sub Main"
+Name="Debug2"

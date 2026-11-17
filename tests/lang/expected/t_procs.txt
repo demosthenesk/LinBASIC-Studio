@@ -1,0 +1,10 @@
+byref 2 
+paren 2 
+byval 2 
+call 3 
+Hello World! Hello VB! Hello VB! Hello World! Hello World! 
+FalseTrue
+fib 6765 
+static 1  2  3 
+right left
+ 42  42 

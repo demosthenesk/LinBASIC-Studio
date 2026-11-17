@@ -1,0 +1,42 @@
+FileSystemObject
+b.txt|b|txt
+c:\a|dir|c:
+c:\a\b|c:\a\b|
+folder fsotest True Folder
+again 58 
+write at 6  1 
+File one.txt 30 True
+ 1 [Line one]
+ 2 [Line two]
+ 3 []
+ 4 []
+ 5 [Last]
+past end 62 
+read3 [Lin] col 4 
+all 25 ast
++tail
+files four.dat one.txt two.txt
+count 3 
+after delete 1 False
+sub sub fsotest
+getfile 53 
+getfolder 76 
+open 53 
+deleted False
+Dictionary 4 two  3,5  TrueFalseFalse
+key a =  1 
+key b = two
+key  3  =  3,5 
+key c = set
+keys 0  3 ac
+items two
+after 3 TrueFalse
+read adds 4 True
+dup 457 
+remove 32811 
+mode 5 
+text True 1 
+empty-1 
+Dictionary 10  1 
+FileSystemObjectFalse
+create 429 

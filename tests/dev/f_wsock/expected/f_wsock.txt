@@ -1,0 +1,106 @@
+== new controls
+  TypeName Winsock | host name True | LocalIP True | SocketHandle -1
+  wsX: protocol=0 remotehost='' remoteport=0 localport=0 state=0 bytes=0 remotehostip='' sockethandle=-1
+  wsU1: protocol=1 remotehost='' remoteport=0 localport=0 state=0 bytes=!10038 remotehostip='' sockethandle=-1
+  wsU2: protocol=1 remotehost='127.0.0.1' remoteport=47112 localport=0 state=0 bytes=!10038 remotehostip='' sockethandle=-1
+== errors
+  X.SendData: ! 40006 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  X.GetData: ! 40006 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  X.PeekData: ! 40006 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  X.Accept 12345: ! 10038 The descriptor is not a socket [Winsock]
+  X.Close: ok Empty
+  X.Protocol=2: ! 380 Invalid property value [WsockTest]
+  X.Protocol=-1: ! 380 Invalid property value [WsockTest]
+  X.RemotePort=-1: ! 40014 The argument passed to a function was not in the correct format or in the specified range [Winsock]
+  X.RemotePort=70000: ! 40014 The argument passed to a function was not in the correct format or in the specified range [Winsock]
+  X.LocalPort=-5: ! 380 Invalid property value [Winsock]
+  X.LocalPort=70000: ! 380 Invalid property value [Winsock]
+  X.RemoteHostIP=: ! 450 Wrong number of arguments or invalid property assignment [WsockTest]
+  X.State=: ! 450 Wrong number of arguments or invalid property assignment [WsockTest]
+  X.BytesReceived=: ! 450 Wrong number of arguments or invalid property assignment [WsockTest]
+  X.Listen (UDP): ! 40026 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  X.Close: ok Empty
+  X.Connect (UDP): ok Empty
+  wsX after Connect (UDP): protocol=1 remotehost='127.0.0.1' remoteport=47110 localport=eph state=1 bytes=0 remotehostip='' sockethandle=socket
+  X.Connect (no host): ok Empty
+  X state 4
+  X: Error(10061, Connection is forcefully rejected) state=9 | state 9
+== TCP: listen, connect, accept
+  listen: state 2 localport 47110
+  S0.Listen again: ! 10037 The operation is completed. No blocking operation is in progress. [Winsock]
+  S0.LocalPort= (listening): ! 40020 Invalid operation at current state [Winsock]
+  S0.Protocol= (listening): ! 40020 Invalid operation at current state [Winsock]
+  S0.Connect (listening): ! 40020 Invalid operation at current state [Winsock]
+  S0.SendData (listening): ! 40006 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  X.Listen (port in use): ! 10048 Address in use [Winsock]
+  connect: state 6
+  client: Connect state=7
+  server: ConnectionRequest(0) state=2 ip=127.0.0.1 accepted by 1 state=7
+  client: state 7 remotehostip 127.0.0.1 remoteport 47110 localport>0 True
+  wsSrv(1): state 7 remotehostip 127.0.0.1 remoteport=client True localport 47110
+  wsSrv(0): state 2 remotehostip 127.0.0.1
+  C.Connect (connected): ! 40020 Invalid operation at current state [Winsock]
+== client -> server: a String
+  senddata: state 7
+  server got String 'Hello<0><255>AB' | DataArrival(1,9) bytes=9
+  client: SendProgress(9,0) SendComplete
+== server -> client: a Byte array
+  client: DataArrival(4) | BytesReceived 4
+  peek Byte()(0 To 3) 1 2 200 0 | left 4
+  get 3: 0 To 2:1 2 200 | left 1
+  the rest Byte()(0 To 0) 0 | left 0
+  nothing left Byte()(0 To -1)
+== server -> client: numbers
+  BytesReceived 37
+  258 16909060 1,5 True 12,34 -2,25 77 2003-01-02 04:05:06 | left 0
+== server -> client: a String, GetData with maxLen
+  maxLen 4: 'abcd' | left 2
+  the rest: 'ef'
+  peek: 'xyz' | left 3
+  get vbString: String 'xyz' | left 0
+  C.SendData Empty: ! 40018 Unsupported variant types [Winsock]
+  C.SendData Null: ok Empty
+  C.SendData Nothing: ok Empty
+  C.GetData vbVariant: ! 40018 Unsupported variant types [Winsock]
+  C.GetData vbObject: ! 40018 Unsupported variant types [Winsock]
+== client closes
+  client: state 0
+  server: Close(1) state=8 | state 8
+  S1.SendData (closing): ! 40006 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  S1.GetData (closing): ! 40006 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  wsSrv(1).Close: state 0
+  wsSrv(0).Close: state 0
+== connection refused
+  connect: state 6
+  client: Error(10061, Connection is forcefully rejected, 800A274D, C:\Windows\system32\MSWINSCK.ocx, '', 0, True) state=9 | state 9
+  C.Connect (error state): ! 40020 Invalid operation at current state [Winsock]
+  close: state 0
+== a host name
+  connect localhost: state 4
+  client: Connect state=7
+  server: ConnectionRequest(0) state=2 ip=127.0.0.1 accepted by 2 state=7
+  client: state 7 remotehost localhost remotehostip 127.0.0.1
+== UDP
+  wsU1: protocol=1 remotehost='' remoteport=0 localport=0 state=0 bytes=!10038 remotehostip='' sockethandle=-1
+  wsU2: protocol=1 remotehost='127.0.0.1' remoteport=47112 localport=0 state=0 bytes=!10038 remotehostip='' sockethandle=-1
+  bind: state 1 localport 47112
+  wsU1: protocol=1 remotehost='' remoteport=0 localport=47112 state=1 bytes=0 remotehostip='' sockethandle=socket
+  U1.Bind (open): ! 40020 Invalid operation at current state [Winsock]
+  U1.Listen: ! 40026 Wrong protocol or connection state for the requested transaction or request [Winsock]
+  U1.Accept 1: ! 40020 Invalid operation at current state [Winsock]
+  U2.SendData: ! 10047 Address Family is not supported [Winsock]
+  wsU2: protocol=1 remotehost='127.0.0.1' remoteport=47112 localport=eph state=1 bytes=0 remotehostip='' sockethandle=socket
+  U2.SendData (again): ! 10047 Address Family is not supported [Winsock]
+  U2.RemoteHost=, SendData: ok Empty
+  wsU2: protocol=1 remotehost='127.0.0.1' remoteport=47112 localport=eph state=1 bytes=0 remotehostip='' sockethandle=socket
+  U1: U1.DataArrival(12) bytes=12 from :0 got 'datagram one' bytes=0
+  wsU1 after the event: protocol=1 remotehost='' remoteport=eph localport=47112 state=1 bytes=0 remotehostip='127.0.0.1' sockethandle=socket
+  U1: U1.DataArrival(5) bytes=5 from 127.0.0.1:U2 peek 'first' bytes=5 got 'first' bytes=0
+  U1: U1.DataArrival(7) bytes=7 from 127.0.0.1:U2 ! 10040 The datagram is too large to fit into the buffer and is truncated got '' bytes=0
+  U1: U1.DataArrival(5) bytes=5 from 127.0.0.1:U2
+  wsU1 after the event: protocol=1 remotehost='' remoteport=eph localport=47112 state=1 bytes=0 remotehostip='127.0.0.1' sockethandle=socket
+  GetData after the event: err 0 '?'
+  U1: U1.DataArrival(6) bytes=6 from 127.0.0.1:U2 got 'one' bytes=3 U1.DataArrival(3) bytes=3 from 127.0.0.1:U2 got 'two' bytes=0
+  U2: U2.DataArrival(5) got 'reply' from 127.0.0.1:U1
+  closed: 0 0
+end

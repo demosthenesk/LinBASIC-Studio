@@ -1,0 +1,4 @@
+Add p + ListItems(p).ListSubItems.Add x2: 0,14 s
+Clear: 0,01 s
+Add alone: 0,05 s
+Add + SubItems(1), SubItems(2): 0,11 s

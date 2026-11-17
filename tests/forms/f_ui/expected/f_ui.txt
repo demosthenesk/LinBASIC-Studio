@@ -1,0 +1,62 @@
+load True MS Sans Serif 8,25 False
+text2 font Tahoma 9,75 True 700 161
+colors 8000000F 80000005 80000008 C0FFFF C0 8000000F
+list 3 alpha gamma 20 -5
+menu &File True True - True Menu
+picture 3 120 100 True FFFFFF
+pset 255 16777215 10 20
+line 16711680 16777215 39 39
+line2 32768 16777215 16777215
+cls 16777215 0 0
+twips 1800 1500
+user scale 0 10 10 0
+rgb 197121 255 255 -2147483633
+activate True
+text1 gotfocus
+step 1
+after setfocus True
+text1 lostfocus
+text2 gotfocus
+step 2
+form keydown 65 0
+text2 keydown 65 0
+form keypress 97
+text2 keypress 97
+text2 change [a]
+form keyup 65 0
+text2 keyup 65 0
+form keydown 66 0
+text2 keydown 66 0
+form keypress 98
+text2 keypress 98
+text2 change [aB]
+form keyup 66 0
+text2 keyup 66 0
+text2 [aB] 2
+form keydown 8 0
+text2 keydown 8 0
+form keypress 8
+text2 keypress 8
+text2 change [a]
+form keyup 8 0
+text2 keyup 8 0
+form keydown 13 0
+text2 keydown 13 0
+form keypress 13
+form keyup 13 0
+text2 keyup 13 0
+text2 [a]
+step 3
+text2 lostfocus
+command1 gotfocus
+form keydown 32 0
+form keypress 32
+form keyup 32 0
+command1 click
+after space
+step 4
+menu False False
+changed FF True 12
+font 9,75 Arial
+menu open click
+step 5

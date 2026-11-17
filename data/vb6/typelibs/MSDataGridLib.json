@@ -1,0 +1,5287 @@
+{
+ "library": "MSDataGridLib",
+ "short": "MSDataGridLib",
+ "guid": "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "DBGRID98.CHM",
+ "file": "MSDatGrd.ocx",
+ "types": [
+  {
+   "name": "AddNewModeConstants",
+   "kind": "enum",
+   "guid": "{CDE57A45-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270001,
+   "members": [
+    {
+     "name": "dbgNoAddNew",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270002
+    },
+    {
+     "name": "dbgAddNewCurrent",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270003
+    },
+    {
+     "name": "dbgAddNewPending",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 270004
+    }
+   ]
+  },
+  {
+   "name": "AlignmentConstants",
+   "kind": "enum",
+   "guid": "{CDE57A46-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270005,
+   "members": [
+    {
+     "name": "dbgLeft",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270006
+    },
+    {
+     "name": "dbgRight",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270007
+    },
+    {
+     "name": "dbgCenter",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 270008
+    },
+    {
+     "name": "dbgGeneral",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 270009
+    }
+   ]
+  },
+  {
+   "name": "AppearanceConstants",
+   "kind": "enum",
+   "guid": "{CDE57A47-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270010,
+   "members": [
+    {
+     "name": "dbgFlat",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270011
+    },
+    {
+     "name": "dbg3D",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270012
+    }
+   ]
+  },
+  {
+   "name": "BorderStyleConstants",
+   "kind": "enum",
+   "guid": "{CDE57A48-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270013,
+   "members": [
+    {
+     "name": "dbgNoBorder",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270014
+    },
+    {
+     "name": "dbgFixedSingle",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270015
+    }
+   ]
+  },
+  {
+   "name": "DividerStyleConstants",
+   "kind": "enum",
+   "guid": "{CDE57A4A-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270019,
+   "members": [
+    {
+     "name": "dbgNoDividers",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270020
+    },
+    {
+     "name": "dbgBlackLine",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270021
+    },
+    {
+     "name": "dbgDarkGrayLine",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 270022
+    },
+    {
+     "name": "dbgRaised",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 270023
+    },
+    {
+     "name": "dbgInset",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 270024
+    },
+    {
+     "name": "dbgUseForeColor",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 270025
+    },
+    {
+     "name": "dbgLightGrayLine",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 270026
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{AC88CF9C-E803-11D0-BCF9-00C04FC2FB86}",
+   "flags": [],
+   "helpcontext": 270219,
+   "members": [
+    {
+     "name": "dbgOutOfMemory",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 7
+    },
+    {
+     "name": "dbgSubscriptRange",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 9
+    },
+    {
+     "name": "dbgTypeMismatch",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 13,
+     "helpcontext": 13
+    },
+    {
+     "name": "dbgInvalidPropertyValue",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 380,
+     "helpcontext": 380
+    },
+    {
+     "name": "dbgInvalidSafeModeProcCall",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 680,
+     "helpcontext": 680
+    },
+    {
+     "name": "dbgColIndex",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6145,
+     "helpcontext": 6145
+    },
+    {
+     "name": "dbgSplitIndex",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6244,
+     "helpcontext": 6244
+    },
+    {
+     "name": "dbgCNotFound",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 6147,
+     "helpcontext": 6147
+    },
+    {
+     "name": "dbgInvBookmark",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 6149,
+     "helpcontext": 6149
+    },
+    {
+     "name": "dbgDataAccess",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 6160,
+     "helpcontext": 6160
+    },
+    {
+     "name": "dbgNoPropNow",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 6162,
+     "helpcontext": 6162
+    },
+    {
+     "name": "dbgBindError",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 4097,
+     "helpcontext": 4097
+    },
+    {
+     "name": "dbgInvRowNum",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 6148,
+     "helpcontext": 6148
+    },
+    {
+     "name": "dbgBadEvent",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 6161,
+     "helpcontext": 6161
+    },
+    {
+     "name": "dbgScrollRange",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 6151,
+     "helpcontext": 6151
+    },
+    {
+     "name": "dbgDelMultRows",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 6159,
+     "helpcontext": 6159
+    },
+    {
+     "name": "dbgDelError",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 6155,
+     "helpcontext": 6155
+    },
+    {
+     "name": "dbgAddError",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 6154,
+     "helpcontext": 6154
+    },
+    {
+     "name": "dbgUpdError",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 6153,
+     "helpcontext": 6153
+    },
+    {
+     "name": "dbgErrorSetCurrent",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 6152,
+     "helpcontext": 6152
+    },
+    {
+     "name": "dbgNotBookmarkable",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 7004,
+     "helpcontext": 7004
+    },
+    {
+     "name": "dbgOrphaned",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 7000,
+     "helpcontext": 7000
+    },
+    {
+     "name": "dbgUnknown",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 7001,
+     "helpcontext": 7001
+    },
+    {
+     "name": "dbgMustHaveSplit",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 7002,
+     "helpcontext": 7002
+    },
+    {
+     "name": "dbgNoMethodNow",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 7003,
+     "helpcontext": 7003
+    },
+    {
+     "name": "dbgNoRowset",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 7005,
+     "helpcontext": 7005
+    },
+    {
+     "name": "dbgConvertData",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 7006,
+     "helpcontext": 7006
+    },
+    {
+     "name": "dbgErrUpdateColumn",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 7007,
+     "helpcontext": 7007
+    },
+    {
+     "name": "dbgNoCurrentRow",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 7008,
+     "helpcontext": 7008
+    },
+    {
+     "name": "dbgNoRowFound",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 7009,
+     "helpcontext": 7009
+    },
+    {
+     "name": "dbgColReadOnly",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 7010,
+     "helpcontext": 7010
+    },
+    {
+     "name": "dbgActionCanceled",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 7011,
+     "helpcontext": 7011
+    }
+   ]
+  },
+  {
+   "name": "MarqueeStyleConstants",
+   "kind": "enum",
+   "guid": "{CDE57A4B-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270027,
+   "members": [
+    {
+     "name": "dbgDottedCellBorder",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270028
+    },
+    {
+     "name": "dbgSolidCellBorder",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270029
+    },
+    {
+     "name": "dbgHighlightCell",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 270030
+    },
+    {
+     "name": "dbgHighlightRow",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 270031
+    },
+    {
+     "name": "dbgHighlightRowRaiseCell",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 270032
+    },
+    {
+     "name": "dbgNoMarquee",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 270033
+    },
+    {
+     "name": "dbgFloatingEditor",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 270034
+    }
+   ]
+  },
+  {
+   "name": "ScrollBarsConstants",
+   "kind": "enum",
+   "guid": "{CDE57A4C-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270035,
+   "members": [
+    {
+     "name": "dbgNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270036
+    },
+    {
+     "name": "dbgHorizontal",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270037
+    },
+    {
+     "name": "dbgVertical",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 270038
+    },
+    {
+     "name": "dbgBoth",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 270039
+    },
+    {
+     "name": "dbgAutomatic",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 270040
+    }
+   ]
+  },
+  {
+   "name": "SplitSizeModeConstants",
+   "kind": "enum",
+   "guid": "{CDE57A4D-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270041,
+   "members": [
+    {
+     "name": "dbgScalable",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270042
+    },
+    {
+     "name": "dbgExact",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270043
+    }
+   ]
+  },
+  {
+   "name": "TabActionConstants",
+   "kind": "enum",
+   "guid": "{CDE57A4E-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [],
+   "helpcontext": 270045,
+   "members": [
+    {
+     "name": "dbgControlNavigation",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 270046
+    },
+    {
+     "name": "dbgColumnNavigation",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 270047
+    },
+    {
+     "name": "dbgGridNavigation",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 270048
+    }
+   ]
+  },
+  {
+   "name": "Column",
+   "kind": "dispatch",
+   "guid": "{CDE57A4F-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270105,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Alignment",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "AlignmentConstants",
+     "params": [
+      {
+       "name": "penumAlignment",
+       "type": "AlignmentConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270106
+    },
+    {
+     "name": "Alignment",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "AlignmentConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270106
+    },
+    {
+     "name": "AllowSizing",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowSizing",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270107
+    },
+    {
+     "name": "AllowSizing",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270107
+    },
+    {
+     "name": "Button",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfButton",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270108
+    },
+    {
+     "name": "Button",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270108
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrCaption",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270109
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270109
+    },
+    {
+     "name": "ColIndex",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piColIndex",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270110
+    },
+    {
+     "name": "DataChanged",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfDataChanged",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270111
+    },
+    {
+     "name": "DataField",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrDataField",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270112
+    },
+    {
+     "name": "DataField",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270112
+    },
+    {
+     "name": "DividerStyle",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "DividerStyleConstants",
+     "params": [
+      {
+       "name": "penumDividerStyle",
+       "type": "DividerStyleConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270114
+    },
+    {
+     "name": "DividerStyle",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "DividerStyleConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270114
+    },
+    {
+     "name": "Left",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_XPOS_CONTAINER",
+     "params": [
+      {
+       "name": "pxposLeft",
+       "type": "stdole.OLE_XPOS_CONTAINER",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270115
+    },
+    {
+     "name": "Locked",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfLocked",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270116
+    },
+    {
+     "name": "Locked",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270116
+    },
+    {
+     "name": "NumberFormat",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrNumberFormat",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270117
+    },
+    {
+     "name": "NumberFormat",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270117
+    },
+    {
+     "name": "Text",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270118
+    },
+    {
+     "name": "Text",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270118
+    },
+    {
+     "name": "Top",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_YPOS_CONTAINER",
+     "params": [
+      {
+       "name": "pyposTop",
+       "type": "stdole.OLE_YPOS_CONTAINER",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270119
+    },
+    {
+     "name": "Value",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarValue",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270120
+    },
+    {
+     "name": "Value",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270120
+    },
+    {
+     "name": "Visible",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfVisible",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270121
+    },
+    {
+     "name": "Visible",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270121
+    },
+    {
+     "name": "Width",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_XSIZE_CONTAINER",
+     "params": [
+      {
+       "name": "pxsizeWidth",
+       "type": "stdole.OLE_XSIZE_CONTAINER",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270122
+    },
+    {
+     "name": "Width",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_XSIZE_CONTAINER",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270122
+    },
+    {
+     "name": "WrapText",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfWrapText",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270123
+    },
+    {
+     "name": "WrapText",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270123
+    },
+    {
+     "name": "DataFormat",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "StdFormat.IDataFormatDisp",
+     "params": [
+      {
+       "name": "ppdf",
+       "type": "StdFormat.IDataFormatDisp",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270131
+    },
+    {
+     "name": "DataFormat",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "StdFormat.IDataFormatDisp",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270131
+    },
+    {
+     "name": "CellText",
+     "memid": 100,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270124
+    },
+    {
+     "name": "CellValue",
+     "memid": 101,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarValue",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270125
+    }
+   ]
+  },
+  {
+   "name": "Columns",
+   "kind": "dispatch",
+   "guid": "{CDE57A50-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270126,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270127
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "_ppNewEnum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Add",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Column",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pcol",
+       "type": "Column",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270128
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Column",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pcol",
+       "type": "Column",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270129
+    },
+    {
+     "name": "Remove",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270130
+    }
+   ]
+  },
+  {
+   "name": "SelBookmarks",
+   "kind": "dispatch",
+   "guid": "{CDE57A52-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270137,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270138
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "_ppNewEnum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarBookmark",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270139
+    },
+    {
+     "name": "Remove",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270140
+    },
+    {
+     "name": "Add",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270141
+    }
+   ]
+  },
+  {
+   "name": "Split",
+   "kind": "dispatch",
+   "guid": "{CDE57A54-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270142,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "AllowFocus",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowFocus",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270143
+    },
+    {
+     "name": "AllowFocus",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270143
+    },
+    {
+     "name": "AllowRowSizing",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowRowSizing",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270144
+    },
+    {
+     "name": "AllowRowSizing",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270144
+    },
+    {
+     "name": "AllowSizing",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowSizing",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270145
+    },
+    {
+     "name": "AllowSizing",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270145
+    },
+    {
+     "name": "CurrentCellVisible",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfCurrentCellVisible",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270146
+    },
+    {
+     "name": "CurrentCellVisible",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270146
+    },
+    {
+     "name": "FirstRow",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarFirstRow",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270147
+    },
+    {
+     "name": "FirstRow",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270147
+    },
+    {
+     "name": "Index",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piIndex",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270148
+    },
+    {
+     "name": "LeftCol",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piLeftCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270149
+    },
+    {
+     "name": "LeftCol",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270149
+    },
+    {
+     "name": "Locked",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfLocked",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270150
+    },
+    {
+     "name": "Locked",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270150
+    },
+    {
+     "name": "MarqueeStyle",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "MarqueeStyleConstants",
+     "params": [
+      {
+       "name": "penumMarqueeStyle",
+       "type": "MarqueeStyleConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270151
+    },
+    {
+     "name": "MarqueeStyle",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "MarqueeStyleConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270151
+    },
+    {
+     "name": "RecordSelectors",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfRecordSelectors",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270152
+    },
+    {
+     "name": "RecordSelectors",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270152
+    },
+    {
+     "name": "ScrollBars",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ScrollBarsConstants",
+     "params": [
+      {
+       "name": "penumScrollBars",
+       "type": "ScrollBarsConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270153
+    },
+    {
+     "name": "ScrollBars",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ScrollBarsConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270153
+    },
+    {
+     "name": "ScrollGroup",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piScrollGroup",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270154
+    },
+    {
+     "name": "ScrollGroup",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270154
+    },
+    {
+     "name": "SelEndCol",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piSelEndCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270155
+    },
+    {
+     "name": "SelEndCol",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270155
+    },
+    {
+     "name": "SelStartCol",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piSelStartCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270156
+    },
+    {
+     "name": "SelStartCol",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270156
+    },
+    {
+     "name": "Size",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarSize",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270157
+    },
+    {
+     "name": "Size",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270157
+    },
+    {
+     "name": "SizeMode",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "SplitSizeModeConstants",
+     "params": [
+      {
+       "name": "penumSizeMode",
+       "type": "SplitSizeModeConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270158
+    },
+    {
+     "name": "SizeMode",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "SplitSizeModeConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270158
+    },
+    {
+     "name": "ClearSelCols",
+     "memid": 100,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 270159
+    },
+    {
+     "name": "Columns",
+     "memid": 101,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Columns",
+     "params": [
+      {
+       "name": "ppColumns",
+       "type": "Columns",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270160
+    }
+   ]
+  },
+  {
+   "name": "Splits",
+   "kind": "dispatch",
+   "guid": "{CDE57A53-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270161,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270162
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "_ppNewEnum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Split",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "psplit",
+       "type": "Split",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270164
+    },
+    {
+     "name": "Add",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Split",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "psplit",
+       "type": "Split",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270163
+    },
+    {
+     "name": "Remove",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270165
+    }
+   ]
+  },
+  {
+   "name": "IDataGrid",
+   "kind": "dispatch",
+   "guid": "{CDE57A41-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "AddNewMode",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "AddNewModeConstants",
+     "params": [
+      {
+       "name": "penumAddNewMode",
+       "type": "AddNewModeConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270102
+    },
+    {
+     "name": "AllowAddNew",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowAddNew",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270055
+    },
+    {
+     "name": "AllowAddNew",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270055
+    },
+    {
+     "name": "AllowArrows",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowArrows",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270096
+    },
+    {
+     "name": "AllowArrows",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270096
+    },
+    {
+     "name": "AllowDelete",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowDelete",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270054
+    },
+    {
+     "name": "AllowDelete",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270054
+    },
+    {
+     "name": "AllowRowSizing",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowRowSizing",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270056
+    },
+    {
+     "name": "AllowRowSizing",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270056
+    },
+    {
+     "name": "AllowUpdate",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfAllowUpdate",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270057
+    },
+    {
+     "name": "AllowUpdate",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270057
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "AppearanceConstants",
+     "params": [
+      {
+       "name": "penumAppearance",
+       "type": "AppearanceConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270058
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "AppearanceConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270058
+    },
+    {
+     "name": "ApproxCount",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plApproxCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270100
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "pocBackColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270091
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270091
+    },
+    {
+     "name": "Bookmark",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarBookmark",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270060
+    },
+    {
+     "name": "Bookmark",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270060
+    },
+    {
+     "name": "BorderStyle",
+     "memid": -504,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "BorderStyleConstants",
+     "params": [
+      {
+       "name": "penumBorderStyle",
+       "type": "BorderStyleConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270059
+    },
+    {
+     "name": "BorderStyle",
+     "memid": -504,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "BorderStyleConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270059
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrCaption",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270093
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270093
+    },
+    {
+     "name": "Col",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270061
+    },
+    {
+     "name": "Col",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270061
+    },
+    {
+     "name": "ColumnHeaders",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfColumnHeaders",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270062
+    },
+    {
+     "name": "ColumnHeaders",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270062
+    },
+    {
+     "name": "CurrentCellModified",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfCurrentCellModified",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270064
+    },
+    {
+     "name": "CurrentCellModified",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270064
+    },
+    {
+     "name": "CurrentCellVisible",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfCurrentCellVisible",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270063
+    },
+    {
+     "name": "CurrentCellVisible",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270063
+    },
+    {
+     "name": "DataChanged",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfDataChanged",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270065
+    },
+    {
+     "name": "DataChanged",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270065
+    },
+    {
+     "name": "DataSource",
+     "memid": 42,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "msdatsrc.tlb:{7C0FFAB3-CD84-11D0-949A-00A0C91110ED}",
+     "params": [
+      {
+       "name": "ppds",
+       "type": "msdatsrc.tlb:{7C0FFAB3-CD84-11D0-949A-00A0C91110ED}",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270067
+    },
+    {
+     "name": "DataSource",
+     "memid": 42,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "msdatsrc.tlb:{7C0FFAB3-CD84-11D0-949A-00A0C91110ED}",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270067
+    },
+    {
+     "name": "DataMember",
+     "memid": 43,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "msdatsrc.tlb:{7C0FFAB1-CD84-11D0-949A-00A0C91110ED}",
+     "params": [
+      {
+       "name": "pdm",
+       "type": "msdatsrc.tlb:{7C0FFAB1-CD84-11D0-949A-00A0C91110ED}",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270050
+    },
+    {
+     "name": "DataMember",
+     "memid": 43,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "msdatsrc.tlb:{7C0FFAB1-CD84-11D0-949A-00A0C91110ED}",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270050
+    },
+    {
+     "name": "DefColWidth",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "psDefColWidth",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270068
+    },
+    {
+     "name": "DefColWidth",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270068
+    },
+    {
+     "name": "EditActive",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEditActive",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270069
+    },
+    {
+     "name": "EditActive",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270069
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270070
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270070
+    },
+    {
+     "name": "ErrorText",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrErrorText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270101
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#32",
+     "params": [
+      {
+       "name": "ppFont",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270094
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270094
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "pocForeColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270092
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270092
+    },
+    {
+     "name": "FirstRow",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarFirstRow",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270071
+    },
+    {
+     "name": "FirstRow",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270071
+    },
+    {
+     "name": "HeadFont",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#32",
+     "params": [
+      {
+       "name": "ppFont",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270072
+    },
+    {
+     "name": "HeadFont",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270072
+    },
+    {
+     "name": "HeadLines",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pxHeadLines",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270073
+    },
+    {
+     "name": "HeadLines",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270073
+    },
+    {
+     "name": "hWnd",
+     "memid": -515,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_HANDLE",
+     "params": [
+      {
+       "name": "phWnd",
+       "type": "stdole.OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270074
+    },
+    {
+     "name": "hWndEditor",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_HANDLE",
+     "params": [
+      {
+       "name": "phWndEditor",
+       "type": "stdole.OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270075
+    },
+    {
+     "name": "LeftCol",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piLeftCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270095
+    },
+    {
+     "name": "LeftCol",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270095
+    },
+    {
+     "name": "MarqueeStyle",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "MarqueeStyleConstants",
+     "params": [
+      {
+       "name": "penumMarqueeStyle",
+       "type": "MarqueeStyleConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270077
+    },
+    {
+     "name": "MarqueeStyle",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "MarqueeStyleConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270077
+    },
+    {
+     "name": "RecordSelectors",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfRecordSelectors",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270078
+    },
+    {
+     "name": "RecordSelectors",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270078
+    },
+    {
+     "name": "RightToLeft",
+     "memid": -611,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfRightToLeft",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270225
+    },
+    {
+     "name": "RightToLeft",
+     "memid": -611,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270225
+    },
+    {
+     "name": "Row",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piRow",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270079
+    },
+    {
+     "name": "Row",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270079
+    },
+    {
+     "name": "RowDividerStyle",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "DividerStyleConstants",
+     "params": [
+      {
+       "name": "penumDividerStyle",
+       "type": "DividerStyleConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270080
+    },
+    {
+     "name": "RowDividerStyle",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "DividerStyleConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270080
+    },
+    {
+     "name": "RowHeight",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pxRowHeight",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270081
+    },
+    {
+     "name": "RowHeight",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270081
+    },
+    {
+     "name": "ScrollBars",
+     "memid": -535,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ScrollBarsConstants",
+     "params": [
+      {
+       "name": "penumScrollBars",
+       "type": "ScrollBarsConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270082
+    },
+    {
+     "name": "ScrollBars",
+     "memid": -535,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ScrollBarsConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270082
+    },
+    {
+     "name": "SelEndCol",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piSelEndCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270087
+    },
+    {
+     "name": "SelEndCol",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270087
+    },
+    {
+     "name": "SelLength",
+     "memid": -548,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plSelLength",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270083
+    },
+    {
+     "name": "SelLength",
+     "memid": -548,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270083
+    },
+    {
+     "name": "SelStart",
+     "memid": -547,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plSelStart",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270084
+    },
+    {
+     "name": "SelStart",
+     "memid": -547,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270084
+    },
+    {
+     "name": "SelStartCol",
+     "memid": 34,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piSelStartCol",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270086
+    },
+    {
+     "name": "SelStartCol",
+     "memid": 34,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270086
+    },
+    {
+     "name": "SelText",
+     "memid": -546,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrSelText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270085
+    },
+    {
+     "name": "SelText",
+     "memid": -546,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270085
+    },
+    {
+     "name": "Split",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piSplit",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270088
+    },
+    {
+     "name": "Split",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270088
+    },
+    {
+     "name": "TabAcrossSplits",
+     "memid": 37,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfTabAcrossSplits",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270097
+    },
+    {
+     "name": "TabAcrossSplits",
+     "memid": 37,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270097
+    },
+    {
+     "name": "TabAction",
+     "memid": 38,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "TabActionConstants",
+     "params": [
+      {
+       "name": "penumTabAction",
+       "type": "TabActionConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270098
+    },
+    {
+     "name": "TabAction",
+     "memid": 38,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "TabActionConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270098
+    },
+    {
+     "name": "Text",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270103
+    },
+    {
+     "name": "Text",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270103
+    },
+    {
+     "name": "VisibleCols",
+     "memid": 39,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piVisibleCols",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270089
+    },
+    {
+     "name": "VisibleRows",
+     "memid": 40,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piVisibleRows",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270090
+    },
+    {
+     "name": "WrapCellPointer",
+     "memid": 41,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfWrapCellPointer",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270099
+    },
+    {
+     "name": "WrapCellPointer",
+     "memid": 41,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270099
+    },
+    {
+     "name": "DataFormats",
+     "memid": 44,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "StdFormat.IStdDataFormatsDisp",
+     "params": [
+      {
+       "name": "ppCollection",
+       "type": "StdFormat.IStdDataFormatsDisp",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 270220
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 270104
+    },
+    {
+     "name": "CaptureImage",
+     "memid": 101,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "stdole2.tlb:#36",
+     "params": [
+      {
+       "name": "ppCaptureImage",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270166
+    },
+    {
+     "name": "ClearSelCols",
+     "memid": 102,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 270167
+    },
+    {
+     "name": "ClearFields",
+     "memid": 103,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 270168
+    },
+    {
+     "name": "ColContaining",
+     "memid": 104,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "X",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "piColContaining",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270169
+    },
+    {
+     "name": "Columns",
+     "memid": 105,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Columns",
+     "params": [
+      {
+       "name": "ppColumns",
+       "type": "Columns",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270170
+    },
+    {
+     "name": "GetBookmark",
+     "memid": 106,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "RowNum",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarBookmark",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270171
+    },
+    {
+     "name": "HoldFields",
+     "memid": 107,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 270172
+    },
+    {
+     "name": "ReBind",
+     "memid": 108,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 270173
+    },
+    {
+     "name": "Refresh",
+     "memid": -550,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 270174
+    },
+    {
+     "name": "RowBookmark",
+     "memid": 109,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "RowNum",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarBookmark",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270175
+    },
+    {
+     "name": "RowContaining",
+     "memid": 110,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "Y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "piRow",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270176
+    },
+    {
+     "name": "RowTop",
+     "memid": 111,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "RowNum",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "psRowTop",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270177
+    },
+    {
+     "name": "Scroll",
+     "memid": 220,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Cols",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Rows",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270178
+    },
+    {
+     "name": "SelBookmarks",
+     "memid": 113,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "SelBookmarks",
+     "params": [
+      {
+       "name": "ppSelBookmarks",
+       "type": "SelBookmarks",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270179
+    },
+    {
+     "name": "SplitContaining",
+     "memid": 114,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "X",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "piSplit",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270180
+    },
+    {
+     "name": "Splits",
+     "memid": 115,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Splits",
+     "params": [
+      {
+       "name": "ppSplits",
+       "type": "Splits",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270181
+    }
+   ]
+  },
+  {
+   "name": "DDataGridEvents",
+   "kind": "dispatch",
+   "guid": "{CDE57A42-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 270049,
+   "members": [
+    {
+     "name": "Click",
+     "memid": -600,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "uidefault"
+     ],
+     "helpcontext": 270194
+    },
+    {
+     "name": "AfterColEdit",
+     "memid": 200,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270182
+    },
+    {
+     "name": "AfterColUpdate",
+     "memid": 201,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270185
+    },
+    {
+     "name": "AfterDelete",
+     "memid": 202,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270183
+    },
+    {
+     "name": "AfterInsert",
+     "memid": 203,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270184
+    },
+    {
+     "name": "AfterUpdate",
+     "memid": 204,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270186
+    },
+    {
+     "name": "BeforeColEdit",
+     "memid": 205,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "KeyAscii",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270187
+    },
+    {
+     "name": "BeforeColUpdate",
+     "memid": 206,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "OldValue",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270188
+    },
+    {
+     "name": "BeforeDelete",
+     "memid": 207,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270189
+    },
+    {
+     "name": "BeforeInsert",
+     "memid": 208,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270190
+    },
+    {
+     "name": "BeforeUpdate",
+     "memid": 209,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270191
+    },
+    {
+     "name": "ButtonClick",
+     "memid": 210,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270192
+    },
+    {
+     "name": "Change",
+     "memid": 211,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270193
+    },
+    {
+     "name": "ColEdit",
+     "memid": 212,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270195
+    },
+    {
+     "name": "ColResize",
+     "memid": 213,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270196
+    },
+    {
+     "name": "DblClick",
+     "memid": -601,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270197
+    },
+    {
+     "name": "Error",
+     "memid": 215,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DataError",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Response",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270198
+    },
+    {
+     "name": "HeadClick",
+     "memid": 216,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270199
+    },
+    {
+     "name": "KeyDown",
+     "memid": -602,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "KeyCode",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270200
+    },
+    {
+     "name": "KeyPress",
+     "memid": -603,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "KeyAscii",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270201
+    },
+    {
+     "name": "KeyUp",
+     "memid": -604,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "KeyCode",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270202
+    },
+    {
+     "name": "MouseMove",
+     "memid": -606,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "X",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270203
+    },
+    {
+     "name": "MouseDown",
+     "memid": -605,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "X",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270204
+    },
+    {
+     "name": "MouseUp",
+     "memid": -607,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "X",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270205
+    },
+    {
+     "name": "OnAddNew",
+     "memid": 217,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270206
+    },
+    {
+     "name": "RowColChange",
+     "memid": 218,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "LastRow",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "LastCol",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270207
+    },
+    {
+     "name": "RowResize",
+     "memid": 219,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270208
+    },
+    {
+     "name": "Scroll",
+     "memid": 112,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270209
+    },
+    {
+     "name": "SelChange",
+     "memid": 221,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 270210
+    },
+    {
+     "name": "SplitChange",
+     "memid": 222,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 270211
+    }
+   ]
+  },
+  {
+   "name": "DataGrid",
+   "kind": "coclass",
+   "guid": "{CDE57A43-8B86-11D0-B3C6-00A0C90AEA82}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "IDataGrid",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DDataGridEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "DataGrid2",
+   "kind": "coclass",
+   "guid": "{D646316D-0915-421A-84C1-6A21C2495791}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "IDataGrid",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DDataGridEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "DataGrid3",
+   "kind": "coclass",
+   "guid": "{225957BB-0005-48B9-8BFB-11AEE66779FB}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "IDataGrid",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DDataGridEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,39 @@
+  image without imagelist ! 35600 Index out of bounds
+load img=0
+  ev resize w=6000 h=600
+  ev heightchanged 360 w=6000 h=360
+  ev resize w=6000 h=360
+start: cb w=6000 h=360 rows=1 Text1(420,0,5295,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2
+imagelist 16, b1 image: cb w=6000 h=360 rows=1 Text1(420,0,5295,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2
+b1 image 1: cb w=6000 h=360 rows=1 Text1(690,0,5025,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=1 pos=1 | b2 h=300 w=0 img=0 pos=2
+b1 image b: cb w=6000 h=360 rows=1 Text1(690,0,5025,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=b pos=1 | b2 h=300 w=0 img=0 pos=2
+  b1 image 9 ! 35600 Index out of bounds
+  b1 image zz ! 35601 Element not found
+b1 image bad: cb w=6000 h=360 rows=1 Text1(690,0,5025,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=b pos=1 | b2 h=300 w=0 img=0 pos=2
+b1 image, no caption: cb w=6000 h=360 rows=1 Text1(435,0,5280,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=1 pos=1 | b2 h=300 w=0 img=0 pos=2
+b2 image: cb w=6000 h=360 rows=1 Text1(435,0,4980,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=1 pos=1 | b2 h=300 w=0 img=1 pos=2
+  ev heightchanged 600 w=6000 h=600
+  ev resize w=6000 h=600
+imagelist 32: cb w=6000 h=600 rows=1 Text1(675,120,4500,300,True) Text2(5940,120,0,300,True) | b1 h=540 w=2400 img=1 pos=1 | b2 h=540 w=0 img=1 pos=2
+b1 caption again: cb w=6000 h=600 rows=1 Text1(930,120,4245,300,True) Text2(5940,120,0,300,True) | b1 h=540 w=2400 img=1 pos=1 | b2 h=540 w=0 img=1 pos=2
+fixed order: cb w=6000 h=600 rows=1 Text1(855,120,4320,300,True) Text2(5940,120,0,300,True) | b1 h=540 w=2400 img=1 pos=1 | b2 h=540 w=0 img=1 pos=2
+one band: cb w=6000 h=600 rows=1 Text1(855,120,5025,300,True) Text2(5940,120,0,300,False) | b1 h=540 w=2400 img=1 pos=1 | b2 h=0 w=0 img=1 pos=2
+  ev heightchanged 360 w=6000 h=360
+  ev resize w=6000 h=360
+one band, no image: cb w=6000 h=360 rows=1 Text1(345,0,5535,300,True) Text2(5940,120,0,300,False) | b1 h=300 w=2400 img=0 pos=1 | b2 h=0 w=0 img=1 pos=2
+  ev heightchanged 600 w=6000 h=600
+  ev resize w=6000 h=600
+  ev heightchanged 360 w=6000 h=360
+  ev resize w=6000 h=360
+no imagelist: cb w=6000 h=360 rows=1 Text1(420,0,5295,300,True) Text2(5940,0,0,300,True) | b1 h=300 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2
+  ev heightchanged 690 w=690 h=360
+  ev resize w=690 h=360
+vertical: cb w=690 h=360 rows=2 Text1(0,420,300,0,True) Text2(330,135,300,165,True) | b1 h=300 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2
+vertical, b2 new row: cb w=690 h=360 rows=2 Text1(0,420,300,0,True) Text2(330,135,300,165,True) | b1 h=300 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2
+  ev heightchanged 360 w=360 h=360
+  ev resize w=360 h=360
+vertical, b1 not vertical: cb w=360 h=360 rows=1 Text1(0,420,300,0,False) Text2(0,0,300,300,True) | b1 h=0 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2
+  ev heightchanged 690 w=690 h=360
+  ev resize w=690 h=360
+  ev resize w=690 h=360
+horizontal: cb w=690 h=360 rows=1 Text1(420,0,0,300,True) Text2(630,0,0,300,True) | b1 h=300 w=2400 img=0 pos=1 | b2 h=300 w=0 img=0 pos=2

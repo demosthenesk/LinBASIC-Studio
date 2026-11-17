@@ -1,0 +1,12 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 2) — 3ος γύρος (f_ctl2)
+
+Image, Shape, Line, ScrollBars, Drive/Dir/File lists, LoadPicture, MsgBox και InputBox.
+Οι MsgBox/InputBox απαντώνται μόνες τους με SendKeys. Το έργο κλείνει μόνο του σε 1-2 δευτερόλεπτα.
+
+ΣΗΜΑΝΤΙΚΟ: το UAC πρέπει να είναι κλειστό (όπως στο f_ui) και η φόρμα να μείνει μπροστά.
+Μην πατάς τίποτα και μην αλλάζεις παράθυρο όσο τρέχει.
+
+1. Άνοιξε το f_ctl2\Ctl2Tests.vbp με το VB6 και πάτα F5.
+   - Αν βγει σφάλμα ή μείνει ανοιχτό κάποιο MsgBox, στείλε μου εικόνα.
+2. File > Make Ctl2Tests.exe και τρέξε το Ctl2Tests.exe μία φορά.
+3. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο f_ctl2\expected\f_ctl2.txt.

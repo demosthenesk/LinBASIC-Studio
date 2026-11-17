@@ -1,0 +1,5 @@
+Type=Exe
+Object={6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}#1.0#0; SysInfo.Ocx
+Form=Form1.frm
+Startup="Form1"
+Name="Si"

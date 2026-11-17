@@ -1,0 +1,1 @@
+1032 1253 Greek (Greece) - Windows 7 32-bit VM that ran LangTests.exe

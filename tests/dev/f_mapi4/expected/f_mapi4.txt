@@ -1,0 +1,173 @@
+== start
+-- signon by Action; fetch, then one property at a time (two unread messages with a file each)
+  LogonUI = Boolean:False
+  Action = Integer:1
+    (394 [Mapi4Test] Get not supported (write-only property))
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:False NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:65537
+  SessionID = Long:65537
+    | MAPILogon(ui=0, profile="", password="", flags=0x1000) = 0 session=0x10001
+  Fetch ok
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 0 id="000101"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000101", flags=0x0) = 16 id=""
+count: MsgCount=Long:2
+  MsgIndex = Integer:0
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="With a file" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x1 recips=1 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+id: MsgID=String:000100
+read: MsgRead=Boolean:False
+subject: MsgSubject=String:With a file MsgOrigDisplayName=String:Eve Adams RecipCount=Long:1
+attachments: AttachmentCount=Long:0
+    (380 [Mapi4Test] Invalid property value)
+  AttachmentIndex = Integer:0 !380
+attachment: AttachmentName=String:note.txt AttachmentPathName=String:<store>\tmp\000100_1_note.txt AttachmentPosition=Long:-1
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x0) = 0
+    |   subject="With a file" note="Text of one" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x1 recips=1 files=1
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   file(0) flags=0 position=4294967295 path="<store>\tmp\000100_1_note.txt" name="note.txt" type=(null)
+    text: Hello from Eve
+note: MsgNoteText=String:Text of one MsgRead=Boolean:True AttachmentCount=Long:1
+-- the second message: the text first, then the attachments, Reply after the text
+  MsgIndex = Integer:1
+    | MAPIReadMail(session=0x10001, ui=0, id="000101", flags=0xc0) = 0
+    |   subject="Second" note=(null) type=""
+    |   date="2026/01/06 09:00" conversation="" flags=0x1 recips=2 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+note: MsgNoteText=String:Text of two
+    | MAPIReadMail(session=0x10001, ui=0, id="000101", flags=0x800) = 0
+    |   subject="Second" note="Text of two" type=""
+    |   date="2026/01/06 09:00" conversation="" flags=0x1 recips=2 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+attachments: AttachmentCount=Long:0 MsgRead=Boolean:True
+  Reply ok
+reply: MsgIndex=Long:-1 MsgSubject=String:RE: Second RecipCount=Long:1 AttachmentCount=Long:1
+    | MAPIReadMail(session=0x10001, ui=0, id="000101", flags=0x0) = 0
+    |   subject="Second" note="Text of two" type=""
+    |   date="2026/01/06 09:00" conversation="" flags=0x0 recips=2 files=1
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+    |   file(0) flags=0 position=4294967295 path="<store>\tmp\000101_1_c.txt" name="c.txt" type=(null)
+  MsgIndex = Integer:1
+message 1 again: MsgSubject=String:Second AttachmentCount=Long:1
+  MsgIndex = Integer:0
+  Copy ok
+copy of 0: MsgIndex=Long:-1 MsgSubject=String:With a file MsgOrigDisplayName=String:Eve Adams MsgOrigAddress=String:SMTP:eve@example.com AttachmentCount=Long:1
+-- the compose buffer across Fetch; Send, Save, Delete on a message read and on the buffer
+  Compose ok
+  MsgSubject = String:Kept
+  Fetch ok
+after fetch: MsgIndex=Long:0 MsgCount=Long:2 MsgSubject=String:With a file
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 0 id="000101"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000101", flags=0x0) = 16 id=""
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="With a file" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+  MsgIndex = Integer:-1
+buffer: MsgIndex=Long:-1 MsgSubject=String:Kept RecipCount=Long:0
+  MsgIndex = Integer:0
+    (32052 [Mapi4Test] Application-defined or object-defined error)
+  Send !32052
+  Save !32052
+  Forward ok
+forward: MsgIndex=Long:-1 MsgSubject=String:FW: With a file
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x0) = 0
+    |   subject="With a file" note="Text of one" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x0 recips=1 files=1
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   file(0) flags=0 position=4294967295 path="<store>\tmp\000100_1_note.txt" name="note.txt" type=(null)
+  MsgIndex = Integer:-1
+    (32055 [Mapi4Test] Application-defined or object-defined error)
+  Delete !32055
+buffer after delete: MsgIndex=Long:-1 MsgCount=Long:2 MsgSubject=String:FW: With a file
+-- the Action of MAPIMessages
+  Action = Integer:6
+action 6: MsgIndex=Long:-1 MsgSubject=String: RecipCount=Long:0
+  MsgSubject = String:By action
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob Smith
+  RecipAddress = String:SMTP:bob@example.com
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Carol Jones
+  RecipAddress = String:SMTP:carol@example.com
+  AttachmentIndex = Integer:0
+  AttachmentPathName = String:<app>\att1.txt
+  RecipIndex = Integer:1
+  Action = Integer:14
+action 14: RecipCount=Long:1 RecipIndex=Long:0 RecipDisplayName=String:Bob Smith AttachmentCount=Long:1
+  Action = Integer:15
+action 15: RecipCount=Long:1 AttachmentCount=Long:0 AttachmentIndex=Long:0
+  Action = Integer:4
+action 4: MsgIndex=Long:-1 MsgID=String:000102 MsgCount=Long:2
+    | MAPISaveMail(session=0x10001, ui=0, flags=0x0, id="")
+    |   subject="By action" note=(null) type=(null)
+    |   date=(null) conversation=(null) flags=0x0 recips=1 files=0
+    |   originator (null)
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   = 0 id="000102"
+  Action = Integer:1
+action 1: MsgCount=Long:3
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="", flags=0x0) = 0 id="000100"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000100", flags=0x0) = 0 id="000101"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000101", flags=0x0) = 0 id="000102"
+    | MAPIFindNext(session=0x10001, ui=0, type="", seed="000102", flags=0x0) = 16 id=""
+  MsgIndex = Integer:0
+  Action = Integer:7
+action 7: MsgIndex=Long:-1 MsgSubject=String:RE: With a file RecipCount=Long:1
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0xc0) = 0
+    |   subject="With a file" note=(null) type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    | MAPIReadMail(session=0x10001, ui=0, id="000100", flags=0x0) = 0
+    |   subject="With a file" note="Text of one" type=""
+    |   date="2026/01/05 10:20" conversation="" flags=0x0 recips=1 files=1
+    |   originator class=0 name="Eve Adams" address="SMTP:eve@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   file(0) flags=0 position=4294967295 path="<store>\tmp\000100_1_note.txt" name="note.txt" type=(null)
+  MsgIndex = Integer:0
+  Action = Integer:8
+action 8: MsgIndex=Long:-1 MsgSubject=String:RE: With a file RecipCount=Long:2
+  MsgIndex = Integer:0
+  Action = Integer:9
+action 9: MsgIndex=Long:-1 MsgSubject=String:FW: With a file RecipCount=Long:0
+  MsgIndex = Integer:0
+  Action = Integer:5
+action 5: MsgIndex=Long:-1 MsgSubject=String:With a file MsgID=String:000100
+  MsgIndex = Integer:2
+message 2: MsgID=String:000102 MsgSubject=String:By action
+    | MAPIReadMail(session=0x10001, ui=0, id="000102", flags=0xc0) = 0
+    |   subject="By action" note=(null) type=""
+    |   date="2026/01/02 03:04" conversation="" flags=0x0 recips=1 files=0
+    |   originator class=0 name="" address="" eid=0
+    |   recip(0) class=1 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+  Action = Integer:10
+action 10: MsgCount=Long:2 MsgIndex=Long:1 MsgID=String:000101
+    | MAPIDeleteMail(session=0x10001, ui=0, id="000102", flags=0x0) = 0
+    | MAPIReadMail(session=0x10001, ui=0, id="000101", flags=0xc0) = 0
+    |   subject="Second" note=(null) type=""
+    |   date="2026/01/06 09:00" conversation="" flags=0x0 recips=2 files=0
+    |   originator class=0 name="Bob Smith" address="SMTP:bob@example.com" eid=0
+    |   recip(0) class=1 name="Tester" address="SMTP:tester@example.com" eid=0
+    |   recip(1) class=1 name="Carol Jones" address="SMTP:carol@example.com" eid=0
+  Action = Integer:13
+  Action = Integer:16 !380
+  Action = Integer:0 !380
+-- signoff by Action
+  Action = Integer:2
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:False NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:0
+    | MAPILogoff(session=0x10001, ui=0, flags=0x0) = 0
+end

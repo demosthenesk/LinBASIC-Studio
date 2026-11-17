@@ -1,0 +1,54 @@
+main start
+Form1 Initialize
+Form1 Load Form1 Form1 1
+controls 9 CommandButton TextBox Object OptionButton Timer
+command1 Command1 240 240 1215 495 True False 0
+text1 [Text1] Text1 5 0
+label1 Label1 Label1
+option1 2 0 1 False 1
+timer1 100 False
+Text1 Change hello
+after text hello
+Text1 Change world
+Check1 Click 1
+Option1 Click 1
+options False True
+list 3 c -1
+List1 Click 1
+list text a
+Combo1 Click 1
+combo y 2
+Command1 Click
+loaded option 3 False 2400
+end load Go Main
+Form1 Resize
+main end 1
+Form1 Activate
+Timer 1
+Form2 Initialize
+Form2 Load Second form
+forms 2 False
+shown True
+Timer 2
+hidden False 2
+Form2 QueryUnload 1
+Form2 Unload
+unloaded 1
+Form2 Load Second form
+caption again Form2
+forms 2
+Form2 QueryUnload 1
+Form2 Unload
+Form2 Terminate
+form2 nothing
+Form1 Activate
+Timer 3
+option count 2
+Form1 QueryUnload 1
+cancelled
+still loaded 1
+Timer 4
+Form1 QueryUnload 1
+Form1 Unload
+after unload me 0
+Form1 Terminate

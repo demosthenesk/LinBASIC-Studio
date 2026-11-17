@@ -1,0 +1,34 @@
+db made
+== the design-time properties (the .frx of LinBASIC Studio)
+  DBGrid1 Caption=String 'Unbound' DataMode=1 AllowAddNew=True AllowDelete=True AllowUpdate=True MarqueeStyle=6 RecordSelectors=True HeadLines=1
+    Font=MS Sans Serif 8,25 False HeadFont=MS Sans Serif 8,25 False Width=4935 Height=1935 Columns.Count=2
+    col 0 Caption=String 'Key' DataField=String '' Width=1000,063 Alignment=0
+    col 1 Caption=String 'Text' DataField=String '' Width=2000,126 Alignment=0
+  DBGrid2 Caption=String 'Bound' DataMode=0 AllowAddNew=False AllowDelete=False AllowUpdate=False MarqueeStyle=3 RecordSelectors=False HeadLines=2
+    Font=Arial 9,75 True HeadFont=Arial 9 True Width=4935 Height=1575 Columns.Count=2
+    col 0 Caption=String 'Number' DataField=String 'ID' Width=1000,063 Alignment=2
+    col 1 Caption=String 'Person' DataField=String 'Name' Width=2000,126 Alignment=0
+  DBList1 RowSource=Nothing ListField=String 'Name' VisibleItems(0)=Byte() | DBCombo1 Style=2 VisibleCount=0 VisibleItems(0)=! 380 Invalid property value
+  DBList1 Text=Cleo: String 'Cleo' String '3' True | DBCombo1 BoundText=4: String 'Dora' True
+== DBGrid2 bound, its columns
+  ApproxCount=4 Text=String '1' Columns(1).Value=String 'Anna' Columns("Person").Text=String 'Anna'
+  MoveNext: Row=1 Text=String '2' Columns(1).Value=String 'Bill'
+  ReBind: Columns.Count=2 Caption(0)=String 'Number' DataField(1)=String 'Name' Text=String '2'
+== DBGrid1 unbound
+  first: Row=0 Col=0 Text=String '10' Bookmark=Long '1' FirstRow=Long '1' DataChanged=False (read) ApproxCount=6 VisibleRows>=3=True
+  Columns(0).Value=Long '10' Columns(1).Text=String 'R1' CellText(3)=String 'R3' CellValue(3)=Long '30' GetBookmark(1)=Long '2' RowBookmark(2)=Long '3'
+  Row=2 -> Row=2 Col=0 Text=String '30' Bookmark=Long '3' FirstRow=Long '1' DataChanged=False ev[RCC(Long '1',0)]
+  Col=1 -> Row=2 Col=1 Text=String 'R3' Bookmark=Long '3' FirstRow=Long '1' DataChanged=False ev[RCC(Long '3',0)]
+  Text=Zed -> Row=2 Col=1 Text=String 'Zed' Bookmark=Long '3' FirstRow=Long '1' DataChanged=True
+  Row=0 -> Row=0 Col=1 Text=String 'R1' Bookmark=Long '1' FirstRow=Long '1' DataChanged=False ev[BU Write(Long '3'|Null|String 'Zed') AU RCC(Long '3',1)]
+  Texts(3)=Zed
+  Refresh -> Row=0 Col=1 Text=String 'R1' Bookmark=Long '1' FirstRow=Long '1' DataChanged=False (read) ev[RCC(Long '1',1)]
+  Columns(1).Value=Wye -> Row=0 Col=1 Text=String 'Wye' Bookmark=Long '1' FirstRow=Long '1' DataChanged=True
+  Bookmark=5 -> Row=3 Col=1 Text=String 'R5' Bookmark=Long '5' FirstRow=Long '2' DataChanged=False (read) ev[BU Write(Long '1'|Null|String 'Wye') AU RCC(Long '1',1)]
+  Texts(1)=Wye
+  ReBind -> Row=3 Col=1 Text=String 'R5' Bookmark=Long '5' FirstRow=Long '2' DataChanged=False (read) ev[RCC(Long '5',1)]
+  Scroll 0,2 -> Row=3 Col=1 Text=String 'R5' Bookmark=Long '5' FirstRow=Long '2' DataChanged=False
+  Bookmark=1 -> Row=0 Col=1 Text=String 'Wye' Bookmark=Long '1' FirstRow=Long '1' DataChanged=False (read) ev[RCC(Long '5',1)]
+  ApproxCount=6 -> Row=0 Col=1 Text=String 'Wye' Bookmark=Long '1' FirstRow=Long '1' DataChanged=False
+  ApproxCount=6 AddNewMode=0 Columns(1).Text=String 'Wye'
+end

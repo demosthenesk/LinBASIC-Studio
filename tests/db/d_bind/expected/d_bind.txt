@@ -1,0 +1,38 @@
+db made
+bc DBindingCollection count=0 mode=1 member=[]
+datasource Recordset
+  let name Anna
+  let age 31
+p Anna/31
+  let name Bill
+  let age 25
+moved p Bill/25
+  let name Billy
+  let name Cleo
+  let age 42
+moved p Cleo/42
+  let name Billy
+  let age 25
+back p Billy/25 field=Billy
+  let age 30
+  let name Bob
+mode 1 field=Billy age=25 editmode=0
+  let name Anna
+  let age 31
+  let name Anna
+  let age 31
+updatecontrols p Anna/31
+removed count 1
+  ! 5 Invalid procedure call or argument
+  ! 438 Object doesn't support this property or method
+  ! 42000 Invalid field name supplied
+== class source
+  getdatamember []
+  let name one
+p2 one
+  let name two
+src moved p2 two
+  getdatamember [other]
+  let name other one
+member other p2 other one
+end

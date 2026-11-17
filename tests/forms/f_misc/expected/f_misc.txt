@@ -1,0 +1,57 @@
+load True False 1 0 9 0
+activate Text1
+text1 gotfocus
+step 1
+after setfocus Text2
+text1 lostfocus
+text2 gotfocus
+step 2
+now Text2
+after setfocus Command1
+text2 lostfocus
+command1 gotfocus
+step 3
+after setfocus Text1
+text1 gotfocus
+step 4
+text1 validate [ok]
+text1 lostfocus
+text2 gotfocus
+after tab Text2
+step 5
+after setfocus Text1
+text2 lostfocus
+text1 gotfocus
+step 6
+text1 validate []
+validatecontrols 380 Text1
+step 7
+pop click
+pop A click
+after popup
+pop click
+after popup 2
+step 8
+added TextBox txtNew False 0 0 1200 480 [] 10 5
+mtext change [abc]
+added2 cmdNew Picture1 [] 11
+removed 9
+err 729
+step 9
+pointer 11 0
+icon 3 423 423
+step 10
+picture1 dragover Picture1 0
+picture1 dragover Picture1 1
+command2 dragover Picture1 600 240 0
+command2 dragover Picture1 600 240 2
+command2 dragdrop Picture1 600 240
+drag done
+step 11
+picture1 dragover Picture1 0
+drag begun
+picture1 dragover Picture1 1
+command2 dragover Picture1 300 150 0
+command2 dragdrop Picture1 300 150
+drag ended
+step 12

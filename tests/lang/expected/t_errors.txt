@@ -1,0 +1,12 @@
+div0 11 Division by zero
+cleared 0 
+overflow 6 
+mismatch 13 
+from sub 11 
+raise 1234  MySource My message
+object error 5 
+ 0,25  error 11 error 6
+handler 5  0 
+handler 5  0 
+handler 5  0 
+resumed 3 

@@ -1,0 +1,87 @@
+== start
+  ctl init
+  ctl init
+load: name=[RepCtl.RowCtl] caption=[Edited] style=0 rowind=False scroll=3 divider=1 integral=False border=1 app=1 back=FF fore=80000012 enabled=True member=[]
+load: bindings=3
+  binding 1 PName=Name key=[kName] changed=False fmt=IStdDataFormatDisp tag=Empty
+  binding 2 PAge=Age key=[kAge] changed=False fmt=IStdDataFormatDisp tag=Empty
+  binding 3 PActive=Active key=[] changed=False fmt=IStdDataFormatDisp tag=Empty
+load props=String()(0 To 2) PName PAge PActive
+load fields=Null
+load ctl=RowCtl
+load before data: rows=0 active=0 count=0 cur=(Null) ctl=//False ! 91 Object variable or With block variable not set
+load after data: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Anna/31/True
+load fields=String()(0 To 4) ID Name Age Active Notes props=String()(0 To 2) PName PAge PActive
+  ev repeatedcontrolloaded ctl=RowCtl
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+activate: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Anna/31/True
+timer: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Anna/31/True
+movenext: rows=3 active=2 count=8 cur=Bill rs=Bill ctl=Bill/25/False
+movelast: rows=3 active=3 count=8 cur=Hana rs=Hana ctl=Hana/64/False
+movefirst: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Anna/31/True
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+  visible 1 = Anna
+  visible 2 = Bill
+  visible 3 = Cleo
+  visible 0 ! 381 [DataRepeater] Invalid property array index
+  visible past ! 381 [DataRepeater] Invalid property array index
+activerow 3: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Anna/31/True
+currentrecord 6th: rows=3 active=1 count=8 cur=Finn rs=Finn ctl=Finn/50/False
+  currentrecord x ! 32002 [DataRepeater] Invalid bookmark
+  activerow 99 ! 380 [DataRepeater] Invalid property value
+movefirst: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Anna/31/True
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anna
+  ev currentrecordchanged cur=Anna
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anna
+  ev currentrecordchanged cur=Anna
+set pname: rows=3 active=1 count=8 cur=Anna rs=Anna ctl=Zed/31/True
+  rs name=Anna editmode=0
+  ev dataupdate cancel=False record=Anna field=[Name]
+moved: rows=3 active=2 count=8 cur=Bill rs=Bill ctl=Bill/25/False
+  db: 1:Zed:31:True 2:Bill:25:False 3:Cleo:42:True 4:Dino:37:False 5:Eve:28:True 6:Finn:50:False 7:Gus:19:True 8:Hana:64:False
+back: rows=3 active=1 count=8 cur=Zed rs=Zed ctl=Zed/31/True
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Zed
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Zed
+  ev activerowchanged active=1
+  add pactive ! 35703 [RepeaterBindings] PropertyName already bound
+after add: bindings=3
+  binding 1 PName=Name key=[kName] changed=False fmt=IStdDataFormatDisp tag=Empty
+  binding 2 PAge=Age key=[kAge] changed=False fmt=IStdDataFormatDisp tag=Empty
+  binding 3 PActive=Active key=[] changed=False fmt=IStdDataFormatDisp tag=Empty
+after add: rows=3 active=1 count=8 cur=Zed rs=Zed ctl=Zed/31/True
+  add pname again ! 35703 [RepeaterBindings] PropertyName already bound
+  add nope ! 35704 [RepeaterBindings] Invalid PropertyName
+  add info ! 35701 [RepeaterBindings] Property is not bindable
+  add nofield ! 35703 [RepeaterBindings] PropertyName already bound
+  item ! 35600 [RepeaterBindings] Index out of bounds
+  item 9 ! 35600 [RepeaterBindings] Index out of bounds
+  item zz ! 35601 [RepeaterBindings] Element not found
+after remove: bindings=2
+  binding 1 PName=Name key=[kName] changed=False fmt=IStdDataFormatDisp tag=Empty
+  binding 2 PActive=Active key=[] changed=False fmt=IStdDataFormatDisp tag=Empty
+after remove moved: rows=3 active=2 count=8 cur=Bill rs=Bill ctl=Bill/31/False
+  ev currentrecordchanged cur=Bill
+  ev activerowchanged active=2
+no data: rows=0 active=0 count=0 cur=(Null) rs=Bill ctl=Bill/31/False
+end
+  ctl term
+  ctl term

@@ -1,0 +1,15 @@
+Form: RightToLeft False, Alignment -
+Text1: RightToLeft False, Alignment 0
+Label1: RightToLeft False, Alignment 0
+Command1: RightToLeft False, Alignment -
+Check1: RightToLeft False, Alignment 0
+List1: RightToLeft False, Alignment -
+Combo1: RightToLeft False, Alignment -
+Text2: RightToLeft False, Alignment 0
+Text1 = False: err 0, now False
+Text2 = True: err 0, now False
+Label1 = False: err 0, now False
+Form = False: err 0, now False
+Check1 = False: err 0, now False
+Text3 (added): RightToLeft False, Alignment 0
+done

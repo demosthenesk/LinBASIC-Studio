@@ -1,0 +1,16 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 2) — 4ος γύρος: f_win και f_mouse
+
+f_win: MDI φόρμες, πολλά αντίγραφα της ίδιας φόρμας, ιδιότητες παραθύρου
+(BorderStyle, Width/Height, WindowState, Move), Paint, Screen, App, Clipboard.
+f_mouse: ποντίκι μέσω των API SetCursorPos/mouse_event.
+
+ΣΗΜΑΝΤΙΚΟ: μην αγγίζεις ποντίκι και πληκτρολόγιο όσο τρέχουν. Στο f_mouse ο κώδικας
+κινεί και πατάει μόνος του το ποντίκι μέσα στη φόρμα. Το f_win χρησιμοποιεί το
+πρόχειρο (Clipboard). Κάθε έργο κλείνει μόνο του σε λίγα δευτερόλεπτα.
+
+1. Άνοιξε το f_win\WinTests.vbp, πάτα F5 και περίμενε να κλείσει.
+2. File > Make WinTests.exe και τρέξε το WinTests.exe μία φορά.
+3. Άνοιξε το f_mouse\MouseTests.vbp, πάτα F5 και περίμενε να κλείσει.
+4. File > Make MouseTests.exe και τρέξε το MouseTests.exe μία φορά.
+5. Πες μου «έτοιμο». Τα αποτελέσματα: f_win\expected\f_win.txt και f_mouse\expected\f_mouse.txt.
+Αν βγει σφάλμα, πάτα Debug και στείλε μου εικόνα.

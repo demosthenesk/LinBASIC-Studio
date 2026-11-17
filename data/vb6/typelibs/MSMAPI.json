@@ -1,0 +1,2927 @@
+{
+ "library": "MSMAPI",
+ "short": "MSMAPI",
+ "guid": "{20C62CAE-15DA-101B-B9A8-444553540000}",
+ "version": "1.1",
+ "lcid": 1033,
+ "helpfile": "MAPI98.CHM",
+ "file": "msmapi32.Ocx",
+ "types": [
+  {
+   "name": "DeleteConstants",
+   "kind": "enum",
+   "guid": "{20C62CB1-15DA-101B-B9A8-444553540000}",
+   "flags": [],
+   "helpcontext": 260001,
+   "members": [
+    {
+     "name": "mapMessageDelete",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 260002
+    },
+    {
+     "name": "mapRecipientDelete",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 260003
+    },
+    {
+     "name": "mapAttachmentDelete",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 260004
+    }
+   ]
+  },
+  {
+   "name": "MessagesActionConstants",
+   "kind": "enum",
+   "guid": "{B54A7431-FC5B-11CF-89BF-00AA00688B10}",
+   "flags": [],
+   "helpcontext": 260117,
+   "members": [
+    {
+     "name": "mapFetch",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 260102
+    },
+    {
+     "name": "mapSendDialog",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 260111
+    },
+    {
+     "name": "mapSend",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 260109
+    },
+    {
+     "name": "mapSave",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 260107
+    },
+    {
+     "name": "mapCopy",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 260100
+    },
+    {
+     "name": "mapCompose",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 260099
+    },
+    {
+     "name": "mapReply",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 260104
+    },
+    {
+     "name": "mapReplyAll",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 260105
+    },
+    {
+     "name": "mapForward",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 260103
+    },
+    {
+     "name": "mapDelete",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 10,
+     "helpcontext": 260112
+    },
+    {
+     "name": "mapShowAddressBook",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 11,
+     "helpcontext": 260113
+    },
+    {
+     "name": "mapShowRecipDetails",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 12,
+     "helpcontext": 260114
+    },
+    {
+     "name": "mapResolveName",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 13,
+     "helpcontext": 260106
+    },
+    {
+     "name": "mapDeleteRecip",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 14,
+     "helpcontext": 260115
+    },
+    {
+     "name": "mapDeleteAttachment",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 15,
+     "helpcontext": 260116
+    }
+   ]
+  },
+  {
+   "name": "MAPIErrors",
+   "kind": "enum",
+   "guid": "{20C62CB2-15DA-101B-B9A8-444553540000}",
+   "flags": [],
+   "helpcontext": 260005,
+   "members": [
+    {
+     "name": "mapSuccessSuccess",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 32000,
+     "helpcontext": 260006
+    },
+    {
+     "name": "mapUserAbort",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 32001,
+     "helpcontext": 260032
+    },
+    {
+     "name": "mapFailure",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 32002,
+     "helpcontext": 260007
+    },
+    {
+     "name": "mapLoginFail",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 32003,
+     "helpcontext": 260008
+    },
+    {
+     "name": "mapDiskFull",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 32004,
+     "helpcontext": 260009
+    },
+    {
+     "name": "mapInsufficientMem",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 32005,
+     "helpcontext": 260010
+    },
+    {
+     "name": "mapAccessDenied",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32006,
+     "helpcontext": 260011
+    },
+    {
+     "name": "mapGeneralFailure",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 32007,
+     "helpcontext": 260012
+    },
+    {
+     "name": "mapTooManySessions",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 32008,
+     "helpcontext": 260013
+    },
+    {
+     "name": "mapTooManyFiles",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 32009,
+     "helpcontext": 260014
+    },
+    {
+     "name": "mapTooManyRecipients",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 32010,
+     "helpcontext": 260015
+    },
+    {
+     "name": "mapAttachmentNotFound",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 32011,
+     "helpcontext": 260016
+    },
+    {
+     "name": "mapAttachmentOpenFailure",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 32012,
+     "helpcontext": 260017
+    },
+    {
+     "name": "mapAttachmentWriteFailure",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 32013,
+     "helpcontext": 260018
+    },
+    {
+     "name": "mapUnknownRecipient",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 32014,
+     "helpcontext": 260019
+    },
+    {
+     "name": "mapBadRecipType",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 32015,
+     "helpcontext": 260020
+    },
+    {
+     "name": "mapNoMessages",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 32016,
+     "helpcontext": 260021
+    },
+    {
+     "name": "mapInvalidMessage",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 32017,
+     "helpcontext": 260022
+    },
+    {
+     "name": "mapTextTooLarge",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 32018,
+     "helpcontext": 260023
+    },
+    {
+     "name": "mapInvalidSession",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 32019,
+     "helpcontext": 260024
+    },
+    {
+     "name": "mapTypeNotSupported",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 32020,
+     "helpcontext": 260025
+    },
+    {
+     "name": "mapAmbiguousRecipient",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 32021,
+     "helpcontext": 260026
+    },
+    {
+     "name": "mapMessageInUse",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 32022,
+     "helpcontext": 260027
+    },
+    {
+     "name": "mapNetworkFailure",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 32023,
+     "helpcontext": 260028
+    },
+    {
+     "name": "mapInvalidEditFields",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 32024,
+     "helpcontext": 260029
+    },
+    {
+     "name": "mapInvalidRecips",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 32025,
+     "helpcontext": 260030
+    },
+    {
+     "name": "mapNotSupported",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 32026,
+     "helpcontext": 260031
+    },
+    {
+     "name": "mapSessionExist",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 32050,
+     "helpcontext": 260033
+    },
+    {
+     "name": "mapInvalidBuffer",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 32051,
+     "helpcontext": 260034
+    },
+    {
+     "name": "mapInvalidReadBufferAction",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 32052,
+     "helpcontext": 260035
+    },
+    {
+     "name": "mapNoSession",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 32053,
+     "helpcontext": 260036
+    },
+    {
+     "name": "mapInvalidRecipient",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 32054,
+     "helpcontext": 260037
+    },
+    {
+     "name": "mapInvalidComposeBufferAction",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 32055,
+     "helpcontext": 260038
+    },
+    {
+     "name": "mapControlFailure",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 32056,
+     "helpcontext": 260039
+    },
+    {
+     "name": "mapNoRecipients",
+     "memid": 1073741858,
+     "kind": "const",
+     "type": "Long",
+     "value": 32057,
+     "helpcontext": 260040
+    },
+    {
+     "name": "mapNoAttachment",
+     "memid": 1073741859,
+     "kind": "const",
+     "type": "Long",
+     "value": 32058,
+     "helpcontext": 260041
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{3438EDD0-D90A-11CF-89B4-00AA00688B10}",
+   "flags": [],
+   "helpcontext": 260110,
+   "members": [
+    {
+     "name": "mpeOutOfMemory",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 7
+    },
+    {
+     "name": "mpeErrorLoadingMAPI",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 48,
+     "helpcontext": 48
+    },
+    {
+     "name": "mpeInvalidPropertyValue",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 380,
+     "helpcontext": 380
+    },
+    {
+     "name": "mpeInvalidPropertyArrayIndex",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 381,
+     "helpcontext": 381
+    },
+    {
+     "name": "mpeSetNotSupported",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 383,
+     "helpcontext": 383
+    },
+    {
+     "name": "mpeGetNotSupported",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 394,
+     "helpcontext": 394
+    },
+    {
+     "name": "mpeUserCancelled",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32001,
+     "helpcontext": 32001
+    },
+    {
+     "name": "mpeUnspecifiedFailure",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 32002,
+     "helpcontext": 32002
+    },
+    {
+     "name": "mpeLoginFailed",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 32003,
+     "helpcontext": 32003
+    },
+    {
+     "name": "mpeDiskFull",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 32004,
+     "helpcontext": 32004
+    },
+    {
+     "name": "mpeInsufficientMemory",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 32005,
+     "helpcontext": 32005
+    },
+    {
+     "name": "mpeAccessDenied",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 32006,
+     "helpcontext": 32006
+    },
+    {
+     "name": "mpeMAPIFailure",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 32007,
+     "helpcontext": 32007
+    },
+    {
+     "name": "mpeTooManySessions",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 32008,
+     "helpcontext": 32008
+    },
+    {
+     "name": "mpeTooManyFiles",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 32009,
+     "helpcontext": 32009
+    },
+    {
+     "name": "mpeTooManyRecipients",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 32010,
+     "helpcontext": 32010
+    },
+    {
+     "name": "mpeAttachmentNotFound",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 32011,
+     "helpcontext": 32011
+    },
+    {
+     "name": "mpeFailedOpeningAttachment",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 32012,
+     "helpcontext": 32012
+    },
+    {
+     "name": "mpeFailedWritingAttachment",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 32013,
+     "helpcontext": 32013
+    },
+    {
+     "name": "mpeUnknownRecipient",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 32014,
+     "helpcontext": 32014
+    },
+    {
+     "name": "mpeInvalidRecipientType",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 32015,
+     "helpcontext": 32015
+    },
+    {
+     "name": "mpeNoMessages",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 32016,
+     "helpcontext": 32016
+    },
+    {
+     "name": "mpeInvalidMessage",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 32017,
+     "helpcontext": 32017
+    },
+    {
+     "name": "mpeTextTooLarge",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 32018,
+     "helpcontext": 32018
+    },
+    {
+     "name": "mpeInvalidSession",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 32019,
+     "helpcontext": 32019
+    },
+    {
+     "name": "mpeTypeNotSupported",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 32020,
+     "helpcontext": 32020
+    },
+    {
+     "name": "mpeAmbiguousRecipient",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 32021,
+     "helpcontext": 32021
+    },
+    {
+     "name": "mpeMessageInUse",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 32022,
+     "helpcontext": 32022
+    },
+    {
+     "name": "mpeNetworkFailure",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 32023,
+     "helpcontext": 32023
+    },
+    {
+     "name": "mpeInvalidEditFields",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 32024,
+     "helpcontext": 32024
+    },
+    {
+     "name": "mpeInvalidRecipients",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 32025,
+     "helpcontext": 32025
+    },
+    {
+     "name": "mpeNotSupported",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 32026,
+     "helpcontext": 32026
+    },
+    {
+     "name": "mpeUserAbortedAction",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 32027,
+     "helpcontext": 32027
+    },
+    {
+     "name": "mpeMAPIMissing",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 32048,
+     "helpcontext": 32048
+    },
+    {
+     "name": "mpeLogonFailure",
+     "memid": 1073741858,
+     "kind": "const",
+     "type": "Long",
+     "value": 32050,
+     "helpcontext": 32050
+    },
+    {
+     "name": "mpePropertyIsReadOnly",
+     "memid": 1073741859,
+     "kind": "const",
+     "type": "Long",
+     "value": 32051,
+     "helpcontext": 32051
+    },
+    {
+     "name": "mpeInvalidAction",
+     "memid": 1073741860,
+     "kind": "const",
+     "type": "Long",
+     "value": 32052,
+     "helpcontext": 32052
+    },
+    {
+     "name": "mpeNoValidSessionID",
+     "memid": 1073741861,
+     "kind": "const",
+     "type": "Long",
+     "value": 32053,
+     "helpcontext": 32053
+    },
+    {
+     "name": "mpeNoOriginator",
+     "memid": 1073741862,
+     "kind": "const",
+     "type": "Long",
+     "value": 32054,
+     "helpcontext": 32054
+    },
+    {
+     "name": "mpeActionNotValid",
+     "memid": 1073741863,
+     "kind": "const",
+     "type": "Long",
+     "value": 32055,
+     "helpcontext": 32055
+    },
+    {
+     "name": "mpeNoMessageList",
+     "memid": 1073741864,
+     "kind": "const",
+     "type": "Long",
+     "value": 32056,
+     "helpcontext": 32056
+    },
+    {
+     "name": "mpeNoRecipients",
+     "memid": 1073741865,
+     "kind": "const",
+     "type": "Long",
+     "value": 32057,
+     "helpcontext": 32057
+    },
+    {
+     "name": "mpeNoAttachments",
+     "memid": 1073741866,
+     "kind": "const",
+     "type": "Long",
+     "value": 32058,
+     "helpcontext": 32058
+    }
+   ]
+  },
+  {
+   "name": "RecipTypeConstants",
+   "kind": "enum",
+   "guid": "{20C62CB3-15DA-101B-B9A8-444553540000}",
+   "flags": [],
+   "helpcontext": 260042,
+   "members": [
+    {
+     "name": "mapOrigList",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 260043
+    },
+    {
+     "name": "mapToList",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 260044
+    },
+    {
+     "name": "mapCcList",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 260045
+    },
+    {
+     "name": "mapBccList",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 260046
+    }
+   ]
+  },
+  {
+   "name": "AttachTypeConstants",
+   "kind": "enum",
+   "guid": "{20C62CB4-15DA-101B-B9A8-444553540000}",
+   "flags": [],
+   "helpcontext": 260047,
+   "members": [
+    {
+     "name": "mapData",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 260048
+    },
+    {
+     "name": "mapEOLE",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 260049
+    },
+    {
+     "name": "mapSOLE",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 260050
+    }
+   ]
+  },
+  {
+   "name": "SessionActionConstants",
+   "kind": "enum",
+   "guid": "{20C62CB5-15DA-101B-B9A8-444553540000}",
+   "flags": [],
+   "helpcontext": 260051,
+   "members": [
+    {
+     "name": "mapSignOn",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 260052
+    },
+    {
+     "name": "mapSignOff",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 260053
+    }
+   ]
+  },
+  {
+   "name": "IMapiSession",
+   "kind": "dispatch",
+   "guid": "{F49AC0B0-DF74-11CF-8E74-00A0C90F26F8}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 260054,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "DownLoadMail",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbDownloadMail",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260056
+    },
+    {
+     "name": "DownLoadMail",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260056
+    },
+    {
+     "name": "LogonUI",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbLogonUI",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260057
+    },
+    {
+     "name": "LogonUI",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260057
+    },
+    {
+     "name": "NewSession",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbNewSession",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260058
+    },
+    {
+     "name": "NewSession",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260058
+    },
+    {
+     "name": "Action",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psAction",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260059
+    },
+    {
+     "name": "Action",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260059
+    },
+    {
+     "name": "SessionID",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plSessionID",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260060
+    },
+    {
+     "name": "SessionID",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260060
+    },
+    {
+     "name": "Password",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPassword",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260061
+    },
+    {
+     "name": "Password",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260061
+    },
+    {
+     "name": "UserName",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrUserName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260055
+    },
+    {
+     "name": "UserName",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260055
+    },
+    {
+     "name": "SignOn",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260062
+    },
+    {
+     "name": "SignOff",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260063
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MAPISessionEvents",
+   "kind": "dispatch",
+   "guid": "{20C62CA2-15DA-101B-B9A8-444553540000}",
+   "flags": [
+    "hidden",
+    "nonextensible",
+    "dispatchable"
+   ],
+   "helpcontext": 260054
+  },
+  {
+   "name": "MAPISession",
+   "kind": "coclass",
+   "guid": "{20C62CA0-15DA-101B-B9A8-444553540000}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 260054,
+   "implements": [
+    {
+     "name": "IMapiSession",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "MAPISessionEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "MAPISession2",
+   "kind": "coclass",
+   "guid": "{47DEF242-7DAF-4828-936A-895FC81D92F8}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 260054,
+   "implements": [
+    {
+     "name": "IMapiSession",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "MAPISessionEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "IMapiMessages",
+   "kind": "dispatch",
+   "guid": "{F49AC0B2-DF74-11CF-8E74-00A0C90F26F8}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 260064,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "AddressCaption",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrAddressCaption",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260065
+    },
+    {
+     "name": "AddressCaption",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260065
+    },
+    {
+     "name": "AddressEditFieldCount",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psAddressEditFieldCount",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260066
+    },
+    {
+     "name": "AddressEditFieldCount",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260066
+    },
+    {
+     "name": "AddressLabel",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrAddressLabel",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260067
+    },
+    {
+     "name": "AddressLabel",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260067
+    },
+    {
+     "name": "AddressModifiable",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbAddressModifiable",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260068
+    },
+    {
+     "name": "AddressModifiable",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260068
+    },
+    {
+     "name": "AddressResolveUI",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbAddressResolveUI",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260069
+    },
+    {
+     "name": "AddressResolveUI",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260069
+    },
+    {
+     "name": "AttachmentCount",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plAttachmentCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260070
+    },
+    {
+     "name": "AttachmentCount",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260070
+    },
+    {
+     "name": "AttachmentIndex",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plAttachmentIndex",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260071
+    },
+    {
+     "name": "AttachmentIndex",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260071
+    },
+    {
+     "name": "AttachmentName",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrAttachmentName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260072
+    },
+    {
+     "name": "AttachmentName",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260072
+    },
+    {
+     "name": "AttachmentPathName",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrAttachmentPathName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260073
+    },
+    {
+     "name": "AttachmentPathName",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260073
+    },
+    {
+     "name": "AttachmentPosition",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plAttachmentPosition",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260074
+    },
+    {
+     "name": "AttachmentPosition",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260074
+    },
+    {
+     "name": "AttachmentType",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psAttachmentType",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260075
+    },
+    {
+     "name": "AttachmentType",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260075
+    },
+    {
+     "name": "FetchMsgType",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrFetchMsgType",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260076
+    },
+    {
+     "name": "FetchMsgType",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260076
+    },
+    {
+     "name": "FetchSorted",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFetchSorted",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260077
+    },
+    {
+     "name": "FetchSorted",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260077
+    },
+    {
+     "name": "FetchUnreadOnly",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFetchUnreadOnly",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260078
+    },
+    {
+     "name": "FetchUnreadOnly",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260078
+    },
+    {
+     "name": "MsgConversationID",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgConversationID",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260079
+    },
+    {
+     "name": "MsgConversationID",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260079
+    },
+    {
+     "name": "MsgCount",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plMsgCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260080
+    },
+    {
+     "name": "MsgCount",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260080
+    },
+    {
+     "name": "MsgDateReceived",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgDateReceived",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260081
+    },
+    {
+     "name": "MsgDateReceived",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260081
+    },
+    {
+     "name": "MsgID",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgID",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260082
+    },
+    {
+     "name": "MsgID",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260082
+    },
+    {
+     "name": "MsgIndex",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plMsgIndex",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260083
+    },
+    {
+     "name": "MsgIndex",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260083
+    },
+    {
+     "name": "MsgNoteText",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgNoteText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260084
+    },
+    {
+     "name": "MsgNoteText",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260084
+    },
+    {
+     "name": "MsgOrigAddress",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgOrigAddress",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260085
+    },
+    {
+     "name": "MsgOrigAddress",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260085
+    },
+    {
+     "name": "MsgOrigDisplayName",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgOrigDisplayName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260086
+    },
+    {
+     "name": "MsgOrigDisplayName",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260086
+    },
+    {
+     "name": "MsgRead",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbMsgRead",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260087
+    },
+    {
+     "name": "MsgRead",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260087
+    },
+    {
+     "name": "MsgReceiptRequested",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbMsgReceiptRequested",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260088
+    },
+    {
+     "name": "MsgReceiptRequested",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260088
+    },
+    {
+     "name": "MsgSent",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbMsgSent",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260089
+    },
+    {
+     "name": "MsgSent",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260089
+    },
+    {
+     "name": "RecipAddress",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrRecipAddress",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260090
+    },
+    {
+     "name": "RecipAddress",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260090
+    },
+    {
+     "name": "RecipCount",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plRecipCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260091
+    },
+    {
+     "name": "RecipCount",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260091
+    },
+    {
+     "name": "RecipDisplayName",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrRecipDisplayName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260092
+    },
+    {
+     "name": "RecipDisplayName",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260092
+    },
+    {
+     "name": "RecipIndex",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plRecipIndex",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260093
+    },
+    {
+     "name": "RecipIndex",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260093
+    },
+    {
+     "name": "RecipType",
+     "memid": 30,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psRecipType",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260094
+    },
+    {
+     "name": "RecipType",
+     "memid": 30,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260094
+    },
+    {
+     "name": "SessionID",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plSessionID",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260095
+    },
+    {
+     "name": "SessionID",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260095
+    },
+    {
+     "name": "MsgSubject",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgSubject",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260096
+    },
+    {
+     "name": "MsgSubject",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260096
+    },
+    {
+     "name": "MsgType",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrMsgType",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260097
+    },
+    {
+     "name": "MsgType",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 260097
+    },
+    {
+     "name": "Action",
+     "memid": 34,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psAction",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 260098
+    },
+    {
+     "name": "Action",
+     "memid": 34,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 260098
+    },
+    {
+     "name": "Compose",
+     "memid": 35,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260099
+    },
+    {
+     "name": "Copy",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260100
+    },
+    {
+     "name": "Delete",
+     "memid": 45,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "vObj",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 260101
+    },
+    {
+     "name": "Fetch",
+     "memid": 37,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260102
+    },
+    {
+     "name": "Forward",
+     "memid": 38,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260103
+    },
+    {
+     "name": "Reply",
+     "memid": 39,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260104
+    },
+    {
+     "name": "ReplyAll",
+     "memid": 40,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260105
+    },
+    {
+     "name": "ResolveName",
+     "memid": 41,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260106
+    },
+    {
+     "name": "Save",
+     "memid": 42,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 260107
+    },
+    {
+     "name": "Show",
+     "memid": 44,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "vDetails",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 260108
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Send",
+     "memid": 43,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "vDialog",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 260109
+    }
+   ]
+  },
+  {
+   "name": "MAPIMessagesEvents",
+   "kind": "dispatch",
+   "guid": "{20C62CAD-15DA-101B-B9A8-444553540000}",
+   "flags": [
+    "hidden",
+    "nonextensible",
+    "dispatchable"
+   ],
+   "helpcontext": 0
+  },
+  {
+   "name": "MAPIMessages",
+   "kind": "coclass",
+   "guid": "{20C62CAB-15DA-101B-B9A8-444553540000}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 260064,
+   "implements": [
+    {
+     "name": "IMapiMessages",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "MAPIMessagesEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "MAPIMessages2",
+   "kind": "coclass",
+   "guid": "{1B6413C2-C55E-4BA7-B4DF-1A71DBC6ACC2}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 260064,
+   "implements": [
+    {
+     "name": "IMapiMessages",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "MAPIMessagesEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

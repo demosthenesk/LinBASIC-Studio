@@ -1,0 +1,250 @@
+default: Application-defined or object-defined error
+ 3 Return without GoSub
+ 5 Invalid procedure call or argument
+ 6 Overflow
+ 7 Out of memory
+ 9 Subscript out of range
+ 10 This array is fixed or temporarily locked
+ 11 Division by zero
+ 13 Type mismatch
+ 14 Out of string space
+ 16 Expression too complex
+ 17 Can't perform requested operation
+ 18 User interrupt occurred
+ 20 Resume without error
+ 28 Out of stack space
+ 35 Sub or Function not defined
+ 47 Too many DLL application clients
+ 48 Error in loading DLL
+ 49 Bad DLL calling convention
+ 51 Internal error
+ 52 Bad file name or number
+ 53 File not found
+ 54 Bad file mode
+ 55 File already open
+ 57 Device I/O error
+ 58 File already exists
+ 59 Bad record length
+ 61 Disk full
+ 62 Input past end of file
+ 63 Bad record number
+ 67 Too many files
+ 68 Device unavailable
+ 70 Permission denied
+ 71 Disk not ready
+ 74 Can't rename with different drive
+ 75 Path/File access error
+ 76 Path not found
+ 91 Object variable or With block variable not set
+ 92 For loop not initialized
+ 93 Invalid pattern string
+ 94 Invalid use of Null
+ 96 Unable to sink events of object because the object is already firing events to the maximum number of event receivers that it supports
+ 97 Can not call friend function on object which is not an instance of defining class
+ 98 A property or method call cannot include a reference to a private object, either as an argument or as a return value
+ 321 Invalid file format
+ 322 Can't create necessary temporary file
+ 325 Invalid format in resource file
+ 380 Invalid property value
+ 381 Invalid property array index
+ 382 Set not supported at runtime
+ 383 Set not supported (read-only property)
+ 385 Need property array index
+ 387 Set not permitted
+ 393 Get not supported at runtime
+ 394 Get not supported (write-only property)
+ 422 Property not found
+ 423 Property or method not found
+ 424 Object required
+ 429 ActiveX component can't create object
+ 430 Class does not support Automation or does not support expected interface
+ 432 File name or class name not found during Automation operation
+ 438 Object doesn't support this property or method
+ 440 Automation error
+ 442 Connection to type library or object library for remote process has been lost. Press OK for dialog to remove reference.
+ 443 Automation object does not have a default value
+ 445 Object doesn't support this action
+ 446 Object doesn't support named arguments
+ 447 Object doesn't support current locale setting
+ 448 Named argument not found
+ 449 Argument not optional
+ 450 Wrong number of arguments or invalid property assignment
+ 451 Property let procedure not defined and property get procedure did not return an object
+ 452 Invalid ordinal
+ 453 Specified DLL function not found
+ 454 Code resource not found
+ 455 Code resource lock error
+ 457 This key is already associated with an element of this collection
+ 458 Variable uses an Automation type not supported in Visual Basic
+ 459 Object or class does not support the set of events
+ 460 Invalid clipboard format
+ 461 Method or data member not found
+ 462 The remote server machine does not exist or is unavailable
+ 463 Class not registered on local machine
+ 481 Invalid picture
+ 482 Printer error
+ 735 Can't save file to TEMP
+ 744 Search text not found
+ 746 Replacements too long
+texts: 87 
+Error$(0): [] 0 
+Error$(-1): no error
+Error$(65536): 6 Overflow
+Error$(): []
+raise 3 : 3 Return without GoSub| 1000003 |True
+raise 5 : 5 Invalid procedure call or argument| 1000005 |True
+raise 6 : 6 Overflow| 1000006 |True
+raise 7 : 7 Out of memory| 1000007 |True
+raise 9 : 9 Subscript out of range| 1000009 |True
+raise 11 : 11 Division by zero| 1000011 |True
+raise 13 : 13 Type mismatch| 1000013 |True
+raise 52 : 52 Bad file name or number| 1000052 |True
+raise 53 : 53 File not found| 1000053 |True
+raise 62 : 62 Input past end of file| 1000062 |True
+raise 91 : 91 Object variable or With block variable not set| 1000091 |True
+raise 94 : 94 Invalid use of Null| 1000094 |True
+raise 380 : 380 Invalid property value| 1000380 |True
+raise 424 : 424 Object required| 1000424 |True
+raise 438 : 438 Object doesn't support this property or method| 1000438 |True
+raise 457 : 457 This key is already associated with an element of this collection| 1000457 |True
+raise 481 : 481 Invalid picture| 1000481 |True
+raise 1001 : 1001 Application-defined or object-defined error| 1000095 |True
+raise 31004 : 31004 Application-defined or object-defined error| 1000095 |True
+raise 32000 : 32000 Application-defined or object-defined error| 1000095 |True
+raise 0: 5 Invalid procedure call or argument
+raise 65536: 5 Invalid procedure call or argument
+raise -5:-5 Automation error
+raise vbObjectError+1: 1 Automation error
+Invalid advise flags 
+raise vbObjectError+513: 513 Mine Src
+raise &H80070005:46 Permission denied
+Error 11: 11 Division by zero| 1000011 
+raise 5 custom: 5 custom| 1000005 
+Err.Number = 6: 6 []
+Err.Description only: 0 [only text]
+Return without GoSub: 3 Return without GoSub
+Resume without error: 20 Resume without error
+ReDim of a locked array: 10 This array is fixed or temporarily locked
+Integer + 1: 6 Overflow
+Long + 1: 6 Overflow
+Byte + 1: 6 Overflow
+CInt(40000): 6 Overflow
+CByte(-1): 6 Overflow
+CLng(3e9): 6 Overflow
+CCur(1e20): 6 Overflow
+Double * 10: 6 Overflow
+1 \ 0: 11 Division by zero
+5 Mod 0: 11 Division by zero
+1 / 0: 11 Division by zero
+0 / 0: 6 Overflow
+0 ^ -1: 5 Invalid procedure call or argument
+(-8) ^ 0.5: 5 Invalid procedure call or argument
+Sqr(-1): 5 Invalid procedure call or argument
+Log(0): 5 Invalid procedure call or argument
+Exp(1000): 6 Overflow
+CInt("abc"): 13 Type mismatch
+"a" + 1: 13 Type mismatch
+CDate(text): 13 Type mismatch
+DateSerial(10000): 5 Invalid procedure call or argument
+DateAdd("x"): 5 Invalid procedure call or argument
+MonthName(13): 5 Invalid procedure call or argument
+WeekdayName(8): 5 Invalid procedure call or argument
+Mid$(s, 0): 5 Invalid procedure call or argument
+Left$(s, -1): 5 Invalid procedure call or argument
+Chr$(256): 5 Invalid procedure call or argument
+Chr$(-1): 5 Invalid procedure call or argument
+ChrW$(65536): 5 Invalid procedure call or argument
+Asc(""): 5 Invalid procedure call or argument
+String$(-1): 5 Invalid procedure call or argument
+Space$(-1): 5 Invalid procedure call or argument
+InStr(0): 5 Invalid procedure call or argument
+Replace(find ""): no error
+Replace(start 0): 5 Invalid procedure call or argument
+Split(count -2): 5 Invalid procedure call or argument
+Round(x, -1): 5 Invalid procedure call or argument
+StrConv(3333): 5 Invalid procedure call or argument
+Format long: no error
+Like "[a": 93 Invalid pattern string
+String = Null: 94 Invalid use of Null
+CInt(Null): 94 Invalid use of Null
+Integer = Null Variant: 94 Invalid use of Null
+Hex$(Null): 94 Invalid use of Null
+Empty(0): 13 Type mismatch
+Error$(1.5e10): 6 Overflow
+a(6): 9 Subscript out of range
+dyn(0): 9 Subscript out of range
+UBound(dyn): 9 Subscript out of range
+ReDim dyn(-1 To -5): 9 Subscript out of range
+GoTo into For: 6 Overflow
+Space$(huge): 5 Invalid procedure call or argument
+len 300 
+Open missing for Input: 53 File not found
+Open in missing folder: 76 Path not found
+Open "": 75 Path/File access error
+Open a folder for Output: 75 Path/File access error
+Open as #0: 52 Bad file name or number
+Open as #512: no error
+Print # not open: 52 Bad file name or number
+Close # not open: no error
+Input$ not open: 52 Bad file name or number
+LOF not open: 52 Bad file name or number
+EOF not open: 52 Bad file name or number
+Open the same number twice: 55 File already open
+Open for Output while open for Input: 55 File already open
+Print # on Input: 54 Bad file mode
+Line Input past end: 62 Input past end of file
+Input # past end: 62 Input past end of file
+Input$ past end: 62 Input past end of file
+Kill an open file: 55 File already open
+Name an open file: 55 File already open
+Line Input on Output: 52 Bad file name or number
+Get on Output: 52 Bad file name or number
+Put a long String, Len 10: 52 Bad file name or number
+Put record 0: 52 Bad file name or number
+Get record -1: 52 Bad file name or number
+Seek 0: 63 Bad record number
+Line Input on Binary: 52 Bad file name or number
+Open a locked file: 55 File already open
+Name onto an existing file: 55 File already open
+Name a missing file: 53 File not found
+Kill a missing file: 53 File not found
+Kill no match: 53 File not found
+FileLen missing: 53 File not found
+GetAttr missing: 53 File not found
+SetAttr missing: 53 File not found
+FileDateTime missing: 53 File not found
+FileCopy missing: 53 File not found
+MkDir existing: 75 Path/File access error
+MkDir in missing folder: 76 Path not found
+RmDir missing: 76 Path not found
+RmDir not empty: 75 Path/File access error
+ChDir missing: 76 Path not found
+Dir in missing folder: no error
+CurDir("?"): 5 Invalid procedure call or argument
+Nothing.Count: 91 Object variable or With block variable not set
+5.Count: 424 Object required
+Collection key twice: 457 This key is already associated with an element of this collection
+Collection(5): 9 Subscript out of range
+Collection(0): 9 Subscript out of range
+Collection("nokey"): 5 Invalid procedure call or argument
+Collection.Remove missing: 5 Invalid procedure call or argument
+Collection.Add before 9: 9 Subscript out of range
+Collection.Add key 5 (a number): 13 Type mismatch
+late NoSuchMethod: 438 Object doesn't support this property or method
+late Count(1): 451 Property let procedure not defined and property get procedure did not return an object
+late Add(): 450 Wrong number of arguments or invalid property assignment
+CreateObject missing: 429 ActiveX component can't create object
+GetObject missing: 429 ActiveX component can't create object
+For Each over Nothing: no error
+Dictionary key twice: 457 This key is already associated with an element of this collection
+Dictionary.Remove missing: 32811 Application-defined or object-defined error
+Dictionary.Items(5): 9 Subscript out of range
+fso.GetFile missing: 53 File not found
+fso.GetFolder missing: 76 Path not found
+fso.OpenTextFile missing: 53 File not found
+fso.CreateFolder existing: 58 File already exists
+fso.DeleteFile missing: 53 File not found
+CallByName missing: 438 Object doesn't support this property or method
+Nothing.Add: 91 Object variable or With block variable not set
+TypeName(Nothing): Nothing
+endless recursion: 28 Out of stack space

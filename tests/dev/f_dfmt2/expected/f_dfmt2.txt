@@ -1,0 +1,127 @@
+db made
+form load new=IStdDataFormatDisp
+col same=True
+before grid cols=5 row=-1
+   0 Who(Name) text=! 7005 value=! 7005 nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1500,095 visible=True locked=False
+   1 Age(Age) text=! 7005 value=! 7005 nf="000" df=IStdDataFormatDisp:1:"000" true=Boolean:True null=String:"" align=2 width=794,8347 visible=True locked=False
+   2 Pay(Salary) text=! 7005 value=! 7005 nf="0.00" df=IStdDataFormatDisp:1:"0.00" true=Boolean:True null=String:"" align=1 width=1514,835 visible=True locked=False
+   3 On(Active) text=! 7005 value=! 7005 nf="" df=IStdDataFormatDisp:5:"" true=String:"Yes" null=String:"?" align=0 width=1514,835 visible=True locked=True
+   4 Born(Born) text=! 7005 value=! 7005 nf="yyyy-mm-dd" df=IStdDataFormatDisp:1:"yyyy-mm-dd" true=Boolean:True null=String:"" align=0 width=1514,835 visible=False locked=False
+  ev b format String:"Yes" target=TextBox:txtActive
+refreshed [1234,5|Yes|031|5/3/1994|0]
+grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=Anna value=String:"Anna" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=31 value=String:"31" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=-1 value=String:"-1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=1234,5 value=String:"1234,5" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+step 1 [1234,5|Yes|031|5/3/1994|0]
+  ev b format String:"No" target=TextBox:txtActive
+bill [|No|025||0]
+grid cols=7 row=1
+   0 ID(ID) text=2 value=String:"2" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=Bill value=String:"Bill" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=25 value=String:"25" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text= value=Null nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text= value=Null nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text= value=Null nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+  ev b format String:"Yes" target=TextBox:txtActive
+cleo [99,99|Yes|n/a|31/12/2000 1:45:00 μμ|0]
+grid cols=7 row=2
+   0 ID(ID) text=3 value=String:"3" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=Cleo value=String:"Cleo" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text= value=Null nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=-1 value=String:"-1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=31/12/2000 1:45:00 μμ value=String:"31/12/2000 1:45:00 μμ" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=99,99 value=String:"99,99" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=third value=String:"third" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+step 2 [99,99|Yes|n/a|31/12/2000 1:45:00 μμ|0]
+  ev b format String:"Yes" target=TextBox:txtActive
+  ev b unformat String:"no" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+back [12,5|No|031|5/3/1994|0]
+fields ID=1 Name=String:"Anna" Age=Integer:31 Active=Boolean:False Born=Date:5/3/1994 Salary=Currency:12,5
+  ev b unformat String:"?" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+back [42|No|031|5/3/1994|0]
+fields ID=1 Name=String:"Anna" Age=Integer:31 Active=Boolean:False Born=Date:5/3/1994 Salary=Currency:42
+  ev b format String:"No" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+back [42|No|n/a|5/3/1994|0]
+fields ID=1 Name=String:"Anna" Age=Null Active=Boolean:False Born=Date:5/3/1994 Salary=Currency:42
+step 3 [42|No|n/a|5/3/1994|0]
+  ev b format String:"No" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+chk [42|No|n/a|5/3/1994|0]
+fields ID=1 Name=String:"Anna" Age=Null Active=Boolean:False Born=Date:5/3/1994 Salary=Currency:42
+step 4 [42|No|n/a|5/3/1994|0]
+  ev b format String:"No" target=TextBox:txtActive
+  active text ! 6160 Data access error
+edited grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+  ev b format String:"No" target=TextBox:txtActive
+  ev b format String:"No" target=TextBox:txtActive
+fields ID=1 Name=String:"12" Age=Integer:4 Active=Boolean:False Born=Date:5/3/1994 Salary=Currency:42
+grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+step 5 [42|No|004|5/3/1994|0]
+set source grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+rebind grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+  ev b format String:"No" target=TextBox:txtActive
+refresh grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+clearfields grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+rebind grid cols=7 row=0
+   0 ID(ID) text=1 value=String:"1" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=915,0237 visible=True locked=False
+   1 Name(Name) text=12 value=String:"12" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   2 Age(Age) text=4 value=String:"4" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=615,1182 visible=True locked=False
+   3 Active(Active) text=0 value=String:"0" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=764,7874 visible=True locked=False
+   4 Born(Born) text=5/3/1994 value=String:"5/3/1994" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   5 Salary(Salary) text=42 value=String:"42" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+   6 Notes(Notes) text=first value=String:"first" nf="" df=IStdDataFormatDisp:0:"" true=Boolean:True null=String:"" align=0 width=1739,906 visible=True locked=False
+step 6 [42|No|004|5/3/1994|0]
+form unload [42|No|004|5/3/1994|0]

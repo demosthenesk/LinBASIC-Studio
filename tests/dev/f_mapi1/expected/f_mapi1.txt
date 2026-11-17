@@ -1,0 +1,109 @@
+== start
+    (394 [MapiTest] Get not supported (write-only property))
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:True NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:0
+messages: AddressCaption=String: AddressEditFieldCount=Integer:1 AddressLabel=String: AddressModifiable=Boolean:False AddressResolveUI=Boolean:False AttachmentCount=Long:0 AttachmentIndex=Long:0 AttachmentName=String: AttachmentPathName=String: AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String: FetchSorted=Boolean:False FetchUnreadOnly=Boolean:False MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:0 MsgNoteText=String: MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:False MsgReceiptRequested=Boolean:False MsgSent=Boolean:False MsgSubject=String: MsgType=String: RecipAddress=String: RecipCount=Long:0 RecipDisplayName=String: RecipIndex=Long:0 RecipType=Integer:0 SessionID=Long:0 Action=!394
+-- signon (defaults)
+    (48389 [MapiTest] Application-defined or object-defined error)
+  SignOn !48389
+session: Action=!394 DownLoadMail=Boolean:True LogonUI=Boolean:True NewSession=Boolean:False Password=String: UserName=String: SessionID=Long:0
+    (32053 [MapiTest] Application-defined or object-defined error)
+  SignOff !32053
+  Action = Integer:1 !48389
+  Action = Integer:2 !32053
+    (380 [MapiTest] Invalid property value)
+  Action = Integer:3 !380
+  Action = Integer:0 !380
+-- signon (no UI, a user)
+  LogonUI = Boolean:False
+  DownLoadMail = Boolean:False
+  NewSession = Boolean:True
+  UserName = String:tester
+  Password = String:secret
+  SignOn !48389
+session: Action=!394 DownLoadMail=Boolean:False LogonUI=Boolean:False NewSession=Boolean:True Password=String:secret UserName=String:tester SessionID=Long:0
+    (383 [MapiTest] Set not supported (read-only property))
+  SessionID = Integer:5 !383
+-- messages without a session
+  Compose !32053
+  Fetch !32053
+    (32052 [MapiTest] Application-defined or object-defined error)
+  Send !32052
+  Save !32052
+    (32056 [MapiTest] Application-defined or object-defined error)
+  Copy !32056
+  Delete !32053
+  Forward !32056
+  Reply !32056
+  ReplyAll !32056
+  ResolveName ok
+  MsgIndex = Integer:-1
+  MsgIndex = Integer:0 !380
+  RecipIndex = Integer:0
+  AttachmentIndex = Integer:0
+  MsgSubject = String:Hello
+  RecipDisplayName = String:Bob
+messages: AddressCaption=String: AddressEditFieldCount=Integer:1 AddressLabel=String: AddressModifiable=Boolean:False AddressResolveUI=Boolean:False AttachmentCount=Long:1 AttachmentIndex=Long:0 AttachmentName=String: AttachmentPathName=String: AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String: FetchSorted=Boolean:False FetchUnreadOnly=Boolean:False MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:-1 MsgNoteText=String: MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:True MsgReceiptRequested=Boolean:False MsgSent=Boolean:False MsgSubject=String:Hello MsgType=String: RecipAddress=String: RecipCount=Long:1 RecipDisplayName=String:Bob RecipIndex=Long:0 RecipType=Integer:1 SessionID=Long:0 Action=!394
+-- messages with a session that is not one
+  SessionID = Integer:1234
+  Compose ok
+messages: AddressCaption=String: AddressEditFieldCount=Integer:1 AddressLabel=String: AddressModifiable=Boolean:False AddressResolveUI=Boolean:False AttachmentCount=Long:0 AttachmentIndex=Long:0 AttachmentName=String: AttachmentPathName=String: AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String: FetchSorted=Boolean:False FetchUnreadOnly=Boolean:False MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:-1 MsgNoteText=String: MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:True MsgReceiptRequested=Boolean:False MsgSent=Boolean:False MsgSubject=String: MsgType=String: RecipAddress=String: RecipCount=Long:1 RecipDisplayName=String: RecipIndex=Long:0 RecipType=Integer:0 SessionID=Long:1234 Action=!394
+  MsgSubject = String:Hello
+  MsgNoteText = String:Body
+  MsgType = String:IPM.Note
+  MsgReceiptRequested = Boolean:True
+  RecipIndex = Integer:0
+  RecipDisplayName = String:Bob
+  RecipAddress = String:SMTP:bob@example.com
+  RecipType = Integer:1
+  RecipIndex = Integer:1
+  RecipDisplayName = String:Carol
+  RecipType = Integer:2
+  RecipIndex = Integer:3
+  RecipIndex = Integer:-1 !380
+  RecipType = Integer:7 !380
+  AttachmentIndex = Integer:0
+  AttachmentPathName = String:C:\Temp\ModLog.bas
+  AttachmentName = String:log.bas
+  AttachmentPosition = Integer:0
+  AttachmentType = Integer:0
+  AttachmentType = Integer:5 !380
+  AttachmentIndex = Integer:2
+messages: AddressCaption=String: AddressEditFieldCount=Integer:1 AddressLabel=String: AddressModifiable=Boolean:False AddressResolveUI=Boolean:False AttachmentCount=Long:3 AttachmentIndex=Long:2 AttachmentName=String: AttachmentPathName=String: AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String: FetchSorted=Boolean:False FetchUnreadOnly=Boolean:False MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:-1 MsgNoteText=String:Body MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:True MsgReceiptRequested=Boolean:True MsgSent=Boolean:False MsgSubject=String:Hello MsgType=String:IPM.Note RecipAddress=String: RecipCount=Long:4 RecipDisplayName=String: RecipIndex=Long:3 RecipType=Integer:0 SessionID=Long:1234 Action=!394
+  RecipIndex = Integer:0
+recip 0: RecipIndex=Long:0 RecipDisplayName=String:Bob RecipAddress=String:SMTP:bob@example.com RecipType=Integer:1 RecipCount=Long:4
+  Delete ok
+after delete recip: RecipIndex=Long:0 RecipDisplayName=String:Carol RecipType=Integer:2 RecipCount=Long:3
+  Delete ok
+after delete attachment: AttachmentIndex=Long:1 AttachmentName=String: AttachmentCount=Long:2
+  Delete !380
+  Send !48389
+  ResolveName !48389
+  Fetch !48389
+  Save !32052
+  Delete !32056
+messages: AddressCaption=String: AddressEditFieldCount=Integer:1 AddressLabel=String: AddressModifiable=Boolean:False AddressResolveUI=Boolean:False AttachmentCount=Long:0 AttachmentIndex=Long:0 AttachmentName=String: AttachmentPathName=String: AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String: FetchSorted=Boolean:False FetchUnreadOnly=Boolean:False MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:0 MsgNoteText=String: MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:False MsgReceiptRequested=Boolean:False MsgSent=Boolean:False MsgSubject=String: MsgType=String: RecipAddress=String: RecipCount=Long:0 RecipDisplayName=String: RecipIndex=Long:0 RecipType=Integer:0 SessionID=Long:1234 Action=!394
+-- the other properties
+  AddressEditFieldCount = Integer:2
+    (32024 [MapiTest] Application-defined or object-defined error)
+  AddressEditFieldCount = Integer:5 !32024
+  AddressCaption = String:Pick
+  AddressLabel = String:To:
+  AddressModifiable = Boolean:True
+  AddressResolveUI = Boolean:True
+  FetchMsgType = String:IPM.Note
+  FetchSorted = Boolean:True
+  FetchUnreadOnly = Boolean:True
+  MsgCount = Integer:3 !383
+  MsgID = String:x !383
+  MsgOrigAddress = String:a@b !383
+  MsgRead = Boolean:True !383
+  MsgDateReceived = String:2026/01/01 !383
+  RecipCount = Integer:4 !383
+  AttachmentCount = Integer:4 !383
+  Action = Integer:6
+  Action = Integer:99 !380
+  SessionID = Integer:0
+  Compose !32053
+messages: AddressCaption=String:Pick AddressEditFieldCount=Integer:2 AddressLabel=String:To: AddressModifiable=Boolean:True AddressResolveUI=Boolean:True AttachmentCount=Long:0 AttachmentIndex=Long:0 AttachmentName=String: AttachmentPathName=String: AttachmentPosition=Long:0 AttachmentType=Integer:0 FetchMsgType=String:IPM.Note FetchSorted=Boolean:True FetchUnreadOnly=Boolean:True MsgConversationID=String: MsgCount=Long:0 MsgDateReceived=String: MsgID=String: MsgIndex=Long:-1 MsgNoteText=String: MsgOrigAddress=String: MsgOrigDisplayName=String: MsgRead=Boolean:True MsgReceiptRequested=Boolean:False MsgSent=Boolean:False MsgSubject=String: MsgType=String: RecipAddress=String: RecipCount=Long:1 RecipDisplayName=String: RecipIndex=Long:0 RecipType=Integer:0 SessionID=Long:0 Action=!394
+session: Action=!394 DownLoadMail=Boolean:False LogonUI=Boolean:False NewSession=Boolean:True Password=String:secret UserName=String:tester SessionID=Long:0
+end

@@ -1,0 +1,8 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 4.2) — f_comctl2
+
+TreeView, ListView (MSCOMCTL), MSFlexGrid (MSFLXGRD), SSTab (TABCTL32), UpDown (MSCOMCT2).
+Το έργο κλείνει μόνο του σε 1-2 δευτερόλεπτα. Μην πατάς τίποτα όσο τρέχει.
+
+1. Άνοιξε το f_comctl2\Comctl2Tests.vbp με το VB6 και πάτα F5.
+   - Αν βγει σφάλμα, στείλε μου εικόνα (ή το Form1.log αν γράφτηκε).
+2. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο f_comctl2\expected\f_comctl2.txt.

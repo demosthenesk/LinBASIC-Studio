@@ -1,0 +1,5 @@
+start
+good1
+after good1: 42
+good2
+end

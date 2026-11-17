@@ -1,0 +1,15 @@
+new:(6) 0 0 0 0 0 0
+padded: [Al    ] 6 
+cut: [Bartho] 6 
+copy: [Al    ] [Bartho] 12,5 
+len of the type: 60 
+loop: [p0    p3    ]
+redim:(4) 0 0 0 0
+member: [abcd] [Knights ]
+preserve: [abcd](4) 0 0 0 0
+erase field:(6) 0 0 0 0 0 0
+erase array:(3) 0 0 0
+put type: 60 
+get type: [Al    ] [Bartho] 12,5 
+put array: 9 
+get array: [x  yy zzz]

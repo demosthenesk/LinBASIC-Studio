@@ -1,0 +1,98 @@
+  ev resize h=1095
+  ev resize h=1095
+  ev heightchanged 780
+  ev resize h=780
+start: h=780 rows=2 Text1(135,0,2805,330) Text2(3165,0,3915,330) Text3(645,360,6435,360)
+  b1 pos=1 w=3000 h=330 nr=False child=Text1
+  b2 pos=2 w=2505 h=330 nr=False child=Text2
+  b3 pos=3 w=0 h=360 nr=True child=Text3
+drag band 2 left 40
+  ev mousedown 1 3075 165
+  ev mouseup 1 2475 165
+  ev click
+band 2 left: h=780 rows=2 Text1(135,0,2205,330) Text2(2565,0,4515,330) Text3(645,360,6435,360)
+  b1 pos=1 w=2400 h=330 nr=False child=Text1
+  b2 pos=2 w=4710 h=330 nr=False child=Text2
+  b3 pos=3 w=0 h=360 nr=True child=Text3
+drag band 2 right 60
+  ev mousedown 1 2475 165
+  ev mouseup 1 3375 165
+  ev click
+band 2 right: h=780 rows=2 Text1(135,0,3105,330) Text2(3465,0,3615,330) Text3(645,360,6435,360)
+  b1 pos=1 w=3300 h=330 nr=False child=Text1
+  b2 pos=2 w=3810 h=330 nr=False child=Text2
+  b3 pos=3 w=0 h=360 nr=True child=Text3
+drag band 2 down 40
+  ev mousedown 1 3375 165
+  ev mouseup 1 3375 765
+band 2 down: h=780 rows=2 Text1(135,0,6945,330) Text2(3465,375,3615,330) Text3(645,360,2595,360)
+  b1 pos=1 w=3300 h=330 nr=False child=Text1
+  b2 pos=3 w=3810 h=360 nr=False child=Text2
+  b3 pos=2 w=3300 h=360 nr=True child=Text3
+drag band 2 up 25
+  ev mousedown 1 3375 540
+  ev mouseup 1 3375 165
+  ev click
+band 2 up: h=780 rows=2 Text1(135,0,3105,330) Text2(3465,0,3615,330) Text3(645,360,6435,360)
+  b1 pos=1 w=3300 h=330 nr=False child=Text1
+  b2 pos=2 w=3810 h=330 nr=False child=Text2
+  b3 pos=3 w=3300 h=360 nr=True child=Text3
+drag band 3 up 25, right 100
+  ev mousedown 1 30 540
+  ev heightchanged 420
+  ev resize h=420
+  ev mouseup 1 1530 165
+  ev click
+band 3 up: h=420 rows=1 Text1(135,15,1275,330) Text2(6795,15,285,330) Text3(2145,0,4425,360)
+  b1 pos=1 w=1470 h=360 nr=False child=Text1
+  b2 pos=3 w=3810 h=360 nr=False child=Text2
+  b3 pos=2 w=5130 h=360 nr=False child=Text3
+drag band 1 down 40
+  ev mousedown 1 45 180
+  ev heightchanged 780
+  ev resize h=780
+  ev mouseup 1 45 780
+band 1 down: h=780 rows=2 Text1(135,390,6945,330) Text2(5295,15,1785,330) Text3(645,0,4425,360)
+  b1 pos=3 w=1470 h=330 nr=True child=Text1
+  b2 pos=2 w=3810 h=360 nr=False child=Text2
+  b3 pos=1 w=5130 h=360 nr=False child=Text3
+fixed order: h=780 rows=2 Text1(135,390,6945,330) Text2(5295,15,1785,330) Text3(570,0,4500,360)
+  b1 pos=3 w=1470 h=330 nr=True child=Text1
+  b2 pos=2 w=3810 h=360 nr=False child=Text2
+  b3 pos=1 w=5130 h=360 nr=False child=Text3
+drag band 2 (fixed order) down 40
+  ev mousedown 1 5205 180
+  ev heightchanged 1140
+  ev resize h=1140
+  ev mouseup 1 5205 780
+  ev click
+fixed order, band 2 down: h=1140 rows=3 Text1(135,750,6945,330) Text2(135,390,6945,330) Text3(570,0,6510,360)
+  b1 pos=3 w=1470 h=330 nr=True child=Text1
+  b2 pos=2 w=3810 h=330 nr=True child=Text2
+  b3 pos=1 w=5130 h=360 nr=False child=Text3
+drag band 2 (fixed order) up 25
+  ev mousedown 1 45 555
+  ev heightchanged 780
+  ev resize h=780
+  ev mouseup 1 45 180
+  ev click
+fixed order, band 2 up: h=780 rows=2 Text1(135,390,6945,330) Text2(735,15,6345,330) Text3(570,0,0,360)
+  b1 pos=3 w=1470 h=330 nr=True child=Text1
+  b2 pos=2 w=6540 h=360 nr=False child=Text2
+  b3 pos=1 w=570 h=360 nr=False child=Text3
+double click on the gripper of band 2
+  ev mousedown 1 720 180
+  ev mouseup 1 720 180
+  ev click
+double click: h=780 rows=2 Text1(135,390,6945,330) Text2(7140,15,0,330) Text3(645,0,6270,360)
+  b1 pos=3 w=1470 h=330 nr=True child=Text1
+  b2 pos=2 w=135 h=360 nr=False child=Text2
+  b3 pos=1 w=6975 h=360 nr=False child=Text3
+double click again
+  ev mousedown 1 7050 180
+  ev mouseup 1 7050 180
+  ev click
+double click again: h=780 rows=2 Text1(135,390,6945,330) Text2(810,15,6270,330) Text3(645,0,0,360)
+  b1 pos=3 w=1470 h=330 nr=True child=Text1
+  b2 pos=2 w=6465 h=360 nr=False child=Text2
+  b3 pos=1 w=645 h=360 nr=False child=Text3

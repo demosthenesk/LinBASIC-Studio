@@ -1,0 +1,2777 @@
+{
+ "library": "ComCtl3",
+ "short": "ComCtl3",
+ "guid": "{38911DA0-E448-11D0-84A3-00DD01104159}",
+ "version": "1.1",
+ "lcid": 1033,
+ "helpfile": "cmctl398.chm",
+ "file": "ComCt332.ocx",
+ "types": [
+  {
+   "name": "_CoolBar",
+   "kind": "dispatch",
+   "guid": "{38911D91-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 401000,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Picture",
+     "memid": 1745027091,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401029
+    },
+    {
+     "name": "Picture",
+     "memid": 1745027091,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.Picture",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401029
+    },
+    {
+     "name": "ForeColor",
+     "memid": 1745027090,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401015
+    },
+    {
+     "name": "ForeColor",
+     "memid": 1745027090,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401015
+    },
+    {
+     "name": "BackColor",
+     "memid": 1745027089,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401005
+    },
+    {
+     "name": "BackColor",
+     "memid": 1745027089,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401005
+    },
+    {
+     "name": "EmbossHighlight",
+     "memid": 1745027088,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401059
+    },
+    {
+     "name": "EmbossHighlight",
+     "memid": 1745027088,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401059
+    },
+    {
+     "name": "EmbossShadow",
+     "memid": 1745027087,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401060
+    },
+    {
+     "name": "EmbossShadow",
+     "memid": 1745027087,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401060
+    },
+    {
+     "name": "EmbossPicture",
+     "memid": 1745027086,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401058
+    },
+    {
+     "name": "EmbossPicture",
+     "memid": 1745027086,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401058
+    },
+    {
+     "name": "Bands",
+     "memid": 1745027085,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "_Bands",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "_Bands",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401006
+    },
+    {
+     "name": "RowCount",
+     "memid": 1745027084,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401031
+    },
+    {
+     "name": "ImageList",
+     "memid": 1745027083,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401019
+    },
+    {
+     "name": "ImageList",
+     "memid": 1745027083,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401019
+    },
+    {
+     "name": "FixedOrder",
+     "memid": 1745027082,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401014
+    },
+    {
+     "name": "FixedOrder",
+     "memid": 1745027082,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401014
+    },
+    {
+     "name": "BandBorders",
+     "memid": 1745027081,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401007
+    },
+    {
+     "name": "BandBorders",
+     "memid": 1745027081,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401007
+    },
+    {
+     "name": "VariantHeight",
+     "memid": 1745027080,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401036
+    },
+    {
+     "name": "VariantHeight",
+     "memid": 1745027080,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401036
+    },
+    {
+     "name": "Orientation",
+     "memid": 1745027079,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "OrientationConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401028
+    },
+    {
+     "name": "Orientation",
+     "memid": 1745027079,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OrientationConstants",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "OrientationConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401028
+    },
+    {
+     "name": "OLEDropMode",
+     "memid": 1745027078,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OLEDropConstants",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "OLEDropConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401027
+    },
+    {
+     "name": "OLEDropMode",
+     "memid": 1745027078,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "OLEDropConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401027
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401012
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401012
+    },
+    {
+     "name": "hwnd",
+     "memid": -515,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401017
+    },
+    {
+     "name": "MouseIcon",
+     "memid": 1745027077,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.Picture",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401024
+    },
+    {
+     "name": "MouseIcon",
+     "memid": 1745027077,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401024
+    },
+    {
+     "name": "MousePointer",
+     "memid": 1745027076,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "MousePointerConstants",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "MousePointerConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401025
+    },
+    {
+     "name": "MousePointer",
+     "memid": 1745027076,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "MousePointerConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401025
+    },
+    {
+     "name": "OLEDrag",
+     "memid": 1610809364,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 401055
+    },
+    {
+     "name": "Refresh",
+     "memid": -550,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 401056
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 401000
+    }
+   ]
+  },
+  {
+   "name": "CoolBar",
+   "kind": "coclass",
+   "guid": "{38911D92-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 401000,
+   "implements": [
+    {
+     "name": "_CoolBar",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "__CoolBar",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "_Band",
+   "kind": "dispatch",
+   "guid": "{5522DAF7-06D6-11D2-8D70-00A0C98B28E2}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 401002,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "BackColor",
+     "memid": 1745027108,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401005
+    },
+    {
+     "name": "BackColor",
+     "memid": 1745027108,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401005
+    },
+    {
+     "name": "ForeColor",
+     "memid": 1745027107,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401015
+    },
+    {
+     "name": "ForeColor",
+     "memid": 1745027107,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401015
+    },
+    {
+     "name": "Caption",
+     "memid": 1745027106,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401008
+    },
+    {
+     "name": "Caption",
+     "memid": 1745027106,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401008
+    },
+    {
+     "name": "Image",
+     "memid": 1745027105,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401018
+    },
+    {
+     "name": "Image",
+     "memid": 1745027105,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401018
+    },
+    {
+     "name": "Picture",
+     "memid": 1745027104,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401029
+    },
+    {
+     "name": "Picture",
+     "memid": 1745027104,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401029
+    },
+    {
+     "name": "Position",
+     "memid": 1745027103,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401030
+    },
+    {
+     "name": "Index",
+     "memid": 1745027102,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401020
+    },
+    {
+     "name": "Key",
+     "memid": 1745027101,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401021
+    },
+    {
+     "name": "Key",
+     "memid": 1745027101,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401021
+    },
+    {
+     "name": "NewRow",
+     "memid": 1745027100,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401026
+    },
+    {
+     "name": "NewRow",
+     "memid": 1745027100,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401026
+    },
+    {
+     "name": "Visible",
+     "memid": 1745027099,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401037
+    },
+    {
+     "name": "Visible",
+     "memid": 1745027099,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401037
+    },
+    {
+     "name": "Style",
+     "memid": 1745027098,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "BandStyleConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401032
+    },
+    {
+     "name": "Style",
+     "memid": 1745027098,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "BandStyleConstants",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "BandStyleConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401032
+    },
+    {
+     "name": "Tag",
+     "memid": 1745027097,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401033
+    },
+    {
+     "name": "Tag",
+     "memid": 1745027097,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401033
+    },
+    {
+     "name": "AllowVertical",
+     "memid": 1745027096,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401004
+    },
+    {
+     "name": "AllowVertical",
+     "memid": 1745027096,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401004
+    },
+    {
+     "name": "MinWidth",
+     "memid": 1745027095,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401023
+    },
+    {
+     "name": "MinWidth",
+     "memid": 1745027095,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401023
+    },
+    {
+     "name": "MinHeight",
+     "memid": 1745027094,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401022
+    },
+    {
+     "name": "MinHeight",
+     "memid": 1745027094,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401022
+    },
+    {
+     "name": "Width",
+     "memid": 1745027093,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401038
+    },
+    {
+     "name": "Width",
+     "memid": 1745027093,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401038
+    },
+    {
+     "name": "Child",
+     "memid": 1745027092,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401009
+    },
+    {
+     "name": "Child",
+     "memid": 1745027092,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401009
+    },
+    {
+     "name": "Height",
+     "memid": 1745027091,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401016
+    },
+    {
+     "name": "FixedBackground",
+     "memid": 1745027090,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401013
+    },
+    {
+     "name": "FixedBackground",
+     "memid": 1745027090,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401013
+    },
+    {
+     "name": "EmbossPicture",
+     "memid": 1745027089,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401058
+    },
+    {
+     "name": "EmbossPicture",
+     "memid": 1745027089,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401058
+    },
+    {
+     "name": "EmbossHighlight",
+     "memid": 1745027088,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401059
+    },
+    {
+     "name": "EmbossHighlight",
+     "memid": 1745027088,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401059
+    },
+    {
+     "name": "EmbossShadow",
+     "memid": 1745027087,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401060
+    },
+    {
+     "name": "EmbossShadow",
+     "memid": 1745027087,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401060
+    },
+    {
+     "name": "UseCoolbarPicture",
+     "memid": 1745027086,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401035
+    },
+    {
+     "name": "UseCoolbarPicture",
+     "memid": 1745027086,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401035
+    },
+    {
+     "name": "UseCoolbarColors",
+     "memid": 1745027085,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401034
+    },
+    {
+     "name": "UseCoolbarColors",
+     "memid": 1745027085,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401034
+    }
+   ]
+  },
+  {
+   "name": "Band",
+   "kind": "coclass",
+   "guid": "{5522DAF8-06D6-11D2-8D70-00A0C98B28E2}",
+   "flags": [],
+   "helpcontext": 401002,
+   "implements": [
+    {
+     "name": "_Band",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Band___v0",
+   "kind": "alias",
+   "guid": "{38911D87-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "_Band"
+  },
+  {
+   "name": "_Bands",
+   "kind": "dispatch",
+   "guid": "{5522DAF9-06D6-11D2-8D70-00A0C98B28E2}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 401001,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Add",
+     "memid": 1610809355,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "_Band",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": -1
+      },
+      {
+       "name": "Key",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      },
+      {
+       "name": "Caption",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      },
+      {
+       "name": "Image",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "NewRow",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      },
+      {
+       "name": "Child",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "Visible",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      },
+      {
+       "name": "arg8",
+       "type": "_Band",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401052
+    },
+    {
+     "name": "Remove",
+     "memid": 1610809356,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401057
+    },
+    {
+     "name": "Clear",
+     "memid": 1610809357,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 401053
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "_Band",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "_Band",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401054
+    },
+    {
+     "name": "Count",
+     "memid": 1745027082,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 401011
+    },
+    {
+     "name": "NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.IUnknown",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Bands",
+   "kind": "coclass",
+   "guid": "{5522DAFA-06D6-11D2-8D70-00A0C98B28E2}",
+   "flags": [],
+   "helpcontext": 401001,
+   "implements": [
+    {
+     "name": "_Bands",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Bands___v0",
+   "kind": "alias",
+   "guid": "{38911D8A-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "_Bands"
+  },
+  {
+   "name": "_BandProperties",
+   "kind": "dispatch",
+   "guid": "{5522DB03-06D6-11D2-8D70-00A0C98B28E2}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "BackColor",
+     "memid": 1745027076,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2
+    },
+    {
+     "name": "BackColor",
+     "memid": 1745027076,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2
+    },
+    {
+     "name": "ForeColor",
+     "memid": 1745027075,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 3
+    },
+    {
+     "name": "ForeColor",
+     "memid": 1745027075,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 3
+    },
+    {
+     "name": "Picture",
+     "memid": 1745027074,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 1
+    },
+    {
+     "name": "Picture",
+     "memid": 1745027074,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.Picture",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.Picture",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 1
+    },
+    {
+     "name": "EmbossHighlight",
+     "memid": 1745027073,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 4
+    },
+    {
+     "name": "EmbossHighlight",
+     "memid": 1745027073,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 4
+    },
+    {
+     "name": "EmbossShadow",
+     "memid": 1745027072,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 5
+    },
+    {
+     "name": "EmbossShadow",
+     "memid": 1745027072,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 5
+    }
+   ]
+  },
+  {
+   "name": "BandProperties",
+   "kind": "coclass",
+   "guid": "{5522DB04-06D6-11D2-8D70-00A0C98B28E2}",
+   "flags": [],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "_BandProperties",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "BandProperties___v0",
+   "kind": "alias",
+   "guid": "{38911D9C-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "_BandProperties"
+  },
+  {
+   "name": "_BandsPage",
+   "kind": "dispatch",
+   "guid": "{38911D8F-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "CoolbarPropertyChanged",
+     "memid": 1610809344,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "sPropertyName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "BandsPage",
+   "kind": "coclass",
+   "guid": "{38911D90-E448-11D0-84A3-00DD01104159}",
+   "flags": [],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "_BandsPage",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "_CoolBarPage",
+   "kind": "dispatch",
+   "guid": "{38911D8D-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "PropertyChanged",
+     "memid": 1610809344,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "sPropertyName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CoolBarPage",
+   "kind": "coclass",
+   "guid": "{38911D8E-E448-11D0-84A3-00DD01104159}",
+   "flags": [],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "_CoolBarPage",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "__CoolBar",
+   "kind": "dispatch",
+   "guid": "{38911D96-E448-11D0-84A3-00DD01104159}",
+   "flags": [
+    "hidden",
+    "nonextensible",
+    "dispatchable"
+   ],
+   "helpcontext": 401000,
+   "members": [
+    {
+     "name": "OLECompleteDrag",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Effect",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401045
+    },
+    {
+     "name": "OLEDragDrop",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Data",
+       "type": "MSVBVM60.DLL\\VBRUN.DataObject",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "Effect",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "button",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401046
+    },
+    {
+     "name": "OLEDragOver",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Data",
+       "type": "MSVBVM60.DLL\\VBRUN.DataObject",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "Effect",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "button",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "State",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401047
+    },
+    {
+     "name": "OLEGiveFeedback",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Effect",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "DefaultCursors",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401048
+    },
+    {
+     "name": "OLESetData",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Data",
+       "type": "MSVBVM60.DLL\\VBRUN.DataObject",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "DataFormat",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401049
+    },
+    {
+     "name": "OLEStartDrag",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Data",
+       "type": "MSVBVM60.DLL\\VBRUN.DataObject",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "AllowedEffects",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ],
+     "helpcontext": 401050
+    },
+    {
+     "name": "Resize",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 401051
+    },
+    {
+     "name": "MouseMove",
+     "memid": -606,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "button",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401043
+    },
+    {
+     "name": "MouseDown",
+     "memid": -605,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "button",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401042
+    },
+    {
+     "name": "MouseUp",
+     "memid": -607,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "button",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 401044
+    },
+    {
+     "name": "Click",
+     "memid": -600,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 401039
+    },
+    {
+     "name": "DblClick",
+     "memid": -601,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 401040
+    },
+    {
+     "name": "HeightChanged",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "NewHeight",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "uidefault"
+     ],
+     "helpcontext": 401041
+    }
+   ]
+  },
+  {
+   "name": "OrientationConstants",
+   "kind": "enum",
+   "guid": "{38911D93-E448-11D0-84A3-00DD01104159}",
+   "flags": [],
+   "helpcontext": 401000,
+   "members": [
+    {
+     "name": "cc3OrientationHorizontal",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "cc3OrientationVertical",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    }
+   ]
+  },
+  {
+   "name": "OLEDropConstants",
+   "kind": "enum",
+   "guid": "{38911D94-E448-11D0-84A3-00DD01104159}",
+   "flags": [],
+   "helpcontext": 401000,
+   "members": [
+    {
+     "name": "cc3OLEDropNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "cc3OLEDropManual",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    }
+   ]
+  },
+  {
+   "name": "MousePointerConstants",
+   "kind": "enum",
+   "guid": "{38911D95-E448-11D0-84A3-00DD01104159}",
+   "flags": [],
+   "helpcontext": 401000,
+   "members": [
+    {
+     "name": "cc3Default",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "cc3Arrow",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "cc3Cross",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "cc3IBeam",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "cc3Icon",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "cc3Size",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5
+    },
+    {
+     "name": "cc3SizeNESW",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6
+    },
+    {
+     "name": "cc3SizeNS",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7
+    },
+    {
+     "name": "cc3SizeNWSE",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 8
+    },
+    {
+     "name": "cc3SizeEW",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 9
+    },
+    {
+     "name": "cc3UpArrow",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 10
+    },
+    {
+     "name": "cc3Hourglass",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 11
+    },
+    {
+     "name": "cc3NoDrop",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 12
+    },
+    {
+     "name": "cc3ArrowHourglass",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 13
+    },
+    {
+     "name": "cc3ArrowQuestion",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 14
+    },
+    {
+     "name": "cc3SizeAll",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 15
+    },
+    {
+     "name": "cc3Custom",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 99
+    }
+   ]
+  },
+  {
+   "name": "BandStyleConstants",
+   "kind": "enum",
+   "guid": "{38911D89-E448-11D0-84A3-00DD01104159}",
+   "flags": [],
+   "helpcontext": 401002,
+   "members": [
+    {
+     "name": "cc3BandNormal",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "cc3BandFixedSize",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    }
+   ]
+  }
+ ]
+}

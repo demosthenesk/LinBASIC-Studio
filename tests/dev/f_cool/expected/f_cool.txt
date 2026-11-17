@@ -1,0 +1,150 @@
+load: cb h=750 w=7200 rows=0 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=3000 minw=0 minh=330 h=0 nr=False vis=True st=0 img=0 av=True ucc=True child=-
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=0 nr=False vis=True st=0 img=0 av=True ucc=True child=-
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=0 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+cb props fixed=False variant=True borders=True emboss=False orient=0 back=8000000F fore=80000012 pic=Nothing il=Nothing
+  ev resize h=750
+  ev resize h=750
+  ev heightchanged 780 h=780
+  ev resize h=780
+activate: cb h=780 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=3000 minw=0 minh=330 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(135,0,2805,330)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3165,0,3915,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+  ev heightchanged 1125 h=1125
+  ev resize h=1125
+band2 newrow: cb h=1125 w=7200 rows=3 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=3000 minw=0 minh=330 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(135,0,6945,330)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=315 nr=True vis=True st=0 img=0 av=True ucc=True child=Combo1(135,360,6945,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+  ev heightchanged 780 h=780
+  ev resize h=780
+band2 same row: cb h=780 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=3000 minw=0 minh=330 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(135,0,2805,330)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3165,0,3915,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+  ev heightchanged 390 h=390
+  ev resize h=390
+band3 hidden: cb h=390 w=7200 rows=1 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=3000 minw=0 minh=330 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(135,0,2805,330)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3165,0,3915,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=0 nr=True vis=False st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+  ev heightchanged 780 h=780
+  ev resize h=780
+band3 shown: cb h=780 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=3000 minw=0 minh=330 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(135,0,2805,330)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=330 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3165,0,3915,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+  ev heightchanged 945 h=945
+  ev resize h=945
+band1 changed: cb h=945 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=1995 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(525,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2250,90,4830,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+item first 1
+  ev heightchanged 1335 h=1335
+  ev resize h=1335
+added Band 4 k4
+added: cb h=1335 w=7200 rows=3 n=4 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=1995 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(525,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2250,90,4830,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  b4 idx=4 pos=4 key=[k4] cap=[Four] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(120,420,1215,285)
+  ev heightchanged 1260 h=1260
+  ev resize h=1260
+  ev heightchanged 1335 h=1335
+  ev resize h=1335
+child text1: cb h=1335 w=7200 rows=3 n=4 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=1995 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(525,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2250,90,4830,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  b4 idx=4 pos=4 key=[k4] cap=[Four] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=Text1(555,915,6525,360)
+  free Text1(555,915,6525,360)
+added at 1: cb h=1335 w=7200 rows=3 n=5 label=1200 form=3600
+  b1 idx=1 pos=1 key=[k0] cap=[Zero] w=0 minw=0 minh=360 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=-
+  b2 idx=2 pos=2 key=[first] cap=[One] w=1995 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(1110,0,1500,495)
+  b3 idx=3 pos=3 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2835,90,4245,315)
+  b4 idx=4 pos=4 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  b5 idx=5 pos=5 key=[k4] cap=[Four] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=Text1(555,915,6525,360)
+  free Text1(555,915,6525,360)
+k4 fixed: cb h=1335 w=7200 rows=3 n=5 label=1200 form=3600
+  b1 idx=1 pos=1 key=[k0] cap=[Zero] w=0 minw=0 minh=360 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=-
+  b2 idx=2 pos=2 key=[first] cap=[One] w=1995 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(1110,0,1500,495)
+  b3 idx=3 pos=3 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2835,90,4245,315)
+  b4 idx=4 pos=4 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  b5 idx=5 pos=5 key=[k4] cap=[Four] w=0 minw=0 minh=360 h=360 nr=True vis=True st=1 img=0 av=True ucc=True child=Text1(480,915,6600,360)
+  free Text1(480,915,6600,360)
+  ev heightchanged 945 h=945
+  ev resize h=945
+removed: cb h=945 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=1995 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(525,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2250,90,4830,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+  item 9 ! 35600 Index out of bounds
+  item nope ! 35601 Element not found
+  add 9 ! 35600 Index out of bounds
+  add first again ! 457 This key is already associated with an element of this collection
+  remove 99 ! 35600 Index out of bounds
+  style 7 ! 380 Invalid property value
+after errors: cb h=945 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=0 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(525,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2250,90,4830,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+  ev heightchanged 1080 h=1080
+  ev resize h=1080
+variant off: cb h=1080 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=0 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(525,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2250,90,4830,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=495 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+  ev heightchanged 1050 h=1050
+  ev resize h=1050
+props fixed=True borders=False emboss=True
+borders off: cb h=1050 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[One] w=0 minw=1500 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(450,0,1500,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(2145,90,4935,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=495 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+borders off, no caption: cb h=1050 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[] w=3000 minw=0 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(0,0,2940,495)
+  b2 idx=2 pos=2 key=[] cap=[] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3135,90,3945,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=495 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+borders off, caption two: cb h=1050 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[] w=3000 minw=0 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(0,0,2940,495)
+  b2 idx=2 pos=2 key=[] cap=[Two] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3540,90,3540,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=495 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+  ev heightchanged 1080 h=1080
+  ev resize h=1080
+borders on, caption two: cb h=1080 w=7200 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[] w=3000 minw=0 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(0,0,2940,495)
+  b2 idx=2 pos=2 key=[] cap=[Two] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3570,90,3510,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=495 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+  ev resize h=1080
+narrower: cb h=1080 w=5700 rows=2 n=3 label=1200 form=3600
+  b1 idx=1 pos=1 key=[first] cap=[] w=3000 minw=0 minh=495 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Picture1(0,0,2940,495)
+  b2 idx=2 pos=2 key=[] cap=[Two] w=2505 minw=0 minh=315 h=495 nr=False vis=True st=0 img=0 av=True ucc=True child=Combo1(3570,90,2010,315)
+  b3 idx=3 pos=3 key=[] cap=[] w=0 minw=0 minh=360 h=495 nr=True vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)
+  ev resize h=1080
+  ev heightchanged 810 h=810
+  ev resize h=810
+  ev heightchanged 420 h=420
+  ev resize h=420
+cleared: cb h=420 w=7200 rows=0 n=0 label=1200 form=3600
+  free Text1(480,915,6600,360)
+one band: cb h=420 w=7200 rows=1 n=1 label=1200 form=3600
+  b1 idx=1 pos=1 key=[] cap=[] w=0 minw=0 minh=360 h=360 nr=False vis=True st=0 img=0 av=True ucc=True child=-
+  free Text1(480,915,6600,360)

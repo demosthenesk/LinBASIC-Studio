@@ -1,0 +1,186 @@
+== engine
+DBEngine 3.6 ws=1
+Workspace #Default Workspace# user=admin dbs=0 type=2
+== create
+Database dao1.mdb updatable=True dbs=1
+tabledefs 4 querydefs 0 relations 0
+  MSysACEs attr=-2147483648
+  MSysObjects attr=-2147483648
+  MSysQueries attr=-2147483648
+  MSysRelationships attr=-2147483648
+== ddl
+  ! show: 3265 Item not found in this collection. [DAO.TableDefs]
+table Authors attr=0 fields=11 indexes=2 updatable=True
+  field Au_ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field Name type=10 size=30 attr=2 req=True zl=False pos=1 def=S''
+  field Born type=3 size=2 attr=1 req=False zl=False pos=2 def=S''
+  field Salary type=5 size=8 attr=1 req=False zl=False pos=3 def=S''
+  field Hired type=8 size=8 attr=1 req=False zl=False pos=4 def=S''
+  field Active type=1 size=1 attr=1 req=False zl=False pos=5 def=S''
+  field Notes type=12 size=0 attr=2 req=False zl=False pos=6 def=S''
+  field Rate type=7 size=8 attr=1 req=False zl=False pos=7 def=S''
+  field Score type=6 size=4 attr=1 req=False zl=False pos=8 def=S''
+  field Age type=2 size=1 attr=1 req=False zl=False pos=9 def=S''
+  field Big type=4 size=4 attr=1 req=False zl=False pos=10 def=S''
+  index ByName primary=False unique=False req=False ignorenulls=False foreign=False : Name/0
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : Au_ID/0
+== tabledef objects
+unappended fields 7 Title size=40
+relations 1 AuthorBooks Authors->Books attr=0 Au_ID=AuID
+table Books attr=0 fields=7 indexes=3 updatable=True
+  field BookID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field Title type=10 size=40 attr=2 req=False zl=False pos=1 def=S''
+  field AuID type=4 size=4 attr=1 req=False zl=False pos=2 def=S''
+  field Price type=5 size=8 attr=1 req=False zl=False pos=3 def=S''
+  field Pub type=8 size=8 attr=1 req=False zl=False pos=4 def=S''
+  field Pages type=3 size=2 attr=1 req=False zl=False pos=5 def=S'100'
+  field Code type=10 size=5 attr=2 req=True zl=False pos=6 def=S''
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : BookID/0
+  index ByTitle primary=False unique=False req=False ignorenulls=False foreign=False : Title/1
+  index ByCode primary=False unique=True req=False ignorenulls=False foreign=False : Code/0
+tabledefs 6
+== insert
+affected 1
+affected 1
+  ! insert without name: 3314 The field 'Authors.Name' cannot contain a Null value because the Required property for this field is set to True.  Enter a value in this field. [DAO.Database]
+  ! insert into nope: 3192 Could not find output table 'Nope'. [DAO.Database]
+  ! too long: 0  []
+update affected 2
+== recordsets
+default type 1 count 5 updatable True name Authors editmode 0
+-- Authors (table)
+  cols: Au_ID/4 Name/10 Born/3 Salary/5 Hired/8 Active/1 Notes/12 Rate/7 Score/6 Age/2 Big/4
+  L1 S'Smith' I1950 C1234.5 D1990-03-15 00:00:00 BT Null Do1.5 Si2.25 B40 L100000
+  L2 S'O'Brien' I1963 Null D1985-12-01 10:30:00 BF Null Null Null Null Null
+  L3 S'jones' I1972 Null Null BF S'memo text' Null Null Null Null
+  L4 S'Adams' Null Null Null BF Null Null Null Null Null
+  L6 S'Too long name for the thirty c' I1 Null Null BF Null Null Null Null Null
+  rows 5
+dynaset type 2 count 1 bof False eof False pos 0
+after movelast count 5 pos 4 name Too long name for the thirty c
+first L4 S'Adams' Null Null Null BF Null Null Null Null Null
+before first bof True eof False pos -1
+  ! field at bof: 3021 No current record. [DAO.Field]
+  ! moveprevious at bof: 3021 No current record. [DAO.Recordset]
+move 2 from bof: jones pos 1
+move -1: Adams
+absolute 3: Smith
+after last eof True pos -1
+  ! movenext at eof: 3021 No current record. [DAO.Recordset]
+field types:
+  Au_ID type=4 size=4 src=Authors.Au_ID upd=True
+  Name type=10 size=30 src=Authors.Name upd=True
+  Born type=3 size=2 src=Authors.Born upd=True
+  Salary type=5 size=8 src=Authors.Salary upd=True
+  Hired type=8 size=8 src=Authors.Hired upd=True
+  Active type=1 size=1 src=Authors.Active upd=True
+  Notes type=12 size=0 src=Authors.Notes upd=True
+  Rate type=7 size=8 src=Authors.Rate upd=True
+  Score type=6 size=4 src=Authors.Score upd=True
+  Age type=2 size=1 src=Authors.Age upd=True
+  Big type=4 size=4 src=Authors.Big upd=True
+  ! no field: 3265 Item not found in this collection. [DAO.Fields]
+  ! field 99: 3265 Item not found in this collection. [DAO.Fields]
+== snapshot
+snapshot type 4 updatable False count 1
+  ! edit snapshot: 3251 Operation is not supported for this type of object. [DAO.Recordset]
+  ! open nope: 3078 The Microsoft Jet database engine cannot find the input table or query 'Nope'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+  ! bad sql: 3078 The Microsoft Jet database engine cannot find the input table or query 'SELEC * FROM Authors'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+  ! unknown column: 3061 Too few parameters. Expected 1. [DAO.Database]
+  ! bad where: 3075 Missing ), ], or Item in query expression '(Born > 1'. [DAO.Database]
+== addnew / edit
+count 5 last Too long name for the thirty c
+editmode 2 new id L7 name Null pos 4
+after update current Too long name for the thirty c editmode 0 count 6
+lastmodified Baker L7 C99.99
+  ! update without edit: 3020 Update or CancelUpdate without AddNew or Edit. [DAO.Recordset]
+  ! type mismatch: 3421 Data type conversion error. [DAO.Field]
+  ! required null: 3314 The field 'Authors.Name' cannot contain a Null value because the Required property for this field is set to True.  Enter a value in this field. [DAO.Recordset]
+edited Baker Jr notes S''
+cancel editmode 0 current Baker Jr
+bookmark AByte()(0 To 3)
+back to Baker Jr
+clone current? L0
+  ! clone pos: 0  []
+clone at bookmark Baker Jr
+deleted, editmode 0
+  ! field after delete: 3021 No current record. [DAO.Field]
+next after delete O'Brien count 5
+requery count 5
+== find
+findfirst b* False Baker Jr
+findnext b* True Baker Jr
+findnext again True Baker Jr
+findlast born>1900 False O'Brien
+findprevious False jones
+find date True Adams
+find upper True Adams
+find none True pos 0
+  ! find bad: 3070 The Microsoft Jet database engine does not recognize 'Nope' as a valid field name or expression. [DAO.Recordset]
+find isnull False
+== seek
+  ! seek without index: 3019 Operation invalid without a current index. [DAO.Recordset]
+seek =2 False O'Brien
+seek >=4 False Adams
+seek >100 True
+seek <3 False O'Brien
+byname first Adams
+seek jones False jones
+seek >=C False jones
+== sort / filter
+-- sorted born desc
+  cols: Name/10 Born/3
+  S'Baker Jr' I1980
+  S'jones' I1972
+  S'O'Brien' I1963
+  S'Too long name for the thirty c' I1
+  S'Adams' Null
+  rows 5
+-- filter born < 1970
+  cols: Name/10 Born/3
+  S'O'Brien' I1963
+  S'Too long name for the thirty c' I1
+  rows 2
+== constraints
+  ! no author: 3201 You cannot add or change a record because a related record is required in table 'Authors'. [DAO.Database]
+  ! duplicate code: 3022 The changes you requested to the table were not successful because they would create duplicate values in the index, primary key, or relationship.  Change the data in the field or fields that contain duplicate data, remove the index, or redefine the index to permit duplicate entries and try again. [DAO.Database]
+  ! required code: 3314 The field 'Books.Code' cannot contain a Null value because the Required property for this field is set to True.  Enter a value in this field. [DAO.Database]
+  ! delete referenced: 3200 The record cannot be deleted or changed because table 'Books' includes related records. [DAO.Database]
+  ! zero length: 3315 Field 'Books.Code' cannot be a zero-length string. [DAO.Recordset]
+  ! duplicate by recordset: 3022 The changes you requested to the table were not successful because they would create duplicate values in the index, primary key, or relationship.  Change the data in the field or fields that contain duplicate data, remove the index, or redefine the index to permit duplicate entries and try again. [DAO.Recordset]
+default pages I100
+-- books
+  cols: BookID/4 Title/10 AuID/4 Price/5 Pub/8 Pages/3 Code/10
+  L1 S'Book A' L2 Null Null I100 S'A1'
+  L2 S'Book B' L3 C12.5 D1999-01-31 00:00:00 I100 S'B1'
+  L8 S'Book H' L3 Null Null I100 S'H1'
+  rows 3
+== transactions
+in trans affected 3
+after rollback 3
+after commit C3
+  ! commit without begin: 3034 You tried to commit or rollback a transaction without first beginning a transaction. [DAO.Workspace]
+== close / reopen
+dbs after close 0
+  ! use closed: 3420 Object invalid or no longer set. [DAO.Database]
+reopened dao1.mdb tables 6 dbs 1 True
+table Books attr=0 fields=7 indexes=4 updatable=True
+  field BookID type=4 size=4 attr=17 req=False zl=False pos=0 def=S''
+  field Title type=10 size=40 attr=2 req=False zl=False pos=1 def=S''
+  field AuID type=4 size=4 attr=1 req=False zl=False pos=2 def=S''
+  field Price type=5 size=8 attr=1 req=False zl=False pos=3 def=S''
+  field Pub type=8 size=8 attr=1 req=False zl=False pos=4 def=S''
+  field Pages type=3 size=2 attr=1 req=False zl=False pos=5 def=S'100'
+  field Code type=10 size=5 attr=2 req=True zl=False pos=6 def=S''
+  index AuthorBooks primary=False unique=False req=False ignorenulls=False foreign=True : AuID/0
+  index ByCode primary=False unique=True req=False ignorenulls=False foreign=False : Code/0
+  index ByTitle primary=False unique=False req=False ignorenulls=False foreign=False : Title/1
+  index PrimaryKey primary=True unique=True req=True ignorenulls=False foreign=False : BookID/0
+authors 5
+  ! delete nope: 3265 Item not found in this collection. [DAO.TableDefs]
+tables 6
+tables after delete 7
+  ! deleted table: 3265 Item not found in this collection. [DAO.TableDefs]
+  ! open missing: 3024 DAO.Workspace
+errors 1 3024 DAO.Workspace
+end

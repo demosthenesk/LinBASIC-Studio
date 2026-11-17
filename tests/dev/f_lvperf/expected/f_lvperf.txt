@@ -1,0 +1,6 @@
+== start
+subitems: Count=20000 first=10.0.1 last=10.0.20000 sub=2 10.1.20000  -  10.2.20000 10.3.20000
+clear: Count=0
+alone: Count=20000 first=item 1 last=item 20000
+subitems(): Count=20000 first=x1 last=x20000 sub=2 y20000 z20000
+end

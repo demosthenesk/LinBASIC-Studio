@@ -1,0 +1,10 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 4.3) — f_uctl
+
+User controls (UserControl, .ctl): events, PropertyBag, Extender, Ambient, RaiseEvent.
+Το έργο κλείνει μόνο του σε 1-2 δευτερόλεπτα. Μην πατάς τίποτα όσο τρέχει.
+
+1. Άνοιξε το f_uctl\UCTests.vbp με το VB6 (ως διαχειριστής) και πάτα F5.
+   - Μην ανοίξεις τη φόρμα ή το Counter στον designer πριν το F5.
+   - Αν βγει σφάλμα, στείλε μου εικόνα.
+2. Κλείσε το VB6 χωρίς αποθήκευση.
+3. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο f_uctl\expected\f_uctl.txt.

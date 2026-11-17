@@ -1,0 +1,14 @@
+﻿Tests ADO της VB6 (LinBASIC Studio, Φάση 4.4)
+
+d_ado1: Connection, Execute, Recordset (forward-only, keyset, client cursor), Find, Filter, Sort,
+        αλλαγές εγγραφών, GetRows/GetString, Clone, transactions, OpenSchema, σφάλματα.
+d_ado2: Command και παράμετροι, stored queries, γεγονότα του Recordset (WithEvents),
+        Recordset χωρίς βάση (Fields.Append), μετατροπές τύπων, σελίδες, MaxRecords.
+
+Κάθε τεστ φτιάχνει μόνο του τη βάση του (ado1.mdb / ado2.mdb) με το DAO 3.6.
+
+1. Άνοιξε το d_ado1\AdoTest1.vbp με το VB6 (ως διαχειριστής) και πάτα F5. Τελειώνει μόνο του
+   (δεν έχει φόρμα). Κλείσε το VB6 χωρίς αποθήκευση.
+2. Το ίδιο για το d_ado2\AdoTest2.vbp.
+3. Πες μου «έτοιμο». Τα αποτελέσματα γράφονται στα d_ado1\expected\d_ado1.txt και d_ado2\expected\d_ado2.txt.
+   Αν βγει μήνυμα σφάλματος (π.χ. στη μεταγλώττιση), στείλε μου εικόνα.

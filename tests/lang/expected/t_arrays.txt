@@ -1,0 +1,8 @@
+ 0  5  25  55 
+ 1  3  0  1  7  0 
+ 4 xz[]w
+ 1 []
+ 0  5 
+s 2,5 Double
+bad index 9 
+erased 9 

@@ -1,0 +1,149 @@
+==== c1_letobj 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c1_letobj\c1_letobj.bas', Line 1 : Argument not optional
+Build of 'c1_letobj.exe' failed.
+==== c2_exitfunc_propget 
+
+Build of 'c2_exitfunc_propget.exe' succeeded.
+ran 5
+==== c3_exitsub_propget 
+
+Build of 'c3_exitsub_propget.exe' succeeded.
+ran 6
+==== c4_clng_default 
+
+Build of 'c4_clng_default.exe' succeeded.
+ran 16711680
+==== c5_subcmp 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c5_subcmp\c5_subcmp.bas', Line 4 : Expected Function or variable
+Build of 'c5_subcmp.exe' failed.
+==== c6_propset_let 
+
+Build of 'c6_propset_let.exe' succeeded.
+ran err=0 name=Courier New
+inner err=0 name=Times New Roman
+==== c7_varptr_func 
+
+Build of 'c7_varptr_func.exe' succeeded.
+ran True
+==== c8_forward_enum 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c8_forward_enum\c8_forward_enum.bas', Line 0 : Constant expression required
+Build of 'c8_forward_enum.exe' failed.
+==== c9_unused_undefined 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c9_unused_undefined\c9_unused_undefined.bas', Line 5 : Variable not defined
+Build of 'c9_unused_undefined.exe' failed.
+==== c10_for_each_nothing 
+
+Build of 'c10_for_each_nothing.exe' succeeded.
+body 1 err=438
+ran 1 err=92
+==== c11_erase_field 
+
+Build of 'c11_erase_field.exe' succeeded.
+ran err=0 True False Variant()
+==== c12_noarg_recursion 
+
+Build of 'c12_noarg_recursion.exe' succeeded.
+ran 4 4
+==== c13_split_to_variant_array 
+
+Build of 'c13_split_to_variant_array.exe' succeeded.
+==== c14_const_from_string 
+
+Build of 'c14_const_from_string.exe' succeeded.
+ran -2147483625 35
+==== c15_stdole_color 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c15_stdole_color\c15_stdole_color.bas', Line 1 : Assignment to constant not permitted
+Build of 'c15_stdole_color.exe' failed.
+==== c16_error_object 
+
+Build of 'c16_error_object.exe' succeeded.
+==== c17_iface_var_byval_byval 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c17_iface_var_byval_byval\CImpl.cls', Line 6 : Procedure declaration does not match description of event or procedure having the same name
+Build of 'c17_iface_var_byval_byval.exe' failed.
+==== c18_iface_var_byref_byref 
+
+Build of 'c18_iface_var_byref_byref.exe' succeeded.
+let
+v 5
+set
+obj Collection
+ran
+==== c19_iface_var_byref_byval 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c19_iface_var_byref_byval\CImpl.cls', Line 10 : Procedure declaration does not match description of event or procedure having the same name
+Build of 'c19_iface_var_byref_byval.exe' failed.
+==== c20_iface_var_byval_byref 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c20_iface_var_byval_byref\CImpl.cls', Line 6 : Procedure declaration does not match description of event or procedure having the same name
+Build of 'c20_iface_var_byval_byref.exe' failed.
+==== c21_iface_var_no_set 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c21_iface_var_no_set\CImpl.cls', Line 1 : Object module needs to implement 'V' for interface 'IFace'
+Build of 'c21_iface_var_no_set.exe' failed.
+==== c22_iface_obj_byval 
+
+Build of 'c22_iface_obj_byval.exe' succeeded.
+set o
+o 1
+ran
+==== c23_iface_obj_byref 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c23_iface_obj_byref\CImpl.cls', Line 6 : Procedure declaration does not match description of event or procedure having the same name
+Build of 'c23_iface_obj_byref.exe' failed.
+==== c24_iface_str_byref 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c24_iface_str_byref\CImpl.cls', Line 6 : Procedure declaration does not match description of event or procedure having the same name
+Build of 'c24_iface_str_byref.exe' failed.
+==== c25_iface_str_byval 
+
+Build of 'c25_iface_str_byval.exe' succeeded.
+let s
+s abc
+ran
+==== c26_const_clng 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c26_const_clng\c26_const_clng.bas', Line 0 : Constant expression required
+Build of 'c26_const_clng.exe' failed.
+==== c27_debug_assert_paren 
+
+Build of 'c27_debug_assert_paren.exe' succeeded.
+ran
+==== c28_erase_variant 
+
+Build of 'c28_erase_variant.exe' succeeded.
+v 0 True False Variant() ub=-99 err=9
+  elem0 ? err=9
+v 0 True False Variant() ub=-99 err=9
+  elem0 ? err=9
+ran
+==== c29_const_before_enum 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c29_const_before_enum\c29_const_before_enum.bas', Line 0 : Constant expression required
+Build of 'c29_const_before_enum.exe' failed.
+==== c30_enum_qualified_default 
+
+Build of 'c30_enum_qualified_default.exe' succeeded.
+ran 2 3
+==== c31_const_before_const 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c31_const_before_const\c31_const_before_const.bas', Line 0 : Constant expression required
+Build of 'c31_const_before_const.exe' failed.
+==== c32_enum_later_member 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c32_enum_later_member\c32_enum_later_member.bas', Line 1 : Constant expression required
+Build of 'c32_enum_later_member.exe' failed.
+==== c33_foreach_nothing 
+
+Build of 'c33_foreach_nothing.exe' succeeded.
+body 1 err=424
+ran 1 err=92
+==== c34_default_before_enum 
+
+Compile Error in File '\\VBoxSvr\VMShared\VB-TESTS\tests-6.8\compile-6.8\c34_default_before_enum\c34_default_before_enum.bas', Line 0 : Constant expression required
+Build of 'c34_default_before_enum.exe' failed.

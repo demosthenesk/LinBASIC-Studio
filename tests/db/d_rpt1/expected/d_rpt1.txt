@@ -1,0 +1,258 @@
+== the object
+event DataReport_Initialize
+typename=rptTest caption=Test report title=
+margins=1440,1440,1440,1440 width=7560
+datamember=Customers_Grouping datasource=deRpt01
+sections=9
+  section 1 ReportHeader height=360 controls=1: RptLabel:lblTitle
+  section 2 PageHeader height=300 controls=4: RptLabel:lblCust RptLabel:lblOrder RptLabel:lblAmount RptLabel:lblDate
+  section 3 Customers_Grouping_Header height=300 controls=1: RptTextBox:txtCountry
+  section 4 Customers_Header height=300 controls=2: RptTextBox:txtName RptTextBox:txtCustID
+  section 5 Orders_Detail height=270 controls=3: RptTextBox:txtOrderID RptTextBox:txtAmount RptTextBox:txtDate
+  section 6 Customers_Footer height=300 controls=3: RptLabel:lblSub RptFunction:fnSub RptLine:lnSub
+  section 7 Customers_Grouping_Footer height=300 controls=2: RptLabel:lblCountryTot RptFunction:fnCountry
+  section 8 PageFooter height=300 controls=1: RptLabel:lblPage
+  section 9 ReportFooter height=360 controls=2: RptLabel:lblGrand RptFunction:fnGrand
+detail by name=Orders_Detail
+label=Page %p of %P
+exportformats=4
+  format 1 key=key_def_HTML type=0 string=HTML (*.htm; *.html) filter=*.htm;*.html
+  template <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><cr><lf><HTML><cr><lf><HEAD><cr><lf><TITLE><!--MSDBRPT_Template_Title--></TITLE><cr><lf></HEAD><cr><lf><BODY><cr><lf><cr><lf><!--MSDBRPT_Template_Body--><cr><lf><cr><lf></BODY><cr><lf></HTML><cr><lf>
+  format 2 key=key_def_UnicodeHTML_UTF8 type=3 string=Unicode HTML (UTF-8) (*.htm; *.html) filter=*.htm;*.html
+  template <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><cr><lf><HTML><cr><lf><HEAD><cr><lf><META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=utf-8"><cr><lf><TITLE><!--MSDBRPT_Template_Title--></TITLE><cr><lf></HEAD><cr><lf><BODY><cr><lf><cr><lf><!--MSDBRPT_Template_Body--><cr><lf><cr><lf></BODY><cr><lf></HTML><cr><lf>
+  format 3 key=key_def_Text type=1 string=Text (*.txt) filter=*.txt
+  template <!--MSDBRPT_Template_Body-->
+  format 4 key=key_def_UnicodeText type=2 string=Unicode Text (*.txt) filter=*.txt
+  template <!--MSDBRPT_Template_Body-->
+== export text
+  bytes=2153
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |                   Orders by country<cr>
+  |<cr>
+  |                   Customer                              Order                         Amount  Date<cr>
+  |                   France<cr>
+  |                        Bon app                          BONAP<cr>
+  |                                                         12                              7,25  2026-02-03<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                                                         7,25<cr>
+  |                                                         Country total                   7,25<cr>
+  |                   Germany<cr>
+  |                        Alfreds                          ALFKI<cr>
+  |                                                         10                            100,50  2026-01-05<cr>
+  |                                                         11                          1.020,00  2026-02-01<cr>
+  |                                                         14                              1,00  2026-03-09<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                                                     1.121,50<cr>
+  |                        Blauer See                       BLAUS<cr>
+  |                                                         13                            300,00  2026-03-01<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                                                       300,00<cr>
+  |                                                         Country total               1.421,50<cr>
+  |                   Netherlands<cr>
+  |                        Noord                            NOORD<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                         Country total<cr>
+  |                                                         Grand total                 1.428,75<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |                   Page 1 of 1<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+== export html
+  bytes=5459
+  |<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><cr>
+  |<HTML><cr>
+  |<HEAD><cr>
+  |<TITLE></TITLE><cr>
+  |</HEAD><cr>
+  |<BODY><cr>
+  |<cr>
+  |<TABLE WIDTH=100%><cr>
+  |<TR><TD WIDTH=0></TD><TH WIDTH=17%></TH><TH WIDTH=4%></TH><TH WIDTH=29%></TH><TH WIDTH=17%></TH><TH WIDTH=15%></TH><TH WIDTH=2%></TH><TH WIDTH=4%></TH><TH WIDTH=12%></TH></TR><cr>
+  |  <TR><TD HEIGHT=96></TD></TR><cr>
+  |  <TR><TD HEIGHT=24></TD><TD></TD><TD COLSPAN=3 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Orders by country</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Customer</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Order</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>Amount</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Date</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>France</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Bon app</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>BONAP</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>12</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>7,25</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-02-03</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=0></TD><TD></TD><TD></TD><TD></TD><TD ROWSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>7,25</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Country total</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>7,25</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Germany</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Alfreds</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>ALFKI</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>10</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>100,50</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-01-05</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>11</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.020,00</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-02-01</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>14</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1,00</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-03-09</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=0></TD><TD></TD><TD></TD><TD></TD><TD ROWSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.121,50</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Blauer See</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>BLAUS</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>13</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>300,00</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-03-01</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=0></TD><TD></TD><TD></TD><TD></TD><TD ROWSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>300,00</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Country total</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.421,50</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Netherlands</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Noord</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>NOORD</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Country total</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=430></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Grand total</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.428,75</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=15></TD><TD></TD><TD COLSPAN=3 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Page 1 of 1</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=100></TD></TR><cr>
+  |</TABLE><cr>
+  |<cr>
+  |<cr>
+  |</BODY><cr>
+  |</HTML><cr>
+== export again without overwrite
+  ! no overwrite: 8512 File already exists: '\\VBoxSvr\VMShared\DAO\d_rpt1\out.txt' [DataReport]
+== a format of the program
+exportformats=5 template=<!--MSDBRPT_Template_Body-->
+  ! add again: 8500 Duplicate key value 'mine' [ExportFormats]
+  bytes=2153
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |                   Orders by country<cr>
+  |<cr>
+  |                   Customer                              Order                         Amount  Date<cr>
+  |                   France<cr>
+  |                        Bon app                          BONAP<cr>
+  |                                                         12                              7,25  2026-02-03<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                                                         7,25<cr>
+  |                                                         Country total                   7,25<cr>
+  |                   Germany<cr>
+  |                        Alfreds                          ALFKI<cr>
+  |                                                         10                            100,50  2026-01-05<cr>
+  |                                                         11                          1.020,00  2026-02-01<cr>
+  |                                                         14                              1,00  2026-03-09<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                                                     1.121,50<cr>
+  |                        Blauer See                       BLAUS<cr>
+  |                                                         13                            300,00  2026-03-01<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                                                       300,00<cr>
+  |                                                         Country total               1.421,50<cr>
+  |                   Netherlands<cr>
+  |                        Noord                            NOORD<cr>
+  |                                                         Subtotal           -----------------<cr>
+  |                                                         Country total<cr>
+  |                                                         Grand total                 1.428,75<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |                   Page 1 of 1<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+== titles
+  bytes=5465
+  |<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><cr>
+  |<HTML><cr>
+  |<HEAD><cr>
+  |<TITLE>My title</TITLE><cr>
+  |</HEAD><cr>
+  |<BODY><cr>
+  |<cr>
+  |<TABLE WIDTH=100%><cr>
+  |<TR><TD WIDTH=0></TD><TH WIDTH=17%></TH><TH WIDTH=4%></TH><TH WIDTH=29%></TH><TH WIDTH=17%></TH><TH WIDTH=15%></TH><TH WIDTH=2%></TH><TH WIDTH=4%></TH><TH WIDTH=12%></TH></TR><cr>
+  |  <TR><TD HEIGHT=96></TD></TR><cr>
+  |  <TR><TD HEIGHT=24></TD><TD></TD><TD COLSPAN=3 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Title: My title</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Customer</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Order</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>Amount</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Date</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>France</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Bon app</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>BONAP</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>12</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>7,25</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-02-03</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=0></TD><TD></TD><TD></TD><TD></TD><TD ROWSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>7,25</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Country total</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>7,25</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Germany</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Alfreds</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>ALFKI</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>10</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>100,50</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-01-05</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>11</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.020,00</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-02-01</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>14</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1,00</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-03-09</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=0></TD><TD></TD><TD></TD><TD></TD><TD ROWSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.121,50</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Blauer See</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>BLAUS</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=18></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>13</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>300,00</DIV></FONT></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>2026-03-01</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=0></TD><TD></TD><TD></TD><TD></TD><TD ROWSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>300,00</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Country total</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.421,50</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD COLSPAN=2 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Netherlands</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Noord</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>NOORD</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Subtotal</FONT></TD><TD VALIGN=TOP><HR></TD></TR><cr>
+  |  <TR><TD HEIGHT=20></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Country total</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=430></TD><TD></TD><TD></TD><TD></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Grand total</FONT></TD><TD NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1><DIV ALIGN=RIGHT>1.428,75</DIV></FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=15></TD><TD></TD><TD COLSPAN=3 NOWRAP VALIGN=TOP><FONT FACE="Arial" SIZE=1>Page 1 of 1</FONT></TD></TR><cr>
+  |  <TR><TD HEIGHT=100></TD></TR><cr>
+  |</TABLE><cr>
+  |<cr>
+  |<cr>
+  |</BODY><cr>
+  |</HTML><cr>
+event DataReport_Terminate
+end

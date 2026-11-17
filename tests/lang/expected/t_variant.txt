@@ -1,0 +1,13 @@
+emptyTrue 0 Empty[] 1 [x]
+Integer 32768 Long
+LongDouble
+ 15 Double105 50 
+abcdefTrue
+TrueTrueFalse[x] 1 
+ 3 Double 0,75  1  0 
+TrueBoolean 0 Integer
+Byte 400 Integer
+FalseDouble 8  3 
+truthy
+not zero
+yes 2,5 

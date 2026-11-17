@@ -1,0 +1,4 @@
+== start
+session: DownLoadMail=Boolean:False LogonUI=Boolean:False NewSession=Boolean:True Password=String:secret UserName=String:tester SessionID=Long:0
+messages: AddressCaption=String:Pick AddressEditFieldCount=Integer:3 AddressLabel=String:To: AddressModifiable=Boolean:True AddressResolveUI=Boolean:True FetchMsgType=String:IPM.Note FetchSorted=Boolean:True FetchUnreadOnly=Boolean:True SessionID=Long:0 MsgIndex=Long:0
+end

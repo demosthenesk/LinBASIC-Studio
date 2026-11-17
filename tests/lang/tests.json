@@ -1,0 +1,64 @@
+{
+ "t_arith": "T_Arith",
+ "t_strings": "T_Strings",
+ "t_convert": "T_Convert",
+ "t_control": "T_Control",
+ "t_procs": "T_Procs",
+ "t_arrays": "T_Arrays",
+ "t_errors": "T_Errors",
+ "t_variant": "T_Variant",
+ "t_files": "T_Files",
+ "t_print": "T_Print",
+ "t_numfmt": "T_NumFmt",
+ "t_dates": "T_Dates",
+ "t_udt": "T_Udt",
+ "t_class": {
+  "sub": "T_Class",
+  "files": [
+   "CCounter.cls",
+   "CNode.cls"
+  ]
+ },
+ "t_events": {
+  "sub": "T_Events",
+  "files": [
+   "IShape.cls",
+   "CSquare.cls",
+   "CCircle.cls",
+   "CSource.cls",
+   "CSink.cls"
+  ]
+ },
+ "t_binfiles": "T_BinFiles",
+ "t_declare": "T_Declare",
+ "t_declare2": "T_Declare2",
+ "t_flow": "T_Flow",
+ "t_format": "T_Format",
+ "t_vbafuncs": "T_VbaFuncs",
+ "t_enum": {
+  "sub": "T_Enum",
+  "files": [
+   "CItems.cls"
+  ]
+ },
+ "t_scripting": "T_Scripting",
+ "t_order": "T_Order",
+ "t_fin": "T_Fin",
+ "t_decimal": "T_Decimal",
+ "t_bytes": "T_Bytes",
+ "t_traperr": "T_TrapErr",
+ "t_intl": "T_Intl",
+ "t_ph68": {
+  "sub": "T_Ph68",
+  "files": [
+   "IVarIface.cls",
+   "CVarImpl.cls"
+  ]
+ },
+ "t_bstrptr": "T_BstrPtr",
+ "t_resnext": "T_ResNext",
+ "t_arrbyref": "T_ArrByRef",
+ "t_lenvba": "T_LenVba",
+ "t_fixarr": "T_FixArr",
+ "t_varptrarr": "T_VarPtrArr"
+}

@@ -1,0 +1,16 @@
+int ops 9  5  14  3,5  3  1  49 
+neg mod-3 -1  1 -1 
+precedence 14  20 -4  0,5  3  64 
+types Integer Double Integer Long Double
+single 0,75 SingleDoubleSingle
+long 300000  14285  5 Long
+double 0,333333333333333  1  3E+20  0,00000000025 
+currency 1,2345  3,7035  0,4115 Currency 3,33333333333333 
+byte 150 IntegerByte
+cint 2  4 -2  2  1234568  0 
+fix int-2 -3  2  2  2  4  2,35 
+abs sgn 5  2,5 -1  0  1 
+math 4  2718  2302  3141 
+assign rounding 2  4 -4 
+bool math 0 -2 -1 -6 False 1  7  6 
+compareTrueTrueFalseTrueTrue

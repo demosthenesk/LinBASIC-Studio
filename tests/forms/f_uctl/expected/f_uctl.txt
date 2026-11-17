@@ -1,0 +1,67 @@
+main
+form initialize
+  uc1 initialize 1800x600
+  uc1 resize 1800x600
+  uc1 readproperties Counter2 value=0 step=1 caption=Cnt usermode=True display=Counter2(0)
+  uc2 initialize 1800x600
+  uc2 resize 1800x600
+  uc2 readproperties Counter1 value=5 step=2 caption=A usermode=True display=Counter1
+form load
+typename Counter True Counter
+counter1 5 default 5 step 2 caption A
+counter2 0 step 1 caption Cnt
+extender Counter1 tag first 240,240 1800x600 tabindex 0 index 0
+controls 3 Timer1:Timer Counter2:Counter Counter1:Counter 
+form resize
+main shown
+  uc1 show
+  uc2 show
+form activate
+step 1
+counter1 changed 7
+value 7
+counter1 changed 9
+default 9
+counter1 changed 500
+  uc2 vetoed 500
+after veto 9
+  uc2 cmdup click
+counter1 changed 11
+pressup 11
+  uc2 cmdup click
+counter1 changed 21
+pressup 21
+step 2
+info back=8000000F fore=80000012 font=MS Sans Serif usermode=True ext=Counter1 240,240 1800x600 tag=[first] parent=Form1 visible=True scale=1800x600 lbl=21 ctls=2
+  uc2 resize 2400x900
+info back=8000000F fore=80000012 font=MS Sans Serif usermode=True ext=Counter1 120,120 2400x900 tag=[t1] parent=Form1 visible=True scale=2400x900 lbl=21 ctls=2
+  uc2 resize 1995x900
+moved 300 2000
+step 3
+  uc2 hide
+visible False
+visible True
+enabled False
+  uc2 show
+step 4
+  uc1 writeproperties
+  uc3 initialize 1800x600
+  uc3 resize 1800x600
+  uc3 readproperties Counter2 value=0 step=1 caption=Cnt usermode=True display=Counter2(1)
+loaded 0 Cnt False 1200
+counter2(1) changed 3
+counter2(0) changed 4
+values 4 3 count 4
+  uc3 terminate
+unloaded count 3
+step 5
+object Counter 21 Counter1
+nosuch 438
+mismatch 13
+step 6
+form unload
+  uc1 hide
+  uc1 terminate
+  uc2 hide
+  uc2 terminate
+form terminate

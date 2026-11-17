@@ -1,0 +1,8 @@
+﻿Test του ADO πάνω σε ODBC (LinBASIC Studio, Φάση 4.4 - ο provider ODBC), δεύτερο
+
+d_odbc2: λεπτομέρειες του MSDASQL που το d_odbc1 δεν ξεκαθάρισε: Update Criteria του client cursor,
+         ενημέρωση γραμμών με Null, αλλαγές από άλλον στον server, query-based update/delete του
+         server cursor (και το delete που αποτυγχάνει και μένει εκκρεμές), τύποι cursor, join, εκφράσεις.
+
+Στο VB6 (Win7-32, ως διαχειριστής): άνοιξε το DAO\d_odbc2\OdbcTest2.vbp, F5, κλείσε χωρίς αποθήκευση.
+Χρειάζεται τον SQLite ODBC Driver (sqliteodbc). Γράφει το expected\d_odbc2.txt.

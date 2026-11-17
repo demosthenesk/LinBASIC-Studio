@@ -1,0 +1,56 @@
+controls Timer FileListBox DirListBox DriveListBox VScrollBar HScrollBar PictureBox Line Shape Image
+shape 2 FF 0 FF00 0 1 1 True
+line 240 1320 2640 1320 2 FF0000 1
+changed 3 2000
+image 855 495 False 0 0
+hscroll 10 0 100 5 20
+vscroll 5 10 0 1 1
+hscroll change 50
+vscroll change 2
+err 380
+err 380
+values 50 2
+loaded 480 240 1 847 423 32
+picture 480 240 32 255 16711680
+after cls 255 255
+err 53 847
+empty 0 0 480
+drive True True
+dir1 change ctl2data
+dir 2 -1 ctl2data Alpha beta True
+file1 pathchange ctl2data
+files 3 A.txt b.txt c.dat [] *.*
+attrs True True False True False
+file1 patternchange *.txt
+txt 2 A.txt b.txt
+file1 click 1
+selected b.txt ctl2data
+activate HScroll1
+hscroll gotfocus
+step 1
+hscroll keydown 39
+hscroll change 55
+hscroll keyup 39
+hscroll keydown 34
+hscroll change 75
+hscroll keyup 34
+hscroll keydown 35
+hscroll change 100
+hscroll keyup 35
+hscroll keydown 36
+hscroll change 0
+hscroll keyup 36
+hscroll 0
+step 2
+vscroll gotfocus
+vscroll change 1
+vscroll change 2
+vscroll 2
+step 3
+msgbox 1
+msgbox 7
+msgbox 2
+inputbox [hello]
+inputbox []
+inputbox [keep]
+step 4

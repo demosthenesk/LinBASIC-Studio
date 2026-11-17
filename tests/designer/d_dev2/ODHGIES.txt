@@ -1,0 +1,10 @@
+﻿Δοκιμή του MMControl και του MSComm στον σχεδιαστή φορμών (LinBASIC Studio, Φάση 4.5)
+
+Η Form1 φτιάχτηκε στο LinBASIC Studio: ένα MMControl
+και τέσσερα MSComm, με τις υπόλοιπες ιδιότητές τους αλλαγμένες.
+
+1. Άνοιξε το DevForm2.vbp στο VB6. Δεν πρέπει να βγει μήνυμα λάθους ούτε να γραφτεί αρχείο .log.
+
+2. File > Save Form1.frm As... με το ίδιο όνομα, Yes.
+
+3. Κλείσε το VB6 (No αν ρωτήσει για το DevForm2.vbp).

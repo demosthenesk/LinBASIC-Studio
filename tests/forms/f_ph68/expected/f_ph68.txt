@@ -1,0 +1,13 @@
+count 7 7 7
+1 PictureBox Picture1 def=0 back=0 left=2400 lefterr=0
+2 VScrollBar VScroll1 def=0 back=438 left=4200 lefterr=0
+3 Label Label1 def=Label back=0 left=240 lefterr=0
+4 Line Line1 def=True back=438 lefterr=438
+5 Shape Shape1 def=3 back=0 left=240 lefterr=0
+6 Menu mnuFile def=True back=438 lefterr=438
+7 Menu mnuOpen def=True back=438 lefterr=438
+loop 7 0
+menu False &Open False
+shape 2 2
+line False False
+pic 0 Picture

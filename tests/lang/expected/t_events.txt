@@ -1,0 +1,20 @@
+square 9  circle=3 CSquare
+sh is IShape
+sh is CSquare
+ci is IShape
+ci is not CSquare
+ 6 True
+ 36 squareCSquareTrue
+ 6 CSquare
+err 438 
+err 438 
+squareCSquare
+err 0 square
+err 13 True
+err 0  0 []
+ 39 
+ 2 []
+ 2 [at1;at2;at3;adone2;]
+ 4 []
+ 1 [at1;bt1;adone1;bdone1;]
+ 1 [bt1;bdone1;]

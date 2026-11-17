@@ -1,0 +1,113 @@
+load MSComm
+MSComm1
+  port=1 settings=9600,n,8,1 open=False in=1024 out=512 inputlen=0 mode=0 rth=0 sth=0 hs=0 dtr=True rts=False null=False eof=False parrep='?'
+  cdto=0 ctsto=0 dsrto=0 interval=1000 break=False
+MSComm2
+  port=2 settings=9600,n,8,1 open=False in=1024 out=512 inputlen=0 mode=0 rth=1 sth=0 hs=0 dtr=True rts=False null=False eof=False parrep='?'
+  cdto=0 ctsto=0 dsrto=0 interval=1000 break=False
+== closed port
+  InBufferCount: ok Integer 0
+  OutBufferCount: ok Integer 0
+  Input: ! 8018 Operation valid only when the port is open
+  CDHolding: ok Boolean False
+  CTSHolding: ok Boolean False
+  DSRHolding: ok Boolean False
+  Output: ! 8018 Operation valid only when the port is open
+  Break: ok Empty 
+  InBufferCount=0: ok Empty 
+  OutBufferCount=0: ok Empty 
+  Close: ! 8012 The device is not open
+== settings
+  Settings=19200,e,7,2: ok 19200,e,7,2
+  Settings=9600,N,8,1: ok 9600,n,8,1
+  Settings=110,m,5,1.5: ok 110,m,5,1.5
+  Settings=300,s,6,1: ok 300,s,6,1
+  Settings=128000,o,8,1: ok 128000,o,8,1
+  Settings=256000,n,8,1: ok 256000,n,8,1
+  Settings=1200,n,4,1: ok 1200,n,4,1
+  Settings=1200,n,9,1: ! 380 Invalid property value
+  Settings=1200,x,8,1: ! 380 Invalid property value
+  Settings=1200,n,8,3: ! 380 Invalid property value
+  Settings=1200,n,8,2.5: ! 380 Invalid property value
+  Settings=abc: ! 380 Invalid property value
+  Settings=: ok 1200,n,4,1
+  Settings=9600: ok 9600,n,4,1
+  Settings=9600,n: ok 9600,n,4,1
+  Settings=9600,n,8: ok 9600,n,8,1
+  Settings= 9600 , n , 8 , 1: ok 9600,n,8,1
+  Settings=9600,n,8,1,: ! 380 Invalid property value
+  Settings=1234,n,8,1: ! 380 Invalid property value
+  Settings=0,n,8,1: ! 380 Invalid property value
+  Settings=-9600,n,8,1: ! 380 Invalid property value
+  Settings=9600,n,8,1: ok 9600,n,8,1
+== other properties
+  CommPort=0: ! 8002 Invalid port number
+  CommPort=1: ok 1
+  CommPort=16: ok 16
+  CommPort=17: ! 8002 Invalid port number
+  CommPort=99: ! 8002 Invalid port number
+  CommPort=255: ! 8002 Invalid port number
+  CommPort=256: ! 8002 Invalid port number
+  CommPort=-1: ! 8002 Invalid port number
+  InBufferSize=0: ok 0
+  InBufferSize=1: ok 1
+  InBufferSize=1024: ok 1024
+  InBufferSize=32767: ok 32767
+  InBufferSize=-1: ! 380 Invalid property value
+  OutBufferSize=0: ok
+  OutBufferSize=512: ok
+  InputLen=-1: ! 380 Invalid property value
+  InputLen=5: ok 5
+  InputLen=0: ok 0
+  InputMode=2: ! 380 Invalid property value
+  InputMode=-1: ! 380 Invalid property value
+  RThreshold=-1: ! 380 Invalid property value
+  SThreshold=-1: ! 380 Invalid property value
+  Handshaking=4: ! 380 Invalid property value
+  Handshaking=-1: ! 380 Invalid property value
+  ParityReplace=ab: ok 'a'
+  ParityReplace=: ok ''
+  ParityReplace=?: ok '?'
+  CDTimeout=100: ok
+  Interval=100: ok
+  CommEvent=2: ! 383 Property is read-only
+  CommID=5: ! 383 Property is read-only
+== a port that is not there
+  open 9: 8002 Invalid port number open=False
+== COM1 and COM2
+  opened
+  port=1 settings=9600,n,8,1 open=True in=1024 out=512 inputlen=0 mode=0 rth=0 sth=0 hs=0 dtr=True rts=False null=False eof=False parrep='?'
+  cdto=0 ctsto=0 dsrto=0 interval=1000 break=True
+  open again: 8005 Port already open
+  commport while open: 8005 Port already open port=1
+  inbuffersize while open: 8000 Operation not valid while the port is opened size=1024
+  settings while open: 0  19200,n,8,1
+  bad settings while open: 380 Invalid property value 9600,n,8,1
+  id>0=True in=0 out=0
+  output a number: 380 Invalid property value
+== text
+  count=5 events2= 2 events1= out=0
+  input String 'HE' left=3
+  input String 'LLO' left=0
+  input String '' left=0
+  event=2
+== null discard
+  count=2 input String 'AB'
+== eof
+  count=3 events2= 2 input String 'C<26>D'
+== binary
+  count=5
+  input Byte()(0 To 2) 0 1 128
+  input Byte()(0 To 1) 255 65
+  empty Byte()(0 To -1) isarray=True isempty=False
+== output a string in binary mode, and 8 bit text
+  input len=3 asc=200,10,122
+== sthreshold
+  events1= 1
+== rthreshold 0: no events
+  events2=[] count=3
+  cleared count=0
+== close
+  open=False event=1
+  count after close=0
+end

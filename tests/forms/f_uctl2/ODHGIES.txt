@@ -1,0 +1,10 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 4.3) — f_uctl2
+
+User controls 2: focus, container, InvisibleAtRuntime, AccessKeys, Controls.Add.
+Το έργο κλείνει μόνο του σε 3 δευτερόλεπτα. Μην πατάς τίποτα και μην αλλάζεις παράθυρο όσο τρέχει.
+
+1. Άνοιξε το f_uctl2\UC2Tests.vbp με το VB6 (ως διαχειριστής) και πάτα F5 αμέσως.
+   - Μην ανοίξεις φόρμα ή user control στον designer πριν το F5.
+   - Αν βγει σφάλμα, στείλε μου εικόνα.
+2. Κλείσε το VB6 χωρίς αποθήκευση.
+3. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο f_uctl2\expected\f_uctl2.txt.

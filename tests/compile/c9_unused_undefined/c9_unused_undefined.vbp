@@ -1,0 +1,10 @@
+Type=Exe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#C:\Windows\system32\stdole2.tlb#OLE Automation
+Module=ModMain; c9_unused_undefined.bas
+Startup="Sub Main"
+ExeName32="c9_unused_undefined.exe"
+Name="c9_unused_undefined"
+CompilationType=-1
+MajorVer=1
+MinorVer=0
+RevisionVer=0

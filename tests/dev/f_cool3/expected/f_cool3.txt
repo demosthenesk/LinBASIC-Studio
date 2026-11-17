@@ -1,0 +1,5 @@
+cb l=0 t=600 w=6000 h=1200 fixed=True borders=False variant=False emboss=True back=C0C0C0 fore=FF
+b1 cap=[Cap] key=[kk] tag=[] st=0 ucc=True back=8000000F fore=80000012 emboss=False fixedbg=True ucp=True av=False minw=600 minh=300 w=2400 nr=False vis=True pic=Nothing
+b2 cap=[] key=[] tag=[] st=0 ucc=False back=8000000F fore=80000012 emboss=False fixedbg=False ucp=False av=True minw=0 minh=360 w=0 nr=True vis=True pic=Nothing
+child outside ! 380 Invalid property value | Nothing
+activate h=780 rows=2 text1=435,30,5445,300 cmd=120,120

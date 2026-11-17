@@ -1,0 +1,21 @@
+﻿Test του DataEnvironment και του DataReport (LinBASIC Studio, Φάση 4.6, συμπληρώματα)
+
+d_de2: εντολές με παραμέτρους (μία, δύο, και παιδί που δένεται σε παράμετρο: RELATE ... TO PARAMETER),
+       και DataReport με RptShape και RptImage (οι τύποι τους στο .dsr: ItemType 6 και 7).
+       Τα deDe2.Dsr / rptDe2.Dsr / rptDe2.dsx είναι πια όπως τα αποθήκευσε το VB6 (με τα βήματα 1-3
+       παρακάτω, 2026-11-08): η σχέση με παράμετρο (ChildType = 1), το .dsx με την εικόνα του imgLogo.
+       Για νέο expected αρκεί το βήμα 4.
+
+Στο VB6 (Win7-32, ως διαχειριστής), άνοιξε το DAO\d_de2\DeTest2.vbp:
+1. deDe2 (διπλό κλικ): δεξί κλικ στο CustOrders > Properties > καρτέλα Relation:
+   - σβήσε τη σχέση που υπάρχει (Remove),
+   - Parent Fields: CustID, Child Fields/Parameters: Param1, Add, OK.
+   Δεξί κλικ στο ByCountry > Properties > καρτέλα Parameters: στείλε μου εικόνα της, και Cancel.
+2. rptDe2 (διπλό κλικ), στο Properties της αναφοράς (το rptDe2 στη λίστα πάνω):
+   - DataSource: deDe2, DataMember: Cust.
+   - Διάλεξε το imgLogo (δεξιά στο Cust_Header) και βάλε στο Picture μια μικρή εικόνα (.bmp ή .jpg)
+     που δεν σε πειράζει να μπει στο GitHub (θα μείνει στο test).
+3. File > Save Project (αυτή τη φορά ΘΕΛΟΥΜΕ αποθήκευση).
+4. F5. Γράφει το expected\d_de2.txt και το out.txt. Αν κάτι κολλήσει ή κλείσει, πες μου σε ποιο σημείο.
+5. Αντίγραψε το C:\Windows\System32\SYSINFO.OCX μέσα στο DAO\d_de2 (μόνο για να διαβάσω τη βιβλιοθήκη
+   τύπων του· δεν μπαίνει στο source/ ούτε στο GitHub).

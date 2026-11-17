@@ -1,0 +1,9 @@
+call: 12 12 12 12
+statement: 34 34 34 34
+function: 45  5 34 34 34
+recursion: 0 1 4 9
+swap: 0 9 4 1
+redim: 11  11 
+udt field: 2  12  7 
+udt field, function: 3  13 
+calls: 13 

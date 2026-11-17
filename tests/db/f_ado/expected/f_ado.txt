@@ -1,0 +1,84 @@
+db made
+form load People cursor=3 lock=3 loc=3 cmd=8 eof=0
+rs in load Nothing
+  willmove 10 [||0|] changed=False/False
+  willmove 10 [||0|] changed=False/False
+  movecomplete 10 [||0|] eof=False bof=False
+  movecomplete 10 [||0|] eof=False bof=False
+refreshed [Anna|31|1|1] rs=Recordset count=3
+grid cols=5 ID=1 Name=Anna Age=31 Active=-1 Notes=first row=0 approx=3
+list text=[] bound= combo=[]
+form activate [Anna|31|1|1]
+step 1 [Anna|31|1|1]
+rs 3/3/3 pos=1
+changed False field Name source Adodc
+  willmove 13 [Anna|31|1|1] changed=False/False
+  movecomplete 13 [Anna|31|1|1] eof=False bof=False
+after movenext [Bill|25|0|2] grid cols=5 ID=2 Name=Bill Age=25 Active=0 Notes= row=1 approx=3
+step 2 [Bill|25|0|2]
+edited changed=True field=Bill editmode=0
+  willmove 13 [Billy|25|0|2] changed=True/False
+  willchangerecord 11 [Billy|25|0|2]
+  recordchangecomplete 11 [Billy|25|0|2]
+  willchangerecord 3 [Billy|25|0|2]
+  recordchangecomplete 3 [Billy|25|0|2]
+  movecomplete 13 [Billy|25|0|2] eof=False bof=False
+after movenext [Cleo|42|1|3]
+  willmove 14 [Cleo|42|1|3] changed=False/False
+  movecomplete 14 [Cleo|42|1|3] eof=False bof=False
+back [Billy|25|0|2] field=Billy
+step 3 [Billy|25|0|2]
+  willmove 15 [Billy|25|0|2] changed=False/False
+  movecomplete 15 [Billy|25|0|2] eof=False bof=False
+  willmove 13 [Cleo|42|1|3] changed=False/False
+  endofrecordset [Cleo|42|1|3]
+  movecomplete 13 [Cleo|42|1|3] eof=True bof=False
+eof True [||2|]
+  willmove 12 [||2|] changed=False/False
+  movecomplete 12 [||2|] eof=False bof=False
+first [Anna|31|1|1] grid cols=5 ID=1 Name=Anna Age=31 Active=-1 Notes=first row=0 approx=3
+step 4 [Anna|31|1|1]
+  willmove 10 [Anna|31|1|1] changed=False/False
+  willchangerecord 1 [Anna|31|1|1]
+  recordchangecomplete 1 [Anna|31|1|1]
+  movecomplete 10 [Anna|31|1|1] eof=False bof=False
+addnew [||2|] editmode=2
+  willchangerecord 3 [Dora|19|2|]
+  recordchangecomplete 3 [Dora|19|2|]
+update [Dora|19|2|] count=4 id=4
+step 5 [Dora|19|2|]
+list bound 2 text=[Patras] matched=True
+combo bound 3 text=[Volos] matched=True
+combo text Patras bound=2 matched=True
+combo text Sparta bound=[Sparta] matched=False
+step 6 [Dora|19|2|]
+  willmove 10 [Dora|19|2|] changed=False/False
+  willmove 10 [Dora|19|2|] changed=False/False
+  movecomplete 10 [Dora|19|2|] eof=False bof=False
+  movecomplete 10 [Dora|19|2|] eof=False bof=False
+refreshed [Cleo|42|1|3] count=3 grid cols=5 ID=3 Name=Cleo Age=42 Active=-1 Notes=third row=0 approx=3
+step 7 [Cleo|42|1|3]
+  willchangerecord 2 [Cleo|42|1|3]
+  recordchangecomplete 2 [Cleo|42|1|3]
+  willchangerecord 3 [Cleo|42|1|3]
+  recordchangecomplete 3 [Cleo|42|1|3]
+deleted [Cleo|42|1|3]
+  willmove 13 [Cleo|42|1|3] changed=False/False
+  movecomplete 13 [Cleo|42|1|3] eof=False bof=False
+  willmove 13 [Anna|31|1|1] changed=False/False
+  movecomplete 13 [Anna|31|1|1] eof=False bof=False
+next [Anna|31|1|1] grid cols=5 ID=1 Name=Anna Age=31 Active=-1 Notes=first row=0 approx=2
+step 8 [Anna|31|1|1]
+  willmove 12 [|31|1|1] changed=True/False
+  willchangerecord 11 [|31|1|1]
+  recordchangecomplete 11 [|31|1|1]
+  willchangerecord 3 [|31|1|1]
+  recordchangecomplete 3 [|31|1|1]
+  movecomplete 12 [|31|1|1] eof=False bof=False
+empty name [|31|1|1]
+step 9 [|31|1|1]
+  adodc error 3639 The Microsoft Jet database engine cannot find the input table or query 'Nope'.  Make sure it exists and that its name is spelled correctly. scode=-2147217865 src=People
+missing table -2147217865
+after [|31|1|1]
+step 10 [|31|1|1]
+form unload [|31|1|1]

@@ -1,0 +1,2151 @@
+{
+ "library": "MSAdodcLib",
+ "short": "MSAdodcLib",
+ "guid": "{67397AA1-7FB1-11D0-B148-00A0C922E820}",
+ "version": "6.0",
+ "lcid": 1033,
+ "helpfile": "adodc98.chm",
+ "file": "MSAdoDc.ocx",
+ "types": [
+  {
+   "name": "BOFActionEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420132,
+   "members": [
+    {
+     "name": "adDoMoveFirst",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 420133
+    },
+    {
+     "name": "adStayBOF",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420134
+    }
+   ]
+  },
+  {
+   "name": "EOFActionEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420135,
+   "members": [
+    {
+     "name": "adDoMoveLast",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 420136
+    },
+    {
+     "name": "adStayEOF",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420137
+    },
+    {
+     "name": "adDoAddNew",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 420138
+    }
+   ]
+  },
+  {
+   "name": "AppearanceEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420139,
+   "members": [
+    {
+     "name": "adFlatBevel",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 420140
+    },
+    {
+     "name": "ad3DBevel",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420141
+    }
+   ]
+  },
+  {
+   "name": "OrientationEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420142,
+   "members": [
+    {
+     "name": "adHorizontal",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 420143
+    },
+    {
+     "name": "adVertical",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420144
+    }
+   ]
+  },
+  {
+   "name": "ConnectStringTypeEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 420145,
+   "members": [
+    {
+     "name": "adConnectTypeUnknown",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 420146
+    },
+    {
+     "name": "adConnectTypeOledb",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420147
+    },
+    {
+     "name": "adConnectTypeOledbFile",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 420148
+    },
+    {
+     "name": "adConnectTypeOdbc",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 420149
+    }
+   ]
+  },
+  {
+   "name": "AdodcErrorEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 42150,
+   "members": [
+    {
+     "name": "ERRADODC_ERRORINFO",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 25020,
+     "helpcontext": 25020
+    },
+    {
+     "name": "ERRADODC_SETMODE",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 25021,
+     "helpcontext": 25021
+    },
+    {
+     "name": "ERRADODC_SETCONNECTTIMEOUT",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 25022,
+     "helpcontext": 25022
+    },
+    {
+     "name": "ERRADODC_SETCURSORLOCATION",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 25023,
+     "helpcontext": 25023
+    },
+    {
+     "name": "ERRADODC_SETCOMMANDTIMEOUT",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 25024,
+     "helpcontext": 25024
+    },
+    {
+     "name": "ERRADODC_SETCACHESIZE",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 25025,
+     "helpcontext": 25025
+    },
+    {
+     "name": "ERRADODC_SETMAXRECORDS",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 25026,
+     "helpcontext": 25026
+    }
+   ]
+  },
+  {
+   "name": "CursorTypeEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420011,
+   "members": [
+    {
+     "name": "adOpenKeyset",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420014
+    },
+    {
+     "name": "adOpenDynamic",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 420015
+    },
+    {
+     "name": "adOpenStatic",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 420016
+    }
+   ]
+  },
+  {
+   "name": "CursorLocationEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420034,
+   "members": [
+    {
+     "name": "adUseServer",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 420036
+    },
+    {
+     "name": "adUseClient",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 420037
+    }
+   ]
+  },
+  {
+   "name": "CommandTypeEnum",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 420048,
+   "members": [
+    {
+     "name": "adCmdUnknown",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 420050
+    },
+    {
+     "name": "adCmdText",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 420051
+    },
+    {
+     "name": "adCmdTable",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 420052
+    },
+    {
+     "name": "adCmdStoredProc",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 420053
+    }
+   ]
+  },
+  {
+   "name": "IAdodc",
+   "kind": "dispatch",
+   "guid": "{47A738F1-7FAF-11D0-B148-00A0C922E820}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 420000,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "ConnectionString",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "bstrConnect",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420060
+    },
+    {
+     "name": "ConnectionString",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420060
+    },
+    {
+     "name": "OLEDBString",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "bstrOLEDBString",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420061
+    },
+    {
+     "name": "OLEDBString",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420061
+    },
+    {
+     "name": "OLEDBFile",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "bstrOLEDBFile",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420062
+    },
+    {
+     "name": "OLEDBFile",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420062
+    },
+    {
+     "name": "DataSourceName",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrDataSourceName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420063
+    },
+    {
+     "name": "DataSourceName",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420063
+    },
+    {
+     "name": "OtherAttributes",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "bstrOtherAttributes",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420064
+    },
+    {
+     "name": "OtherAttributes",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420064
+    },
+    {
+     "name": "ConnectStringType",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ConnectStringTypeEnum",
+     "params": [
+      {
+       "name": "pnType",
+       "type": "ConnectStringTypeEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420065
+    },
+    {
+     "name": "ConnectStringType",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ConnectStringTypeEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420065
+    },
+    {
+     "name": "UserName",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrUserName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420067
+    },
+    {
+     "name": "UserName",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420067
+    },
+    {
+     "name": "Password",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPassword",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420068
+    },
+    {
+     "name": "Password",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420068
+    },
+    {
+     "name": "Mode",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ADODB.ConnectModeEnum",
+     "params": [
+      {
+       "name": "pnMode",
+       "type": "ADODB.ConnectModeEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420069
+    },
+    {
+     "name": "Mode",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ADODB.ConnectModeEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420069
+    },
+    {
+     "name": "CursorLocation",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "CursorLocationEnum",
+     "params": [
+      {
+       "name": "pnCursorLocation",
+       "type": "CursorLocationEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420070
+    },
+    {
+     "name": "CursorLocation",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "CursorLocationEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420070
+    },
+    {
+     "name": "IsolationLevel",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ADODB.IsolationLevelEnum",
+     "params": [
+      {
+       "name": "pnIsolationLevel",
+       "type": "ADODB.IsolationLevelEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420071
+    },
+    {
+     "name": "IsolationLevel",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ADODB.IsolationLevelEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420071
+    },
+    {
+     "name": "ConnectionTimeout",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pnConnectionTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420073
+    },
+    {
+     "name": "ConnectionTimeout",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420073
+    },
+    {
+     "name": "CommandTimeout",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pnCommandTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420074
+    },
+    {
+     "name": "CommandTimeout",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420074
+    },
+    {
+     "name": "RecordSource",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrRecordSource",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420076
+    },
+    {
+     "name": "RecordSource",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420076
+    },
+    {
+     "name": "CursorType",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "CursorTypeEnum",
+     "params": [
+      {
+       "name": "pnCursorType",
+       "type": "CursorTypeEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420077
+    },
+    {
+     "name": "CursorType",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "CursorTypeEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420077
+    },
+    {
+     "name": "LockType",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ADODB.LockTypeEnum",
+     "params": [
+      {
+       "name": "pnLockType",
+       "type": "ADODB.LockTypeEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420078
+    },
+    {
+     "name": "LockType",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ADODB.LockTypeEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420078
+    },
+    {
+     "name": "CommandType",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "CommandTypeEnum",
+     "params": [
+      {
+       "name": "pnCommandType",
+       "type": "CommandTypeEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420079
+    },
+    {
+     "name": "CommandType",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "CommandTypeEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420079
+    },
+    {
+     "name": "CursorOptions",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ADODB.CursorOptionEnum",
+     "params": [
+      {
+       "name": "pnOptions",
+       "type": "ADODB.CursorOptionEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420080
+    },
+    {
+     "name": "CacheSize",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pnCacheSize",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420081
+    },
+    {
+     "name": "CacheSize",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420081
+    },
+    {
+     "name": "MaxRecords",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pnMaxRecords",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420082
+    },
+    {
+     "name": "MaxRecords",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420082
+    },
+    {
+     "name": "BOFAction",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "BOFActionEnum",
+     "params": [
+      {
+       "name": "pnBOFAction",
+       "type": "BOFActionEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420085
+    },
+    {
+     "name": "BOFAction",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "BOFActionEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420085
+    },
+    {
+     "name": "EOFAction",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "EOFActionEnum",
+     "params": [
+      {
+       "name": "nEOFAction",
+       "type": "EOFActionEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420086
+    },
+    {
+     "name": "EOFAction",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "EOFActionEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420086
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrCaption",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420087
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420087
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "AppearanceEnum",
+     "params": [
+      {
+       "name": "pnAppearance",
+       "type": "AppearanceEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420088
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "AppearanceEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420088
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "pocBackColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420089
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420089
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_COLOR",
+     "params": [
+      {
+       "name": "pocForeColor",
+       "type": "stdole.OLE_COLOR",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420090
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_COLOR",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420090
+    },
+    {
+     "name": "Orientation",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OrientationEnum",
+     "params": [
+      {
+       "name": "pnOrientation",
+       "type": "OrientationEnum",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420091
+    },
+    {
+     "name": "Orientation",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "OrientationEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420091
+    },
+    {
+     "name": "Recordset",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ADODB._Recordset",
+     "params": [
+      {
+       "name": "ppADORecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420092
+    },
+    {
+     "name": "Recordset",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420092
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#32",
+     "params": [
+      {
+       "name": "ppdispFont",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420093
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#32",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420093
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420094
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420094
+    },
+    {
+     "name": "Refresh",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 420095
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 420097
+    },
+    {
+     "name": "FireErrorInfo",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "sc",
+       "type": "SCODE",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pUnknown",
+       "type": "IUnknown",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DAdodcEvents",
+   "kind": "dispatch",
+   "guid": "{67397AA2-7FB1-11D0-B148-00A0C922E820}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 420123,
+   "members": [
+    {
+     "name": "WillMove",
+     "memid": 200,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "adReason",
+       "type": "ADODB.EventReasonEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420100
+    },
+    {
+     "name": "MoveComplete",
+     "memid": 201,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "adReason",
+       "type": "ADODB.EventReasonEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pError",
+       "type": "ADODB.Error",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420101
+    },
+    {
+     "name": "WillChangeField",
+     "memid": 202,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "cFields",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Fields",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420102
+    },
+    {
+     "name": "FieldChangeComplete",
+     "memid": 203,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "cFields",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Fields",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pError",
+       "type": "ADODB.Error",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420103
+    },
+    {
+     "name": "WillChangeRecord",
+     "memid": 204,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "adReason",
+       "type": "ADODB.EventReasonEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cRecords",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420104
+    },
+    {
+     "name": "RecordChangeComplete",
+     "memid": 205,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "adReason",
+       "type": "ADODB.EventReasonEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cRecords",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pError",
+       "type": "ADODB.Error",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420105
+    },
+    {
+     "name": "WillChangeRecordset",
+     "memid": 206,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "adReason",
+       "type": "ADODB.EventReasonEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420106
+    },
+    {
+     "name": "RecordsetChangeComplete",
+     "memid": 207,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "adReason",
+       "type": "ADODB.EventReasonEnum",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pError",
+       "type": "ADODB.Error",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420107
+    },
+    {
+     "name": "EndOfRecordset",
+     "memid": 208,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "fMoreData",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "adStatus",
+       "type": "ADODB.EventStatusEnum",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pRecordset",
+       "type": "ADODB._Recordset",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420108
+    },
+    {
+     "name": "Error",
+     "memid": 211,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ErrorNumber",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Description",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Scode",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "HelpFile",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "HelpContext",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fCancelDisplay",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420117
+    },
+    {
+     "name": "MouseDown",
+     "memid": -605,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420118
+    },
+    {
+     "name": "MouseMove",
+     "memid": -606,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420119
+    },
+    {
+     "name": "MouseUp",
+     "memid": -607,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420120
+    }
+   ]
+  },
+  {
+   "name": "Adodc",
+   "kind": "coclass",
+   "guid": "{67397AA3-7FB1-11D0-B148-00A0C922E820}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 420000,
+   "implements": [
+    {
+     "name": "IAdodc",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DAdodcEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "Adodc2",
+   "kind": "coclass",
+   "guid": "{234086BB-0242-46C5-B71F-5A9B961DB911}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 420000,
+   "implements": [
+    {
+     "name": "IAdodc",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DAdodcEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

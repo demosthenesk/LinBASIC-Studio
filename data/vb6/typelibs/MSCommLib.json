@@ -1,0 +1,1777 @@
+{
+ "library": "MSCommLib",
+ "short": "MSCommLib",
+ "guid": "{648A5603-2C6E-101B-82B6-000000000014}",
+ "version": "1.1",
+ "lcid": 1033,
+ "helpfile": "COMM98.CHM",
+ "file": "MSComm32.Ocx",
+ "types": [
+  {
+   "name": "HandshakingConstants",
+   "kind": "enum",
+   "guid": "{4B4B0391-6897-11CF-953F-0020AFC28C3B}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 250001,
+   "members": [
+    {
+     "name": "NoHandshaking",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 250002
+    },
+    {
+     "name": "XonXoff",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 250003
+    },
+    {
+     "name": "RtsCts",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 250004
+    },
+    {
+     "name": "XonXoffAndRtsCts",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 250005
+    }
+   ]
+  },
+  {
+   "name": "HandshakeConstants",
+   "kind": "enum",
+   "guid": "{72F05B40-B530-101B-82B6-000000000014}",
+   "flags": [],
+   "helpcontext": 250001,
+   "members": [
+    {
+     "name": "comNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 250002
+    },
+    {
+     "name": "comXOnXoff",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 250003
+    },
+    {
+     "name": "comRTS",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 250004
+    },
+    {
+     "name": "comRTSXOnXOff",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 250005
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{7C4FC790-BE64-11CF-95DA-0020AFC28C3B}",
+   "flags": [],
+   "helpcontext": 250066,
+   "members": [
+    {
+     "name": "comInvalidPropertyValue",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 380,
+     "helpcontext": 380
+    },
+    {
+     "name": "comGetNotSupported",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 394,
+     "helpcontext": 394
+    },
+    {
+     "name": "comSetNotSupported",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 383,
+     "helpcontext": 383
+    },
+    {
+     "name": "comPortInvalid",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 8002,
+     "helpcontext": 8002
+    },
+    {
+     "name": "comPortAlreadyOpen",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 8005,
+     "helpcontext": 8005
+    },
+    {
+     "name": "comPortOpen",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 8000,
+     "helpcontext": 8000
+    },
+    {
+     "name": "comNoOpen",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 8012,
+     "helpcontext": 8012
+    },
+    {
+     "name": "comSetCommStateFailed",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 8015,
+     "helpcontext": 8015
+    },
+    {
+     "name": "comPortNotOpen",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 8018,
+     "helpcontext": 8018
+    },
+    {
+     "name": "comReadError",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 8020,
+     "helpcontext": 8020
+    },
+    {
+     "name": "comDCBError",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 8021,
+     "helpcontext": 8021
+    },
+    {
+     "name": "comBreak",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 1001,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250007
+    },
+    {
+     "name": "comCTSTO",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 1002,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250008
+    },
+    {
+     "name": "comDSRTO",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 1003,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250009
+    },
+    {
+     "name": "comFrame",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 1004,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250010
+    },
+    {
+     "name": "comOverrun",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 1006,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250011
+    },
+    {
+     "name": "comCDTO",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 1007,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250012
+    },
+    {
+     "name": "comRxOver",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 1008,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250013
+    },
+    {
+     "name": "comRxParity",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 1009,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250014
+    },
+    {
+     "name": "comTxFull",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 1010,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250015
+    },
+    {
+     "name": "comDCB",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 1011,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250016
+    }
+   ]
+  },
+  {
+   "name": "CommEventConstants",
+   "kind": "enum",
+   "guid": "{8E6EB360-C3B1-11CF-8E6B-00A0C90F26F8}",
+   "flags": [],
+   "helpcontext": 250006,
+   "members": [
+    {
+     "name": "comEventBreak",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1001,
+     "helpcontext": 250007
+    },
+    {
+     "name": "comEventCTSTO",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1002,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250008
+    },
+    {
+     "name": "comEventDSRTO",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 1003,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250009
+    },
+    {
+     "name": "comEventFrame",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 1004,
+     "helpcontext": 250010
+    },
+    {
+     "name": "comEventOverrun",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 1006,
+     "helpcontext": 250011
+    },
+    {
+     "name": "comEventCDTO",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 1007,
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250012
+    },
+    {
+     "name": "comEventRxOver",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 1008,
+     "helpcontext": 250013
+    },
+    {
+     "name": "comEventRxParity",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 1009,
+     "helpcontext": 250014
+    },
+    {
+     "name": "comEventTxFull",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 1010,
+     "helpcontext": 250015
+    },
+    {
+     "name": "comEventDCB",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 1011,
+     "helpcontext": 250016
+    }
+   ]
+  },
+  {
+   "name": "OnCommConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 250017,
+   "members": [
+    {
+     "name": "comEvSend",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 250018
+    },
+    {
+     "name": "comEvReceive",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 250019
+    },
+    {
+     "name": "comEvCTS",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 250020
+    },
+    {
+     "name": "comEvDSR",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 250021
+    },
+    {
+     "name": "comEvCD",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 250022
+    },
+    {
+     "name": "comEvRing",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 250023
+    },
+    {
+     "name": "comEvEOF",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 250024
+    }
+   ]
+  },
+  {
+   "name": "InputModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 250062,
+   "members": [
+    {
+     "name": "comInputModeText",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 250063
+    },
+    {
+     "name": "comInputModeBinary",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 250064
+    }
+   ]
+  },
+  {
+   "name": "IMSComm",
+   "kind": "dispatch",
+   "guid": "{E6E17E90-DF38-11CF-8E74-00A0C90F26F8}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "CDHolding",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250025
+    },
+    {
+     "name": "CDHolding",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfCDHolding",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250025
+    },
+    {
+     "name": "CDTimeout",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250026
+    },
+    {
+     "name": "CDTimeout",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCDTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250026
+    },
+    {
+     "name": "CommID",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250027
+    },
+    {
+     "name": "CommID",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCommID",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250027
+    },
+    {
+     "name": "CommPort",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250028
+    },
+    {
+     "name": "CommPort",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCommPort",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250028
+    },
+    {
+     "name": "_CommPort",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_CommPort",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCommPort",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "CTSHolding",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250029
+    },
+    {
+     "name": "CTSHolding",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfCTSHolding",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250029
+    },
+    {
+     "name": "CTSTimeout",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250030
+    },
+    {
+     "name": "CTSTimeout",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCTSTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250030
+    },
+    {
+     "name": "DSRHolding",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250031
+    },
+    {
+     "name": "DSRHolding",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfDSRHolding",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250031
+    },
+    {
+     "name": "DSRTimeout",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250032
+    },
+    {
+     "name": "DSRTimeout",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plDSRTimeout",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250032
+    },
+    {
+     "name": "DTREnable",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250033
+    },
+    {
+     "name": "DTREnable",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfDTREnable",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250033
+    },
+    {
+     "name": "Handshaking",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "HandshakeConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250034
+    },
+    {
+     "name": "Handshaking",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "HandshakeConstants",
+     "params": [
+      {
+       "name": "phandshake",
+       "type": "HandshakeConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250034
+    },
+    {
+     "name": "InBufferSize",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250035
+    },
+    {
+     "name": "InBufferSize",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psInBufferSize",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250035
+    },
+    {
+     "name": "InBufferCount",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250036
+    },
+    {
+     "name": "InBufferCount",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psInBufferCount",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250036
+    },
+    {
+     "name": "Break",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250037
+    },
+    {
+     "name": "Break",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfBreak",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250037
+    },
+    {
+     "name": "InputLen",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250038
+    },
+    {
+     "name": "InputLen",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psInputLen",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250038
+    },
+    {
+     "name": "Interval",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250039
+    },
+    {
+     "name": "Interval",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plInterval",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ],
+     "helpcontext": 250039
+    },
+    {
+     "name": "NullDiscard",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250040
+    },
+    {
+     "name": "NullDiscard",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfNullDiscard",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250040
+    },
+    {
+     "name": "OutBufferSize",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250041
+    },
+    {
+     "name": "OutBufferSize",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psOutBufferSize",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250041
+    },
+    {
+     "name": "OutBufferCount",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250042
+    },
+    {
+     "name": "OutBufferCount",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psOutBufferCount",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250042
+    },
+    {
+     "name": "ParityReplace",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250043
+    },
+    {
+     "name": "ParityReplace",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrParityReplace",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250043
+    },
+    {
+     "name": "PortOpen",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250044
+    },
+    {
+     "name": "PortOpen",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfPortOpen",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250044
+    },
+    {
+     "name": "RThreshold",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250045
+    },
+    {
+     "name": "RThreshold",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psRThreshold",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250045
+    },
+    {
+     "name": "RTSEnable",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250046
+    },
+    {
+     "name": "RTSEnable",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfRTSEnable",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250046
+    },
+    {
+     "name": "Settings",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250047
+    },
+    {
+     "name": "Settings",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrSettings",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250047
+    },
+    {
+     "name": "SThreshold",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250048
+    },
+    {
+     "name": "SThreshold",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psSThreshold",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250048
+    },
+    {
+     "name": "Output",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250049
+    },
+    {
+     "name": "Output",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarOutput",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250049
+    },
+    {
+     "name": "Input",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250050
+    },
+    {
+     "name": "Input",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarInput",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250050
+    },
+    {
+     "name": "CommEvent",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250051
+    },
+    {
+     "name": "CommEvent",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCommEvent",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 250051
+    },
+    {
+     "name": "EOFEnable",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250060
+    },
+    {
+     "name": "EOFEnable",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEOFEnable",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250060
+    },
+    {
+     "name": "InputMode",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "InputModeConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 250065
+    },
+    {
+     "name": "InputMode",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "InputModeConstants",
+     "params": [
+      {
+       "name": "InputMode",
+       "type": "InputModeConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 250065
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DMSCommEvents",
+   "kind": "dispatch",
+   "guid": "{648A5602-2C6E-101B-82B6-000000000014}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "OnComm",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 250052
+    }
+   ]
+  },
+  {
+   "name": "MSComm",
+   "kind": "coclass",
+   "guid": "{648A5600-2C6E-101B-82B6-000000000014}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 250000,
+   "implements": [
+    {
+     "name": "IMSComm",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DMSCommEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "MSComm2",
+   "kind": "coclass",
+   "guid": "{F6565773-FA54-45E9-941C-2505E54D5710}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 250000,
+   "implements": [
+    {
+     "name": "IMSComm",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DMSCommEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

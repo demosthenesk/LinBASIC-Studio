@@ -1,0 +1,3413 @@
+{
+ "library": "Scripting",
+ "short": "Scripting",
+ "guid": "{420B2830-E718-11CF-893D-00A0C9054228}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "VBENLR98.CHM",
+ "file": "scrrun.dll",
+ "types": [
+  {
+   "name": "CompareMethod",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "BinaryCompare",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "TextCompare",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "DatabaseCompare",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "name": "IOMode",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "ForReading",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "ForWriting",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "ForAppending",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 8
+    }
+   ]
+  },
+  {
+   "name": "Tristate",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "TristateTrue",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": -1
+    },
+    {
+     "name": "TristateFalse",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "TristateUseDefault",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": -2
+    },
+    {
+     "name": "TristateMixed",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": -2
+    }
+   ]
+  },
+  {
+   "name": "FileAttribute",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "__MIDL___MIDL_itf_scrrun_0000_0000_0001"
+  },
+  {
+   "name": "__MIDL___MIDL_itf_scrrun_0000_0000_0001",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Normal",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "ReadOnly",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "Hidden",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "System",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "Volume",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 8
+    },
+    {
+     "name": "Directory",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 16
+    },
+    {
+     "name": "Archive",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32
+    },
+    {
+     "name": "Alias",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 1024
+    },
+    {
+     "name": "Compressed",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 2048
+    }
+   ]
+  },
+  {
+   "name": "IDictionary",
+   "kind": "dispatch",
+   "guid": "{42C642C1-97E1-11CF-978F-00A02463E06F}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181922,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181946
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pRetItem",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Add",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Item",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181948
+    },
+    {
+     "name": "Count",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181945
+    },
+    {
+     "name": "Exists",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pExists",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181949
+    },
+    {
+     "name": "Items",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pItemsArray",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181950
+    },
+    {
+     "name": "Key",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181947
+    },
+    {
+     "name": "Keys",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pKeysArray",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181951
+    },
+    {
+     "name": "Remove",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181952
+    },
+    {
+     "name": "RemoveAll",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 2181953
+    },
+    {
+     "name": "CompareMode",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "CompareMethod",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181931
+    },
+    {
+     "name": "CompareMode",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "CompareMethod",
+     "params": [
+      {
+       "name": "pcomp",
+       "type": "CompareMethod",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppunk",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "HashVal",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "HashVal",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Dictionary",
+   "kind": "coclass",
+   "guid": "{EE09B103-97E0-11CF-978F-00A02463E06F}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 2181922,
+   "implements": [
+    {
+     "name": "IDictionary",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "IFileSystem",
+   "kind": "dispatch",
+   "guid": "{0AB5A3D0-E5B6-11D0-ABF5-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181927,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Drives",
+     "memid": 10010,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IDriveCollection",
+     "params": [
+      {
+       "name": "ppdrives",
+       "type": "IDriveCollection",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182030
+    },
+    {
+     "name": "BuildPath",
+     "memid": 10000,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Name",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182031
+    },
+    {
+     "name": "GetDriveName",
+     "memid": 10004,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182049
+    },
+    {
+     "name": "GetParentFolderName",
+     "memid": 10005,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182056
+    },
+    {
+     "name": "GetFileName",
+     "memid": 10006,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182053
+    },
+    {
+     "name": "GetBaseName",
+     "memid": 10007,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182047
+    },
+    {
+     "name": "GetExtensionName",
+     "memid": 10008,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182052
+    },
+    {
+     "name": "GetAbsolutePathName",
+     "memid": 10002,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182045
+    },
+    {
+     "name": "GetTempName",
+     "memid": 10003,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182058
+    },
+    {
+     "name": "DriveExists",
+     "memid": 10015,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "DriveSpec",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pfExists",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182038
+    },
+    {
+     "name": "FileExists",
+     "memid": 10016,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "FileSpec",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pfExists",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182039
+    },
+    {
+     "name": "FolderExists",
+     "memid": 10017,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "FolderSpec",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pfExists",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182042
+    },
+    {
+     "name": "GetDrive",
+     "memid": 10011,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IDrive",
+     "params": [
+      {
+       "name": "DriveSpec",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppdrive",
+       "type": "IDrive",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182048
+    },
+    {
+     "name": "GetFile",
+     "memid": 10012,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IFile",
+     "params": [
+      {
+       "name": "FilePath",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfile",
+       "type": "IFile",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182054
+    },
+    {
+     "name": "GetFolder",
+     "memid": 10013,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "FolderPath",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182055
+    },
+    {
+     "name": "GetSpecialFolder",
+     "memid": 10014,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "SpecialFolder",
+       "type": "SpecialFolderConst",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182057
+    },
+    {
+     "name": "DeleteFile",
+     "memid": 1200,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "FileSpec",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Force",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      }
+     ],
+     "helpcontext": 2182036
+    },
+    {
+     "name": "DeleteFolder",
+     "memid": 1201,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "FolderSpec",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Force",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      }
+     ],
+     "helpcontext": 2182037
+    },
+    {
+     "name": "MoveFile",
+     "memid": 1204,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182059
+    },
+    {
+     "name": "MoveFolder",
+     "memid": 1205,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182060
+    },
+    {
+     "name": "CopyFile",
+     "memid": 1202,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "OverWriteFiles",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      }
+     ],
+     "helpcontext": 2182032
+    },
+    {
+     "name": "CopyFolder",
+     "memid": 1203,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "OverWriteFiles",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      }
+     ],
+     "helpcontext": 2182033
+    },
+    {
+     "name": "CreateFolder",
+     "memid": 1120,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182034
+    },
+    {
+     "name": "CreateTextFile",
+     "memid": 1101,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ITextStream",
+     "params": [
+      {
+       "name": "FileName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Overwrite",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      },
+      {
+       "name": "Unicode",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      },
+      {
+       "name": "ppts",
+       "type": "ITextStream",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182035
+    },
+    {
+     "name": "OpenTextFile",
+     "memid": 1100,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ITextStream",
+     "params": [
+      {
+       "name": "FileName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "IOMode",
+       "type": "IOMode",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "Create",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      },
+      {
+       "name": "Format",
+       "type": "Tristate",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "ppts",
+       "type": "ITextStream",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182061
+    }
+   ]
+  },
+  {
+   "name": "IDriveCollection",
+   "kind": "dispatch",
+   "guid": "{C7C3F5A1-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181924,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IDrive",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppdrive",
+       "type": "IDrive",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181946
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppenum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted",
+      "hidden"
+     ]
+    },
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181945
+    }
+   ]
+  },
+  {
+   "name": "IDrive",
+   "kind": "dispatch",
+   "guid": "{C7C3F5A0-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181923,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Path",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPath",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181960
+    },
+    {
+     "name": "DriveLetter",
+     "memid": 10000,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrLetter",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181955
+    },
+    {
+     "name": "ShareName",
+     "memid": 10001,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrShareName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181963
+    },
+    {
+     "name": "DriveType",
+     "memid": 10002,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "DriveTypeConst",
+     "params": [
+      {
+       "name": "pdt",
+       "type": "DriveTypeConst",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181956
+    },
+    {
+     "name": "RootFolder",
+     "memid": 10003,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181961
+    },
+    {
+     "name": "AvailableSpace",
+     "memid": 10005,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarAvail",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181954
+    },
+    {
+     "name": "FreeSpace",
+     "memid": 10004,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarFree",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181958
+    },
+    {
+     "name": "TotalSize",
+     "memid": 10006,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarTotal",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181964
+    },
+    {
+     "name": "VolumeName",
+     "memid": 10007,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181965
+    },
+    {
+     "name": "VolumeName",
+     "memid": 10007,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181965
+    },
+    {
+     "name": "FileSystem",
+     "memid": 10008,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrFileSystem",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181957
+    },
+    {
+     "name": "SerialNumber",
+     "memid": 10009,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pulSerialNumber",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181962
+    },
+    {
+     "name": "IsReady",
+     "memid": 10010,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfReady",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181959
+    }
+   ]
+  },
+  {
+   "name": "DriveTypeConst",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "__MIDL___MIDL_itf_scrrun_0001_0000_0001"
+  },
+  {
+   "name": "__MIDL___MIDL_itf_scrrun_0001_0000_0001",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "UnknownType",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "Removable",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "Fixed",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "Remote",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "CDRom",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "RamDisk",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5
+    }
+   ]
+  },
+  {
+   "name": "IFolder",
+   "kind": "dispatch",
+   "guid": "{C7C3F5A2-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181928,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Path",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPath",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181960
+    },
+    {
+     "name": "Name",
+     "memid": 1000,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181996
+    },
+    {
+     "name": "Name",
+     "memid": 1000,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181996
+    },
+    {
+     "name": "ShortPath",
+     "memid": 1002,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPath",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181998
+    },
+    {
+     "name": "ShortName",
+     "memid": 1001,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181997
+    },
+    {
+     "name": "Drive",
+     "memid": 1004,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IDrive",
+     "params": [
+      {
+       "name": "ppdrive",
+       "type": "IDrive",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181976
+    },
+    {
+     "name": "ParentFolder",
+     "memid": 1005,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181999
+    },
+    {
+     "name": "Attributes",
+     "memid": 1003,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "FileAttribute",
+     "params": [
+      {
+       "name": "pfa",
+       "type": "FileAttribute",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181972
+    },
+    {
+     "name": "Attributes",
+     "memid": 1003,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "FileAttribute",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181972
+    },
+    {
+     "name": "DateCreated",
+     "memid": 1006,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "pdate",
+       "type": "Date",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181973
+    },
+    {
+     "name": "DateLastModified",
+     "memid": 1007,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "pdate",
+       "type": "Date",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181975
+    },
+    {
+     "name": "DateLastAccessed",
+     "memid": 1008,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "pdate",
+       "type": "Date",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181974
+    },
+    {
+     "name": "Type",
+     "memid": 1010,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrType",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182001
+    },
+    {
+     "name": "Delete",
+     "memid": 1201,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Force",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      }
+     ],
+     "helpcontext": 2182005
+    },
+    {
+     "name": "Copy",
+     "memid": 1203,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "OverWriteFiles",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      }
+     ],
+     "helpcontext": 2182004
+    },
+    {
+     "name": "Move",
+     "memid": 1205,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182006
+    },
+    {
+     "name": "IsRootFolder",
+     "memid": 10000,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfRootFolder",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182069
+    },
+    {
+     "name": "Size",
+     "memid": 1009,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarSize",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182000
+    },
+    {
+     "name": "SubFolders",
+     "memid": 10001,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFolderCollection",
+     "params": [
+      {
+       "name": "ppfolders",
+       "type": "IFolderCollection",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182070
+    },
+    {
+     "name": "Files",
+     "memid": 10002,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFileCollection",
+     "params": [
+      {
+       "name": "ppfiles",
+       "type": "IFileCollection",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182095
+    },
+    {
+     "name": "CreateTextFile",
+     "memid": 1101,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ITextStream",
+     "params": [
+      {
+       "name": "FileName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Overwrite",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      },
+      {
+       "name": "Unicode",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      },
+      {
+       "name": "ppts",
+       "type": "ITextStream",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182035
+    }
+   ]
+  },
+  {
+   "name": "IFolderCollection",
+   "kind": "dispatch",
+   "guid": "{C7C3F5A3-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181929,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Add",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "Name",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181948
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181946
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppenum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted",
+      "hidden"
+     ]
+    },
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181945
+    }
+   ]
+  },
+  {
+   "name": "IFileCollection",
+   "kind": "dispatch",
+   "guid": "{C7C3F5A5-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181926,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFile",
+     "params": [
+      {
+       "name": "Key",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppfile",
+       "type": "IFile",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181946
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppenum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted",
+      "hidden"
+     ]
+    },
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181945
+    }
+   ]
+  },
+  {
+   "name": "IFile",
+   "kind": "dispatch",
+   "guid": "{C7C3F5A4-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181925,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Path",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPath",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181960
+    },
+    {
+     "name": "Name",
+     "memid": 1000,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181996
+    },
+    {
+     "name": "Name",
+     "memid": 1000,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181996
+    },
+    {
+     "name": "ShortPath",
+     "memid": 1002,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrPath",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181998
+    },
+    {
+     "name": "ShortName",
+     "memid": 1001,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181997
+    },
+    {
+     "name": "Drive",
+     "memid": 1004,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IDrive",
+     "params": [
+      {
+       "name": "ppdrive",
+       "type": "IDrive",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181976
+    },
+    {
+     "name": "ParentFolder",
+     "memid": 1005,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IFolder",
+     "params": [
+      {
+       "name": "ppfolder",
+       "type": "IFolder",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181999
+    },
+    {
+     "name": "Attributes",
+     "memid": 1003,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "FileAttribute",
+     "params": [
+      {
+       "name": "pfa",
+       "type": "FileAttribute",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181972
+    },
+    {
+     "name": "Attributes",
+     "memid": 1003,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "FileAttribute",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2181972
+    },
+    {
+     "name": "DateCreated",
+     "memid": 1006,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "pdate",
+       "type": "Date",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181973
+    },
+    {
+     "name": "DateLastModified",
+     "memid": 1007,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "pdate",
+       "type": "Date",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181975
+    },
+    {
+     "name": "DateLastAccessed",
+     "memid": 1008,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Date",
+     "params": [
+      {
+       "name": "pdate",
+       "type": "Date",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2181974
+    },
+    {
+     "name": "Size",
+     "memid": 1009,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarSize",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182000
+    },
+    {
+     "name": "Type",
+     "memid": 1010,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrType",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182001
+    },
+    {
+     "name": "Delete",
+     "memid": 1200,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Force",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      }
+     ],
+     "helpcontext": 2182005
+    },
+    {
+     "name": "Copy",
+     "memid": 1202,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "OverWriteFiles",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": true
+      }
+     ],
+     "helpcontext": 2182004
+    },
+    {
+     "name": "Move",
+     "memid": 1204,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Destination",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182006
+    },
+    {
+     "name": "OpenAsTextStream",
+     "memid": 1100,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ITextStream",
+     "params": [
+      {
+       "name": "IOMode",
+       "type": "IOMode",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 1
+      },
+      {
+       "name": "Format",
+       "type": "Tristate",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "ppts",
+       "type": "ITextStream",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182007
+    }
+   ]
+  },
+  {
+   "name": "ITextStream",
+   "kind": "dispatch",
+   "guid": "{53BAD8C1-E718-11CF-893D-00A0C9054228}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181930,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Line",
+     "memid": 10000,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Line",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182074
+    },
+    {
+     "name": "Column",
+     "memid": -529,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Column",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182073
+    },
+    {
+     "name": "AtEndOfStream",
+     "memid": 10002,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "EOS",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182072
+    },
+    {
+     "name": "AtEndOfLine",
+     "memid": 10003,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "EOL",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182071
+    },
+    {
+     "name": "Read",
+     "memid": 10004,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Characters",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182076
+    },
+    {
+     "name": "ReadLine",
+     "memid": 10005,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182078
+    },
+    {
+     "name": "ReadAll",
+     "memid": 10006,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2182077
+    },
+    {
+     "name": "Write",
+     "memid": 10007,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182081
+    },
+    {
+     "name": "WriteLine",
+     "memid": 10008,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": ""
+      }
+     ],
+     "helpcontext": 2182082
+    },
+    {
+     "name": "WriteBlankLines",
+     "memid": 10009,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Lines",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182083
+    },
+    {
+     "name": "Skip",
+     "memid": 10010,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Characters",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 2182079
+    },
+    {
+     "name": "SkipLine",
+     "memid": 10011,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 2182080
+    },
+    {
+     "name": "Close",
+     "memid": 10012,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 2182075
+    }
+   ]
+  },
+  {
+   "name": "SpecialFolderConst",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "__MIDL___MIDL_itf_scrrun_0001_0000_0002"
+  },
+  {
+   "name": "__MIDL___MIDL_itf_scrrun_0001_0000_0002",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "WindowsFolder",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "SystemFolder",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "TemporaryFolder",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "name": "IFileSystem3",
+   "kind": "dispatch",
+   "guid": "{2A0B9D10-4B87-11D3-A97A-00104B365C9F}",
+   "flags": [
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2181927,
+   "implements": [
+    {
+     "name": "IFileSystem",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "GetStandardStream",
+     "memid": 20000,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ITextStream",
+     "params": [
+      {
+       "name": "StandardStreamType",
+       "type": "StandardStreamTypes",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Unicode",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": false
+      },
+      {
+       "name": "ppts",
+       "type": "ITextStream",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "GetFileVersion",
+     "memid": 20010,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "FileName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "FileVersion",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "StandardStreamTypes",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "__MIDL___MIDL_itf_scrrun_0001_0000_0003"
+  },
+  {
+   "name": "__MIDL___MIDL_itf_scrrun_0001_0000_0003",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "StdIn",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "StdOut",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "StdErr",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "name": "FileSystemObject",
+   "kind": "coclass",
+   "guid": "{0D43FE01-F093-11CF-8940-00A0C9054228}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 2181927,
+   "implements": [
+    {
+     "name": "IFileSystem3",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Drive",
+   "kind": "coclass",
+   "guid": "{C7C3F5B1-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [],
+   "helpcontext": 2181923,
+   "implements": [
+    {
+     "name": "IDrive",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Drives",
+   "kind": "coclass",
+   "guid": "{C7C3F5B2-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [],
+   "helpcontext": 2181924,
+   "implements": [
+    {
+     "name": "IDriveCollection",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Folder",
+   "kind": "coclass",
+   "guid": "{C7C3F5B3-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [],
+   "helpcontext": 2181928,
+   "implements": [
+    {
+     "name": "IFolder",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Folders",
+   "kind": "coclass",
+   "guid": "{C7C3F5B4-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [],
+   "helpcontext": 2181929,
+   "implements": [
+    {
+     "name": "IFolderCollection",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "File",
+   "kind": "coclass",
+   "guid": "{C7C3F5B5-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [],
+   "helpcontext": 2181925,
+   "implements": [
+    {
+     "name": "IFile",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "Files",
+   "kind": "coclass",
+   "guid": "{C7C3F5B6-88A3-11D0-ABCB-00A0C90FFFC0}",
+   "flags": [],
+   "helpcontext": 2181926,
+   "implements": [
+    {
+     "name": "IFileCollection",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "TextStream",
+   "kind": "coclass",
+   "guid": "{0BB02EC0-EF49-11CF-8940-00A0C9054228}",
+   "flags": [],
+   "helpcontext": 2181930,
+   "implements": [
+    {
+     "name": "ITextStream",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "IScriptEncoder",
+   "kind": "dispatch",
+   "guid": "{AADC65F6-CFF1-11D1-B747-00C04FC2B085}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 2184337,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "EncodeScriptFile",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "szExt",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrStreamIn",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cFlags",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrDefaultLang",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrStreamOut",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 2184340
+    }
+   ]
+  },
+  {
+   "name": "Encoder",
+   "kind": "coclass",
+   "guid": "{32DA2B15-CFED-11D1-B747-00C04FC2B085}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 2184336,
+   "implements": [
+    {
+     "name": "IScriptEncoder",
+     "default": true,
+     "source": false
+    }
+   ]
+  }
+ ]
+}

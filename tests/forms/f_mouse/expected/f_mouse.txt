@@ -1,0 +1,24 @@
+load True True True
+step 1
+command1 mousedown 1 0 600 240
+command1 click
+command1 mouseup 1 0 600 240
+step 2
+picture1 mousemove 0 10 5
+picture1 mousedown 1 0 10 5
+picture1 mouseup 1 0 10 5
+picture1 click
+picture1 dblclick
+picture1 mouseup 1 0 10 5
+step 3
+form mousedown 2 0 3000 2700
+form mouseup 2 0 3000 2700
+form click
+step 4
+label1 mousedown 1 0 150 75
+label1 mouseup 1 0 150 75
+label1 click
+label1 dblclick
+label1 mouseup 1 0 150 75
+step 5
+cursor 0 0

@@ -1,0 +1,8 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 4.2) — f_comctl
+
+ProgressBar, Slider, StatusBar, Toolbar, TabStrip, ImageList (Microsoft Windows Common Controls 6.0).
+Το έργο κλείνει μόνο του σε 1-2 δευτερόλεπτα. Μην πατάς τίποτα όσο τρέχει.
+
+1. Άνοιξε το f_comctl\ComctlTests.vbp με το VB6 και πάτα F5.
+   - Αν βγει σφάλμα (π.χ. στη φόρτωση της φόρμας ή μεταγλώττισης), στείλε μου εικόνα.
+2. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο f_comctl\expected\f_comctl.txt.

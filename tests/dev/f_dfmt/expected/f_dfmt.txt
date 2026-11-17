@@ -1,0 +1,150 @@
+db made
+form load
+df txtName IStdDataFormatDisp type=0 format="" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtAge IStdDataFormatDisp type=1 format="000" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtActive IStdDataFormatDisp type=5 format="" true=String:"Yes" false=String:"No" null=String:"?" day=0 week=0
+df txtChk IStdDataFormatDisp type=4 format="" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtBorn IStdDataFormatDisp type=1 format="yyyy-mm-dd" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtSal1 IStdDataFormatDisp type=1 format="0.00" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtSal2 IStdDataFormatDisp type=1 format="0.00" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtSalG IStdDataFormatDisp type=0 format="" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df lblNotes IStdDataFormatDisp type=0 format="" true=String:"" false=String:"" null=String:"(null)" day=0 week=0
+df lblAge IStdDataFormatDisp type=1 format="\A\g\e 0" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtDao IStdDataFormatDisp type=1 format="000" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+df txtBind IStdDataFormatDisp type=0 format="" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+fmtAge IStdDataFormatDisp same=True
+  ev age format String:"031" target=TextBox:txtAge
+refreshed [Anna|031|Yes|1|1994-03-05|1234,50|1.235|1234,5|first|Age 31]
+grid cols=7 ID(ID)=1/1 nf="" df=IStdDataFormatDisp:"" Name(Name)=Anna/Anna nf="" df=IStdDataFormatDisp:"" Age(Age)=31/31 nf="" df=IStdDataFormatDisp:"" Active(Active)=-1/-1 nf="" df=IStdDataFormatDisp:"" Born(Born)=5/3/1994/5/3/1994 nf="" df=IStdDataFormatDisp:"" Salary(Salary)=1234,5/1234,5 nf="" df=IStdDataFormatDisp:"" Notes(Notes)=first/first nf="" df=IStdDataFormatDisp:"" row=0
+dao [31] df txtDao IStdDataFormatDisp type=1 format="000" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+step 1 [Anna|031|Yes|1|1994-03-05|1234,50|1.235|1234,5|first|Age 31]
+  ev age format String:"025" target=TextBox:txtAge
+bill [Bill|025|No|0||||||Age 25]
+grid cols=7 ID(ID)=2/2 nf="" df=IStdDataFormatDisp:"" Name(Name)=Bill/Bill nf="" df=IStdDataFormatDisp:"" Age(Age)=25/25 nf="" df=IStdDataFormatDisp:"" Active(Active)=0/0 nf="" df=IStdDataFormatDisp:"" Born(Born)=/ nf="" df=IStdDataFormatDisp:"" Salary(Salary)=/ nf="" df=IStdDataFormatDisp:"" Notes(Notes)=/ nf="" df=IStdDataFormatDisp:"" row=1
+  ev age format String:"" target=TextBox:txtAge
+cleo [Cleo||Yes|1|2000-12-31|99,99|100|99,99|third|]
+grid cols=7 ID(ID)=3/3 nf="" df=IStdDataFormatDisp:"" Name(Name)=Cleo/Cleo nf="" df=IStdDataFormatDisp:"" Age(Age)=/ nf="" df=IStdDataFormatDisp:"" Active(Active)=-1/-1 nf="" df=IStdDataFormatDisp:"" Born(Born)=31/12/2000 1:45:00 μμ/31/12/2000 1:45:00 μμ nf="" df=IStdDataFormatDisp:"" Salary(Salary)=99,99/99,99 nf="" df=IStdDataFormatDisp:"" Notes(Notes)=third/third nf="" df=IStdDataFormatDisp:"" row=2
+step 2 [Cleo||Yes|1|2000-12-31|99,99|100|99,99|third|]
+  ev age format String:"031" target=TextBox:txtAge
+edited [Anna|7|No|1|2001-02-03|12.5|1.235|1234,5|first|Age 31] changed=TrueTrueTrueTrue
+  ev age unformat String:"7" target=TextBox:txtAge
+  ev age format String:"025" target=TextBox:txtAge
+  ev age format String:"007" target=TextBox:txtAge
+back [Anna|007|No|0|2001-02-03|125,00|125|125|first|Age 7]
+fields ID=1 Name=String:"Anna" Age=Integer:7 Active=Boolean:False Born=Date:3/2/2001 Salary=Currency:125 Notes=String:"first"
+step 3 [Anna|007|No|0|2001-02-03|125,00|125|125|first|Age 7]
+  ev age format String:"025" target=TextBox:txtAge
+  ev age format String:"007" target=TextBox:txtAge
+back [Anna2|007|Yes|1|2001-02-03|3,25|003|3,25|first|Age 7]
+fields ID=1 Name=String:"Anna2" Age=Integer:7 Active=Boolean:True Born=Date:3/2/2001 Salary=Currency:3,25 Notes=String:"first"
+step 4 [Anna2|007|Yes|1|2001-02-03|3,25|003|3,25|first|Age 7]
+  ev age unformat String:"abc" target=TextBox:txtAge
+  ev age format String:"007" target=TextBox:txtAge
+  movenext ! -2147217842 Operation was canceled.
+moved [Anna2|007|Yes|1|2001-02-03|3,25|003|3,25|first|Age 7]
+  ev age unformat String:"007" target=TextBox:txtAge
+  ev age format String:"007" target=TextBox:txtAge
+first [Anna2|007|Yes|1|2001-02-03|3,25|003|3,25|first|Age 7]
+fields ID=1 Name=String:"Anna2" Age=Integer:7 Active=Boolean:True Born=Date:3/2/2001 Salary=Currency:3,25 Notes=String:"first"
+step 5 [Anna2|007|Yes|1|2001-02-03|3,25|003|3,25|first|Age 7]
+new type=0 format="" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+set [Anna2|007|Yes|1|2001-02-03|3,25|003|3,25|first|Age 7] same=True
+  ev name format String:"Bill" target=TextBox:txtName
+  ev age format String:"025" target=TextBox:txtAge
+next [<Bill>|025|No|0||||||Age 25]
+step 6 [<Bill>|025|No|0||||||Age 25]
+  ev name unformat String:"zed" target=TextBox:txtName
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+  ev name format String:"ZED" target=TextBox:txtName
+  ev age format String:"025" target=TextBox:txtAge
+back [<ZED>|025|No|0||||||Age 25]
+fields ID=2 Name=String:"ZED" Age=Integer:25 Active=Boolean:False Born=Null Salary=Null Notes=Null
+  ev name unformat String:"<kim>" target=TextBox:txtName
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+  ev name format String:"kim" target=TextBox:txtName
+  ev age format String:"025" target=TextBox:txtAge
+fields ID=2 Name=String:"kim" Age=Integer:25 Active=Boolean:False Born=Null Salary=Null Notes=Null
+step 7 [<kim>|025|No|0||||||Age 25]
+  ev name changed type=1 format="" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+  ev name changed type=1 format="@@@@@@!" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+custom [<kim>|025|No|0||||||Age 25]
+  ev name changed type=1 format="@@@@@@!" true=Integer:5 false=Boolean:False null=String:"" day=0 week=0
+  ev name changed type=1 format="@@@@@@!" true=Integer:5 false=String:"F" null=String:"" day=0 week=0
+  ev name changed type=1 format="@@@@@@!" true=Integer:5 false=String:"F" null=Null day=0 week=0
+values type=1 format="@@@@@@!" true=Integer:5 false=String:"F" null=Null day=0 week=0
+  type 9 ! 5 Invalid procedure call or argument
+  type -1 ! 5 Invalid procedure call or argument
+  day 8 ! 5 Invalid procedure call or argument
+  week 4 ! 5 Invalid procedure call or argument
+  ev name changed type=1 format="@@@@@@!" true=Integer:5 false=String:"F" null=Null day=2 week=0
+  ev name changed type=1 format="@@@@@@!" true=Integer:5 false=String:"F" null=Null day=2 week=3
+props type=1 format="@@@@@@!" true=Integer:5 false=String:"F" null=Null day=2 week=3
+  ev name changed type=0 format="@@@@@@!" true=Integer:5 false=String:"F" null=Null day=2 week=3
+  ev name changed type=1 format="" true=Integer:5 false=String:"F" null=Null day=2 week=3
+  ev name changed type=1 format="" true=Integer:5 false=String:"F" null=Null day=2 week=3
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+  ev name format String:"kim" target=TextBox:txtName
+  ev age format String:"025" target=TextBox:txtAge
+general [<kim>|025|No|0||||||Age 25]
+step 8 [<kim>|025|No|0||||||Age 25]
+  ev age changed
+age 0000 [<kim>|025|No|0||||||Age 25]
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+  ev name format String:"kim" target=TextBox:txtName
+  ev age format String:"0025" target=TextBox:txtAge
+moved [<kim>|0025|No|0||||||Age 25]
+  nothing ! -2147024809 System Error &H80070057 (-2147024809).   The parameter is incorrect.
+nothing txtAge IStdDataFormatDisp type=1 format="0000" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0 [<kim>|0025|No|0||||||Age 25]
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+  ev name format String:"kim" target=TextBox:txtName
+  ev age format String:"0025" target=TextBox:txtAge
+moved [<kim>|0025|No|0||||||Age 25]
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+  ev name format String:"kim" target=TextBox:txtName
+  ev age format String:"0025" target=TextBox:txtAge
+boolean [<kim>|0025|No|F||||||T]
+  ev name format String:"Cleo" target=TextBox:txtName
+  ev age format String:"" target=TextBox:txtAge
+last [<Cleo>||Yes|T|2000-12-31|99,99|100|99,99|third|N]
+step 9 [<Cleo>||Yes|T|2000-12-31|99,99|100|99,99|third|N]
+fs IStdDataFormatsDisp count=0
+  add no index ! 13 Type mismatch
+count=3
+item age 0.0 salary #
+item 0 0.0
+item 1 #
+item 2 0.0
+  item nope ! 5 Invalid procedure call or argument
+  each IStdDataFormatDisp 0.0
+  each IStdDataFormatDisp #
+  each IStdDataFormatDisp 0.0
+removed count=2
+  remove nope ! 5 Invalid procedure call or argument
+cleared count=0
+step 10 [<Cleo>||Yes|T|2000-12-31|99,99|100|99,99|third|N]
+bind [3,250] df=IStdDataFormatDisp type=1 format="0.000" true=Boolean:True false=Boolean:False null=String:"" day=0 week=0
+last [99,990]
+back [75,000] field=Currency:75
+set [75,000]
+first [3]
+step 11 [<Cleo>||Yes|T|2000-12-31|99,99|100|99,99|third|N]
+dao next [25]
+dao back [7] field=Integer:7
+step 12 [<Cleo>||Yes|T|2000-12-31|99,99|100|99,99|third|N]
+  ev name format String:"Anna2" target=TextBox:txtName
+  ev age format String:"0007" target=TextBox:txtAge
+grid cols=7 ID(ID)=1/1 nf="" df=IStdDataFormatDisp:"" Name(Name)=Anna2/Anna2 nf="" df=IStdDataFormatDisp:"" Age(Age)=7/7 nf="" df=IStdDataFormatDisp:"" Active(Active)=-1/-1 nf="" df=IStdDataFormatDisp:"" Born(Born)=3/2/2001/3/2/2001 nf="" df=IStdDataFormatDisp:"" Salary(Salary)=3,25/3,25 nf="" df=IStdDataFormatDisp:"" Notes(Notes)=first/first nf="" df=IStdDataFormatDisp:"" row=0
+grid cols=7 ID(ID)=1/1 nf="" df=IStdDataFormatDisp:"" Name(Name)=Anna2/Anna2 nf="0000" df=IStdDataFormatDisp:"0000" Age(Age)=7/7 nf="" df=IStdDataFormatDisp:"" Active(Active)=-1/-1 nf="" df=IStdDataFormatDisp:"" Born(Born)=3/2/2001/3/2/2001 nf="" df=IStdDataFormatDisp:"" Salary(Salary)=3,25/3,25 nf="" df=IStdDataFormatDisp:"" Notes(Notes)=first/first nf="" df=IStdDataFormatDisp:"" row=0
+grid cols=7 ID(ID)=1/1 nf="" df=IStdDataFormatDisp:"" Name(Name)=Anna2/Anna2 nf="0000" df=IStdDataFormatDisp:"0000" Age(Age)=7,0/7 nf="0.0" df=IStdDataFormatDisp:"0.0" Active(Active)=-1/-1 nf="" df=IStdDataFormatDisp:"" Born(Born)=3/2/2001/3/2/2001 nf="" df=IStdDataFormatDisp:"" Salary(Salary)=3,25/3,25 nf="" df=IStdDataFormatDisp:"" Notes(Notes)=first/first nf="" df=IStdDataFormatDisp:"" row=0
+  ev name format String:"kim" target=TextBox:txtName
+  ev age format String:"0025" target=TextBox:txtAge
+grid cols=7 ID(ID)=2/2 nf="" df=IStdDataFormatDisp:"" Name(Name)=kim/kim nf="0000" df=IStdDataFormatDisp:"0000" Age(Age)=25,0/25 nf="0.0" df=IStdDataFormatDisp:"0.0" Active(Active)=0/0 nf="" df=IStdDataFormatDisp:"" Born(Born)=/ nf="" df=IStdDataFormatDisp:"" Salary(Salary)=/ nf="" df=IStdDataFormatDisp:"" Notes(Notes)=/ nf="" df=IStdDataFormatDisp:"" row=1
+cell kim / 25
+step 13 [<kim>|0025|No|F||||||T]
+form unload [<kim>|0025|No|F||||||T]

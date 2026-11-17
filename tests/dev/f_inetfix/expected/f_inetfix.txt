@@ -1,0 +1,16 @@
+== an FTP command on HTTP: an error, the control is not busy after it
+  CD sub: ! 35756 Unable to complete request | StillExecuting False ResponseCode 87
+  then GET: ! 0
+  String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+== other HTTP verbs are sent
+  DELETE: ! 0 | HTTP/1.1 200 OK | DELETE /echo HTTP/1.1
+  OPTIONS: ! 0 | HTTP/1.1 501 Unsupported method ('OPTIONS') | StillExecuting False
+  BAD/VERB: ! 35762 Not a valid or supported command | StillExecuting False
+== GetChunk after Cancel returns at once
+  GetChunk: String(0) '' | at once True | StillExecuting False
+== OpenURL of ftp://
+  hello.txt: ! 0 String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+  bin.dat: ! 0 Byte()(0 To 255)
+  sub/: ! 0 String(11) 'inner.txt<13><10>'
+  nope.txt: ! 0 Empty | ResponseCode 12003 String(156) '200 Type set to I.<13><10>550 /nope.txt: No such file or directory.<13><10>200 Type set to I.<13><10>200 PORT command successful.<13><10>550 /nope.txt: No such file or directory.<13><10>'
+end

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=LinBASIC Studio
+GenericName=BASIC Development Environment
+Comment=VB6-like BASIC development environment: forms, code, debugger, Make for Linux and Windows
+Exec=linbasic-studio %f
+Icon=linbasic-studio
+Terminal=false
+Categories=Development;IDE;
+MimeType=application/x-vbp;application/x-vbg;
+Keywords=Visual Basic;VB6;BASIC;IDE;compiler;

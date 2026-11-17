@@ -1,0 +1,51 @@
+== the URL
+  Protocol 5 RemotePort -18414 Document /hello.txt URL https://<server>:47122/hello.txt
+  Protocol 5 RemotePort 443 URL https://www.example.com/
+== OpenURL
+  OpenURL https://<server>:47122/hello.txt: ! 0 String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+    events 3 4 5 6 7 8 | ResponseCode 0
+  OpenURL https://<server>:47122/bin: ! 0 Byte()(0 To 255) sum 64531
+    events 5 6 7 8 | ResponseCode 0
+  OpenURL https://<server>:47122/redirect: ! 0 String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+    events 5 6 7 8 | ResponseCode 0
+  OpenURL https://<server>:47122/auth: ! 0 String(12) 'who are you?'
+    events 5 6 7 8 | ResponseCode 0
+  OpenURL https://vb:six@<server>:47122/auth: ! 0 String(7) 'welcome'
+    events 5 6 7 8 | ResponseCode 0
+  OpenURL https://<server>:47122/auth: ! 0 String(7) 'welcome'
+    events 5 6 7 8 | ResponseCode 0
+  OpenURL https://<server>:47123/hello.txt: ! 0 String(0) ''
+    events 3 4 9 10 11 | ResponseCode 0
+  OpenURL https://<server>:47124/hello.txt: ! 0 String(0) ''
+    events 3 4 9 10 11 | ResponseCode 0
+  OpenURL https://<server>:47125/hello.txt: ! 0 String(0) ''
+    events 3 4 9 10 11 | ResponseCode 0
+== Execute
+  Execute https://<server>:47122/hello.txt GET: events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    status: HTTP/1.1 200 OK | Content-Length 22
+    data: String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+  Execute https://<server>:47122/hello.txt HEAD: events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    status: HTTP/1.1 200 OK | Content-Length 22
+    data: String(0) ''
+  Execute https://<server>:47122/echo POST: events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    status: HTTP/1.1 200 OK | Content-Length (echo)
+    data: String(19) 'POST /echo HTTP/1.1' ... String(16) '<body 7> name=vb'
+  Execute https://<server>:47122/missing GET: events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    status: HTTP/1.1 404 Not Found | Content-Length 8
+    data: String(8) 'not here'
+  Execute https://<server>:47123/hello.txt GET: events 3 4 9 10 11 | ResponseCode 12045 ResponseInfo String(28) 'Invalid client authorization'
+    status:  | Content-Length 
+    data: String(0) ''
+  Execute https://<server>:47124/hello.txt GET: events 3 4 9 10 11 | ResponseCode 12037 ResponseInfo String(33) 'Security certificate date invalid'
+    status:  | Content-Length 
+    data: String(0) ''
+  Execute https://<server>:47125/hello.txt GET: events 3 4 9 10 11 | ResponseCode 12038 ResponseInfo String(35) 'Security certificate number invalid'
+    status:  | Content-Length 
+    data: String(0) ''
+  Execute https://<server>:47129/refused GET: events 3 11 | ResponseCode 12029 ResponseInfo String(14) 'Cannot connect'
+    status:  | Content-Length 
+    data: String(0) ''
+  Execute https://no-such-host.invalid/ GET: events 11 | ResponseCode 12007 ResponseInfo String(17) 'Name not resolved'
+    status:  | Content-Length 
+    data: String(0) ''
+end

@@ -1,0 +1,40 @@
+start
+make pen 3 1,5 [PE] t1-pen t2-pen
+copy 3 4
+variant 36 TItem False False
+from variant pen 3 1,5 [PE] t1-pen t2-pen
+variant copy pen 3
+typename call TItem
+kindof 36 TItem / 36 TItem
+event Added pen 3 PE t1-pen
+event Added ink 2 IN t1-ink
+trace add pen 3|add ink 20| count 2
+get ink 20 4 [IN] t1-ink t2-ink
+total 84,5
+bump 4 t2-pen+
+bumpval 9
+event Added pen 9 PE t1-pen
+late trace add pen 9| count 3
+late get pen 9 1,5 [PE] t1-pen t2-pen+
+late bump 10 t2-pen++
+late variant 36 TItem
+late make cap 7 0,5 [CA] t1-cap t2-cap
+late total 98
+col pen 9 TItem
+col foreach 16
+err long 13
+err empty 13
+other 36 TOther 0
+err other 13
+late field 0 7
+late fields cap t2-cap 0
+late typename price Double 0
+late typename tags - 13
+late let 0
+late let value 55
+late let elem 0
+late let elem value new
+late nope 461 -1
+named bumpval 9
+named make nm 6 2,5 [NM] t1-nm t2-nm
+end

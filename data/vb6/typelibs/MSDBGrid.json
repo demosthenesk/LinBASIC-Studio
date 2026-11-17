@@ -1,0 +1,3643 @@
+{
+ "library": "MSDBGrid",
+ "short": "MSDBGrid",
+ "guid": "{00028C01-0000-0000-0000-000000000046}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "dbgrid96.hlp",
+ "file": "dbgrid32.ocx",
+ "types": [
+  {
+   "name": "IDummy",
+   "kind": "interface",
+   "guid": "{76D9FA20-FBCF-11CF-B9F9-00A0247033C4}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IUnknown",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "ICursor",
+   "kind": "interface",
+   "guid": "{9F6AA700-D188-11CD-AD48-00AA003C9CB6}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IUnknown",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "enumScrollBarsConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390002,
+   "members": [
+    {
+     "name": "_None",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390003
+    },
+    {
+     "name": "_Horizontal",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390004
+    },
+    {
+     "name": "_Vertical",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390005
+    },
+    {
+     "name": "_Both",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390006
+    },
+    {
+     "name": "_Automatic",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 390007
+    }
+   ]
+  },
+  {
+   "name": "ScrollBarsConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390002,
+   "members": [
+    {
+     "name": "dbgNone",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390003
+    },
+    {
+     "name": "dbgHorizontal",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390004
+    },
+    {
+     "name": "dbgVertical",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390005
+    },
+    {
+     "name": "dbgBoth",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390006
+    },
+    {
+     "name": "dbgAutomatic",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 390007
+    }
+   ]
+  },
+  {
+   "name": "enumBorderStyleConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390008,
+   "members": [
+    {
+     "name": "_None",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390009
+    },
+    {
+     "name": "_FixedSingle",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390010
+    }
+   ]
+  },
+  {
+   "name": "BorderStyleConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390008,
+   "members": [
+    {
+     "name": "dbgNoBorder",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390009
+    },
+    {
+     "name": "dbgFixedSingle",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390010
+    }
+   ]
+  },
+  {
+   "name": "enumDividerStyleConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390011,
+   "members": [
+    {
+     "name": "_NoDividers",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390012
+    },
+    {
+     "name": "_BlackLine",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390013
+    },
+    {
+     "name": "_DarkGrayLine",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390014
+    },
+    {
+     "name": "_Raised",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390015
+    },
+    {
+     "name": "_Inset",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 390016
+    },
+    {
+     "name": "_UseForeColor",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 390017
+    },
+    {
+     "name": "_LightGrayLine",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 390018
+    }
+   ]
+  },
+  {
+   "name": "DividerStyleConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390011,
+   "members": [
+    {
+     "name": "dbgNoDividers",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390012
+    },
+    {
+     "name": "dbgBlackLine",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390013
+    },
+    {
+     "name": "dbgDarkGrayLine",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390014
+    },
+    {
+     "name": "dbgRaised",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390015
+    },
+    {
+     "name": "dbgInset",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 390016
+    },
+    {
+     "name": "dbgUseForeColor",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 390017
+    },
+    {
+     "name": "dbgLightGrayLine",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 390018
+    }
+   ]
+  },
+  {
+   "name": "enumAlignmentConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390019,
+   "members": [
+    {
+     "name": "_Left",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390020
+    },
+    {
+     "name": "_Right",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390021
+    },
+    {
+     "name": "_Center",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390022
+    },
+    {
+     "name": "_General",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390023
+    }
+   ]
+  },
+  {
+   "name": "AlignmentConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390019,
+   "members": [
+    {
+     "name": "dbgLeft",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390020
+    },
+    {
+     "name": "dbgRight",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390021
+    },
+    {
+     "name": "dbgCenter",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390022
+    },
+    {
+     "name": "dbgGeneral",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390023
+    }
+   ]
+  },
+  {
+   "name": "enumDataModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390024,
+   "members": [
+    {
+     "name": "_Bound",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390025
+    },
+    {
+     "name": "_Unbound",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390026
+    }
+   ]
+  },
+  {
+   "name": "DataModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390024,
+   "members": [
+    {
+     "name": "dbgBound",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390025
+    },
+    {
+     "name": "dbgUnbound",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390026
+    }
+   ]
+  },
+  {
+   "name": "enumSplitSizeModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390034,
+   "members": [
+    {
+     "name": "_Scalable",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390035
+    },
+    {
+     "name": "_Exact",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390036
+    },
+    {
+     "name": "_NumberOfColumns",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390037
+    }
+   ]
+  },
+  {
+   "name": "SplitSizeModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390034,
+   "members": [
+    {
+     "name": "dbgScalable",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390035
+    },
+    {
+     "name": "dbgExact",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390036
+    },
+    {
+     "name": "dbgNumberOfColumns",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390037
+    }
+   ]
+  },
+  {
+   "name": "enumTabActionConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390042,
+   "members": [
+    {
+     "name": "_ControlNavigation",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390043
+    },
+    {
+     "name": "_ColumnNavigation",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390044
+    },
+    {
+     "name": "_GridNavigation",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390045
+    }
+   ]
+  },
+  {
+   "name": "TabActionConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390042,
+   "members": [
+    {
+     "name": "dbgControlNavigation",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390043
+    },
+    {
+     "name": "dbgColumnNavigation",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390044
+    },
+    {
+     "name": "dbgGridNavigation",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390045
+    }
+   ]
+  },
+  {
+   "name": "enumAppearanceConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390046,
+   "members": [
+    {
+     "name": "_Flat",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390047
+    },
+    {
+     "name": "_3D",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390048
+    }
+   ]
+  },
+  {
+   "name": "AppearanceConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390046,
+   "members": [
+    {
+     "name": "dbgFlat",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390047
+    },
+    {
+     "name": "dbg3D",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390048
+    }
+   ]
+  },
+  {
+   "name": "enumMarqueeStyleConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390056,
+   "members": [
+    {
+     "name": "_DottedCellBorder",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390057
+    },
+    {
+     "name": "_SolidCellBorder",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390058
+    },
+    {
+     "name": "_HighlightCell",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390059
+    },
+    {
+     "name": "_HighlightRow",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390060
+    },
+    {
+     "name": "_HighlightRowRaiseCell",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 390061
+    },
+    {
+     "name": "_NoMarquee",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 390062
+    },
+    {
+     "name": "_FloatingEditor",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 390063
+    }
+   ]
+  },
+  {
+   "name": "MarqueeStyleConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390056,
+   "members": [
+    {
+     "name": "dbgDottedCellBorder",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390057
+    },
+    {
+     "name": "dbgSolidCellBorder",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390058
+    },
+    {
+     "name": "dbgHighlightCell",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390059
+    },
+    {
+     "name": "dbgHighlightRow",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 390060
+    },
+    {
+     "name": "dbgHighlightRowRaiseCell",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 390061
+    },
+    {
+     "name": "dbgNoMarquee",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 390062
+    },
+    {
+     "name": "dbgFloatingEditor",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 390063
+    }
+   ]
+  },
+  {
+   "name": "enumAddNewModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390064,
+   "members": [
+    {
+     "name": "_NoAddNew",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390065
+    },
+    {
+     "name": "_AddNewCurrent",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390066
+    },
+    {
+     "name": "_AddNewPending",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390067
+    }
+   ]
+  },
+  {
+   "name": "AddNewModeConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390064,
+   "members": [
+    {
+     "name": "dbgNoAddNew",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 390065
+    },
+    {
+     "name": "dbgAddNewCurrent",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 390066
+    },
+    {
+     "name": "dbgAddNewPending",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 390067
+    }
+   ]
+  },
+  {
+   "name": "enumErrorConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 390359,
+   "members": [
+    {
+     "name": "_BINDERROR",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 4097,
+     "helpcontext": 399999
+    },
+    {
+     "name": "_INVPROPVAL",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 4098,
+     "helpcontext": 399998
+    },
+    {
+     "name": "_COLINDEX",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 6145,
+     "helpcontext": 397951
+    },
+    {
+     "name": "_NOTINIT",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 6146,
+     "helpcontext": 397950
+    },
+    {
+     "name": "_CNOTFOUND",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 6147,
+     "helpcontext": 397949
+    },
+    {
+     "name": "_INVROWNUM",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6148,
+     "helpcontext": 397948
+    },
+    {
+     "name": "_INVBOOKMARK",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6149,
+     "helpcontext": 397947
+    },
+    {
+     "name": "_BADSELRIDX",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 6150,
+     "helpcontext": 397946
+    },
+    {
+     "name": "_SCROLLRANGE",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 6151,
+     "helpcontext": 397945
+    },
+    {
+     "name": "_INVSBSTYLE",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 6152,
+     "helpcontext": 397944
+    },
+    {
+     "name": "_UPDERROR",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 6153,
+     "helpcontext": 397943
+    },
+    {
+     "name": "_ADDERROR",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 6154,
+     "helpcontext": 397942
+    },
+    {
+     "name": "_DELERROR",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 6155,
+     "helpcontext": 397941
+    },
+    {
+     "name": "_COLDATA",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 6156,
+     "helpcontext": 397940
+    },
+    {
+     "name": "_INCOMPAT",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 6157,
+     "helpcontext": 397939
+    },
+    {
+     "name": "_FIELDERR",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 6158,
+     "helpcontext": 397938
+    },
+    {
+     "name": "_DELMULTROWS",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 6159,
+     "helpcontext": 397937
+    },
+    {
+     "name": "_DATAACCESS",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 6160,
+     "helpcontext": 397936
+    },
+    {
+     "name": "_BADEVENT",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 6161,
+     "helpcontext": 397935
+    },
+    {
+     "name": "_NOPROPNOW",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 6162,
+     "helpcontext": 397934
+    },
+    {
+     "name": "_NOCURREC",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 6163,
+     "helpcontext": 397933
+    },
+    {
+     "name": "_CAPTOOLONG",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 6164,
+     "helpcontext": 397932
+    },
+    {
+     "name": "_SPLITINDEX",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 6244,
+     "helpcontext": 397852
+    },
+    {
+     "name": "_VLINDEX",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 6245,
+     "helpcontext": 397851
+    },
+    {
+     "name": "_VITEMERR",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 6246,
+     "helpcontext": 397850
+    },
+    {
+     "name": "_STYLEINDEX",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 6247,
+     "helpcontext": 397849
+    },
+    {
+     "name": "_DUPSTYLE",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 6248,
+     "helpcontext": 397848
+    },
+    {
+     "name": "_STYLEERR",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 6249,
+     "helpcontext": 397847
+    },
+    {
+     "name": "_UPDSTYLE",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 6250,
+     "helpcontext": 397846
+    },
+    {
+     "name": "_REMSTYLE",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 6251,
+     "helpcontext": 397845
+    },
+    {
+     "name": "_ADDCELLCOND",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 6252,
+     "helpcontext": 397844
+    },
+    {
+     "name": "_STYLENAME",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 6253,
+     "helpcontext": 397843
+    },
+    {
+     "name": "_APPLYSTYLE",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 6254,
+     "helpcontext": 397842
+    },
+    {
+     "name": "_BMPTOOLARGE",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 6255,
+     "helpcontext": 397841
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 390359,
+   "members": [
+    {
+     "name": "dbgBINDERROR",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 4097,
+     "helpcontext": 399999
+    },
+    {
+     "name": "dbgINVPROPVAL",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 4098,
+     "helpcontext": 399998
+    },
+    {
+     "name": "dbgCOLINDEX",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 6145,
+     "helpcontext": 397951
+    },
+    {
+     "name": "dbgNOTINIT",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 6146,
+     "helpcontext": 397950
+    },
+    {
+     "name": "dbgCNOTFOUND",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 6147,
+     "helpcontext": 397949
+    },
+    {
+     "name": "dbgINVROWNUM",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6148,
+     "helpcontext": 397948
+    },
+    {
+     "name": "dbgINVBOOKMARK",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6149,
+     "helpcontext": 397947
+    },
+    {
+     "name": "dbgBADSELRIDX",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 6150,
+     "helpcontext": 397946
+    },
+    {
+     "name": "dbgSCROLLRANGE",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 6151,
+     "helpcontext": 397945
+    },
+    {
+     "name": "dbgINVSBSTYLE",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 6152,
+     "helpcontext": 397944
+    },
+    {
+     "name": "dbgUPDERROR",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 6153,
+     "helpcontext": 397943
+    },
+    {
+     "name": "dbgADDERROR",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 6154,
+     "helpcontext": 397942
+    },
+    {
+     "name": "dbgDELERROR",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 6155,
+     "helpcontext": 397941
+    },
+    {
+     "name": "dbgCOLDATA",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 6156,
+     "helpcontext": 397940
+    },
+    {
+     "name": "dbgINCOMPAT",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 6157,
+     "helpcontext": 397939
+    },
+    {
+     "name": "dbgFIELDERR",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 6158,
+     "helpcontext": 397938
+    },
+    {
+     "name": "dbgDELMULTROWS",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 6159,
+     "helpcontext": 397937
+    },
+    {
+     "name": "dbgDATAACCESS",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 6160,
+     "helpcontext": 397936
+    },
+    {
+     "name": "dbgBADEVENT",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 6161,
+     "helpcontext": 397935
+    },
+    {
+     "name": "dbgNOPROPNOW",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 6162,
+     "helpcontext": 397934
+    },
+    {
+     "name": "dbgNOCURREC",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 6163,
+     "helpcontext": 397933
+    },
+    {
+     "name": "dbgCAPTOOLONG",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 6164,
+     "helpcontext": 397932
+    },
+    {
+     "name": "dbgSPLITINDEX",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 6244,
+     "helpcontext": 397852
+    },
+    {
+     "name": "dbgVLINDEX",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 6245,
+     "helpcontext": 397851
+    },
+    {
+     "name": "dbgVITEMERR",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 6246,
+     "helpcontext": 397850
+    },
+    {
+     "name": "dbgSTYLEINDEX",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 6247,
+     "helpcontext": 397849
+    },
+    {
+     "name": "dbgDUPSTYLE",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 6248,
+     "helpcontext": 397848
+    },
+    {
+     "name": "dbgSTYLEERR",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 6249,
+     "helpcontext": 397847
+    },
+    {
+     "name": "dbgUPDSTYLE",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 6250,
+     "helpcontext": 397846
+    },
+    {
+     "name": "dbgREMSTYLE",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 6251,
+     "helpcontext": 397845
+    },
+    {
+     "name": "dbgADDCELLCOND",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 6252,
+     "helpcontext": 397844
+    },
+    {
+     "name": "dbgSTYLENAME",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 6253,
+     "helpcontext": 397843
+    },
+    {
+     "name": "dbgAPPLYSTYLE",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 6254,
+     "helpcontext": 397842
+    },
+    {
+     "name": "dbgBMPTOOLARGE",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 6255,
+     "helpcontext": 397841
+    }
+   ]
+  },
+  {
+   "name": "IMsDgridCtrl",
+   "kind": "dispatch",
+   "guid": "{00028C02-0000-0000-0000-000000000046}",
+   "flags": [
+    "hidden",
+    "nonextensible",
+    "dispatchable"
+   ],
+   "helpcontext": 390068,
+   "members": [
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390139
+    },
+    {
+     "name": "Columns",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 390140
+    },
+    {
+     "name": "Splits",
+     "memid": 35,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 390141
+    },
+    {
+     "name": "SelBookmarks",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 390143
+    },
+    {
+     "name": "ColContaining",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "X",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390144
+    },
+    {
+     "name": "GetBookmark",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "RowNum",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390145
+    },
+    {
+     "name": "ReBind",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390146
+    },
+    {
+     "name": "RowBookmark",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "RowNum",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390147
+    },
+    {
+     "name": "RowContaining",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "Y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390148
+    },
+    {
+     "name": "RowTop",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "RowNum",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390149
+    },
+    {
+     "name": "Scroll",
+     "memid": 30,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cols",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Rows",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390150
+    },
+    {
+     "name": "Refresh",
+     "memid": -550,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390151
+    },
+    {
+     "name": "CaptureImage",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "stdole2.tlb:#36",
+     "params": [],
+     "helpcontext": 390152
+    },
+    {
+     "name": "ClearSelCols",
+     "memid": 76,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390157
+    },
+    {
+     "name": "ClearFields",
+     "memid": 77,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390158
+    },
+    {
+     "name": "HoldFields",
+     "memid": 89,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390159
+    },
+    {
+     "name": "SplitContaining",
+     "memid": 83,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "X",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Y",
+       "type": "Single",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390160
+    },
+    {
+     "name": "AllowDelete",
+     "memid": 1,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390069
+    },
+    {
+     "name": "AllowAddNew",
+     "memid": 2,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390070
+    },
+    {
+     "name": "AllowRowSizing",
+     "memid": 3,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390071
+    },
+    {
+     "name": "AllowUpdate",
+     "memid": 4,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390072
+    },
+    {
+     "name": "Appearance",
+     "memid": -520,
+     "kind": "var",
+     "type": "enumAppearanceConstants",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390073
+    },
+    {
+     "name": "BorderStyle",
+     "memid": -504,
+     "kind": "var",
+     "type": "enumBorderStyleConstants",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390074
+    },
+    {
+     "name": "Bookmark",
+     "memid": 5,
+     "kind": "var",
+     "type": "Variant",
+     "helpcontext": 390075
+    },
+    {
+     "name": "Col",
+     "memid": 6,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390076
+    },
+    {
+     "name": "ColumnHeaders",
+     "memid": 7,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390077
+    },
+    {
+     "name": "CurrentCellVisible",
+     "memid": 72,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390078
+    },
+    {
+     "name": "CurrentCellModified",
+     "memid": 64,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390079
+    },
+    {
+     "name": "DataChanged",
+     "memid": 70,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390080
+    },
+    {
+     "name": "DataMode",
+     "memid": 37,
+     "kind": "var",
+     "type": "enumDataModeConstants",
+     "helpcontext": 390081
+    },
+    {
+     "name": "DataSource",
+     "memid": 9,
+     "kind": "var",
+     "type": "ICursor",
+     "flags": [
+      "bindable",
+      "requestedit",
+      "displaybind"
+     ],
+     "helpcontext": 390082
+    },
+    {
+     "name": "DefColWidth",
+     "memid": 10,
+     "kind": "var",
+     "type": "Single",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390083
+    },
+    {
+     "name": "EditActive",
+     "memid": 63,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390084
+    },
+    {
+     "name": "Enabled",
+     "memid": -514,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390086
+    },
+    {
+     "name": "FirstRow",
+     "memid": 22,
+     "kind": "var",
+     "type": "Variant",
+     "helpcontext": 390088
+    },
+    {
+     "name": "HeadFont",
+     "memid": 11,
+     "kind": "var",
+     "type": "stdole2.tlb:#32",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390089
+    },
+    {
+     "name": "HeadLines",
+     "memid": 12,
+     "kind": "var",
+     "type": "Single",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390090
+    },
+    {
+     "name": "hWnd",
+     "memid": -515,
+     "kind": "var",
+     "type": "stdole.OLE_HANDLE",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390091
+    },
+    {
+     "name": "hWndEditor",
+     "memid": 40,
+     "kind": "var",
+     "type": "stdole.OLE_HANDLE",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390092
+    },
+    {
+     "name": "MarqueeUnique",
+     "memid": 74,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390093
+    },
+    {
+     "name": "MarqueeStyle",
+     "memid": 75,
+     "kind": "var",
+     "type": "enumMarqueeStyleConstants",
+     "helpcontext": 390094
+    },
+    {
+     "name": "RecordSelectors",
+     "memid": 13,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390095
+    },
+    {
+     "name": "Row",
+     "memid": 14,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390096
+    },
+    {
+     "name": "RowDividerStyle",
+     "memid": 15,
+     "kind": "var",
+     "type": "enumDividerStyleConstants",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390097
+    },
+    {
+     "name": "RowHeight",
+     "memid": 16,
+     "kind": "var",
+     "type": "Single",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390098
+    },
+    {
+     "name": "ScrollBars",
+     "memid": 32,
+     "kind": "var",
+     "type": "enumScrollBarsConstants",
+     "helpcontext": 390099
+    },
+    {
+     "name": "SelLength",
+     "memid": 65,
+     "kind": "var",
+     "type": "Long",
+     "helpcontext": 390100
+    },
+    {
+     "name": "SelStart",
+     "memid": 66,
+     "kind": "var",
+     "type": "Long",
+     "helpcontext": 390101
+    },
+    {
+     "name": "SelText",
+     "memid": 67,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 390102
+    },
+    {
+     "name": "SelStartCol",
+     "memid": 17,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390103
+    },
+    {
+     "name": "SelEndCol",
+     "memid": 18,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390104
+    },
+    {
+     "name": "Split",
+     "memid": 43,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390105
+    },
+    {
+     "name": "VisibleCols",
+     "memid": 33,
+     "kind": "var",
+     "type": "Integer",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390106
+    },
+    {
+     "name": "VisibleRows",
+     "memid": 19,
+     "kind": "var",
+     "type": "Integer",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390107
+    },
+    {
+     "name": "BackColor",
+     "memid": -501,
+     "kind": "var",
+     "type": "stdole.OLE_COLOR",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390108
+    },
+    {
+     "name": "ForeColor",
+     "memid": -513,
+     "kind": "var",
+     "type": "stdole.OLE_COLOR",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390109
+    },
+    {
+     "name": "Caption",
+     "memid": -518,
+     "kind": "var",
+     "type": "String",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390110
+    },
+    {
+     "name": "Font",
+     "memid": -512,
+     "kind": "var",
+     "type": "stdole2.tlb:#32",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390111
+    },
+    {
+     "name": "LeftCol",
+     "memid": 23,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390112
+    },
+    {
+     "name": "AllowArrows",
+     "memid": 47,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390113
+    },
+    {
+     "name": "TabAcrossSplits",
+     "memid": 49,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390115
+    },
+    {
+     "name": "TabAction",
+     "memid": 50,
+     "kind": "var",
+     "type": "enumTabActionConstants",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390116
+    },
+    {
+     "name": "WrapCellPointer",
+     "memid": 51,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "bindable"
+     ],
+     "helpcontext": 390117
+    },
+    {
+     "name": "ApproxCount",
+     "memid": 81,
+     "kind": "var",
+     "type": "Long",
+     "helpcontext": 390132
+    },
+    {
+     "name": "ErrorText",
+     "memid": 82,
+     "kind": "var",
+     "type": "String",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390133
+    },
+    {
+     "name": "AddNewMode",
+     "memid": 84,
+     "kind": "var",
+     "type": "enumAddNewModeConstants",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390134
+    },
+    {
+     "name": "Text",
+     "memid": 0,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 390138
+    }
+   ]
+  },
+  {
+   "name": "Column",
+   "kind": "dispatch",
+   "guid": "{00028C07-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 390163,
+   "members": [
+    {
+     "name": "CellText",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390198
+    },
+    {
+     "name": "CellValue",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390199
+    },
+    {
+     "name": "Alignment",
+     "memid": 1,
+     "kind": "var",
+     "type": "enumAlignmentConstants",
+     "helpcontext": 390164
+    },
+    {
+     "name": "AllowSizing",
+     "memid": 2,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390165
+    },
+    {
+     "name": "DividerStyle",
+     "memid": 4,
+     "kind": "var",
+     "type": "enumDividerStyleConstants",
+     "helpcontext": 390167
+    },
+    {
+     "name": "Caption",
+     "memid": 5,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 390168
+    },
+    {
+     "name": "DataChanged",
+     "memid": 35,
+     "kind": "var",
+     "type": "Boolean",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390169
+    },
+    {
+     "name": "DataField",
+     "memid": 8,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 390170
+    },
+    {
+     "name": "DefaultValue",
+     "memid": 9,
+     "kind": "var",
+     "type": "Variant",
+     "helpcontext": 390172
+    },
+    {
+     "name": "ColIndex",
+     "memid": 14,
+     "kind": "var",
+     "type": "Integer",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390179
+    },
+    {
+     "name": "Left",
+     "memid": 15,
+     "kind": "var",
+     "type": "stdole.OLE_XPOS_CONTAINER",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390180
+    },
+    {
+     "name": "Locked",
+     "memid": 16,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390181
+    },
+    {
+     "name": "NumberFormat",
+     "memid": 17,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 390182
+    },
+    {
+     "name": "Text",
+     "memid": 0,
+     "kind": "var",
+     "type": "String",
+     "helpcontext": 390183
+    },
+    {
+     "name": "Top",
+     "memid": 20,
+     "kind": "var",
+     "type": "stdole.OLE_YPOS_CONTAINER",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390184
+    },
+    {
+     "name": "Value",
+     "memid": 21,
+     "kind": "var",
+     "type": "Variant",
+     "helpcontext": 390185
+    },
+    {
+     "name": "Visible",
+     "memid": 22,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390186
+    },
+    {
+     "name": "Width",
+     "memid": 23,
+     "kind": "var",
+     "type": "stdole.OLE_XSIZE_CONTAINER",
+     "helpcontext": 390187
+    },
+    {
+     "name": "WrapText",
+     "memid": 37,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390188
+    },
+    {
+     "name": "Button",
+     "memid": 40,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390189
+    }
+   ]
+  },
+  {
+   "name": "Columns",
+   "kind": "dispatch",
+   "guid": "{00028C06-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 390204,
+   "members": [
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": []
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Column",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390206
+    },
+    {
+     "name": "Add",
+     "memid": 2005,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390208
+    },
+    {
+     "name": "Add",
+     "memid": 2005,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Column",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390208
+    },
+    {
+     "name": "Remove",
+     "memid": 2006,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390209
+    },
+    {
+     "name": "Count",
+     "memid": 2002,
+     "kind": "var",
+     "type": "Long",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390205
+    }
+   ]
+  },
+  {
+   "name": "SelBookmarks",
+   "kind": "dispatch",
+   "guid": "{00028C0B-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 390210,
+   "members": [
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": []
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390212
+    },
+    {
+     "name": "Add",
+     "memid": 2005,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390213
+    },
+    {
+     "name": "Remove",
+     "memid": 2006,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390214
+    },
+    {
+     "name": "Count",
+     "memid": 2002,
+     "kind": "var",
+     "type": "Long",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390211
+    }
+   ]
+  },
+  {
+   "name": "RowBuffer",
+   "kind": "dispatch",
+   "guid": "{00028C31-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 390215,
+   "members": [
+    {
+     "name": "Bookmark",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Row",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390219
+    },
+    {
+     "name": "Bookmark",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Row",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390219
+    },
+    {
+     "name": "ColumnName",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Col",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390220
+    },
+    {
+     "name": "Value",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Row",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Col",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg3",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390222
+    },
+    {
+     "name": "Value",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Row",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Col",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390222
+    },
+    {
+     "name": "RowCount",
+     "memid": 2,
+     "kind": "var",
+     "type": "Long",
+     "helpcontext": 390216
+    },
+    {
+     "name": "ColumnCount",
+     "memid": 3,
+     "kind": "var",
+     "type": "Integer",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390217
+    }
+   ]
+  },
+  {
+   "name": "DBGridEvents",
+   "kind": "dispatch",
+   "guid": "{00028C05-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Click",
+     "memid": -600,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390224
+    },
+    {
+     "name": "DblClick",
+     "memid": -601,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390225
+    },
+    {
+     "name": "AfterColUpdate",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390226
+    },
+    {
+     "name": "AfterDelete",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390227
+    },
+    {
+     "name": "AfterInsert",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390228
+    },
+    {
+     "name": "AfterUpdate",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390229
+    },
+    {
+     "name": "BeforeColUpdate",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "OldValue",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390230
+    },
+    {
+     "name": "BeforeDelete",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390231
+    },
+    {
+     "name": "BeforeInsert",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390232
+    },
+    {
+     "name": "BeforeUpdate",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390233
+    },
+    {
+     "name": "ColResize",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390234
+    },
+    {
+     "name": "HeadClick",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390235
+    },
+    {
+     "name": "RowColChange",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "LastRow",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "LastCol",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390236
+    },
+    {
+     "name": "RowResize",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390237
+    },
+    {
+     "name": "Scroll",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390238
+    },
+    {
+     "name": "SelChange",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390239
+    },
+    {
+     "name": "SplitChange",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390240
+    },
+    {
+     "name": "MouseMove",
+     "memid": -606,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "X",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390241
+    },
+    {
+     "name": "MouseDown",
+     "memid": -605,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "X",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390242
+    },
+    {
+     "name": "MouseUp",
+     "memid": -607,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Button",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "X",
+       "type": "stdole.OLE_XPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Y",
+       "type": "stdole.OLE_YPOS_PIXELS",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390243
+    },
+    {
+     "name": "KeyUp",
+     "memid": -604,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "KeyCode",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390244
+    },
+    {
+     "name": "KeyDown",
+     "memid": -602,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "KeyCode",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Shift",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390245
+    },
+    {
+     "name": "KeyPress",
+     "memid": -603,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "KeyAscii",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390246
+    },
+    {
+     "name": "Change",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390247
+    },
+    {
+     "name": "UnboundGetRelativeBookmark",
+     "memid": 42,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "StartLocation",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "OffSet",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "NewLocation",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ApproximatePosition",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390248
+    },
+    {
+     "name": "UnboundReadData",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "RowBuf",
+       "type": "RowBuffer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "StartLocation",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ReadPriorRows",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390249
+    },
+    {
+     "name": "UnboundWriteData",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "RowBuf",
+       "type": "RowBuffer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "WriteLocation",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390255
+    },
+    {
+     "name": "UnboundAddData",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "RowBuf",
+       "type": "RowBuffer",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "NewRowBookmark",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390256
+    },
+    {
+     "name": "UnboundDeleteRow",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Bookmark",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390257
+    },
+    {
+     "name": "Error",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DataError",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Response",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390258
+    },
+    {
+     "name": "AfterColEdit",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390260
+    },
+    {
+     "name": "BeforeColEdit",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "KeyAscii",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Integer",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390261
+    },
+    {
+     "name": "ColEdit",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390262
+    },
+    {
+     "name": "ButtonClick",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ColIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390267
+    },
+    {
+     "name": "OnAddNew",
+     "memid": 37,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390271
+    }
+   ]
+  },
+  {
+   "name": "Splits",
+   "kind": "dispatch",
+   "guid": "{00028C09-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 390275,
+   "members": [
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "IUnknown",
+     "params": []
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Split",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390277
+    },
+    {
+     "name": "Add",
+     "memid": 2005,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390279
+    },
+    {
+     "name": "Add",
+     "memid": 2005,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Split",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 390279
+    },
+    {
+     "name": "Remove",
+     "memid": 2006,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 390280
+    },
+    {
+     "name": "Count",
+     "memid": 2002,
+     "kind": "var",
+     "type": "Long",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390276
+    }
+   ]
+  },
+  {
+   "name": "Split",
+   "kind": "dispatch",
+   "guid": "{00028C0C-0000-0000-0000-000000000046}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 390281,
+   "members": [
+    {
+     "name": "Columns",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "helpcontext": 390319
+    },
+    {
+     "name": "ClearSelCols",
+     "memid": 38,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 390324
+    },
+    {
+     "name": "Locked",
+     "memid": 1,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390295
+    },
+    {
+     "name": "Index",
+     "memid": 2,
+     "kind": "var",
+     "type": "Integer",
+     "flags": [
+      "restricted"
+     ],
+     "helpcontext": 390296
+    },
+    {
+     "name": "ScrollGroup",
+     "memid": 3,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390297
+    },
+    {
+     "name": "MarqueeStyle",
+     "memid": 31,
+     "kind": "var",
+     "type": "enumMarqueeStyleConstants",
+     "helpcontext": 390298
+    },
+    {
+     "name": "AllowSizing",
+     "memid": 4,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390299
+    },
+    {
+     "name": "AllowFocus",
+     "memid": 5,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390300
+    },
+    {
+     "name": "SizeMode",
+     "memid": 7,
+     "kind": "var",
+     "type": "enumSplitSizeModeConstants",
+     "helpcontext": 390301
+    },
+    {
+     "name": "Size",
+     "memid": 6,
+     "kind": "var",
+     "type": "Variant",
+     "helpcontext": 390302
+    },
+    {
+     "name": "AllowRowSizing",
+     "memid": 15,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390303
+    },
+    {
+     "name": "RecordSelectors",
+     "memid": 16,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390304
+    },
+    {
+     "name": "ScrollBars",
+     "memid": 17,
+     "kind": "var",
+     "type": "enumScrollBarsConstants",
+     "helpcontext": 390305
+    },
+    {
+     "name": "_ColumnProps",
+     "memid": 515,
+     "kind": "var",
+     "type": "stdole.OLE_HANDLE",
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "CurrentCellVisible",
+     "memid": 33,
+     "kind": "var",
+     "type": "Boolean",
+     "helpcontext": 390307
+    },
+    {
+     "name": "FirstRow",
+     "memid": 34,
+     "kind": "var",
+     "type": "Variant",
+     "helpcontext": 390308
+    },
+    {
+     "name": "LeftCol",
+     "memid": 35,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390309
+    },
+    {
+     "name": "SelStartCol",
+     "memid": 36,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390314
+    },
+    {
+     "name": "SelEndCol",
+     "memid": 37,
+     "kind": "var",
+     "type": "Integer",
+     "helpcontext": 390315
+    }
+   ]
+  },
+  {
+   "name": "DBGrid",
+   "kind": "coclass",
+   "guid": "{00028C00-0000-0000-0000-000000000046}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 390356,
+   "implements": [
+    {
+     "name": "IMsDgridCtrl",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DBGridEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "DBGrid2",
+   "kind": "coclass",
+   "guid": "{36D792B3-CEA5-454E-A7EF-5B045E60EDEF}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 390356,
+   "implements": [
+    {
+     "name": "IMsDgridCtrl",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DBGridEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,134 @@
+ChrB(65) = String LenB 1 Len 0 [41]
+ChrB(65) & ChrB(66) = String LenB 2 Len 1 [41 42]
+ChrB(65) & ChrB(66) & ChrB(67) = String LenB 3 Len 1 [41 42 43]
+'A' & ChrB(66) = String LenB 3 Len 1 [41 00 42]
+ChrB(65) & 'B' = String LenB 3 Len 1 [41 42 00]
+ChrB(200) = String LenB 1 Len 0 [C8]
+ChrB(0) = String LenB 1 Len 0 [00]
+ChrB(255) = String LenB 1 Len 0 [FF]
+ChrB(256) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err6
+ChrB(-1) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err6
+ChrB$(66) = String LenB 1 Len 0 [42]
+ChrB(65) & ChrB(66) & 'C' = String LenB 4 Len 2 [41 42 43 00]
+ChrB(65) & ChrB(66) & ChrB(67) & ChrB(68) = String LenB 4 Len 2 [41 42 43 44]
+'' & ChrB(65) = String LenB 1 Len 0 [41]
+ChrB(65) & '' = String LenB 1 Len 0 [41]
+AscB('A') = Byte 65
+AscB(ChrW(937)) = Byte 169
+AscB(ChrB(200)) = Byte 200
+AscB('') = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+AscB(ChrB(65) & ChrB(66)) = Byte 65
+AscB(Chr(200)) = Byte 152
+AscW(ChrB(65)) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+Asc(ChrB(65)) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+AscW(ChrB(65) & ChrB(66)) = Integer 16961
+Asc(ChrB(65) & ChrB(66)) = Integer 63
+LenB('ABC') = Long 6
+LenB(ChrB(65)) = Long 1
+Len(ChrB(65)) = Long 0
+Len(ChrB(65) & ChrB(66)) = Long 1
+Len(ChrB(65) & ChrB(66) & ChrB(67)) = Long 1
+LenB('') = Long 0
+LenB(StrConv('ABC', vbFromUnicode)) = Long 3
+LenB(CVar(ChrB(65))) = Long 1
+LenB(CVar(12345)) = Long 10
+LeftB('ABC', 1) = String LenB 1 Len 0 [41]
+LeftB('ABC', 2) = String LenB 2 Len 1 [41 00]
+LeftB('ABC', 3) = String LenB 3 Len 1 [41 00 42]
+LeftB('ABC', 10) = String LenB 6 Len 3 [41 00 42 00 43 00]
+LeftB('ABC', 0) = String LenB 0 Len 0 [-]
+LeftB('ABC', -1) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+RightB('ABC', 1) = String LenB 1 Len 0 [00]
+RightB('ABC', 2) = String LenB 2 Len 1 [43 00]
+RightB('ABC', 3) = String LenB 3 Len 1 [00 43 00]
+RightB('ABC', 10) = String LenB 6 Len 3 [41 00 42 00 43 00]
+RightB('ABC', 0) = String LenB 0 Len 0 [-]
+MidB('ABC', 2) = String LenB 5 Len 2 [00 42 00 43 00]
+MidB('ABC', 2, 2) = String LenB 2 Len 1 [00 42]
+MidB('ABC', 3, 2) = String LenB 2 Len 1 [42 00]
+MidB('ABC', 6) = String LenB 1 Len 0 [00]
+MidB('ABC', 7) = String LenB 0 Len 0 [-]
+MidB('ABC', 0) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+MidB('ABC', 1, 0) = String LenB 0 Len 0 [-]
+MidB('ABC', 2, 100) = String LenB 5 Len 2 [00 42 00 43 00]
+MidB$('ABC', 3) = String LenB 4 Len 2 [42 00 43 00]
+LeftB$('ABC', 3) = String LenB 3 Len 1 [41 00 42]
+RightB$('ABC', 3) = String LenB 3 Len 1 [00 43 00]
+MidB(ChrB(65) & ChrB(66) & ChrB(67), 2, 1) = String LenB 1 Len 0 [42]
+RightB(ChrB(65) & ChrB(66) & ChrB(67), 1) = String LenB 1 Len 0 [43]
+InStrB('ABC', 'B') = Long 3
+InStrB('ABC', ChrB(66)) = Long 3
+InStrB('ABC', ChrB(0)) = Long 2
+InStrB(2, 'ABAB', 'A') = Long 5
+InStrB(1, ChrB(65) & ChrB(66), ChrB(66)) = Long 2
+InStrB('ABC', '') = Long 1
+InStrB('', 'A') = Long 0
+InStrB(4, 'ABC', 'C') = Long 5
+InStrB(7, 'ABC', '') = Long 0
+InStrB(8, 'ABC', '') = Long 0
+InStrB(0, 'ABC', 'A') = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+InStrB(1, 'abc', 'B', vbTextCompare) = Long 0
+InStrB(1, 'abc', 'B', vbBinaryCompare) = Long 0
+InStrB(ChrB(1) & ChrB(2) & ChrB(3), ChrB(2) & ChrB(3)) = Long 2
+InStrB(2, ChrW(&H4142) & 'C', ChrB(&H41)) = Long 2
+Left(ChrB(65) & ChrB(66) & ChrB(67), 1) = String LenB 2 Len 1 [41 42]
+Right(ChrB(65) & ChrB(66) & ChrB(67), 1) = String LenB 2 Len 1 [42 43]
+Mid(ChrB(65) & ChrB(66) & ChrB(67), 1) = String LenB 3 Len 1 [41 42 43]
+Mid(ChrB(65) & ChrB(66) & ChrB(67), 2) = String LenB 1 Len 0 [43]
+UCase(ChrB(97) & ChrB(0) & ChrB(98)) = String LenB 2 Len 1 [41 00]
+UCase(ChrB(97) & ChrB(98) & ChrB(99)) = String LenB 2 Len 1 [61 62]
+Trim(ChrB(32) & ChrB(0) & ChrB(65)) = String LenB 0 Len 0 [-]
+StrReverse(ChrB(65) & ChrB(66) & ChrB(67)) = String LenB 2 Len 1 [41 42]
+Replace(ChrB(65) & ChrB(0) & ChrB(66), 'A', 'x') = String LenB 2 Len 1 [78 00]
+Space(1) & ChrB(65) = String LenB 3 Len 1 [20 00 41]
+String(2, ChrB(65)) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+CStr(ChrB(65)) = String LenB 1 Len 0 [41]
+CVar(ChrB(65) & ChrB(66) & ChrB(67)) = String LenB 3 Len 1 [41 42 43]
+ChrB(65) = '' = Boolean False
+ChrB(65) & ChrB(0) = 'A' = Boolean True
+ChrB(65) = ChrB(65) = Boolean True
+ChrB(65) < ChrB(66) = Boolean True
+ChrB(66) > 'A' = Boolean True
+StrComp(ChrB(65), ChrB(66), vbBinaryCompare) = Integer -1
+StrComp(ChrB(65), '', vbBinaryCompare) = Integer 1
+StrComp(ChrB(65), ChrB(65) & ChrB(0), vbBinaryCompare) = Integer -1
+StrComp(ChrB(65), ChrB(65) & ChrB(0), vbTextCompare) = Integer -1
+'A' = ChrB(65) & ChrB(0) = Boolean True
+ChrB(65) & ChrB(66) & ChrB(67) = ChrB(65) & ChrB(66) & ChrB(67) = Boolean True
+ChrB(65) & ChrB(66) & ChrB(67) = ChrB(65) & ChrB(66) & ChrB(68) = Boolean False
+ChrB(65) Like '*' = Boolean True
+Len(ChrB(65)) = 0 = Boolean True
+StrConv('AB' & ChrW(915), vbFromUnicode) = String LenB 3 Len 1 [41 42 C3]
+StrConv(StrConv('AB' & ChrW(915), vbFromUnicode), vbUnicode) = String LenB 6 Len 3 [41 00 42 00 93 03]
+StrConv('AB', vbFromUnicode) = String LenB 2 Len 1 [41 42]
+StrConv(ChrB(65), vbUnicode) = String LenB 2 Len 1 [41 00]
+StrConv(ChrB(65) & ChrB(66) & ChrB(195), vbUnicode) = String LenB 6 Len 3 [41 00 42 00 93 03]
+StrConv('', vbFromUnicode) = String LenB 0 Len 0 [-]
+StrConv(ChrB(0), vbUnicode) = String LenB 2 Len 1 [00 00]
+StrConv('A' & ChrW(8364), vbFromUnicode) = String LenB 2 Len 1 [41 80]
+StrConv(ChrB(128), vbUnicode) = String LenB 2 Len 1 [AC 20]
+StrConv(ChrB(65), vbUpperCase) = String LenB 0 Len 0 [-]
+StrConv('abc', vbFromUnicode + vbUpperCase) = String LenB 12 Len 6 [28 00 6E 00 6F 00 6E 00 65 00 29 00] err5
+Val(ChrB(49) & ChrB(0) & ChrB(50)) = Double 12
+CStr(ChrB(49)) & 'x' = String LenB 3 Len 1 [31 78 00]
+IsNumeric(ChrB(49)) = Boolean True
+Hex(AscB(ChrB(171))) = String LenB 4 Len 2 [41 00 42 00]
+s = b(0 To 2) = String LenB 3 Len 1 [41 42 43]
+StrConv(b, vbUnicode) = String LenB 6 Len 3 [41 00 42 00 43 00]
+UBound(StrConv(ABC, vbFromUnicode)) = Long 2
+UBound(b = AB) = Long 3
+UBound(b = 3 bytes) = Long 2
+UBound(b = empty) = Long -1
+s = b(0) = 200 = String LenB 1 Len 0 [C8]
+MidB(ABC, 2, 1) = Z = String LenB 6 Len 3 [41 5A 42 00 43 00]
+MidB(ABC, 3) = ZY = String LenB 6 Len 3 [41 00 5A 00 59 00]
+MidB(ABC, 6, 4) = ZYX = String LenB 6 Len 3 [41 00 42 00 43 5A]
+MidB(3 bytes, 3, 1) = Z = String LenB 3 Len 1 [41 42 5A]
+Mid(ABC, 2, 1) = ChrB(90) = String LenB 6 Len 3 [41 00 5A 00 43 00]
+5 x ChrB = String LenB 5 Len 2 [41 42 43 44 45]
+read back = String LenB 10 Len 5 [41 00 42 00 43 00 44 00 45 00]
+String * 3 = 3 bytes = String LenB 6 Len 3 [41 42 20 00 20 00]
+LOF after Put = Long 2
+file bytes = String LenB 8 Len 4 [33 00 46 00 33 00 46 00]
+Get String(3) = String LenB 6 Len 3 [3F 00 3F 00 00 00]
+Print/Write # bytes = String LenB 44 Len 22 [33 00 46 00 37 00 43 00 33 00 46 00 37 00 43 00 30 00 44 00 30 00 41 00 32 00 32 00 33 00 46 00 32 00 32 00 30 00 44 00 30 00 41 00]

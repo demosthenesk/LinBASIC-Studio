@@ -1,0 +1,86 @@
+mdi load MDIForm1 1 True
+child load 1 [] False
+mdi resize
+f1 one True True
+child load 2 [] False
+children 3 False frmChild Doc 1 Doc 2 Doc 2
+mdi activate Doc 2
+child activate 1
+child deactivate 1
+child activate 2
+step 1
+active Doc 2 False
+after setfocus Doc 1
+count 3
+child load 3 [] False
+default frmChild 4 True False
+child deactivate 2
+child activate 1
+child deactivate 1
+child activate 3
+step 2
+child queryunload 1 1
+child unload 1
+after unload 3
+count 3
+child terminate 1
+released 3
+step 3
+tool load False
+tool resize 3000 1995
+tool shown
+mdi deactivate
+tool activate
+tool first paint
+step 4
+tool 90 420 3 True False False False 0 True
+tool pos 1455 1125
+err 0
+err 382
+tool resize 4410 1995
+width 4500 4410
+tool resize 4905 3075
+moved 600 600 5000 3500 4905 3075
+tool paint
+after refresh
+tool resize 0 0
+state 1
+tool resize 4905 3075
+state 0 4905 3075
+pixels 327 205 4995
+tool unloaded 3
+mdi activate frmChild
+mdi deactivate
+mdi activate frmChild
+step 5
+fixed 90 420 1 True False False True 0 True
+none 0 0 0 False False False False 0 True
+toolwin 90 360 4 True False False False 0 True
+size resize 0
+mdi deactivate
+step 6
+size 240 870 2 True True True True 0 True
+size resize 2
+max 2 True True
+size resize 0
+normal 0 3000 1995
+size resize 0
+taller 2295
+mdi activate frmChild
+step 7
+screen 15 15 True True True 0 frmChild
+pointer 11
+app Win Tests|WinTests|2.3.4|REA|LinBASIC|Window tests|Oracle|False|True|0
+clip hello clip|True|False
+clip2 True|True|847|1
+clip3 []|False
+step 8
+mdi queryunload 1
+child queryunload 2 4
+child queryunload 3 4
+child unload 2
+child unload 3
+mdi unload 1
+child terminate 2
+mdi unload end
+child terminate 3

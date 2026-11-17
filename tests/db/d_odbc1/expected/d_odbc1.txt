@@ -1,0 +1,117 @@
+== connection
+state=1 provider=MSDASQL.1 cursorloc=2 errors=0
+dbms=SQLite
+readonly=False sqlsupport=257
+== ddl and dml
+create affected=0
+insert affected=1
+update affected=3
+delete affected=0
+== forward-only (Execute)
+Recordset state=1 cursortype=0 locktype=1 cursorloc=2 count=-1 bof=False eof=False fields=8
+  field ID type=3 size=4 attr=116 prec=10 scale=255
+  field Name type=202 size=20 attr=100 prec=255 scale=255
+  field Age type=2 size=2 attr=116 prec=6 scale=255
+  field Born type=133 size=6 attr=116 prec=255 scale=255
+  field Salary type=5 size=8 attr=116 prec=10 scale=255
+  field Rate type=5 size=8 attr=116 prec=54 scale=255
+  field Active type=11 size=2 attr=116 prec=255 scale=255
+  field Notes type=203 size=65536 attr=230 prec=255 scale=255
+-- rows
+  L1 S'Anna' I32 D1993-04-05 00:00:00 Do1234.5 Do.25 BT S'first'
+  L2 S'Bill' I25 D1999-12-31 00:00:00 Do99.99 Do1 BF Null
+  L3 S'Cleo' I43 Null Null Null BT S'third'
+  L4 S'Dino' I38 Null Null Null BF Null
+  rows 4
+  ! moveprevious forward-only: 3219 Operation is not allowed in this context. [ADODB.Recordset]
+supports bookmark=False addnew=False movep=False
+== client static
+cursortype=3 locktype=3 count=4 pos=@1 Anna
+find @3 Cleo
+filter count=3 @1 Anna
+sort @1 Dino
+after update @1 Anna age=OField
+after addnew id=OField name=OField count=5
+after delete count=4
+-- server after client changes
+  L1 S'Anna' I50 S'edited'
+  L3 S'Cleo' I43 S'third'
+  L4 S'Dino' I38 Null
+  L5 S'Eve' I22 Null
+  rows 4
+== keyset (server)
+cursortype=3 locktype=3 cursorloc=2 count=4 source=select * from People
+supports bookmark=True addnew=True update=True delete=True
+last @-1 Eve
+  ! update keyset: -2147467259 Query-based update failed because the row to update could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+first @-1 Anna
+after addnew OField id=OField count=4
+  ! delete keyset: -2147467259 Query-based delete failed because the row to delete could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+-- server after keyset changes
+  L1 S'Anna' I34
+  L3 S'Cleo' I43
+  L4 S'Dino' I38
+  L5 S'Eve' I22
+  L6 S'Finn' I44
+  rows 5
+  ! client update of nulls: 3219 Operation is not allowed in this context. [ADODB.Recordset]
+client @5 Finn born=OField salary=OField
+== errors
+  ! syntax: -2147467259 near "SELEC": syntax error (1) [Microsoft OLE DB Provider for ODBC Drivers]
+    error -2147467259 native=1 state=S1000 [Microsoft OLE DB Provider for ODBC Drivers] near "SELEC": syntax error (1)
+  ! no table: -2147467259 no such table: Nope (1) [Microsoft OLE DB Provider for ODBC Drivers]
+    error -2147467259 native=1 state=S1000 [Microsoft OLE DB Provider for ODBC Drivers] no such table: Nope (1)
+  ! unique: -2147467259 UNIQUE constraint failed: People.Name (19) [Microsoft OLE DB Provider for ODBC Drivers]
+    error -2147467259 native=19 state=S1000 [Microsoft OLE DB Provider for ODBC Drivers] UNIQUE constraint failed: People.Name (19)
+  ! not null: -2147467259 NOT NULL constraint failed: People.Name (19) [Microsoft OLE DB Provider for ODBC Drivers]
+    error -2147467259 native=19 state=S1000 [Microsoft OLE DB Provider for ODBC Drivers] NOT NULL constraint failed: People.Name (19)
+  ! unique via recordset: 0  []
+errors count after=0
+== transactions
+count=L5
+begintrans=1
+count in trans=L6
+count after rollback=L5
+count after commit=L6
+  ! commit without begin: -2147168242 No transaction is active. [Microsoft OLE DB Provider for ODBC Drivers]
+== command
+-- age > 30
+  S'Bill' I34
+  S'Cleo' I43
+  S'Dino' I38
+  S'Finn' I44
+  rows 4
+-- age > 40
+  S'Cleo' I43
+  S'Finn' I44
+  rows 2
+cmd insert affected=1
+params=2
+cmd update affected=1
+== types
+  field N type=3 size=4 attr=116 prec=10 scale=255
+  field S type=3 size=4 attr=116 prec=10 scale=255
+  field A type=5 size=8 attr=116 prec=54 scale=255
+  field M type=202 size=255 attr=100 prec=255 scale=255
+  N = L7
+  S = L245
+  A = Do.25
+  M = S'Kept'
+== schema
+  ! schema tables: 3021 Either BOF or EOF is True, or the current record has been deleted. Requested operation requires a current record. [ADODB.Field]
+  table People TABLE
+  column ID pos=1 type=3 nullable=True
+  column Name pos=2 type=130 nullable=False
+  column Age pos=3 type=2 nullable=True
+  column Born pos=4 type=133 nullable=True
+  column Salary pos=5 type=5 nullable=True
+  column Rate pos=6 type=5 nullable=True
+  column Active pos=7 type=11 nullable=True
+  column Notes pos=8 type=130 nullable=True
+== getrows and getstring
+getrows AVariant()(0 To 1) Bill,34 Dino
+getstring [Eve|22/Finn|44/]
+closed state=0
+  ! bad driver: -2147467259 [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified [Microsoft OLE DB Provider for ODBC Drivers]
+  ! bad dsn: -2147467259 [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified [Microsoft OLE DB Provider for ODBC Drivers]
+end

@@ -1,0 +1,152 @@
+== the commands
+commands=3 recordsets=3
+command ByCountry type=1 params=1 text=SELECT CustID, Name FROM Customers WHERE Country = ? ORDER BY CustID
+  param Param1 type=202 dir=1 size=15 prec=0 scale=0 attr=0 value=Empty
+command Range type=1 params=2 text=SELECT OrderID, Amount FROM Orders WHERE Amount >= ? AND Amount <= ? ORDER BY OrderID
+  param MinA type=6 dir=1 size=8 prec=0 scale=0 attr=0 value=Empty
+  param MaxA type=6 dir=1 size=8 prec=0 scale=0 attr=0 value=Empty
+command Cust type=1 params=0 text= SHAPE {SELECT CustID, Name FROM Customers ORDER BY CustID}  AS Cust APPEND ({SELECT OrderID, CustID, Amount FROM Orders WHERE CustID = ? ORDER BY OrderID}  AS CustOrders RELATE 'CustID' TO  PARAMETER 0) AS CustOrders
+== a command with a parameter
+event Conn1_WillExecute source=SELECT CustID, Name FROM Customers WHERE Country = ? ORDER BY CustID
+state=1 count=2 source=SELECT CustID, Name FROM Customers WHERE Country = ? ORDER BY CustID
+  field CustID type=202 size=5 attr=106
+  field Name type=202 size=30 attr=106
+  row S'ALFKI' S'Alfreds'
+  row S'BLAUS' S'Blauer See'
+param after=Empty
+event Conn1_WillExecute source=SELECT CustID, Name FROM Customers WHERE Country = ? ORDER BY CustID
+  field CustID type=202 size=5 attr=106
+  field Name type=202 size=30 attr=106
+  row S'BONAP' S'Bon app'
+-- the parameter set first, then Execute
+event Conn1_WillExecute source=SELECT CustID, Name FROM Customers WHERE Country = ? ORDER BY CustID
+  field CustID type=202 size=5 attr=106
+  field Name type=202 size=30 attr=106
+  row S'NOORD' S'Noord'
+== two parameters
+event Conn1_WillExecute source=SELECT OrderID, Amount FROM Orders WHERE Amount >= ? AND Amount <= ? ORDER BY OrderID
+  field OrderID type=3 size=4 attr=122
+  field Amount type=6 size=8 attr=122
+  row L10 C100.5
+  row L11 C20
+event Conn1_WillExecute source=SELECT OrderID, Amount FROM Orders WHERE Amount >= ? AND Amount <= ? ORDER BY OrderID
+  field OrderID type=3 size=4 attr=122
+  field Amount type=6 size=8 attr=122
+  row L13 C300
+  ! Range x: 13 Type mismatch [DeTest2]
+state=0
+== a child with a parameter
+event Conn1_WillExecute source= SHAPE {SELECT CustID, Name FROM Customers ORDER BY CustID}  AS Cust APPEND ({SELECT OrderID, CustID, Amount FROM Orders WHERE CustID = ? ORDER BY OrderID}  AS CustOrders RELATE 'CustID' TO  PARAMETER 0) AS CustOrders
+state=1 count=4
+source= SHAPE {SELECT CustID, Name FROM Customers ORDER BY CustID}  AS Cust APPEND ({SELECT OrderID, CustID, Amount FROM Orders WHERE CustID = ? ORDER BY OrderID}  AS CustOrders RELATE 'CustID' TO  PARAMETER 0) AS CustOrders
+  field CustID type=202 size=5 attr=106
+  field Name type=202 size=30 attr=106
+  field CustOrders type=136 size=4 attr=8208
+  row S'ALFKI' S'Alfreds' CustOrders=[3]
+      field OrderID type=3 size=4 attr=122
+      field CustID type=202 size=5 attr=106
+      field Amount type=6 size=8 attr=122
+      row L10 S'ALFKI' C100.5
+      row L11 S'ALFKI' C20
+      row L14 S'ALFKI' C1
+  row S'BLAUS' S'Blauer See' CustOrders=[1]
+      field OrderID type=3 size=4 attr=122
+      field CustID type=202 size=5 attr=106
+      field Amount type=6 size=8 attr=122
+      row L13 S'BLAUS' C300
+  row S'BONAP' S'Bon app' CustOrders=[1]
+      field OrderID type=3 size=4 attr=122
+      field CustID type=202 size=5 attr=106
+      field Amount type=6 size=8 attr=122
+      row L12 S'BONAP' C7.25
+  row S'NOORD' S'Noord' CustOrders=[0]
+      field OrderID type=3 size=4 attr=122
+      field CustID type=202 size=5 attr=106
+      field Amount type=6 size=8 attr=122
+      (no rows)
+== the report
+event Conn1_WillExecute source=SELECT CustID, Name FROM Customers WHERE Country = ? ORDER BY CustID
+typename=rptDe2 datamember=Cust sections=5
+  section 1 PageHeader height=300 controls=1: RptLabel:lblHead
+  section 2 Cust_Header height=600 controls=4: RptShape:shpBox RptImage:imgLogo RptTextBox:txtName RptTextBox:txtCustID
+  section 3 CustOrders_Detail height=270 controls=3: RptTextBox:txtOrderID RptTextBox:txtAmount RptShape:shpDot
+  section 4 Cust_Footer height=300 controls=3: RptLine:lnSum RptFunction:fnSum RptShape:shpOval
+  section 5 PageFooter height=300 controls=1: RptLabel:lblPage
+shpBox shape=4 borderstyle=1 backstyle=0 left=0 width=7000 height=560
+imgLogo sizemode=1 align=8 picture=Picture left=6000 top=40
+shpDot shape=3
+shpOval shape=2
+event Conn1_WillExecute source= SHAPE {SELECT CustID, Name FROM Customers ORDER BY CustID}  AS Cust APPEND ({SELECT OrderID, CustID, Amount FROM Orders WHERE CustID = ? ORDER BY OrderID}  AS CustOrders RELATE 'CustID' TO  PARAMETER 0) AS CustOrders
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |                   Customers and orders<cr>
+  |<cr>
+  |                     Alfreds                                   ALFKI<cr>
+  |<cr>
+  |                            10                            100,5<cr>
+  |                            11                               20<cr>
+  |                            14                                1<cr>
+  |                                              -----------------<cr>
+  |                                                          121.5<cr>
+  |<cr>
+  |                     Blauer See                                BLAUS<cr>
+  |<cr>
+  |                            13                              300<cr>
+  |                                              -----------------<cr>
+  |                                                            300<cr>
+  |<cr>
+  |                     Bon app                                   BONAP<cr>
+  |<cr>
+  |                            12                             7,25<cr>
+  |                                              -----------------<cr>
+  |                                                           7.25<cr>
+  |<cr>
+  |                     Noord                                     NOORD<cr>
+  |<cr>
+  |                                              -----------------<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |                   Page 1 of 1<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+  |<cr>
+end

@@ -1,0 +1,46 @@
+progress 0 50 0 ProgressBar
+slider 0 20 5 4 1 2
+panels 2 Ready 1 1 1
+buttons 2 Open 1 Open a file
+tabs 2 First 1 []
+images 0 0
+step 1
+progress value 25
+progress 100 err 380
+progress max 200 100
+slider change 7
+slider change 20
+slider 30 err 0
+slider value 20 ticks 11
+panel add 3 k3 three 3
+panel dup err 35602
+panel index 9 err 35600
+panel numeric key err 35603
+panel 9 err 35600
+panel none err 35601
+panels each Ready,two,three,
+panel removed 2 two
+removed panel text err 0
+panel key dup err 35602
+simple 1 simple
+button add 3 New 1 3
+button value 0
+button value 1
+buttons 4 3
+buttons after remove 3 3
+button image without list err 35613
+tab add 3 t3 3
+selected 1 True
+tab click 2
+selected 2 True
+tab click 3
+selected Third
+tabs 2 Second
+image add 1 a 1 32 16
+image dup err 35602
+image no picture err 35607
+imagewidth with images err 0
+button image a
+button image zz err 35601
+images 1
+step 2

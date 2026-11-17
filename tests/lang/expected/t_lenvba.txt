@@ -1,0 +1,9 @@
+hour: 1  9 
+minute: 1 second: 1 
+year: 4 month: 1 day: 1 weekday: 1 
+two digits: 2  2  2  2  2 
+timeserial: 0 
+dateserial: 0 
+weekdayname: 0 
+in an expression: 42 
+variables: 4  2  8 

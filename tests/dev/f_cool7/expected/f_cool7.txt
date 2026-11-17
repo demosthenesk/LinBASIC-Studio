@@ -1,0 +1,42 @@
+s1 B down 1 step before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s1 B down 1 step after: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s2 B down 4 steps before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s2 B down 4 steps after: h=50 rows=2 Text1(9,0,463) Text2(211,24,261) Text3(9,24,187) | Text1:pos=1,w=200,nr=False Text2:pos=3,w=274,nr=False Text3:pos=2,w=200,nr=True
+s3 B down, left 100 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s3 B down, left 100 after: h=50 rows=2 Text1(9,0,463) Text2(136,24,336) Text3(9,24,112) | Text1:pos=1,w=175,nr=False Text2:pos=3,w=349,nr=False Text3:pos=2,w=125,nr=True
+s4 B down, right 100 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s4 B down, right 100 after: h=50 rows=2 Text1(9,0,463) Text2(286,24,186) Text3(9,24,262) | Text1:pos=1,w=225,nr=False Text2:pos=3,w=199,nr=False Text3:pos=2,w=275,nr=True
+s5 B down, left 100, 1 step before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s5 B down, left 100, 1 step after: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s6 C up 1 step before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=True
+s6 C up 1 step after: h=26 rows=1 Text1(9,0,187) Text2(476,0,0) Text3(211,0,250) | Text1:pos=1,w=200,nr=False Text2:pos=3,w=167,nr=False Text3:pos=2,w=300,nr=False
+s7 C up 4 steps before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=True
+s7 C up 4 steps after: h=26 rows=1 Text1(311,0,150) Text2(476,0,0) Text3(9,0,287) | Text1:pos=2,w=200,nr=False Text2:pos=3,w=167,nr=False Text3:pos=1,w=300,nr=False
+s8 C up, right 100 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=True
+s8 C up, right 100 after: h=26 rows=1 Text1(9,0,85) Text2(476,0,0) Text3(109,0,352) | Text1:pos=1,w=98,nr=False Text2:pos=3,w=167,nr=False Text3:pos=2,w=365,nr=False
+s9 C up, right 250 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=True
+s9 C up, right 250 after: h=26 rows=1 Text1(9,0,235) Text2(476,0,0) Text3(259,0,202) | Text1:pos=1,w=248,nr=False Text2:pos=3,w=167,nr=False Text3:pos=2,w=215,nr=False
+s10 C up, right 400 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=True
+s10 C up, right 400 after: h=26 rows=1 Text1(9,0,187) Text2(211,0,183) Text3(409,0,63) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=196,nr=False Text3:pos=3,w=76,nr=False
+s11 C up, right 250, 1 step before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=True
+s11 C up, right 250, 1 step after: h=26 rows=1 Text1(9,0,187) Text2(211,0,154) Text3(380,0,92) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=300,nr=False
+s12 C up, no widths before: h=50 rows=2 Text1(9,0,452) Text2(476,0,0) Text3(9,24,463) | Text1:pos=1,w=0,nr=False Text2:pos=2,w=0,nr=False Text3:pos=3,w=0,nr=True
+s12 C up, no widths after: h=26 rows=1 Text1(465,0,0) Text2(476,0,0) Text3(9,0,441) | Text1:pos=2,w=0,nr=False Text2:pos=3,w=0,nr=False Text3:pos=1,w=0,nr=False
+s13 B up from row 2 of 3 before: h=74 rows=3 Text1(9,0,463) Text2(9,24,463) Text3(9,48,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=0,nr=True Text3:pos=3,w=0,nr=True
+s13 B up from row 2 of 3 after: h=50 rows=2 Text1(20,0,452) Text2(9,0,0) Text3(9,24,463) | Text1:pos=2,w=200,nr=False Text2:pos=1,w=0,nr=False Text3:pos=3,w=0,nr=True
+s14 B down to row 3 of 3 before: h=74 rows=3 Text1(9,0,463) Text2(9,24,463) Text3(9,48,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=0,nr=True Text3:pos=3,w=0,nr=True
+s14 B down to row 3 of 3 after: h=74 rows=3 Text1(9,0,463) Text2(9,48,463) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=3,w=0,nr=True Text3:pos=2,w=0,nr=True
+s15 C down, new row before: h=26 rows=1 Text1(9,0,87) Text2(111,0,87) Text3(213,0,259) | Text1:pos=1,w=100,nr=False Text2:pos=2,w=100,nr=False Text3:pos=3,w=100,nr=False
+s15 C down, new row after: h=50 rows=2 Text1(9,0,87) Text2(111,0,361) Text3(9,24,463) | Text1:pos=1,w=100,nr=False Text2:pos=2,w=100,nr=False Text3:pos=3,w=100,nr=True
+s16 B down, new row before: h=26 rows=1 Text1(9,0,87) Text2(111,0,87) Text3(213,0,259) | Text1:pos=1,w=100,nr=False Text2:pos=2,w=100,nr=False Text3:pos=3,w=100,nr=False
+s16 B down, new row after: h=50 rows=2 Text1(9,0,87) Text2(9,24,463) Text3(111,0,361) | Text1:pos=1,w=100,nr=False Text2:pos=3,w=100,nr=True Text3:pos=2,w=100,nr=False
+s17 A down, into row 2 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s17 A down, into row 2 after: h=50 rows=2 Text1(9,24,452) Text2(9,0,463) Text3(476,24,0) | Text1:pos=2,w=200,nr=True Text2:pos=1,w=167,nr=False Text3:pos=3,w=0,nr=False
+s18 A down, right 300 before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s18 A down, right 300 after: h=50 rows=2 Text1(309,24,163) Text2(9,0,463) Text3(9,24,285) | Text1:pos=3,w=176,nr=False Text2:pos=1,w=167,nr=False Text3:pos=2,w=298,nr=True
+s19 C up above the bar before: h=74 rows=3 Text1(9,0,463) Text2(9,24,463) Text3(9,48,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=True Text3:pos=3,w=0,nr=True
+s19 C up above the bar after: h=50 rows=2 Text1(20,0,452) Text2(9,24,463) Text3(9,0,0) | Text1:pos=2,w=200,nr=False Text2:pos=3,w=167,nr=True Text3:pos=1,w=0,nr=True
+s20 B left 50, then down before: h=50 rows=2 Text1(9,0,187) Text2(211,0,261) Text3(9,24,463) | Text1:pos=1,w=200,nr=False Text2:pos=2,w=167,nr=False Text3:pos=3,w=0,nr=True
+s20 B left 50, then down after: h=50 rows=2 Text1(9,0,137) Text2(161,0,311) Text3(9,24,463) | Text1:pos=1,w=150,nr=False Text2:pos=2,w=324,nr=False Text3:pos=3,w=0,nr=True
+s20 continued: h=50 rows=2 Text1(9,0,137) Text2(161,0,311) Text3(9,24,463) | Text1:pos=1,w=150,nr=False Text2:pos=2,w=324,nr=False Text3:pos=3,w=0,nr=True
+s20 then down after: h=50 rows=2 Text1(9,0,463) Text2(161,24,311) Text3(9,24,137) | Text1:pos=1,w=150,nr=False Text2:pos=3,w=324,nr=False Text3:pos=2,w=150,nr=True

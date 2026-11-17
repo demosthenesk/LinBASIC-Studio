@@ -1,0 +1,372 @@
+[
+ {
+  "short": "stdole",
+  "library": "stdole",
+  "guid": "{00020430-0000-0000-C000-000000000046}",
+  "version": "2.0",
+  "file": "stdole2.tlb",
+  "helpfile": "",
+  "types": 42,
+  "members": 89
+ },
+ {
+  "short": "VBA",
+  "library": "VBA",
+  "guid": "{000204EF-0000-0000-C000-000000000046}",
+  "version": "6.0",
+  "file": "msvbvm60.dll",
+  "helpfile": "VBA.HLP",
+  "types": 29,
+  "members": 371
+ },
+ {
+  "short": "VBRUN",
+  "library": "VBRUN",
+  "guid": "{EA544A21-C82D-11D1-A3E4-00A0C90AEA82}",
+  "version": "6.0",
+  "file": "msvbvm60.dll",
+  "helpfile": "VB98.CHM",
+  "types": 96,
+  "members": 735
+ },
+ {
+  "short": "VB",
+  "library": "VB",
+  "guid": "{FCFB3D2E-A0FA-1068-A738-08002B3371B5}",
+  "version": "6.0",
+  "file": "VB6.OLB",
+  "helpfile": "VB98.CHM",
+  "types": 98,
+  "members": 3132
+ },
+ {
+  "short": "VBInternal",
+  "library": "VBInternal",
+  "guid": "{6715F050-F076-11CD-9B33-08002B336F14}",
+  "version": "6.0",
+  "file": "VB6.EXE",
+  "helpfile": "z:\\__VB_HELP__",
+  "types": 20,
+  "members": 61
+ },
+ {
+  "short": "VBIDE",
+  "library": "VBIDE",
+  "guid": "{EF404E00-EDA6-101A-8DAF-00DD010F7EBB}",
+  "version": "5.3",
+  "file": "VB6EXT.OLB",
+  "helpfile": "VBEXT98.CHM",
+  "types": 112,
+  "members": 669
+ },
+ {
+  "short": "MSComctlLib",
+  "library": "MSComctlLib",
+  "guid": "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}",
+  "version": "2.2",
+  "file": "mscomctl.OCX",
+  "helpfile": "cmctl198.chm",
+  "types": 132,
+  "members": 1113
+ },
+ {
+  "short": "MSComCtl2",
+  "library": "MSComCtl2",
+  "guid": "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}",
+  "version": "2.0",
+  "file": "mscomct2.ocx",
+  "helpfile": "cmctl298.chm",
+  "types": 42,
+  "members": 420
+ },
+ {
+  "short": "ComCtl3",
+  "library": "ComCtl3",
+  "guid": "{38911DA0-E448-11D0-84A3-00DD01104159}",
+  "version": "1.1",
+  "file": "ComCt332.ocx",
+  "helpfile": "cmctl398.chm",
+  "types": 20,
+  "members": 135
+ },
+ {
+  "short": "MSComDlg",
+  "library": "MSComDlg",
+  "guid": "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}",
+  "version": "1.2",
+  "file": "ComDlg32.OCX",
+  "helpfile": "cmdlg98.chm",
+  "types": 12,
+  "members": 171
+ },
+ {
+  "short": "MSFlexGridLib",
+  "library": "MSFlexGridLib",
+  "guid": "{5E9E78A0-531B-11CF-91F6-C2863C385E30}",
+  "version": "1.0",
+  "file": "MSFlxGrd.ocx",
+  "helpfile": "MSHFlx98.chm",
+  "types": 30,
+  "members": 334
+ },
+ {
+  "short": "RichTextLib",
+  "library": "RichTextLib",
+  "guid": "{3B7C8863-D78F-101B-B9B5-04021C009402}",
+  "version": "1.2",
+  "file": "richtx32.Ocx",
+  "helpfile": "RTFBox98.CHM",
+  "types": 28,
+  "members": 226
+ },
+ {
+  "short": "TabDlg",
+  "library": "TabDlg",
+  "guid": "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}",
+  "version": "1.1",
+  "file": "TabCtl32.Ocx",
+  "helpfile": "mstab98.chm",
+  "types": 16,
+  "members": 134
+ },
+ {
+  "short": "MSChart20Lib",
+  "library": "MSChart20Lib",
+  "guid": "{65E121D4-0C60-11D2-A9FC-0000F8754DA1}",
+  "version": "2.0",
+  "file": "MSChrt20.ocx",
+  "helpfile": "MSCHRT98.chm",
+  "types": 156,
+  "members": 928
+ },
+ {
+  "short": "MCI",
+  "library": "MCI",
+  "guid": "{C1A8AF28-1257-101B-8FB0-0020AF039CA3}",
+  "version": "1.1",
+  "file": "mci32.Ocx",
+  "helpfile": "MMEDIA98.CHM",
+  "types": 20,
+  "members": 252
+ },
+ {
+  "short": "MSCommLib",
+  "library": "MSCommLib",
+  "guid": "{648A5603-2C6E-101B-82B6-000000000014}",
+  "version": "1.1",
+  "file": "MSComm32.Ocx",
+  "helpfile": "COMM98.CHM",
+  "types": 10,
+  "members": 110
+ },
+ {
+  "short": "PicClip",
+  "library": "PicClip",
+  "guid": "{27395F88-0C0C-101B-A3C9-08002B2F49FB}",
+  "version": "1.1",
+  "file": "PicClp32.Ocx",
+  "helpfile": "PICCLP98.CHM",
+  "types": 5,
+  "members": 61
+ },
+ {
+  "short": "Scripting",
+  "library": "Scripting",
+  "guid": "{420B2830-E718-11CF-893D-00A0C9054228}",
+  "version": "1.0",
+  "file": "scrrun.dll",
+  "helpfile": "VBENLR98.CHM",
+  "types": 32,
+  "members": 149
+ },
+ {
+  "short": "ADODB",
+  "library": "ADODB",
+  "guid": "{2A75196C-D9EB-4129-B803-931327F72D5C}",
+  "version": "2.8",
+  "file": "msado28.tlb",
+  "helpfile": "ado270.chm",
+  "types": 97,
+  "members": 734
+ },
+ {
+  "short": "DAO",
+  "library": "DAO",
+  "guid": "{00025E01-0000-0000-C000-000000000046}",
+  "version": "5.0",
+  "file": "dao360.dll",
+  "helpfile": "dao360.chm",
+  "types": 73,
+  "members": 611
+ },
+ {
+  "short": "MSDBGrid",
+  "library": "MSDBGrid",
+  "guid": "{00028C01-0000-0000-0000-000000000046}",
+  "version": "1.0",
+  "file": "dbgrid32.ocx",
+  "helpfile": "dbgrid96.hlp",
+  "types": 34,
+  "members": 309
+ },
+ {
+  "short": "MSDBCtls",
+  "library": "MSDBCtls",
+  "guid": "{FAEEE763-117E-101B-8933-08002B2F4F5A}",
+  "version": "1.1",
+  "file": "dblist32.Ocx",
+  "helpfile": "DBLIST98.CHM",
+  "types": 24,
+  "members": 214
+ },
+ {
+  "short": "MSAdodcLib",
+  "library": "MSAdodcLib",
+  "guid": "{67397AA1-7FB1-11D0-B148-00A0C922E820}",
+  "version": "6.0",
+  "file": "MSAdoDc.ocx",
+  "helpfile": "adodc98.chm",
+  "types": 13,
+  "members": 104
+ },
+ {
+  "short": "MSDataGridLib",
+  "library": "MSDataGridLib",
+  "guid": "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}",
+  "version": "1.0",
+  "file": "MSDatGrd.ocx",
+  "helpfile": "DBGRID98.CHM",
+  "types": 20,
+  "members": 290
+ },
+ {
+  "short": "MSDataListLib",
+  "library": "MSDataListLib",
+  "guid": "{F0D2F211-CCB0-11D0-A316-00AA00688B10}",
+  "version": "1.0",
+  "file": "MSDatLst.Ocx",
+  "helpfile": "dblist98.chm",
+  "types": 23,
+  "members": 218
+ },
+ {
+  "short": "MSBind",
+  "library": "MSBind",
+  "guid": "{56BF9020-7A2F-11D0-9482-00A0C91110ED}",
+  "version": "1.0",
+  "file": "MSBind.dll",
+  "helpfile": "",
+  "types": 7,
+  "members": 28
+ },
+ {
+  "short": "StdFormat",
+  "library": "StdFormat",
+  "guid": "{6B263850-900B-11D0-9484-00A0C91110ED}",
+  "version": "1.0",
+  "file": "msstdfmt.dll",
+  "helpfile": "vb98.chm",
+  "types": 17,
+  "members": 47
+ },
+ {
+  "short": "MSHierarchicalFlexGridLib",
+  "library": "MSHierarchicalFlexGridLib",
+  "guid": "{0ECD9B60-23AA-11D0-B351-00A0C9055D8E}",
+  "version": "6.0",
+  "file": "MShflxgd.ocx",
+  "helpfile": "MSHFlx98.chm",
+  "types": 36,
+  "members": 466
+ },
+ {
+  "short": "MSDataReportLib",
+  "library": "MSDataReportLib",
+  "guid": "{642AC760-AAB4-11D0-8494-00A0C90DC8A9}",
+  "version": "1.0",
+  "file": "MSDbRptr.dll",
+  "helpfile": "VB98.CHM",
+  "types": 44,
+  "members": 354
+ },
+ {
+  "short": "SysInfoLib",
+  "library": "SysInfoLib",
+  "guid": "{6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}",
+  "version": "1.0",
+  "file": "SysInfo.ocx",
+  "helpfile": "SysInf98.CHM",
+  "types": 4,
+  "members": 32
+ },
+ {
+  "short": "MSWinsockLib",
+  "library": "MSWinsockLib",
+  "guid": "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}",
+  "version": "1.0",
+  "file": "MSWINSCK.ocx",
+  "helpfile": "MSWNSK98.chm",
+  "types": 8,
+  "members": 81
+ },
+ {
+  "short": "InetCtlsObjects",
+  "library": "InetCtlsObjects",
+  "guid": "{48E59290-9880-11CF-9754-00AA00C00908}",
+  "version": "1.0",
+  "file": "MSINET.Ocx",
+  "helpfile": "INET98.CHM",
+  "types": 9,
+  "members": 159
+ },
+ {
+  "short": "MSMask",
+  "library": "MSMask",
+  "guid": "{C932BA88-4374-101B-A56C-00AA003668DC}",
+  "version": "1.1",
+  "file": "msmask32.ocx",
+  "helpfile": "MASKED98.CHM",
+  "types": 19,
+  "members": 158
+ },
+ {
+  "short": "MSDataRepeaterLib",
+  "library": "MSDataRepeaterLib",
+  "guid": "{5C8CED40-8909-11D0-9483-00A0C91110ED}",
+  "version": "1.0",
+  "file": "MSDatRep.Ocx",
+  "helpfile": "DatRpt98.CHM",
+  "types": 15,
+  "members": 151
+ },
+ {
+  "short": "MSRDC",
+  "library": "MSRDC",
+  "guid": "{F6125AB1-8AB1-11CE-A77F-08002B2F4E98}",
+  "version": "2.0",
+  "file": "msrdc20.Ocx",
+  "helpfile": "rdo98.chm",
+  "types": 16,
+  "members": 154
+ },
+ {
+  "short": "MSMAPI",
+  "library": "MSMAPI",
+  "guid": "{20C62CAE-15DA-101B-B9A8-444553540000}",
+  "version": "1.1",
+  "file": "msmapi32.Ocx",
+  "helpfile": "MAPI98.CHM",
+  "types": 15,
+  "members": 203
+ },
+ {
+  "short": "RDO",
+  "library": "RDO",
+  "guid": "{EE008642-64A8-11CE-920F-08002B369A33}",
+  "version": "2.0",
+  "file": "msrdo20.dll",
+  "helpfile": "rdo98.chm",
+  "types": 49,
+  "members": 590
+ }
+]

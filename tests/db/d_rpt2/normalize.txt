@@ -1,0 +1,4 @@
+# the page header of rptTwo: VB6 breaks the pages of the HTML export where the text of its fonts
+# makes the rows taller (39 rows a page), LinBASIC Studio where the sections end (45 rows)
+right
+center

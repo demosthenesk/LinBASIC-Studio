@@ -1,0 +1,12 @@
+﻿Tests DAO της VB6 (LinBASIC Studio, Φάση 4.4)
+
+d_dao1: βάση που φτιάχνει το ίδιο το τεστ (CreateDatabase, DDL, TableDefs, Recordsets, Find, Seek, σφάλματα).
+d_dao2: SQL (συναρτήσεις, joins, action queries, QueryDefs, παράμετροι) και ανάγνωση της BIBLIO.MDB.
+
+1. Αντίγραψε το C:\Program Files\Microsoft Visual Studio\VB98\BIBLIO.MDB μέσα στον φάκελο d_dao2
+   (το τεστ το ανοίγει μόνο για ανάγνωση).
+2. Άνοιξε το d_dao1\DaoTest1.vbp με το VB6 (ως διαχειριστής) και πάτα F5. Τελειώνει μόνο του
+   (δεν έχει φόρμα). Κλείσε το VB6 χωρίς αποθήκευση.
+3. Το ίδιο για το d_dao2\DaoTest2.vbp.
+4. Πες μου «έτοιμο». Τα αποτελέσματα γράφονται στα d_dao1\expected\d_dao1.txt και d_dao2\expected\d_dao2.txt.
+   Αν βγει μήνυμα σφάλματος, στείλε μου εικόνα.

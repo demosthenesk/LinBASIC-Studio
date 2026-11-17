@@ -1,0 +1,1101 @@
+{
+ "library": "PicClip",
+ "short": "PicClip",
+ "guid": "{27395F88-0C0C-101B-A3C9-08002B2F49FB}",
+ "version": "1.1",
+ "lcid": 1033,
+ "helpfile": "PICCLP98.CHM",
+ "file": "PicClp32.Ocx",
+ "types": [
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{D9C1A720-E599-11CF-A8B0-00AA00A71809}",
+   "flags": [],
+   "helpcontext": 270017,
+   "members": [
+    {
+     "name": "picOutOfMemory",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 7
+    },
+    {
+     "name": "picSetNotSupported",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 383,
+     "helpcontext": 383
+    },
+    {
+     "name": "picSetNotPermitted",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 383,
+     "helpcontext": 387
+    },
+    {
+     "name": "picGetNotSupported",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 394,
+     "helpcontext": 394
+    },
+    {
+     "name": "picInvalidPictureFormat",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 32000,
+     "helpcontext": 32000
+    },
+    {
+     "name": "picDisplayContext",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 32001,
+     "helpcontext": 32001
+    },
+    {
+     "name": "picMemDevContext",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 32002,
+     "helpcontext": 32002
+    },
+    {
+     "name": "picBitmap",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 32003,
+     "helpcontext": 32003
+    },
+    {
+     "name": "picSelBitmapObj",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 32004,
+     "helpcontext": 32004
+    },
+    {
+     "name": "picIntPicStruct",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 32005,
+     "helpcontext": 32005
+    },
+    {
+     "name": "picBadIndex",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 32006,
+     "helpcontext": 32006
+    },
+    {
+     "name": "picNoPicSize",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 32007,
+     "helpcontext": 32007
+    },
+    {
+     "name": "picBitmapsOnly",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 32008,
+     "helpcontext": 32008
+    },
+    {
+     "name": "picBadClip",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 32010,
+     "helpcontext": 32010
+    },
+    {
+     "name": "picGetObjFailed",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 32012,
+     "helpcontext": 32012
+    },
+    {
+     "name": "picClipBounds",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 32015,
+     "helpcontext": 32015
+    },
+    {
+     "name": "picCellTooSmall",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 32016,
+     "helpcontext": 32016
+    },
+    {
+     "name": "picRowNotPositive",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 32017,
+     "helpcontext": 32017
+    },
+    {
+     "name": "picColNotPositive",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 32018,
+     "helpcontext": 32018
+    },
+    {
+     "name": "picStretchXNegative",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 32019,
+     "helpcontext": 32019
+    },
+    {
+     "name": "picStretchYNegative",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 32020,
+     "helpcontext": 32020
+    },
+    {
+     "name": "picNoPicture",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 32021,
+     "helpcontext": 32021
+    }
+   ]
+  },
+  {
+   "name": "IPicClip",
+   "kind": "dispatch",
+   "guid": "{4D6CC9B0-DF77-11CF-8E74-00A0C90F26F8}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "_Picture",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#36",
+     "params": [
+      {
+       "name": "ppPicture",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_Picture",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_Picture",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "CellHeight",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCellHeight",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270011
+    },
+    {
+     "name": "CellHeight",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270011
+    },
+    {
+     "name": "CellWidth",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCellWidth",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270010
+    },
+    {
+     "name": "CellWidth",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270010
+    },
+    {
+     "name": "Clip",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#36",
+     "params": [
+      {
+       "name": "ppPictureDisp",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270014
+    },
+    {
+     "name": "Clip",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270014
+    },
+    {
+     "name": "Clip",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270014
+    },
+    {
+     "name": "ClipHeight",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psClipHeight",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270007
+    },
+    {
+     "name": "ClipHeight",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270007
+    },
+    {
+     "name": "ClipWidth",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psClipWidth",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270006
+    },
+    {
+     "name": "ClipWidth",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270006
+    },
+    {
+     "name": "ClipX",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psClipX",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270004
+    },
+    {
+     "name": "ClipX",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270004
+    },
+    {
+     "name": "ClipY",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psClipY",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270005
+    },
+    {
+     "name": "ClipY",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270005
+    },
+    {
+     "name": "Cols",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psCols",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270003
+    },
+    {
+     "name": "Cols",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270003
+    },
+    {
+     "name": "Height",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psHeight",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270013
+    },
+    {
+     "name": "Height",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270013
+    },
+    {
+     "name": "Picture",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#36",
+     "params": [
+      {
+       "name": "ppPictureDisp",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270001
+    },
+    {
+     "name": "Picture",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270001
+    },
+    {
+     "name": "Picture",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270001
+    },
+    {
+     "name": "Rows",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psRows",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 270002
+    },
+    {
+     "name": "Rows",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 270002
+    },
+    {
+     "name": "StretchX",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psStretchX",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270008
+    },
+    {
+     "name": "StretchX",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270008
+    },
+    {
+     "name": "StretchY",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psStretchY",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270009
+    },
+    {
+     "name": "StretchY",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270009
+    },
+    {
+     "name": "Width",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psWidth",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270012
+    },
+    {
+     "name": "Width",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270012
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "GraphicCell",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole2.tlb:#36",
+     "params": [
+      {
+       "name": "sIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppPictureDisp",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270016
+    },
+    {
+     "name": "GraphicCell",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "sIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270016
+    },
+    {
+     "name": "GraphicCell",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "sIndex",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "arg2",
+       "type": "stdole2.tlb:#36",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270016
+    },
+    {
+     "name": "Hwnd",
+     "memid": -515,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "stdole.OLE_HANDLE",
+     "params": [
+      {
+       "name": "phWnd",
+       "type": "stdole.OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270015
+    },
+    {
+     "name": "Hwnd",
+     "memid": -515,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "stdole.OLE_HANDLE",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "nonbrowsable"
+     ],
+     "helpcontext": 270015
+    }
+   ]
+  },
+  {
+   "name": "DPicClipEvents",
+   "kind": "dispatch",
+   "guid": "{27395F87-0C0C-101B-A3C9-08002B2F49FB}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0
+  },
+  {
+   "name": "PictureClip",
+   "kind": "coclass",
+   "guid": "{27395F85-0C0C-101B-A3C9-08002B2F49FB}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "IPicClip",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DPicClipEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "PictureClip2",
+   "kind": "coclass",
+   "guid": "{AFB66F3E-7A33-41E9-A4F7-FE87B64F5555}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 270000,
+   "implements": [
+    {
+     "name": "IPicClip",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DPicClipEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

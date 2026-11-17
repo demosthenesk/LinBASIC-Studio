@@ -1,0 +1,933 @@
+{
+ "library": "StdFormat",
+ "short": "StdFormat",
+ "guid": "{6B263850-900B-11D0-9484-00A0C91110ED}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "vb98.chm",
+ "file": "msstdfmt.dll",
+ "types": [
+  {
+   "name": "IDataFormatDisp",
+   "kind": "dispatch",
+   "guid": "{E675F3F0-91B5-11D0-9484-00A0C91110ED}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 420701,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "FormatType",
+   "kind": "enum",
+   "guid": "{D23CBFF0-9010-11D0-9484-00A0C91110ED}",
+   "flags": [],
+   "helpcontext": 420707,
+   "members": [
+    {
+     "name": "fmtGeneral",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "fmtCustom",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "fmtPicture",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "fmtObject",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "fmtCheckbox",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "fmtBoolean",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5
+    },
+    {
+     "name": "fmtBytes",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6
+    }
+   ]
+  },
+  {
+   "name": "FirstDayOfWeek",
+   "kind": "enum",
+   "guid": "{91F625B0-9C13-11D0-9484-00A0C91110ED}",
+   "flags": [],
+   "helpcontext": 420708,
+   "members": [
+    {
+     "name": "fmtDayUseSystem",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "fmtSunday",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "fmtMonday",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "fmtTuesday",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "fmtWednesday",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "fmtThursday",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5
+    },
+    {
+     "name": "fmtFriday",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6
+    },
+    {
+     "name": "fmtSaturday",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7
+    }
+   ]
+  },
+  {
+   "name": "FirstWeekOfYear",
+   "kind": "enum",
+   "guid": "{91F625B1-9C13-11D0-9484-00A0C91110ED}",
+   "flags": [],
+   "helpcontext": 420709,
+   "members": [
+    {
+     "name": "fmtWeekUseSystem",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "fmtFirstJan1",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "fmtFirstFourDays",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "fmtFirstFullWeek",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    }
+   ]
+  },
+  {
+   "name": "IStdDataValueDisp",
+   "kind": "dispatch",
+   "guid": "{5DE7A180-91B1-11D0-9484-00A0C91110ED}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 420705,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Value",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420717
+    },
+    {
+     "name": "Value",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420717
+    },
+    {
+     "name": "TargetObject",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "set",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420718
+    },
+    {
+     "name": "TargetObject",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "Object",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420718
+    }
+   ]
+  },
+  {
+   "name": "StdDataValue",
+   "kind": "coclass",
+   "guid": "{2B11E9B0-9F09-11D0-9484-00A0C91110ED}",
+   "flags": [],
+   "helpcontext": 420705,
+   "implements": [
+    {
+     "name": "IStdDataValueDisp",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "StdDataValue2",
+   "kind": "coclass",
+   "guid": "{1EAC2F2A-251F-4BA8-8617-99A8DD715453}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 420705,
+   "implements": [
+    {
+     "name": "IStdDataValueDisp",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "IStdDataFormatEvents",
+   "kind": "dispatch",
+   "guid": "{C2F13ED0-91B0-11D0-9484-00A0C91110ED}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 420704,
+   "members": [
+    {
+     "name": "Format",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "DataValue",
+       "type": "StdDataValue",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420714
+    },
+    {
+     "name": "UnFormat",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "DataValue",
+       "type": "StdDataValue",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420715
+    },
+    {
+     "name": "Changed",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 420716
+    }
+   ]
+  },
+  {
+   "name": "IStdDataFormatDisp",
+   "kind": "dispatch",
+   "guid": "{6C51B910-900B-11D0-9484-00A0C91110ED}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 420703,
+   "implements": [
+    {
+     "name": "IDataFormatDisp",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Type",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "FormatType",
+     "params": [
+      {
+       "name": "ptype",
+       "type": "FormatType",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420707
+    },
+    {
+     "name": "Type",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "FormatType",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420707
+    },
+    {
+     "name": "Format",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstr",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420710
+    },
+    {
+     "name": "Format",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420710
+    },
+    {
+     "name": "TrueValue",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420711
+    },
+    {
+     "name": "TrueValue",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420711
+    },
+    {
+     "name": "FalseValue",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420712
+    },
+    {
+     "name": "FalseValue",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420712
+    },
+    {
+     "name": "NullValue",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420713
+    },
+    {
+     "name": "NullValue",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420713
+    },
+    {
+     "name": "FirstDayOfWeek",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "FirstDayOfWeek",
+     "params": [
+      {
+       "name": "pl",
+       "type": "FirstDayOfWeek",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420708
+    },
+    {
+     "name": "FirstDayOfWeek",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "FirstDayOfWeek",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420708
+    },
+    {
+     "name": "FirstWeekOfYear",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "FirstWeekOfYear",
+     "params": [
+      {
+       "name": "pl",
+       "type": "FirstWeekOfYear",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 420709
+    },
+    {
+     "name": "FirstWeekOfYear",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "FirstWeekOfYear",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 420709
+    }
+   ]
+  },
+  {
+   "name": "StdDataFormat",
+   "kind": "coclass",
+   "guid": "{6D835690-900B-11D0-9484-00A0C91110ED}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 420703,
+   "implements": [
+    {
+     "name": "IStdDataFormatDisp",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IStdDataFormatEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "StdDataFormat2",
+   "kind": "coclass",
+   "guid": "{7E96FC67-468E-4E70-B246-D42078DD2361}",
+   "flags": [
+    "cancreate",
+    "hidden"
+   ],
+   "helpcontext": 420703,
+   "implements": [
+    {
+     "name": "IStdDataFormatDisp",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IStdDataFormatEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "DataFormat",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "IDataFormatDisp"
+  },
+  {
+   "name": "IDataFormatsDisp",
+   "kind": "dispatch",
+   "guid": "{A1741EF6-FFC6-11D0-BD02-00C04FC2FB86}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 420702,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "IStdDataFormatsDisp",
+   "kind": "dispatch",
+   "guid": "{99FF4676-FFC3-11D0-BD02-00C04FC2FB86}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 420706,
+   "implements": [
+    {
+     "name": "IDataFormatsDisp",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Count",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCount",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "_ppNewEnum",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "DataFormat",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppFormat",
+       "type": "DataFormat",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "_ItemField",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Field",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pbstrField",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Add",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pFormat",
+       "type": "DataFormat",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "Remove",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Clear",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    }
+   ]
+  },
+  {
+   "name": "StdDataFormats",
+   "kind": "coclass",
+   "guid": "{99FF4677-FFC3-11D0-BD02-00C04FC2FB86}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 420706,
+   "implements": [
+    {
+     "name": "IStdDataFormatsDisp",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "StdDataFormats2",
+   "kind": "coclass",
+   "guid": "{D606EEC9-8368-4F10-88DB-BF5563EC36F6}",
+   "flags": [
+    "cancreate",
+    "hidden"
+   ],
+   "helpcontext": 420706,
+   "implements": [
+    {
+     "name": "IStdDataFormatsDisp",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "DataFormats",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "IDataFormatsDisp"
+  }
+ ]
+}

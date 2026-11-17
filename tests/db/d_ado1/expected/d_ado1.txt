@@ -1,0 +1,173 @@
+== connection
+Connection state=0 cursorloc=2 mode=0 timeout=15 cmdtimeout=30 isolation=4096
+  ! execute closed: 3704 Operation is not allowed when the object is closed. [ADODB.Connection]
+state=1 provider=Microsoft.Jet.OLEDB.4.0 errors=0 defaultdb=S''
+  ! open again: 3705 Operation is not allowed when the object is open. [ADODB.Connection]
+== execute
+Recordset state=1 cursortype=0 locktype=1 cursorloc=2 count=-1 bof=False eof=False fields=11 source=SELECT * FROM People ORDER BY ID
+  field ID type=3 size=4 attr=90 prec=10 scale=255
+  field Name type=202 size=20 attr=106 prec=255 scale=255
+  field Age type=2 size=2 attr=122 prec=5 scale=255
+  field Born type=7 size=8 attr=122 prec=255 scale=255
+  field Active type=11 size=2 attr=90 prec=255 scale=255
+  field Salary type=6 size=8 attr=122 prec=19 scale=255
+  field Rate type=5 size=8 attr=122 prec=15 scale=255
+  field Notes type=203 size=536870910 attr=234 prec=255 scale=255
+  field Score type=4 size=4 attr=122 prec=7 scale=255
+  field Big type=3 size=4 attr=122 prec=10 scale=255
+  field Small type=17 size=1 attr=122 prec=3 scale=255
+pos -1 editmode=0
+-- people
+  L1 S'Anna' I31 D1993-04-05 00:00:00 BT C1234.5 Do.25 S'first' Si1.5 L100000 I7
+  L2 S'Bill' I25 D1999-12-31 23:30:00 BF C99.99 Do1 Null Null Null Null
+  L3 S'Cleo' I42 Null BT Null Null S'third' Null Null Null
+  L4 S'Dino' I37 Null BF Null Null Null Null Null Null
+  L5 S'Bert' I19 Null BT Null Null Null Null Null Null
+  rows 5
+eof True bof False
+  ! movenext at eof: 3021 Either BOF or EOF is True, or the current record has been deleted. Requested operation requires a current record. [ADODB.Recordset]
+  ! field at eof: 3021 Either BOF or EOF is True, or the current record has been deleted. Requested operation requires a current record. [ADODB.Field]
+  ! moveprevious forward-only: 3219 Operation is not allowed in this context. [ADODB.Recordset]
+after movefirst @-1 Anna
+  ! edit read-only: 3251 Current Recordset does not support updating. This may be a limitation of the provider, or of the selected locktype. [ADODB.Recordset]
+closed state=0
+  ! eof of closed: 3704 Operation is not allowed when the object is closed. [ADODB.Recordset]
+affected 3
+  ! missing table: -2147217865 The Microsoft Jet database engine cannot find the input table or query 'Nope'.  Make sure it exists and that its name is spelled correctly. [Microsoft JET Database Engine]
+errors 1
+  error -2147217865 [The Microsoft Jet database engine cannot find the input table or query 'Nope'.  Make sure it exists and that its name is spelled correctly.] src=Microsoft JET Database Engine state=3078 native=-524420377
+  ! syntax: -2147217900 Invalid SQL statement; expected 'DELETE', 'INSERT', 'PROCEDURE', 'SELECT', or 'UPDATE'. [Microsoft JET Database Engine]
+  ! missing column: -2147217904 No value given for one or more required parameters. [Microsoft JET Database Engine]
+  ! null required: -2147467259 The field 'People.Name' cannot contain a Null value because the Required property for this field is set to True.  Enter a value in this field. [Microsoft JET Database Engine]
+  ! duplicate key: -2147467259 The changes you requested to the table were not successful because they would create duplicate values in the index, primary key, or relationship.  Change the data in the field or fields that contain duplicate data, remove the index, or redefine the index to permit duplicate entries and try again. [Microsoft JET Database Engine]
+errors after clear 0
+  field N type=3 size=4 attr=122 prec=10 scale=255
+  field M type=2 size=2 attr=122 prec=5 scale=255
+  field Expr1002 type=5 size=8 attr=114 prec=15 scale=255
+  field Expr1003 type=6 size=8 attr=122 prec=19 scale=255
+-- aggregate
+  L5 I43 Do31.4 C1334.49
+  rows 1
+-- like %
+  S'Bert' I19
+  S'Bill' I25
+  rows 2
+-- like *
+  rows 0
+table source=select * from People count=-1
+-- adults
+  S'Anna' I32
+  S'Bill' I25
+  S'Cleo' I43
+  S'Dino' I38
+  rows 4
+  ! parameter not given: -2147217904 No value given for one or more required parameters. [Microsoft JET Database Engine]
+== keyset
+new state=0 cursortype=0 locktype=1 cursorloc=2 maxrecords=0 cachesize=1 source=[] active=Nothing
+  ! count of closed: 3704 Operation is not allowed when the object is closed. [ADODB.Recordset]
+state=1 cursortype=1 locktype=3 count=5 @1 Anna editmode=0 source=select * from People active=Connection
+supports addnew=True bookmark=True moveprev=True update=True delete=True find=True
+last @5 Bert
+move -2 @3 Cleo
+move 10 <eof>
+  ! move past end: 0  []
+before first <bof> bof=True
+bookmark Double 5
+absolute 3 @3 Cleo
+back to bookmark @1 Anna
+find cleo @3 Cleo
+find anna from cleo <eof>
+find like * @2 Bill
+find like % @4 Dino
+find skip 1 <eof>
+find backward @5 Bert
+  ! find with and: 3001 Arguments are of the wrong type, are out of acceptable range, or are in conflict with one another. [ADODB.Recordset]
+  ! find bad field: 3265 Item cannot be found in the collection corresponding to the requested name or ordinal. [ADODB.Recordset]
+filter count=3 @1 Anna filter=Age > 30
+-- filtered
+  L1 S'Anna' I32 D1993-04-05 00:00:00 BT C1234.5 Do.25 S'first' Si1.5 L100000 I7
+  L3 S'Cleo' I43 Null BT Null Null S'third' Null Null Null
+  L4 S'Dino' I38 Null BF Null Null Null Null Null Null
+  rows 3
+filter or count=2
+no filter count=5 @1 Anna filter=0
+  ! sort server cursor: 3251 Current provider does not support the necessary interfaces for sorting or filtering. [ADODB.Recordset]
+== editing
+moved editmode=0 @2 Bill
+saved by move: S'Anna2'
+addnew editmode=2 count=5 id=L7 name=Null eof=False
+before update id=L7
+  ! update: 3251 Current provider does not support refreshing underlying values. [ADODB.Field]
+updated editmode=0 count=6 @6 Eve id=L7
+addnew values editmode=0 @7 Fred id=L8 count=7
+update value I51 editmode=0
+  ! update null required: -2147217887 The field 'People.Name' cannot contain a Null value because the Required property for this field is set to True.  Enter a value in this field. [Microsoft JET Database Engine]
+after failed update editmode=1
+cancelled editmode=0 @7 Fred
+  ! type mismatch: -2147352571 Type mismatch. [Provider]
+  ! too long: -2147217887 The field is too small to accept the amount of data you attempted to add.  Try inserting or pasting less data. [Microsoft JET Database Engine]
+  ! too long update: 0  []
+deleted editmode=0 eof=False bof=False count=6
+  ! field of deleted: -2147217885 Row handle referred to a deleted row or a row marked for deletion. [Microsoft JET Database Engine]
+after delete next @4 Bert
+requery count=6 @1 Anna2
+-- after edits
+  L1 S'Anna2' I32 D1993-04-05 00:00:00 BT C1234.5 Do.25 S'first' Si1.5 L100000 I7
+  L2 S'Bill' I25 D1999-12-31 23:30:00 BF C99.99 Do1 Null Null Null Null
+  L3 S'Cleo' I43 Null BT Null Null S'third' Null Null Null
+  L5 S'Bert' I19 Null BT Null Null Null Null Null Null
+  L7 S'Eve' I20 Null BF Null Null Null Null Null Null
+  L8 S'Fred' I51 Null BF Null Null Null Null Null Null
+  rows 6
+== client cursor
+cursortype=3 locktype=3 count=6 @1 Anna2
+  field ID type=3 size=4 attr=90 prec=10 scale=255
+  field Name type=202 size=20 attr=106 prec=255 scale=255
+  field Age type=2 size=2 attr=122 prec=5 scale=255
+  field Born type=7 size=8 attr=122 prec=255 scale=255
+  field Active type=11 size=2 attr=90 prec=255 scale=255
+  field Salary type=6 size=8 attr=122 prec=19 scale=255
+  field Rate type=5 size=8 attr=122 prec=15 scale=255
+  field Notes type=203 size=536870910 attr=234 prec=255 scale=255
+  field Score type=4 size=4 attr=122 prec=7 scale=255
+  field Big type=3 size=4 attr=122 prec=10 scale=255
+  field Small type=17 size=1 attr=122 prec=3 scale=255
+sort=Age DESC @1 Fred
+sorted Fred/51 Cleo/43 Anna2/32 Bill/25 Eve/20 Bert/19
+by name first @1 Anna2
+getrows AVariant()(0 To 10) 10x1 S'Anna2' S'Bill' @3 Cleo
+getrows rest 1x3 S'Cleo' eof=True
+getstring [1,Anna2,32,5/4/1993,-1,1234,5,0,25,first,1,5,100000,7;2,Bill,25,31/12/1999 11:30:00 μμ,0,99,99,1,(null),(null),(null),(null);]
+clone @6 Fred count=6 orig @3 Cleo
+disconnected state=1 count=6
+disconnected update I77 status=0
+== fields of a row
+  ID = L1 actual=4
+  Name = S'Anna2' actual=10
+  Age = I32 actual=2
+  Born = D1993-04-05 00:00:00 actual=8
+  Active = BT actual=2
+  Salary = C1234.5 actual=8
+  Rate = Do.25 actual=8
+  Notes = S'first' actual=10
+  Score = Si1.5 actual=4
+  Big = L100000 actual=4
+  Small = I7 actual=1
+  ! field 99: 3265 Item cannot be found in the collection corresponding to the requested name or ordinal. [ADODB.Fields]
+  ! field nope: 3265 Item cannot be found in the collection corresponding to the requested name or ordinal. [ADODB.Fields]
+field by index Name default OField
+== transactions
+level 1
+after rollback Do190
+after commit I26
+  ! commit without begin: -2147168242 You tried to commit or rollback a transaction without first beginning a transaction. [Microsoft JET Database Engine]
+== schema
+  Adults VIEW
+  People TABLE
+  Pets TABLE
+  Owner 2 3
+  Pet 3 130
+  PetID 1 3
+closed state=0
+  ! close again: 3704 Operation is not allowed when the object is closed. [ADODB.Connection]
+end

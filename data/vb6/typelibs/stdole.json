@@ -1,0 +1,1953 @@
+{
+ "library": "stdole",
+ "short": "stdole",
+ "guid": "{00020430-0000-0000-C000-000000000046}",
+ "version": "2.0",
+ "lcid": 1033,
+ "helpfile": "",
+ "file": "stdole2.tlb",
+ "types": [
+  {
+   "name": "GUID",
+   "kind": "record",
+   "guid": null,
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Data1",
+     "memid": 1073741824,
+     "kind": "var",
+     "type": "ULong"
+    },
+    {
+     "name": "Data2",
+     "memid": 1073741825,
+     "kind": "var",
+     "type": "UShort"
+    },
+    {
+     "name": "Data3",
+     "memid": 1073741826,
+     "kind": "var",
+     "type": "UShort"
+    },
+    {
+     "name": "Data4",
+     "memid": 1073741827,
+     "kind": "var",
+     "type": "Byte(0 To 7)"
+    }
+   ]
+  },
+  {
+   "name": "DISPPARAMS",
+   "kind": "record",
+   "guid": null,
+   "flags": [
+    "restricted"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "rgvarg",
+     "memid": 1073741824,
+     "kind": "var",
+     "type": "Variant"
+    },
+    {
+     "name": "rgdispidNamedArgs",
+     "memid": 1073741825,
+     "kind": "var",
+     "type": "Long"
+    },
+    {
+     "name": "cArgs",
+     "memid": 1073741826,
+     "kind": "var",
+     "type": "ULong"
+    },
+    {
+     "name": "cNamedArgs",
+     "memid": 1073741827,
+     "kind": "var",
+     "type": "ULong"
+    }
+   ]
+  },
+  {
+   "name": "EXCEPINFO",
+   "kind": "record",
+   "guid": null,
+   "flags": [
+    "restricted"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "wCode",
+     "memid": 1073741824,
+     "kind": "var",
+     "type": "UShort"
+    },
+    {
+     "name": "wReserved",
+     "memid": 1073741825,
+     "kind": "var",
+     "type": "UShort"
+    },
+    {
+     "name": "bstrSource",
+     "memid": 1073741826,
+     "kind": "var",
+     "type": "String"
+    },
+    {
+     "name": "bstrDescription",
+     "memid": 1073741827,
+     "kind": "var",
+     "type": "String"
+    },
+    {
+     "name": "bstrHelpFile",
+     "memid": 1073741828,
+     "kind": "var",
+     "type": "String"
+    },
+    {
+     "name": "dwHelpContext",
+     "memid": 1073741829,
+     "kind": "var",
+     "type": "ULong"
+    },
+    {
+     "name": "pvReserved",
+     "memid": 1073741830,
+     "kind": "var",
+     "type": "Void"
+    },
+    {
+     "name": "pfnDeferredFillIn",
+     "memid": 1073741831,
+     "kind": "var",
+     "type": "Void"
+    },
+    {
+     "name": "scode",
+     "memid": 1073741832,
+     "kind": "var",
+     "type": "SCODE"
+    }
+   ]
+  },
+  {
+   "name": "IUnknown",
+   "kind": "interface",
+   "guid": "{00000000-0000-0000-C000-000000000046}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "QueryInterface",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "riid",
+       "type": "GUID",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppvObj",
+       "type": "Void",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "AddRef",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ULong",
+     "params": [],
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "Release",
+     "memid": 1610612738,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ULong",
+     "params": [],
+     "flags": [
+      "restricted"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IDispatch",
+   "kind": "interface",
+   "guid": "{00020400-0000-0000-C000-000000000046}",
+   "flags": [
+    "restricted"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IUnknown",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "GetTypeInfoCount",
+     "memid": 1610678272,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pctinfo",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "GetTypeInfo",
+     "memid": 1610678273,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "itinfo",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "lcid",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pptinfo",
+       "type": "Void",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "GetIDsOfNames",
+     "memid": 1610678274,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "riid",
+       "type": "GUID",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "rgszNames",
+       "type": "SByte",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cNames",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "lcid",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "rgdispid",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "Invoke",
+     "memid": 1610678275,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "dispidMember",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "riid",
+       "type": "GUID",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "lcid",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "wFlags",
+       "type": "UShort",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pdispparams",
+       "type": "DISPPARAMS",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarResult",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "pexcepinfo",
+       "type": "EXCEPINFO",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "puArgErr",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "restricted"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IEnumVARIANT",
+   "kind": "interface",
+   "guid": "{00020404-0000-0000-C000-000000000046}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IUnknown",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Next",
+     "memid": 1610678272,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "celt",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "rgvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pceltFetched",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Skip",
+     "memid": 1610678273,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "celt",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Reset",
+     "memid": 1610678274,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Clone",
+     "memid": 1610678275,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "ppenum",
+       "type": "IEnumVARIANT",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "OLE_COLOR",
+   "kind": "alias",
+   "guid": "{66504301-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "ULong"
+  },
+  {
+   "name": "OLE_XPOS_PIXELS",
+   "kind": "alias",
+   "guid": "{66504302-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_YPOS_PIXELS",
+   "kind": "alias",
+   "guid": "{66504303-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_XSIZE_PIXELS",
+   "kind": "alias",
+   "guid": "{66504304-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_YSIZE_PIXELS",
+   "kind": "alias",
+   "guid": "{66504305-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_XPOS_HIMETRIC",
+   "kind": "alias",
+   "guid": "{66504306-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_YPOS_HIMETRIC",
+   "kind": "alias",
+   "guid": "{66504307-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_XSIZE_HIMETRIC",
+   "kind": "alias",
+   "guid": "{66504308-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_YSIZE_HIMETRIC",
+   "kind": "alias",
+   "guid": "{66504309-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_XPOS_CONTAINER",
+   "kind": "alias",
+   "guid": "{BF030640-9069-101B-AE2D-08002B2EC713}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Single"
+  },
+  {
+   "name": "OLE_YPOS_CONTAINER",
+   "kind": "alias",
+   "guid": "{BF030641-9069-101B-AE2D-08002B2EC713}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Single"
+  },
+  {
+   "name": "OLE_XSIZE_CONTAINER",
+   "kind": "alias",
+   "guid": "{BF030642-9069-101B-AE2D-08002B2EC713}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Single"
+  },
+  {
+   "name": "OLE_YSIZE_CONTAINER",
+   "kind": "alias",
+   "guid": "{BF030643-9069-101B-AE2D-08002B2EC713}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Single"
+  },
+  {
+   "name": "OLE_HANDLE",
+   "kind": "alias",
+   "guid": "{66504313-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "Long"
+  },
+  {
+   "name": "OLE_OPTEXCLUSIVE",
+   "kind": "alias",
+   "guid": "{6650430B-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "OLE_CANCELBOOL",
+   "kind": "alias",
+   "guid": "{BF030644-9069-101B-AE2D-08002B2EC713}",
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "OLE_ENABLEDEFAULTBOOL",
+   "kind": "alias",
+   "guid": "{BF030645-9069-101B-AE2D-08002B2EC713}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "OLE_TRISTATE",
+   "kind": "enum",
+   "guid": "{6650430A-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Unchecked",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "Checked",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "Gray",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "name": "FONTNAME",
+   "kind": "alias",
+   "guid": "{6650430D-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "String"
+  },
+  {
+   "name": "FONTSIZE",
+   "kind": "alias",
+   "guid": "{6650430E-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Currency"
+  },
+  {
+   "name": "FONTBOLD",
+   "kind": "alias",
+   "guid": "{6650430F-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "FONTITALIC",
+   "kind": "alias",
+   "guid": "{66504310-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "FONTUNDERSCORE",
+   "kind": "alias",
+   "guid": "{66504311-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "FONTSTRIKETHROUGH",
+   "kind": "alias",
+   "guid": "{66504312-BE0F-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "alias": "Boolean"
+  },
+  {
+   "name": "IFont",
+   "kind": "interface",
+   "guid": "{BEF6E002-A874-101A-8BBA-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IUnknown",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Name",
+     "memid": 1610678272,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pname",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Name",
+     "memid": 1610678272,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Size",
+     "memid": 1610678274,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Currency",
+     "params": [
+      {
+       "name": "psize",
+       "type": "Currency",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Size",
+     "memid": 1610678274,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Currency",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Bold",
+     "memid": 1610678276,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbold",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Bold",
+     "memid": 1610678276,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Italic",
+     "memid": 1610678278,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pitalic",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Italic",
+     "memid": 1610678278,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Underline",
+     "memid": 1610678280,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "punderline",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Underline",
+     "memid": 1610678280,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Strikethrough",
+     "memid": 1610678282,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pstrikethrough",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Strikethrough",
+     "memid": 1610678282,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Weight",
+     "memid": 1610678284,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "pweight",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Weight",
+     "memid": 1610678284,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Charset",
+     "memid": 1610678286,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "pcharset",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Charset",
+     "memid": 1610678286,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Integer",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "hFont",
+     "memid": 1610678288,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OLE_HANDLE",
+     "params": [
+      {
+       "name": "phfont",
+       "type": "OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Clone",
+     "memid": 1610678289,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "ppfont",
+       "type": "IFont",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "IsEqual",
+     "memid": 1610678290,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pfontOther",
+       "type": "IFont",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetRatio",
+     "memid": 1610678291,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "cyLogical",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cyHimetric",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "AddRefHfont",
+     "memid": 1610678292,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "hFont",
+       "type": "OLE_HANDLE",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ReleaseHfont",
+     "memid": 1610678293,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "hFont",
+       "type": "OLE_HANDLE",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Font",
+   "kind": "dispatch",
+   "guid": "{BEF6E003-A874-101A-8BBA-00AA00300CAB}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Name",
+     "memid": 0,
+     "kind": "var",
+     "type": "String"
+    },
+    {
+     "name": "Size",
+     "memid": 2,
+     "kind": "var",
+     "type": "Currency"
+    },
+    {
+     "name": "Bold",
+     "memid": 3,
+     "kind": "var",
+     "type": "Boolean"
+    },
+    {
+     "name": "Italic",
+     "memid": 4,
+     "kind": "var",
+     "type": "Boolean"
+    },
+    {
+     "name": "Underline",
+     "memid": 5,
+     "kind": "var",
+     "type": "Boolean"
+    },
+    {
+     "name": "Strikethrough",
+     "memid": 6,
+     "kind": "var",
+     "type": "Boolean"
+    },
+    {
+     "name": "Weight",
+     "memid": 7,
+     "kind": "var",
+     "type": "Integer"
+    },
+    {
+     "name": "Charset",
+     "memid": 8,
+     "kind": "var",
+     "type": "Integer"
+    }
+   ]
+  },
+  {
+   "name": "IFontDisp",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "Font"
+  },
+  {
+   "name": "StdFont",
+   "kind": "coclass",
+   "guid": "{0BE35203-8F91-11CE-9DE3-00AA004BB851}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "Font",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "FontEvents",
+     "default": true,
+     "source": true
+    },
+    {
+     "name": "IFont",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "IPicture",
+   "kind": "interface",
+   "guid": "{7BF80980-BF32-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IUnknown",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Handle",
+     "memid": 1610678272,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OLE_HANDLE",
+     "params": [
+      {
+       "name": "phandle",
+       "type": "OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "hPal",
+     "memid": 1610678273,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OLE_HANDLE",
+     "params": [
+      {
+       "name": "phpal",
+       "type": "OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Type",
+     "memid": 1610678274,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "ptype",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Width",
+     "memid": 1610678275,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OLE_XSIZE_HIMETRIC",
+     "params": [
+      {
+       "name": "pwidth",
+       "type": "OLE_XSIZE_HIMETRIC",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Height",
+     "memid": 1610678276,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "OLE_YSIZE_HIMETRIC",
+     "params": [
+      {
+       "name": "pheight",
+       "type": "OLE_YSIZE_HIMETRIC",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Render",
+     "memid": 1610678277,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "hdc",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "x",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "y",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cx",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cy",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "xSrc",
+       "type": "OLE_XPOS_HIMETRIC",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ySrc",
+       "type": "OLE_YPOS_HIMETRIC",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cxSrc",
+       "type": "OLE_XSIZE_HIMETRIC",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cySrc",
+       "type": "OLE_YSIZE_HIMETRIC",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "prcWBounds",
+       "type": "Void",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "hPal",
+     "memid": 1610678273,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "OLE_HANDLE",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "CurDC",
+     "memid": 1610678279,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "phdcOut",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SelectPicture",
+     "memid": 1610678280,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "hdcIn",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "phdcOut",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "phbmpOut",
+       "type": "OLE_HANDLE",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "KeepOriginalFormat",
+     "memid": 1610678281,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfkeep",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "KeepOriginalFormat",
+     "memid": 1610678281,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PictureChanged",
+     "memid": 1610678283,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "SaveAsFile",
+     "memid": 1610678284,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pstm",
+       "type": "Void",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fSaveMemCopy",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pcbSize",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Attributes",
+     "memid": 1610678285,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pdwAttr",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetHdc",
+     "memid": 1610678286,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "hdc",
+       "type": "OLE_HANDLE",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Picture",
+   "kind": "dispatch",
+   "guid": "{7BF80981-BF32-101A-8BBB-00AA00300CAB}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Render",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "hdc",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "x",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "y",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "cx",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "cy",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "xSrc",
+       "type": "OLE_XPOS_HIMETRIC",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "ySrc",
+       "type": "OLE_YPOS_HIMETRIC",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "cxSrc",
+       "type": "OLE_XSIZE_HIMETRIC",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "cySrc",
+       "type": "OLE_YSIZE_HIMETRIC",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "prcWBounds",
+       "type": "Void",
+       "byref": true,
+       "flags": []
+      }
+     ]
+    },
+    {
+     "name": "Handle",
+     "memid": 0,
+     "kind": "var",
+     "type": "OLE_HANDLE",
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "hPal",
+     "memid": 2,
+     "kind": "var",
+     "type": "OLE_HANDLE"
+    },
+    {
+     "name": "Type",
+     "memid": 3,
+     "kind": "var",
+     "type": "Integer",
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "Width",
+     "memid": 4,
+     "kind": "var",
+     "type": "OLE_XSIZE_HIMETRIC",
+     "flags": [
+      "restricted"
+     ]
+    },
+    {
+     "name": "Height",
+     "memid": 5,
+     "kind": "var",
+     "type": "OLE_YSIZE_HIMETRIC",
+     "flags": [
+      "restricted"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IPictureDisp",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "Picture"
+  },
+  {
+   "name": "StdPicture",
+   "kind": "coclass",
+   "guid": "{0BE35204-8F91-11CE-9DE3-00AA004BB851}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "Picture",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IPicture",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "LoadPictureConstants",
+   "kind": "enum",
+   "guid": "{E6C8FA08-BD9F-11D0-985E-00C04FC29993}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "Default",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "Monochrome",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "VgaColor",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "Color",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    }
+   ]
+  },
+  {
+   "name": "StdFunctions",
+   "kind": "module",
+   "guid": "{91209AC0-60F6-11CF-9C5D-00AA00C1489E}",
+   "flags": [],
+   "helpcontext": 10101,
+   "members": [
+    {
+     "name": "LoadPicture",
+     "memid": 1610612736,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IPictureDisp",
+     "params": [
+      {
+       "name": "filename",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "widthDesired",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "heightDesired",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "flags",
+       "type": "LoadPictureConstants",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional",
+        "hasdefault"
+       ],
+       "default": 0
+      },
+      {
+       "name": "retval",
+       "type": "IPictureDisp",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 10101
+    },
+    {
+     "name": "SavePicture",
+     "memid": 1610612737,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Picture",
+       "type": "IPictureDisp",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "filename",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 10101
+    }
+   ]
+  },
+  {
+   "name": "FontEvents",
+   "kind": "dispatch",
+   "guid": "{4EF6100A-AF88-11D0-9846-00C04FC29993}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "FontChanged",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "PropertyName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IFontEventsDisp",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "FontEvents"
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+start
+trace0 lib main|
+trace1 init 1|
+typename CCalc True True
+value 12 default 12
+createobject CCalc 40 instances 2
+trace2 init 2|term 2| instances 1
+asnew 0 init 3|
+trace3 term 3|
+variant 3 CCalc
+trace4 init 4|term 4|
+global 42 10 CompLib
+node leaf CNode
+hidden *** CHidden
+create notcreatable 429
+create private 429
+create nosuch 429
+event Changed 22 veto=False
+fire applied 22
+event Changed 122 veto=True
+fire cancelled 22
+fire applied 23
+greeter [Hi Bob from the client]
+dll greeter Hello Ann CStdGreeter True
+dll greeter via dll [Hello Tom]
+client greeter Hi Joe from the client CMyGreeter
+fail1 513 CompLib custom fail
+fail2 11 CompLib Division by zero
+fail3 5 CompLib Invalid procedure call or argument
+fail4 514 MySource with source
+swap 2 1
+sum 10 0
+optional tag=none tag=x
+foreach 3 a;2;c;
+callback 1 2 3 4
+addressof 4321
+callback 5 6 7 8
+addressof ptr 8765 True True
+err0 0 [Invalid procedure call or argument]
+err11 11 [Invalid procedure call or argument]
+errnum6 6 []
+trace5  instances 1
+trace6 term 1|
+end

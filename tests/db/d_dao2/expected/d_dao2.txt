@@ -1,0 +1,334 @@
+== select
+-- SELECT * FROM T
+  cols: ID/4 Name/10 Grp/10 Amount/5 D/8 F/7 B/1 M/12
+  L1 S'apple' S'a' C10.5 D2000-01-15 00:00:00 Do1.25 BT S'x'
+  L2 S'Banana' S'a' C20 D2000-02-29 13:45:00 Do-2.5 BF Null
+  L3 S'cherry' S'b' C7.25 D1999-12-31 00:00:00 Do0 BT S''
+  L4 S'Date' S'b' Null Null Do100 BF S'long memo'
+  L5 S'elder*berry' S'c' C3 D2001-06-01 08:00:00 Do3.75 BT Null
+  rows 5
+-- SELECT Name FROM T ORDER BY Name
+  cols: Name/10
+  S'apple'
+  S'Banana'
+  S'cherry'
+  S'Date'
+  S'elder*berry'
+  rows 5
+-- SELECT Name FROM T ORDER BY Name DESC
+  cols: Name/10
+  S'elder*berry'
+  S'Date'
+  S'cherry'
+  S'Banana'
+  S'apple'
+  rows 5
+-- SELECT [Name], T.Grp FROM [T] WHERE ID IN (2,4)
+  cols: Name/10 Grp/10
+  S'Banana' S'a'
+  S'Date' S'b'
+  rows 2
+-- SELECT Name FROM T WHERE Name = 'APPLE'
+  cols: Name/10
+  S'apple'
+  rows 1
+-- SELECT Name FROM T WHERE Name < 'c'
+  cols: Name/10
+  S'apple'
+  S'Banana'
+  rows 2
+-- SELECT Name FROM T WHERE Name Like 'b*' OR Name Like '?ate' OR Name Like '*[*]*'
+  cols: Name/10
+  S'Banana'
+  S'Date'
+  S'elder*berry'
+  rows 3
+-- SELECT Name FROM T WHERE Name Like '[a-c]*' AND Name Not Like '*n*'
+  cols: Name/10
+  S'apple'
+  S'cherry'
+  rows 2
+-- SELECT Name FROM T WHERE Name Like "*e*"
+  cols: Name/10
+  S'apple'
+  S'cherry'
+  S'Date'
+  S'elder*berry'
+  rows 4
+-- SELECT Name FROM T WHERE D > #1/1/2000# AND D < #12/31/2000#
+  cols: Name/10
+  S'apple'
+  S'Banana'
+  rows 2
+-- SELECT Name FROM T WHERE D Between #1/1/2000# And #3/1/2000#
+  cols: Name/10
+  S'apple'
+  S'Banana'
+  rows 2
+-- SELECT Name FROM T WHERE Amount Is Null OR M Is Null
+  cols: Name/10
+  S'Banana'
+  S'Date'
+  S'elder*berry'
+  rows 3
+-- SELECT Name FROM T WHERE B = True
+  cols: Name/10
+  S'apple'
+  S'cherry'
+  S'elder*berry'
+  rows 3
+-- SELECT Name FROM T WHERE B
+  cols: Name/10
+  S'apple'
+  S'cherry'
+  S'elder*berry'
+  rows 3
+-- SELECT Name FROM T WHERE Not B
+  cols: Name/10
+  S'Banana'
+  S'Date'
+  rows 2
+-- SELECT TOP 2 Name FROM T ORDER BY ID DESC
+  cols: Name/10
+  S'elder*berry'
+  S'Date'
+  rows 2
+-- SELECT DISTINCT Grp FROM T
+  cols: Grp/10
+  S'a'
+  S'b'
+  S'c'
+  rows 3
+-- SELECT DISTINCTROW Grp FROM T
+  cols: Grp/10
+  S'a'
+  S'a'
+  S'b'
+  S'b'
+  S'c'
+  rows 5
+== expressions
+-- SELECT ID * 2 AS Dbl, ID / 2 AS Half, ID \ 2 AS IDiv, ID Mod 3 AS M3, -ID AS Neg, ID ^ 2 AS Sq FROM T WHERE ID < 4
+  cols: Dbl/4 Half/7 IDiv/4 M3/4 Neg/4 Sq/7
+  L2 Do.5 L0 L1 L-1 Do1
+  L4 Do1 L1 L2 L-2 Do4
+  L6 Do1.5 L1 L0 L-3 Do9
+  rows 3
+-- SELECT Name & '!' AS Bang, Name + '?' AS Plus, Name & Null AS CatNull, Name + Null AS PlusNull, ID & '' AS IdText FROM T WHERE ID < 3
+  cols: Bang/10 Plus/10 CatNull/10 PlusNull/9 IdText/10
+  S'apple!' S'apple?' S'apple' Null S'1'
+  S'Banana!' S'Banana?' S'Banana' Null S'2'
+  rows 2
+-- SELECT 1 AS One, 'x' AS X, True AS T, #1/2/2003# AS Dt, Null AS N, ID > 2 AS Cmp, Not B AS NB FROM T WHERE ID < 4
+  cols: One/4 X/10 T/3 Dt/8 N/9 Cmp/3 NB/3
+  L1 S'x' I-1 D2003-01-02 00:00:00 Null I0 I0
+  L1 S'x' I-1 D2003-01-02 00:00:00 Null I0 I-1
+  L1 S'x' I-1 D2003-01-02 00:00:00 Null I-1 I0
+  rows 3
+-- SELECT 1.5 AS OneHalf, 3000000000 AS Big, ID + 0.5 AS IdF, 1E3 AS Sci FROM T
+  types: OneHalf/20 Big/20 IdF/20 Sci/4
+-- SELECT Amount * 2 AS A2, Amount + F AS AF, F * 2 AS F2, Amount / 2 AS AH, ID * F AS IF2 FROM T WHERE ID < 3
+  cols: A2/5 AF/5 F2/7 AH/7 IF2/7
+  C21 C11.75 Do2.5 Do5.25 Do1.25
+  C40 C17.5 Do-5 Do10 Do-5
+  rows 2
+-- SELECT UCase(Name), LCase(Name), Left(Name, 2), Right(Name, 2), Mid(Name, 2, 3), Len(Name) FROM T WHERE ID < 3
+  cols: Expr1000/10 Expr1001/10 Expr1002/10 Expr1003/10 Expr1004/10 Expr1005/4
+  S'APPLE' S'apple' S'ap' S'le' S'ppl' L5
+  S'BANANA' S'banana' S'Ba' S'na' S'ana' L6
+  rows 2
+-- SELECT Trim('  a  ') AS Tr, LTrim('  a') AS Lt, RTrim('a  ') AS Rt, InStr(Name, 'an') AS Ins, Space(2) & 'x' AS Sp, String(3, 'z') AS St FROM T WHERE ID = 2
+  cols: Tr/10 Lt/10 Rt/10 Ins/4 Sp/10 St/10
+  S'a' S'a' S'a' L2 S'  x' S'zzz'
+  rows 1
+-- SELECT Year(D), Month(D), Day(D), Hour(D), Minute(D), Weekday(D) FROM T WHERE ID = 2
+  cols: Expr1000/3 Expr1001/3 Expr1002/3 Expr1003/3 Expr1004/3 Expr1005/3
+  I2000 I2 I29 I13 I45 I3
+  rows 1
+-- SELECT Format(D, 'yyyy-mm-dd') AS F1, Format(F, '0.00') AS F2, Format(ID, '000') AS F3 FROM T WHERE ID < 3
+  cols: F1/10 F2/10 F3/10
+  S'2000-01-15' S'1,25' S'001'
+  S'2000-02-29' S'-2,50' S'002'
+  rows 2
+-- SELECT DateAdd('d', 1, D) AS Plus1, DateDiff('d', #1/1/2000#, D) AS Diff, DateSerial(2000, 1, 2) AS DS, DatePart('q', D) AS Qt FROM T WHERE ID < 3
+  cols: Plus1/8 Diff/4 DS/8 Qt/3
+  D2000-01-16 00:00:00 L14 D2000-01-02 00:00:00 I1
+  D2000-03-01 13:45:00 L59 D2000-01-02 00:00:00 I1
+  rows 2
+-- SELECT IIf(ID > 2, 'big', 'small') AS Size, IIf(ID > 2, ID, F) AS Mixed, IsNull(M) AS IsN FROM T
+  cols: Size/10 Mixed/7 IsN/3
+  S'small' Do1.25 I0
+  S'small' Do-2.5 I-1
+  S'big' Do3 I0
+  S'big' Do4 I0
+  S'big' Do5 I-1
+  rows 5
+  ! SELECT Val('12abc') AS V1, Str(ID) AS S1, CStr(ID) AS S2, CInt('42') AS I1, CLng(2.5) AS L1, CDbl('1.5') AS D1, CCur(F) AS C1, Int(-2.5) AS I2, Fix(-2.5) AS F1, Abs(F) AS A1, Sgn(F) AS S3 FROM T WHERE ID = 2: 3085 Undefined function 'Nz' in expression. [DAO.Database]
+-- SELECT Asc(Name) AS A, Chr(65) AS C, Sqr(16) AS S, Round(F, 1) AS R FROM T WHERE ID = 1
+  cols: A/3 C/10 S/7 R/7
+  I97 S'A' Do4 Do1.2
+  rows 1
+== aggregates
+-- SELECT Count(*) AS N, Count(Amount) AS NA, Sum(Amount) AS S, Avg(Amount) AS A, Min(Name) AS Mn, Max(D) AS Mx FROM T
+  cols: N/4 NA/4 S/5 A/5 Mn/10 Mx/8
+  L5 L4 C40.75 C10.1875 S'apple' D2001-06-01 08:00:00
+  rows 1
+-- SELECT Grp, Count(*) AS N, Sum(ID) AS SI, Sum(F) AS SF, Avg(ID) AS AI, First(Name) AS Fi, Last(Name) AS La FROM T GROUP BY Grp ORDER BY Grp
+  cols: Grp/10 N/4 SI/7 SF/7 AI/7 Fi/10 La/10
+  S'a' L2 Do3 Do-1.25 Do1.5 S'apple' S'Banana'
+  S'b' L2 Do7 Do100 Do3.5 S'cherry' S'Date'
+  S'c' L1 Do5 Do3.75 Do5 S'elder*berry' S'elder*berry'
+  rows 3
+-- SELECT Grp, Count(*) AS N FROM T GROUP BY Grp HAVING Count(*) > 1
+  cols: Grp/10 N/4
+  S'a' L2
+  S'b' L2
+  rows 2
+-- SELECT StDev(F) AS SD, Var(F) AS VR FROM T
+  cols: SD/7 VR/7
+  Do44.4989466167459 Do1980.15625
+  rows 1
+== joins
+-- SELECT T.Name, U.Tag FROM T INNER JOIN U ON T.ID = U.TID ORDER BY T.Name, U.Tag
+  cols: Name/10 Tag/10
+  S'apple' S'green'
+  S'apple' S'red'
+  S'cherry' S'red'
+  rows 3
+-- SELECT T.Name, U.Tag FROM T LEFT JOIN U ON T.ID = U.TID ORDER BY T.ID, U.Tag
+  cols: Name/10 Tag/10
+  S'apple' S'green'
+  S'apple' S'red'
+  S'Banana' Null
+  S'cherry' S'red'
+  S'Date' Null
+  S'elder*berry' Null
+  rows 6
+-- SELECT T.Name, U.Tag FROM T RIGHT JOIN U ON T.ID = U.TID ORDER BY U.ID
+  cols: Name/10 Tag/10
+  S'apple' S'red'
+  S'apple' S'green'
+  S'cherry' S'red'
+  Null S'blue'
+  rows 4
+-- SELECT * FROM T, U WHERE T.ID = U.TID AND U.Tag = 'red'
+  cols: T.ID/4 Name/10 Grp/10 Amount/5 D/8 F/7 B/1 M/12 U.ID/4 TID/4 Tag/10
+  L1 S'apple' S'a' C10.5 D2000-01-15 00:00:00 Do1.25 BT S'x' L1 L1 S'red'
+  L3 S'cherry' S'b' C7.25 D1999-12-31 00:00:00 Do0 BT S'' L3 L3 S'red'
+  rows 2
+-- SELECT x.Name FROM T AS x WHERE x.ID IN (SELECT TID FROM U)
+  cols: Name/10
+  S'apple'
+  S'cherry'
+  rows 2
+-- SELECT Name FROM T WHERE EXISTS (SELECT * FROM U WHERE U.TID = T.ID AND Tag = 'green')
+  cols: Name/10
+  S'apple'
+  rows 1
+-- SELECT Name FROM T UNION SELECT Tag FROM U
+  cols: Name/10
+  S'apple'
+  S'Banana'
+  S'blue'
+  S'cherry'
+  S'Date'
+  S'elder*berry'
+  S'green'
+  S'red'
+  rows 8
+== action queries
+select into 2
+-- SELECT * FROM T2
+  cols: ID/4 Name/10 Grp/10 Amount/5 D/8 F/7 B/1 M/12
+  L1 S'apple' S'a' C10.5 D2000-01-15 00:00:00 Do1.25 BT S'x'
+  L2 S'Banana' S'a' C20 D2000-02-29 13:45:00 Do-2.5 BF Null
+  rows 2
+delete * 1
+update 1
+insert select 2
+-- SELECT * FROM T2
+  cols: ID/4 Name/10 Grp/10 Amount/5 D/8 F/7 B/1 Extra/10
+  L2 S'Banana2' S'a' C20 D2000-02-29 13:45:00 Do-5 BF Null
+  L4 S'Date' S'b' Null Null Do100 BF Null
+  L5 S'elder*berry' S'c' C3 D2001-06-01 08:00:00 Do3.75 BT Null
+  rows 3
+update none 0
+  ! execute select: 3065 Cannot execute a select query. [DAO.Database]
+== querydefs
+qd qBig type=0 returns=True params=0 updatable=True
+sql [SELECT Name, ID
+FROM T
+WHERE ID > 2
+ORDER BY ID;
+]
+-- qBig
+  cols: Name/10 ID/4
+  S'cherry' L3
+  S'Date' L4
+  S'elder*berry' L5
+  rows 3
+-- SELECT * FROM qBig WHERE ID < 5
+  cols: Name/10 ID/4
+  S'cherry' L3
+  S'Date' L4
+  rows 2
+qd qParam type=0 params=2
+  param [Min ID] type=4 value=Empty dir=1
+  param pName type=10 value=Empty dir=1
+sql [PARAMETERS [Min ID] Long, pName Text ( 255 );
+SELECT Name
+FROM T
+WHERE ID >= [Min ID] OR Name = pName;
+]
+  ! open without params: 3061 Too few parameters. Expected 2. [DAO.Database]
+-- qParam 4 apple
+  cols: Name/10
+  S'apple'
+  S'Date'
+  S'elder*berry'
+  rows 3
+  ! open param query by name: 3061 Too few parameters. Expected 2. [DAO.Database]
+qd qUpd type=0 returns=True
+qd affected 1
+temp qd name [#Temporary QueryDef#] count 3
+temp result L5
+  ! duplicate querydef: 3012 Object 'qBig' already exists. [DAO.QueryDefs]
+-- qBig
+  cols: Name/10
+  S'apple'
+  rows 1
+  querydef qBig type=0
+  querydef qParam type=0
+  querydef qUpd type=0
+querydefs 2
+== biblio
+biblio version 3.0 updatable False
+  table Authors 6246 fields 3
+  table Publishers 727 fields 10
+  table Title Author 16056 fields 2
+  table Titles 8569 fields 8
+  query All Titles type=0 [SELECT Titles.Title, Titles.ISBN, Authors.Author, Titles.[Year Published], Publishers.[Company Name]
+FROM (([title author] INNER JOIN Titles ON [title author].ISBN = Titles.ISBN) INNER JOIN Authors ON [title author].Au_ID = Authors.Au_ID) INNER JOIN Publishers ON Titles.PubID = Publishers.PubID
+ORDER BY Titles.Title;
+]
+titles type 1 count 8569
+seek False S'Business Programming Using dBASE IV : A Structured Approach to Systems Development/Book and Disk'
+-- biblio join
+  cols: Author/10 Title/10 Year Published/3
+  S'Date, C.J.' S'A Guide to DB2 : A User's Guide to the IBM Product IBM Database 2 (A Relational Database Management System for MVS Environment and Its Major Compani' I1992
+  S'Date, C.J.' S'A Guide to Ingres : A User's Guide to the Ingres Product (A Relational Database Management System With Built-In Application Development Facilities F' I1987
+  S'Date, C.J.' S'A Guide to Sql/Ds' I1989
+  S'Date, C.J.' S'A Guide to the Sql Standard' I1989
+  S'Date, C. J.' S'A Guide to the Sql Standard : A User's Guide to the Standard Relational Language Sql' I1993
+  rows 5
+all titles 16056 type 2
+-- biblio years
+  cols: Year Published/3 N/4
+  I1991 L885
+  I1992 L1041
+  I1993 L1153
+  I1994 L1675
+  I1995 L1637
+  rows 5
+  ! edit readonly: 3027 Cannot update.  Database or object is read-only. [DAO.Recordset]
+end

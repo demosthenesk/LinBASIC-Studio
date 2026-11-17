@@ -1,0 +1,696 @@
+{
+ "library": "SysInfoLib",
+ "short": "SysInfoLib",
+ "guid": "{6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "SysInf98.CHM",
+ "file": "SysInfo.ocx",
+ "types": [
+  {
+   "name": "ISysInfo",
+   "kind": "dispatch",
+   "guid": "{6FBA474C-43AC-11CE-9A0E-00AA0062BB4C}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole2.tlb:{00020400-0000-0000-C000-000000000046}",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "ACStatus",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "piACStatus",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300001
+    },
+    {
+     "name": "BatteryFullTime",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plBatteryFullTime",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300002
+    },
+    {
+     "name": "BatteryLifePercent",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psBatteryLifePercent",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300003
+    },
+    {
+     "name": "BatteryLifeTime",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plBatteryLifeTime",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300004
+    },
+    {
+     "name": "BatteryStatus",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psBatteryStatus",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300005
+    },
+    {
+     "name": "OSBuild",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psOSBuild",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300006
+    },
+    {
+     "name": "OSPlatform",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "psOSPlatform",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300007
+    },
+    {
+     "name": "OSVersion",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfOSVersion",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300008
+    },
+    {
+     "name": "ScrollBarSize",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfScrollBarSize",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300009
+    },
+    {
+     "name": "WorkAreaHeight",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfWorkAreaHeight",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300010
+    },
+    {
+     "name": "WorkAreaLeft",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfWorkAreaLeft",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300011
+    },
+    {
+     "name": "WorkAreaTop",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfWorkAreaTop",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300012
+    },
+    {
+     "name": "WorkAreaWidth",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Single",
+     "params": [
+      {
+       "name": "pfWorkAreaWidth",
+       "type": "Single",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 300013
+    },
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DSysInfoEvents",
+   "kind": "dispatch",
+   "guid": "{6FBA474D-43AC-11CE-9A0E-00AA0062BB4C}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "ConfigChangeCancelled",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300014
+    },
+    {
+     "name": "ConfigChanged",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "OldConfigNum",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "NewConfigNum",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300015
+    },
+    {
+     "name": "DeviceArrival",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DeviceType",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceID",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceData",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300016
+    },
+    {
+     "name": "DeviceOtherEvent",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DeviceType",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "EventName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DataPointer",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300017
+    },
+    {
+     "name": "DeviceQueryRemove",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DeviceType",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceID",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceData",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300018
+    },
+    {
+     "name": "DeviceQueryRemoveFailed",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DeviceType",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceID",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceData",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300019
+    },
+    {
+     "name": "DeviceRemoveComplete",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DeviceType",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceID",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceData",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300020
+    },
+    {
+     "name": "DeviceRemovePending",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "DeviceType",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceID",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "DeviceData",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300021
+    },
+    {
+     "name": "DevModeChanged",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300022
+    },
+    {
+     "name": "DisplayChanged",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300023
+    },
+    {
+     "name": "PowerQuerySuspend",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300024
+    },
+    {
+     "name": "PowerResume",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300025
+    },
+    {
+     "name": "PowerStatusChanged",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300026
+    },
+    {
+     "name": "PowerSuspend",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300027
+    },
+    {
+     "name": "QueryChangeConfig",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300028
+    },
+    {
+     "name": "SettingChanged",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Item",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 300029
+    },
+    {
+     "name": "SysColorsChanged",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300030
+    },
+    {
+     "name": "TimeChanged",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 300031
+    }
+   ]
+  },
+  {
+   "name": "SysInfo",
+   "kind": "coclass",
+   "guid": "{6FBA474B-43AC-11CE-9A0E-00AA0062BB4C}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "control"
+   ],
+   "helpcontext": 300000,
+   "implements": [
+    {
+     "name": "ISysInfo",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DSysInfoEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "SysInfo2",
+   "kind": "coclass",
+   "guid": "{D88A442E-9C85-48E3-A6F8-EF61C93989A0}",
+   "flags": [
+    "cancreate",
+    "licensed",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 300000,
+   "implements": [
+    {
+     "name": "ISysInfo",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DSysInfoEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

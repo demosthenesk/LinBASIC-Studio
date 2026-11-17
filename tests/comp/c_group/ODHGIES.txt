@@ -1,0 +1,10 @@
+﻿Test components VB6 (LinBASIC Studio, Φάση 4.3) — c_group
+
+Ένα ActiveX DLL (Lib\CompLib.vbp) και ο πελάτης του (Client\CompCli.vbp) σε ένα Project Group.
+Το έργο τρέχει χωρίς φόρμες και τελειώνει μόνο του.
+
+1. Άνοιξε το c_group\CompTests.vbg με το VB6 (ως διαχειριστής) και πάτα F5.
+   - Αν το VB6 ρωτήσει για αποθήκευση, απάντησε «Όχι».
+   - Αν βγει σφάλμα, στείλε μου εικόνα.
+2. Κλείσε το VB6 χωρίς αποθήκευση.
+3. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο c_group\expected\c_group.txt.

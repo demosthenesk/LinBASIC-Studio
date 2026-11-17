@@ -1,0 +1,351 @@
+cp1252 ascii 3: 41 7A 30
+cp1252 latin 5: E9 FC F1 DF 80
+cp1252 greek 5: 3F 3F 3F 3F 3F
+cp1252 cyrillic 4: 3F 3F 3F 3F
+cp1252 turkish 4: 67 49 69 73
+cp1252 hebrew 3: 3F 3F 3F
+cp1252 arabic 3: 3F 3F 3F
+cp1252 kana 4: 3F 3F B7 3F
+cp1252 kanji 3: 3F 3F 3F
+cp1252 hanzi 2: 3F 3F
+cp1252 hangul 2: 3F 3F
+cp1252 trad 2: 3F 3F
+cp1252 thai 2: 3F 3F
+cp1252 viet 2: 61 3F
+cp1252 nul 3: 41 0 42
+cp1252 special 2: 3F 3F
+cp1253 ascii 3: 41 7A 30
+cp1253 latin 5: 65 75 6E 3F 80
+cp1253 greek 5: C1 DC F2 FE A2
+cp1253 cyrillic 4: 3F 3F 3F 3F
+cp1253 turkish 4: 67 49 3F 73
+cp1253 hebrew 3: 3F 3F 3F
+cp1253 arabic 3: 3F 3F 3F
+cp1253 kana 4: 3F 3F 3F 3F
+cp1253 kanji 3: 3F 3F 3F
+cp1253 hanzi 2: 3F 3F
+cp1253 hangul 2: 3F 3F
+cp1253 trad 2: 3F 3F
+cp1253 thai 2: 3F 3F
+cp1253 viet 2: 61 3F
+cp1253 nul 3: 41 0 42
+cp1253 special 2: 3F 3F
+cp1250 ascii 3: 41 7A 30
+cp1250 latin 5: E9 FC 6E DF 80
+cp1250 greek 5: 3F 3F 3F 3F 3F
+cp1250 cyrillic 4: 3F 3F 3F 3F
+cp1250 turkish 4: 67 49 69 BA
+cp1250 hebrew 3: 3F 3F 3F
+cp1250 arabic 3: 3F 3F 3F
+cp1250 kana 4: 3F 3F B7 3F
+cp1250 kanji 3: 3F 3F 3F
+cp1250 hanzi 2: 3F 3F
+cp1250 hangul 2: 3F 3F
+cp1250 trad 2: 3F 3F
+cp1250 thai 2: 3F 3F
+cp1250 viet 2: E3 3F
+cp1250 nul 3: 41 0 42
+cp1250 special 2: 3F 3F
+cp1251 ascii 3: 41 7A 30
+cp1251 latin 5: 65 75 6E 3F 88
+cp1251 greek 5: 3F 3F 3F 3F 3F
+cp1251 cyrillic 4: C1 E6 FF B8
+cp1251 turkish 4: 67 49 3F 73
+cp1251 hebrew 3: 3F 3F 3F
+cp1251 arabic 3: 3F 3F 3F
+cp1251 kana 4: 3F 3F 3F 3F
+cp1251 kanji 3: 3F 3F 3F
+cp1251 hanzi 2: 3F 3F
+cp1251 hangul 2: 3F 3F
+cp1251 trad 2: 3F 3F
+cp1251 thai 2: 3F 3F
+cp1251 viet 2: 61 3F
+cp1251 nul 3: 41 0 42
+cp1251 special 2: 3F 3F
+cp1254 ascii 3: 41 7A 30
+cp1254 latin 5: E9 FC F1 DF 80
+cp1254 greek 5: 3F 3F 3F 3F 3F
+cp1254 cyrillic 4: 3F 3F 3F 3F
+cp1254 turkish 4: F0 DD FD FE
+cp1254 hebrew 3: 3F 3F 3F
+cp1254 arabic 3: 3F 3F 3F
+cp1254 kana 4: 3F 3F B7 3F
+cp1254 kanji 3: 3F 3F 3F
+cp1254 hanzi 2: 3F 3F
+cp1254 hangul 2: 3F 3F
+cp1254 trad 2: 3F 3F
+cp1254 thai 2: 3F 3F
+cp1254 viet 2: 61 3F
+cp1254 nul 3: 41 0 42
+cp1254 special 2: 3F 3F
+cp1255 ascii 3: 41 7A 30
+cp1255 latin 5: 3F 3F 3F 3F 80
+cp1255 greek 5: 3F 3F 3F 3F 3F
+cp1255 cyrillic 4: 3F 3F 3F 3F
+cp1255 turkish 4: 3F 3F 3F 3F
+cp1255 hebrew 3: E0 F9 FA
+cp1255 arabic 3: 3F 3F 3F
+cp1255 kana 4: 3F 3F 3F 3F
+cp1255 kanji 3: 3F 3F 3F
+cp1255 hanzi 2: 3F 3F
+cp1255 hangul 2: 3F 3F
+cp1255 trad 2: 3F 3F
+cp1255 thai 2: 3F 3F
+cp1255 viet 2: 3F 3F
+cp1255 nul 3: 41 0 42
+cp1255 special 2: 3F 3F
+cp1256 ascii 3: 41 7A 30
+cp1256 latin 5: E9 FC 3F 3F 80
+cp1256 greek 5: 3F 3F 3F 3F 3F
+cp1256 cyrillic 4: 3F 3F 3F 3F
+cp1256 turkish 4: 3F 3F 3F 3F
+cp1256 hebrew 3: 3F 3F 3F
+cp1256 arabic 3: C7 E1 ED
+cp1256 kana 4: 3F 3F 3F 3F
+cp1256 kanji 3: 3F 3F 3F
+cp1256 hanzi 2: 3F 3F
+cp1256 hangul 2: 3F 3F
+cp1256 trad 2: 3F 3F
+cp1256 thai 2: 3F 3F
+cp1256 viet 2: 3F 3F
+cp1256 nul 3: 41 0 42
+cp1256 special 2: 3F 3F
+cp1257 ascii 3: 41 7A 30
+cp1257 latin 5: E9 FC 3F DF 80
+cp1257 greek 5: 3F 3F 3F 3F 3F
+cp1257 cyrillic 4: 3F 3F 3F 3F
+cp1257 turkish 4: 3F 3F 3F 3F
+cp1257 hebrew 3: 3F 3F 3F
+cp1257 arabic 3: 3F 3F 3F
+cp1257 kana 4: 3F 3F 3F 3F
+cp1257 kanji 3: 3F 3F 3F
+cp1257 hanzi 2: 3F 3F
+cp1257 hangul 2: 3F 3F
+cp1257 trad 2: 3F 3F
+cp1257 thai 2: 3F 3F
+cp1257 viet 2: 3F 3F
+cp1257 nul 3: 41 0 42
+cp1257 special 2: 3F 3F
+cp1258 ascii 3: 41 7A 30
+cp1258 latin 5: E9 FC F1 DF 80
+cp1258 greek 5: 3F 3F 3F 3F 3F
+cp1258 cyrillic 4: 3F 3F 3F 3F
+cp1258 turkish 4: 3F 3F 3F 3F
+cp1258 hebrew 3: 3F 3F 3F
+cp1258 arabic 3: 3F 3F 3F
+cp1258 kana 4: 3F 3F 3F 3F
+cp1258 kanji 3: 3F 3F 3F
+cp1258 hanzi 2: 3F 3F
+cp1258 hangul 2: 3F 3F
+cp1258 trad 2: 3F 3F
+cp1258 thai 2: 3F 3F
+cp1258 viet 2: E3 3F
+cp1258 nul 3: 41 0 42
+cp1258 special 2: 3F 3F
+cp874 ascii 3: 41 7A 30
+cp874 latin 5: 3F 3F 3F 3F 80
+cp874 greek 5: 3F 3F 3F 3F 3F
+cp874 cyrillic 4: 3F 3F 3F 3F
+cp874 turkish 4: 3F 3F 3F 3F
+cp874 hebrew 3: 3F 3F 3F
+cp874 arabic 3: 3F 3F 3F
+cp874 kana 4: 3F 3F 3F 3F
+cp874 kanji 3: 3F 3F 3F
+cp874 hanzi 2: 3F 3F
+cp874 hangul 2: 3F 3F
+cp874 trad 2: 3F 3F
+cp874 thai 2: A1 DF
+cp874 viet 2: 3F 3F
+cp874 nul 3: 41 0 42
+cp874 special 2: 3F 3F
+cp932 ascii 3: 41 7A 30
+cp932 latin 5: 65 75 6E 73 3F
+cp932 greek 6: 83 9F 3F 3F 3F 3F
+cp932 cyrillic 8: 84 41 84 77 84 91 84 76
+cp932 turkish 4: 3F 3F 3F 3F
+cp932 hebrew 3: 3F 3F 3F
+cp932 arabic 3: 3F 3F 3F
+cp932 kana 7: 82 A0 83 41 81 45 B1
+cp932 kanji 6: 93 FA 96 7B 8C EA
+cp932 hanzi 4: 92 86 95 B6
+cp932 hangul 2: 3F 3F
+cp932 trad 4: E9 93 E4 69
+cp932 thai 2: 3F 3F
+cp932 viet 2: 3F 3F
+cp932 nul 3: 41 0 42
+cp932 special 3: 3F F0 40
+cp936 ascii 3: 41 7A 30
+cp936 latin 7: A8 A6 A8 B9 3F 3F 80
+cp936 greek 6: A6 A1 3F 3F 3F 3F
+cp936 cyrillic 8: A7 A2 A7 D8 A7 F1 A7 D7
+cp936 turkish 4: 3F 3F 3F 3F
+cp936 hebrew 3: 3F 3F 3F
+cp936 arabic 3: 3F 3F 3F
+cp936 kana 6: A4 A2 A5 A2 3F 3F
+cp936 kanji 6: C8 D5 B1 BE D5 5A
+cp936 hanzi 4: D6 D0 CE C4
+cp936 hangul 2: 3F 3F
+cp936 trad 4: F3 77 C5 5F
+cp936 thai 2: 3F 3F
+cp936 viet 2: 3F 3F
+cp936 nul 3: 41 0 42
+cp936 special 3: 3F AA A1
+cp949 ascii 3: 41 7A 30
+cp949 latin 7: 65 75 6E A9 AC A2 E6
+cp949 greek 6: A5 C1 3F 3F 3F 3F
+cp949 cyrillic 8: AC A2 AC D8 AC F1 AC D7
+cp949 turkish 5: 3F 3F A9 A5 3F
+cp949 hebrew 3: 3F 3F 3F
+cp949 arabic 3: 3F 3F 3F
+cp949 kana 6: AA A2 AB A2 3F 3F
+cp949 kanji 6: EC ED DC E2 E5 DE
+cp949 hanzi 4: F1 E9 D9 FE
+cp949 hangul 4: C7 D1 B1 DB
+cp949 trad 4: F4 F7 D3 E6
+cp949 thai 2: 3F 3F
+cp949 viet 2: 3F 3F
+cp949 nul 3: 41 0 42
+cp949 special 3: 3F C9 A1
+cp950 ascii 3: 41 7A 30
+cp950 latin 6: 65 75 6E 73 A3 E1
+cp950 greek 6: A3 44 3F 3F 3F 3F
+cp950 cyrillic 4: 3F 3F 3F 3F
+cp950 turkish 4: 3F 3F 3F 3F
+cp950 hebrew 3: 3F 3F 3F
+cp950 arabic 3: 3F 3F 3F
+cp950 kana 4: 3F 3F 3F 3F
+cp950 kanji 6: A4 E9 A5 BB BB 79
+cp950 hanzi 4: A4 A4 A4 E5
+cp950 hangul 2: 3F 3F
+cp950 trad 4: C5 E9 BB 4F
+cp950 thai 2: 3F 3F
+cp950 viet 2: 3F 3F
+cp950 nul 3: 41 0 42
+cp950 special 3: 3F FA 40
+932 a 4: 3042 30A2 FF71 41
+932 lead alone 2: 41 30FB
+932 bad trail 2: 30FB 41
+932 user area 1: E000
+932 undefined 3: 30FB F8F0 F8F1
+936 a 3: 4E2D 6587 20AC
+949 a 3: D55C AE00 3131
+950 a 3: 4E2D 6587 FF11
+1253 all 6: 20AC 81 F8F9 F8FA F8FB 3B1
+1255 a 5: 5D0 5E9 5B0 5BA F88D
+874 a 4: E01 F8C1 F8C5 20AC
+1258 a 4: 102 309 303 301
+1251 a 4: 98 410 44F 2116
+system greek 3: C1 DC 3F
+lcid 0 2: C1 3F
+lcid 1 2: C1 3F
+lcid 99999 err 5 
+lcid 2048 2: C1 3F
+lcid 1024 2: C1 3F
+LenB 3  1 
+wide system err 5 
+wide 1041 18: FF21 FF41 FF11 3000 FF01 FF5E 3042 30A2 30AB 30AC 30A2 30AC 3002 30FB 30FC 3002 391 411
+wide 2052 19: FF21 FF41 FF11 3000 FF01 FF5E 3042 30A2 30AB 30AC FF1F FF1F FF1F 3002 FF1F 30FC FF1F 391 411
+wide 1042 19: FF21 FF41 FF11 3000 FF01 FF5E 3042 30A2 30AB 30AC FF1F FF1F FF1F 3002 FF1F FF1F FF1F 391 411
+wide 1028 19: FF21 FF41 FF11 3000 FF01 FF5E FF1F FF1F FF1F FF1F FF1F FF1F FF1F 3002 FF1F FF1F FF1F 391 FF1F
+wide 1033 err 5 
+narrow system err 5 
+narrow 1041 20: 41 61 31 20 21 7E 3042 FF71 FF76 FF76 FF9E FF71 FF76 FF9E FF61 FF65 FF70 FF61 391 411
+narrow 2052 20: 41 61 31 20 21 7E 3042 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 391 411
+narrow 1042 20: 41 61 31 20 21 7E 3042 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 391 411
+narrow 1028 19: 41 61 31 20 21 7E 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 391 3F
+narrow 1033 err 5 
+katakana system err 5 
+katakana 1041 19: 41 61 31 20 21 7E 30A2 30A2 30AB 30AC FF71 FF76 FF9E 3002 30FB 30FC FF61 391 411
+katakana 2052 err 5 
+katakana 1042 err 5 
+katakana 1028 err 5 
+katakana 1033 err 5 
+hiragana system err 5 
+hiragana 1041 19: 41 61 31 20 21 7E 3042 3042 304B 304C FF71 FF76 FF9E 3002 30FB 30FC FF61 391 411
+hiragana 2052 err 5 
+hiragana 1042 err 5 
+hiragana 1028 err 5 
+hiragana 1033 err 5 
+wide+kata system err 5 
+wide+kata 1041 18: FF21 FF41 FF11 3000 FF01 FF5E 30A2 30A2 30AB 30AC 30A2 30AC 3002 30FB 30FC 3002 391 411
+wide+kata 2052 err 5 
+wide+kata 1042 err 5 
+wide+kata 1028 err 5 
+wide+kata 1033 err 5 
+narrow+hira system err 5 
+narrow+hira 1041 19: 41 61 31 20 21 7E 3042 3042 304B 304C FF71 FF76 FF9E FF61 FF65 FF70 FF61 391 411
+narrow+hira 2052 err 5 
+narrow+hira 1042 err 5 
+narrow+hira 1028 err 5 
+narrow+hira 1033 err 5 
+wide+narrow system err 5 
+wide+narrow 1041 err 5 
+wide+narrow 2052 err 5 
+wide+narrow 1042 err 5 
+wide+narrow 1028 err 5 
+wide+narrow 1033 err 5 
+kata+hira system err 5 
+kata+hira 1041 err 5 
+kata+hira 2052 err 5 
+kata+hira 1042 err 5 
+kata+hira 1028 err 5 
+kata+hira 1033 err 5 
+upper+wide system err 5 
+upper+wide 1041 18: FF21 FF21 FF11 3000 FF01 FF5E 3042 30A2 30AB 30AC 30A2 30AC 3002 30FB 30FC 3002 391 411
+upper+wide 2052 19: FF21 FF21 FF11 3000 FF01 FF5E 3042 30A2 30AB 30AC FF1F FF1F FF1F 3002 FF1F 30FC FF1F 391 411
+upper+wide 1042 19: FF21 FF21 FF11 3000 FF01 FF5E 3042 30A2 30AB 30AC FF1F FF1F FF1F 3002 FF1F FF1F FF1F 391 411
+upper+wide 1028 19: FF21 FF21 FF11 3000 FF01 FF5E FF1F FF1F FF1F FF1F FF1F FF1F FF1F 3002 FF1F FF1F FF1F 391 FF1F
+upper+wide 1033 err 5 
+proper+narrow system err 5 
+proper+narrow 1041 20: 41 61 31 20 21 7E 3042 FF71 FF76 FF76 FF9E FF71 FF76 FF9E FF61 FF65 FF70 FF61 3B1 431
+proper+narrow 2052 20: 41 61 31 20 21 7E 3042 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3B1 431
+proper+narrow 1042 20: 41 61 31 20 21 7E 3042 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3B1 431
+proper+narrow 1028 19: 41 61 31 20 21 7E 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3B1 3F
+proper+narrow 1033 err 5 
+wide fromunicode err 5 
+narrow unicode err 5 
+UCase 24: 386 388 389 38A 38C 38E 38F 390 3B0 3C2 3A3 3A3 386 3AA DF 178 49 49 131 130 1EA 401 FB00 1C5
+LCase 24: 3AC 3AD 3AE 3AF 3CC 3CD 3CE 390 3B0 3C2 3C3 3C3 3AC 3CA DF FF 69 69 131 130 1EB 451 FB00 1C5
+upper system 24: 386 388 389 38A 38C 38E 38F 390 3B0 3C2 3A3 3A3 386 3AA 3F 59 49 49 3F 49 4F 3F 3F 3F
+lower system 24: 3AC 3AD 3AE 3AF 3CC 3CD 3CE 390 3B0 3C2 3C3 3C3 3AC 3CA 3F 79 69 69 3F 69 6F 3F 3F 3F
+upper 1055 24: 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F DF 178 49 49 131 130 4F 3F 3F 3F
+lower 1055 24: 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F DF FF 69 69 131 130 6F 3F 3F 3F
+upper 1033 24: 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 53 53 3F 3F DF 178 49 49 49 49 4F 3F 3F 3F
+proper system 25: 386 3BB 3C6 3B1 20 392 3AE 3C4 3B1 20 3A3 3AF 3B3 3BC 3B1 3C2 20 49 73 74 61 6E 62 75 6C
+proper 1055 25: 3F 3F 3F 3F 20 DF 3F 3F 3F 20 3F 3F 3F B5 3F 3F 20 49 73 74 61 6E 62 75 6C
+proper marks 15: 41 27 62 2D 63 2E 64 9 45 30 66 5F 67 B7 68
+cmp 0  1  0  1 False
+cmp 1 -1  1  0 True
+cmp 2 -1  0  1 True
+cmp 3 -1  0  0 True
+cmp 4  1  0  1 False
+cmp 5  1  0  0 False
+cmp 6  1  0  0 False
+cmp 7 -1  0  1 True
+cmp 8 -1 -1  0 True
+cmp 9  1  1  0 False
+cmp 10 -1 -1  0 True
+cmp 11 -1 -1  0 True
+cmp 12 -1 -1  0 True
+cmp 13  1  1  0 False
+cmp 14 -1  0  0 True
+cmp 15  1  0  0 False
+cmp 16 -1  0  0 True
+cmp 17 -1  0  0 True
+cmp 18  1 -1  0 False
+cmp 19 -1  1  2 True
+cmp 20  1  1  0 False
+cmp 21 -1  1  0 True
+cmp 22  1  1  0 False
+instr greek 2  1 
+replace greek 4: 78 78 3AC 386
+filter  1 
+Chr 20AC 2030 2019 203A A4 AD B6 38F 398 3A1 3AA 3B3 3BC 3C5 3CE
+Asc 193  128  63  63  162 
+AscB 145  66 
+Chr(&H82A0) 5  61 
+Chr(-1) 5 
+ChrB 1: E1
+Len of 932 bytes 2  3 
+Val 0  0 False
+UCase ansi 3: 391 386 3C2

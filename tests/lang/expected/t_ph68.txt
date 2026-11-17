@@ -1,0 +1,30 @@
+fact 120  61 
+q1 1  2  4 
+q2 1  3  1 
+q3-2147483643  255  16711680 
+q4True 2 y 2 
+q5 1  1  2 
+appApp|True| 1  0  0 |TrueTrue
+global set 13 
+global tn Nothing 0 
+global tn2 Unknown 0 
+global app App 0 
+global path True 0 
+each coll
+  in body 1  0 
+  in body 2  0 
+  after loop 2  0 
+ 2 
+each font
+  in body 1  438 
+  after loop 1  92 
+ 1 
+each nothing
+  in body 1  424 
+  after loop 1  92 
+ 1 
+erase v 0 TrueFalseVariant()
+input 1 two 3,5 IntegerStringCurrency
+iface 30 [x]Collection 2 CVarImpl:30:x
+iface log LetLevel3;LetPayload;SetPayload;SetOwner;GetLevel;
+plain 7 pIVarIface:7:p

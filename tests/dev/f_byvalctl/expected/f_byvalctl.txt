@@ -1,0 +1,8 @@
+== start
+text: 72 101 108 108 111
+caption: 87 111 114 108 100 33
+me.text: 72 101 108 0
+form1.caption: 87 111 0
+lstrlen:5 6
+variant: 49 0
+end

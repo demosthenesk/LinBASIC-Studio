@@ -1,0 +1,56 @@
+SLN 1800,00000000 83,33333333
+DDB 2400  300  10  1  2 =480,00000000
+SYD 30000  7500  10  1 =4090,90909091
+DDB 2400  300  10  2  2 =384,00000000
+SYD 30000  7500  10  2 =3681,81818182
+DDB 2400  300  10  3  2 =307,20000000
+SYD 30000  7500  10  3 =3272,72727273
+DDB 2400  300  10  4  2 =245,76000000
+SYD 30000  7500  10  4 =2863,63636364
+DDB 2400  300  10  5  2 =196,60800000
+SYD 30000  7500  10  5 =2454,54545455
+DDB 2400  300  10  6  2 =157,28640000
+SYD 30000  7500  10  6 =2045,45454545
+DDB 2400  300  10  2,5  1,5 =282,11806039
+DDB 1000  100  2  1  2 =900,00000000
+DDB 1000  100  2  2  2 =0,00000000
+DDB 1000  100  1  1  2 =900,00000000
+DDB 0  100  5  1  2 =0,00000000
+DDB 1000  100  5  6  2 error 5 
+DDB 1000 -1  5  1  2 error 5 
+DDB 1000  100  5  0  2 error 5 
+DDB 1000  100  5  1  0 error 5 
+DDB 1000  900  5  3  2 =0,00000000
+SYD 1000  100  5  0 error 5 
+SYD 1000 -5  5  1 error 5 
+SLN life 0 5 
+NPV 19312,57020954 36000,00000000 1588000,00000000
+IRR 0,17743588 0,17743588
+IRR 0,13073554 MIRR 0,12609413 0,12825616
+IRR all positive 5 
+MIRR no payment 11 
+NPV rate -1 5 
+IRR guess -1 5 
+IRR not dimensioned 5 
+Rate 0,00770147 0,05344617 0,03970030
+Rate 0,00416664
+Rate nper 0 5 
+Partition 267  0  500  50 [250:299]
+Partition 5  0  99  5 [  5:  9]
+Partition 99  0  99  5 [ 95: 99]
+Partition 100  0  99  5 [100:   ]
+Partition-3  0  99  5 [   : -1]
+Partition 7  1  9  1 [ 7: 7]
+Partition 0  1  9  1 [  : 0]
+Partition 12  10  1000  7 [  10:  16]
+Partition 3  5  5  1 error 5 
+Partition 3 -1  5  1 error 5 
+Partition 3  0  5  0 error 5 
+String
+FileAttr output 2 
+FileAttr append 8 
+FileAttr input 1 
+FileAttr binary 32 
+FileAttr random 4 
+FileAttr 3 5 
+FileAttr closed 52 

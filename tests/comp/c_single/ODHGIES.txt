@@ -1,0 +1,11 @@
+﻿Test components VB6 (LinBASIC Studio, Φάση 4.3) — c_single
+
+ActiveX EXE με αντικείμενα SingleUse, MultiUse και GlobalSingleUse. Στο VB6 η διαφορά τους φαίνεται
+μόνο όταν ο server είναι μεταγλωττισμένος (.exe): μέσα στο IDE όλα τρέχουν σε μία διεργασία.
+
+1. Άνοιξε το c_single\Server\SUServer.vbp με το VB6 (ως διαχειριστής).
+2. File > Make SUServer.exe... > OK (στον φάκελο Server). Το VB6 το καταχωρεί μόνο του.
+3. Κλείσε το VB6 χωρίς αποθήκευση.
+4. Άνοιξε το c_single\Client\SUClient.vbp και πάτα F5 (δεν έχει παράθυρα, τελειώνει μόνο του).
+5. Κλείσε το VB6 χωρίς αποθήκευση και πες μου «έτοιμο».
+   Το αποτέλεσμα γράφεται στο c_single\expected\c_single.txt.

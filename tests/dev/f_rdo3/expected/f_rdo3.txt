@@ -1,0 +1,3 @@
+ ! 40070 This property or method is not supported when using the currently selected cursor library.
+load text1=[] rs=Object
+activate text1=[Anna] rs=Object rows=0 connect=True

@@ -1,0 +1,4 @@
+cb h=360 rows=1 il=ImageList images=1 pic=Nothing emboss=False hi=80000014 sh=8000000F Text1(435,0,2505,300,True) Text2(3165,0,4515,300,True)
+b1 img=1 vis=True pic=Nothing emboss=False hi=80000014 sh=8000000F ucp=True fixedbg=True h=300 w=3000
+b2 img=0 vis=True pic=Picture picw=847 emboss=True hi=FFFF00 sh=8000FF ucp=False fixedbg=True h=300 w=2400
+b3 img=0 vis=False pic=Nothing emboss=False hi=80000014 sh=8000000F ucp=True fixedbg=True h=0 w=0

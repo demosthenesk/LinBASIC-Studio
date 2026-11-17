@@ -1,0 +1,110 @@
+rtb RichTextBox [] True 2
+chart 1 5 4 False
+anim Animation False False 0
+step 1
+text [Hello world] 11 changes 1 sel 0
+same text changes 2
+lines 19 0 1 2
+sel [line2] 7 5
+bold True changes 4
+bold first False
+bold mixed True [line1|line2]
+styles True True True
+color 255
+font Arial 12
+fontsize 0 err 0
+align 2
+align 5 err 380
+first 0 MS Sans Serif 8,25 0
+all True True True True
+indent 299,9055 150,2362 195,0236
+bullet True
+bullet first False
+offset 60
+protected True
+tabs 2 494,9292 1005,165
+find 0 0 3
+find2 12 -1 -1 -1
+find3 0 0
+find4 0 2 0
+span 4 3 [cat]
+upto 13 0
+span neg 13 2
+upto back 5 0
+span back 7 3
+rtf {\rtf True 10
+rtf [{\rtf1\ansi\deff0{\fonttbl{\f0\fnil\fcharset161 MS Sans Serif;}}|\viewkind4\uc1\pard\lang1032\f0\fs17 abc|\par }|]
+rtf text [one two three|four] 19
+rtf bold True Arial 10
+rtf plain [plain text]
+selrtf [xy] 2
+selrtf italic True
+selrtf get [{\rtf1\ansi\deff0{\fonttbl{\f0\fnil Arial;}}|\uc1\pard\lang1032\f0\fs20 x}|]
+save rtf err 0
+save txt err 0
+load rtf [saved text] 10
+load txt [saved text]
+load txt as rtf err 321
+after [before]
+load missing err 75
+multiline set err 383
+props True 2 False 0 True
+selstart -1 err 380
+chart point True R1 C1
+chartdata 3 2 1 1
+point 8 Feb Cost
+get 0 3 0 2 [10] 4 20 8 Double
+row 9 err 1117
+column 0 err 1117
+autoinc 2 1
+autoinc2 2 2
+title Title 3
+title2 T2
+legend True
+series 2 S1
+fill 255
+scale False 50
+series 9 err 1117
+grid 6 2 6 R6 Cost
+grid ins 8 Last [R1]
+grid del 6 1
+grid data 99
+typename IVcPlot IVcDataGrid IVcAxis
+charttype 99 err 380
+play closed err 35755
+open missing err 53
+open err 0
+play err 0
+play 9 err 0
+stop err 0
+stop autoplay err 35759
+anim False False 0
+backstyle 3 err 382
+close err 0
+close again err 0
+changes 34
+ch bold 1
+ch bold again 2
+ch italic caret 2
+ch size0 2 10
+ch align 3
+ch align5 3
+ch indent 4
+ch bullet 5 104,8819 0
+ch tabcount 6
+ch tabs 7
+ch protected 7
+ch color offset 9
+ch rtf [{\rtf1\ansi\deff0{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset2 Symbol;}}|{\colortbl ;\red255\green0\blue0;}|\viewkind4\uc1\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\li105\qc\tx300\lang1032\b\f0\fs20 a\b0 |\par \pard\cf1\up4 b\cf0\up0 |\par }|] 9
+ch seltext 10
+ch textrtf 11 [a|B]
+ch selrtf empty 11
+ch save 11
+ch load 12
+ch load missing 12
+ch empty 13
+ch empty again 13
+chart defaults 20 of 20 1 1 1
+center err 382
+center False
+step 2

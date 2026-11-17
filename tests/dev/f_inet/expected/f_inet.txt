@@ -1,0 +1,248 @@
+== new controls
+  TypeName Inet
+  Inet1: URL='' Protocol=1 RemoteHost='' RemotePort=80 Document='' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  Inet2: URL='' Protocol=1 RemoteHost='' RemotePort=80 Document='' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+== the URL and its parts
+  URL=http://<server>:47120/hello.txt: URL='http://<server>:47120/hello.txt' Protocol=4 RemoteHost='<server>' RemotePort=-18416 Document='/hello.txt' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  URL=ftp://vb:six@<server>:47121/sub/inner.txt: URL='ftp://vb:six@<server>:47121/sub/inner.txt' Protocol=2 RemoteHost='<server>' RemotePort=-18415 Document='/sub/inner.txt' UserName='vb' Password='six'
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  URL=https://www.example.com/a/b.htm?x=1#frag: URL='https://www.example.com/a/b.htm?x=1#frag' Protocol=5 RemoteHost='www.example.com' RemotePort=443 Document='/a/b.htm?x=1#frag' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  URL=www.example.com/page.htm: URL='https://www.example.com/page.htm' Protocol=5 RemoteHost='www.example.com' RemotePort=443 Document='/page.htm' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  URL=mailto:someone@example.com: URL='https://mailto:someone@example.com' Protocol=5 RemoteHost='example.com' RemotePort=443 Document='' UserName='mailto' Password='someone'
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  URL=gopher://gopher.example.com/: URL='gopher://gopher.example.com/' Protocol=3 RemoteHost='gopher.example.com' RemotePort=0 Document='/' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  URL=: URL='' Protocol=3 RemoteHost='' RemotePort=0 Document='' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  RemoteHost=h2: URL='http://h2/doc.htm' Protocol=4 RemoteHost='h2' RemotePort=80 Document='/doc.htm' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  RemotePort=8080: URL='http://h2:8080/doc.htm' Protocol=4 RemoteHost='h2' RemotePort=8080 Document='/doc.htm' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  Document=/other.htm: URL='http://h2:8080/other.htm' Protocol=4 RemoteHost='h2' RemotePort=8080 Document='/other.htm' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  Protocol=icFTP: URL='ftp://h2/other.htm' Protocol=2 RemoteHost='h2' RemotePort=21 Document='/other.htm' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  UserName, Password: URL='ftp://u:p@h2/other.htm' Protocol=2 RemoteHost='h2' RemotePort=21 Document='/other.htm' UserName='u' Password='p'
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  Protocol=icHTTPS: URL='https://u:p@h2/other.htm' Protocol=5 RemoteHost='h2' RemotePort=443 Document='/other.htm' UserName='u' Password='p'
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+  Protocol=9: ! 380 Invalid property value [Inet]
+  Protocol=-1: ! 380 Invalid property value [Inet]
+  RemotePort=-1: ok Empty
+  RequestTimeout=-1: ! 380 Invalid property value [Inet]
+  AccessType=3: ! 380 Invalid property value [Inet]
+  StillExecuting=: ! 450 Wrong number of arguments or invalid property assignment [InetTest]
+  ResponseCode=: ! 450 Wrong number of arguments or invalid property assignment [InetTest]
+  ResponseInfo=: ! 450 Wrong number of arguments or invalid property assignment [InetTest]
+  hInternet=: ! 450 Wrong number of arguments or invalid property assignment [InetTest]
+  GetChunk (no request): ok String(0) ''
+  GetHeader (no request): ! 35756 Unable to complete request [Inet]
+  Cancel (no request): ok Empty
+  cleared: URL='' Protocol=5 RemoteHost='' RemotePort=-1 Document='' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=0
+== OpenURL
+  OpenURL http://<server>:47120/hello.txt: String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+    events 3 4 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  after OpenURL: URL='http://<server>:47120/hello.txt' Protocol=4 RemoteHost='<server>' RemotePort=-18416 Document='/hello.txt' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=handle
+  OpenURL http://<server>:47120/bin: Byte()(0 To 255) sum 64531 first 0 last 255
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/bin: ! 13 Type mismatch
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/big: Byte()(0 To 99999) sum 655 first 0 last 93
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/empty: String(0) ''
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/greek: String(10) '<922><945><955><951><956><941><961><945><13><10>'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/echo: String(211) 'GET /echo HTTP/1.1<13><10>Accept: image/gif,image/x-xbitmap,image/jpeg,image/pjpeg,*/*<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Connection: Keep-Alive<13><10>Cache-Control: no-cache<13><10><body 0> <13><10>'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/missing: String(8) 'not here'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/error: String(6) 'broken'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/redirect: String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47129/refused: String(0) ''
+    events 3 11 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://no-such-host.invalid/: String(0) ''
+    events 11 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL xyz://<server>/: String(0) ''
+    events 11 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL : String(22) 'Hello, Inet!<13><10>line 2<13><10>'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL (no URL): ! 35752 URL is malformed [Inet]
+  OpenURL (bad DataType): ! 5 Invalid procedure call or argument [InetTest]
+== Execute
+  Execute http://<server>:47120/hello.txt GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(142) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 22<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(2) '22'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 3 chunks: String(22) 'Hello, Inet!<13><10>line 2<13><10>', then String(0) '' | Size after: 10 10 2 | last 0
+  after Execute: URL='http://<server>:47120/hello.txt' Protocol=4 RemoteHost='<server>' RemotePort=-18416 Document='/hello.txt' UserName='' Password=''
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=handle
+  Execute http://<server>:47120/hello.txt : at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(142) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 22<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(2) '22'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(4): 6 chunks: String(22) 'Hello, Inet!<13><10>line 2<13><10>', then String(0) '' | Size after: 4 4 4 | last 0
+  Execute http://<server>:47120/hello.txt HEAD: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(142) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 22<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(2) '22'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 0 chunks: String(0) '', then String(0) '' | Size after: 0 | last 0
+  Execute http://<server>:47120/bin GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(157) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: application/octet-stream<13><10>Content-Length: 256<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '256'
+    content-type: String(24) 'application/octet-stream'
+    X-Missing: String(0) ''
+    GetChunk(100, icByteArray): 3 chunks, 256 bytes, sum 64531, then Byte()(0 To -1) sum 0 | Size after: 100 100 56 | last 0
+  Execute http://<server>:47120/big GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(160) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: application/octet-stream<13><10>Content-Length: 100000<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(6) '100000'
+    content-type: String(24) 'application/octet-stream'
+    X-Missing: String(0) ''
+    GetChunk(4096, icByteArray): 25 chunks, 100000 bytes, sum 655, then Byte()(0 To -1) sum 0 | Size after: 4096 4096 4096 | last 0
+  Execute http://<server>:47120/echo POST: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(143) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 275<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '275'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(1000): 1 chunks: String(275) 'POST /echo HTTP/1.1<13><10>Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*<13><10>Content-Type: application/x-www-form-urlencoded<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Content-Length: 13<13><10>Cache-Control: no-cache<13><10><body 13> name=vb&ver=6<13><10>', then String(0) '' | Size after: 275 0 | last 0
+  Execute http://<server>:47120/echo POST: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(143) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 234<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '234'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(1000): 1 chunks: String(234) 'POST /echo HTTP/1.1<13><10>Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*<13><10>X-One: 1<13><10>X-Two: 2<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Content-Length: 3<13><10>Cache-Control: no-cache<13><10><body 3> a=1<13><10>', then String(0) '' | Size after: 234 0 | last 0
+  Execute http://<server>:47120/echo POST: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(143) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 211<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '211'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(1000): 1 chunks: String(211) 'POST /echo HTTP/1.1<13><10>Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Content-Length: 0<13><10>Cache-Control: no-cache<13><10><body 0> <13><10>', then String(0) '' | Size after: 211 0 | last 0
+  Execute http://<server>:47120/echo PUT: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(143) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 218<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '218'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(1000): 1 chunks: String(218) 'PUT /echo HTTP/1.1<13><10>Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Content-Length: 8<13><10>Cache-Control: no-cache<13><10><body 8> put data<13><10>', then String(0) '' | Size after: 218 0 | last 0
+  Execute http://<server>:47120/echo GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(143) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 204<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '204'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(1000): 1 chunks: String(204) 'GET /echo HTTP/1.1<13><10>Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*<13><10>X-Mine: yes<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Cache-Control: no-cache<13><10><body 0> <13><10>', then String(0) '' | Size after: 204 0 | last 0
+  Execute http://<server>:47120/missing GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(148) 'HTTP/1.1 404 Not Found<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 8<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(1) '8'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 1 chunks: String(8) 'not here', then String(0) '' | Size after: 8 0 | last 0
+  Execute http://<server>:47120/error GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(160) 'HTTP/1.1 500 Internal Server Error<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 6<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(1) '6'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 1 chunks: String(6) 'broken', then String(0) '' | Size after: 6 0 | last 0
+  Execute http://<server>:47120/redirect GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(142) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 22<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(2) '22'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 3 chunks: String(22) 'Hello, Inet!<13><10>line 2<13><10>', then String(0) '' | Size after: 10 10 2 | last 0
+  Execute http://<server>:47129/refused GET: at return StillExecuting True
+    events 3 11 | ResponseCode 12029 ResponseInfo String(14) 'Cannot connect'
+    GetHeader(): String(2) '<13><10>'
+    Content-Length: String(0) ''
+    content-type: String(0) ''
+    X-Missing: String(0) ''
+    GetChunk(10): 0 chunks: String(0) '', then String(0) '' | Size after: 0 | last 0
+  Execute http://no-such-host.invalid/ GET: at return StillExecuting True
+    events 11 | ResponseCode 12007 ResponseInfo String(17) 'Name not resolved'
+    GetHeader(): String(2) '<13><10>'
+    Content-Length: String(0) ''
+    content-type: String(0) ''
+    X-Missing: String(0) ''
+    GetChunk(10): 0 chunks: String(0) '', then String(0) '' | Size after: 0 | last 0
+  Execute  GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(141) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 0<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(1) '0'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 0 chunks: String(0) '', then String(0) '' | Size after: 0 | last 0
+== a slow request: Execute again, Cancel
+  Execute /slow: ! 0 | StillExecuting True
+  Execute again: ! 35764 Still executing last request
+  OpenURL meanwhile: ! 35764 Still executing last request | Empty
+  Cancel: ! 0 | StillExecuting False
+    events 5 6 7 9 10 | ResponseCode 0 ResponseInfo String(0) ''
+  Execute http://<server>:47120/hello.txt GET: at return StillExecuting True
+    events 3 4 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(142) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 22<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(2) '22'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 3 chunks: String(22) 'Hello, Inet!<13><10>line 2<13><10>', then String(0) '' | Size after: 10 10 2 | last 0
+== authentication
+  OpenURL http://<server>:47120/auth: String(12) 'who are you?'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  Execute http://<server>:47120/auth GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(190) 'HTTP/1.1 401 Unauthorized<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 12<13><10>X-Test: one<13><10>WWW-Authenticate: Basic realm="test"<13><10><13><10>'
+    Content-Length: String(2) '12'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 2 chunks: String(12) 'who are you?', then String(0) '' | Size after: 10 2 0 | last 0
+  UserName, Password: URL='http://vb:six@<server>:47120/auth' Protocol=4 RemoteHost='<server>' RemotePort=-18416 Document='/auth' UserName='vb' Password='six'
+    AccessType=0 Proxy='' RequestTimeout=60 ResponseCode=0 ResponseInfo=String(0) '' StillExecuting=False hInternet=handle
+  OpenURL http://<server>:47120/auth: String(12) 'who are you?'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  Execute http://<server>:47120/auth GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(190) 'HTTP/1.1 401 Unauthorized<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 12<13><10>X-Test: one<13><10>WWW-Authenticate: Basic realm="test"<13><10><13><10>'
+    Content-Length: String(2) '12'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 2 chunks: String(12) 'who are you?', then String(0) '' | Size after: 10 2 0 | last 0
+  OpenURL http://vb:six@<server>:47120/auth: String(7) 'welcome'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  OpenURL http://<server>:47120/auth: String(7) 'welcome'
+    events 5 6 7 8 | ResponseCode 0 ResponseInfo String(0) '' StillExecuting False
+  Execute http://<server>:47120/echo GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(143) 'HTTP/1.1 200 OK<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 222<13><10>X-Test: one<13><10><13><10>'
+    Content-Length: String(3) '222'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(1000): 1 chunks: String(222) 'GET /echo HTTP/1.1<13><10>Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*<13><10>User-Agent: Microsoft URL Control - 6.01.9839<13><10>Host: <server>:47120<13><10>Cache-Control: no-cache<13><10>Authorization: Basic dmI6c2l4<13><10><body 0> <13><10>', then String(0) '' | Size after: 222 0 | last 0
+  Execute  GET: at return StillExecuting True
+    events 5 6 7 8 12 | ResponseCode 0 ResponseInfo String(0) ''
+    GetHeader(): String(190) 'HTTP/1.1 401 Unauthorized<13><10>Server: LinBASIC-Test/1.0<13><10>Date: Mon, 01 Jan 2024 00:00:00 GMT<13><10>Content-Type: text/plain<13><10>Content-Length: 12<13><10>X-Test: one<13><10>WWW-Authenticate: Basic realm="test"<13><10><13><10>'
+    Content-Length: String(2) '12'
+    content-type: String(10) 'text/plain'
+    X-Missing: String(0) ''
+    GetChunk(10): 2 chunks: String(12) 'who are you?', then String(0) '' | Size after: 10 2 0 | last 0
+end

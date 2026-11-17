@@ -1,0 +1,115 @@
+== command
+Command type=8 text=[] params=0 timeout=30 prepared=False active=Nothing
+  ! execute without connection: 3709 The connection cannot be used to perform this operation. It is either closed or invalid in this context. [ADODB.Command]
+Parameter minage type=3 dir=1 size=0 value=L30
+params 1 minage L30
+type=8 rs cursortype=0 locktype=1
+-- age > 30
+  S'Anna' I31
+  S'Dino' I37
+  S'Cleo' I42
+  rows 3
+-- age > 20
+  S'Bill' I25
+  S'Anna' I31
+  S'Dino' I37
+  S'Cleo' I42
+  rows 4
+-- age > 36 (array)
+  S'Dino' I37
+  S'Cleo' I42
+  rows 2
+affected 1
+affected 1
+-- rates
+  L3 Do2.5
+  L4 Do35
+  rows 2
+stored params 0
+  ! stored: -2147217904 Too few parameters. Expected 1. [Microsoft JET Database Engine]
+-- older than 30
+  L3 Do2.5
+  L4 Do35
+  rows 2
+-- named parameter > 40
+  S'Cleo'
+  rows 1
+  ! open command without values: 0  []
+  ! query without parameter: -2147217900 Invalid SQL statement; expected 'DELETE', 'INSERT', 'PROCEDURE', 'SELECT', or 'UPDATE'. [Microsoft JET Database Engine]
+== recordset events
+  willmove reason=10 status=3
+  willmove reason=10 status=1
+  movecomplete reason=10 status=1 eof=False bof=False
+  movecomplete reason=10 status=1 eof=False bof=False
+opened
+  willmove reason=13 status=1
+  movecomplete reason=13 status=1 eof=False bof=False
+next
+  willmove reason=15 status=1
+  movecomplete reason=15 status=1 eof=False bof=False
+last
+  willchangerecord reason=11 n=1 status=1
+  willchangefield n=1 status=1
+  fieldchangecomplete n=1 status=1
+  recordchangecomplete reason=11 n=1 status=1
+assigned
+  willchangerecord reason=3 n=1 status=1
+  recordchangecomplete reason=3 n=1 status=1
+updated
+  willmove reason=10 status=1
+  willchangerecord reason=1 n=1 status=1
+  recordchangecomplete reason=1 n=1 status=1
+  movecomplete reason=10 status=1 eof=False bof=False
+added
+  willchangefield n=1 status=1
+  fieldchangecomplete n=1 status=1
+  willchangerecord reason=3 n=1 status=1
+  recordchangecomplete reason=3 n=1 status=1
+updated new
+  recordchangecomplete reason=2 n=1 status=1
+  recordchangecomplete reason=2 n=1 status=1
+deleted
+  willmove reason=12 status=1
+  movecomplete reason=12 status=1 eof=False bof=False
+  willmove reason=14 status=1
+  endofrecordset more=False status=1
+  movecomplete reason=14 status=1 eof=False bof=True
+before first
+  willmove reason=7 status=1
+  movecomplete reason=7 status=1 eof=False bof=True
+  recordsetchangecomplete reason=9 status=1
+  willmove reason=10 status=3
+  willmove reason=10 status=1
+  movecomplete reason=10 status=1 eof=False bof=False
+  movecomplete reason=10 status=1 eof=False bof=False
+requeried
+  recordsetchangecomplete reason=9 status=1
+closed
+== fabricated
+fields 3 state=0
+state=1 cursortype=3 locktype=4 cursorloc=3 count=0
+count=3 L30
+sorted first L30 S'row3' Null
+filtered 2
+  ! too long fabricated: -2147217887 Multiple-step operation generated errors. Check each status value. [Microsoft Cursor Engine]
+== conversions
+  A2 type=3 L62
+  S type=202 S'31'
+  B1 type=7 D1993-04-06 00:00:00
+  C2 type=6 C2469
+  R3 type=5 Do8.33333333333333E-02
+  Active type=11 BT
+  YN type=202 S'y'
+  L type=3 L4
+  U type=202 S'ANNA'
+static count=5 cursortype=3
+pages 3 pagesize 2
+page 2 @3 Cleo abspage=2
+maxrecords count=5
+dynamic asked: cursortype=1 locktype=2 count=-1
+  ! open missing: -2147217865 The Microsoft Jet database engine cannot find the input table or query 'Nope'.  Make sure it exists and that its name is spelled correctly. [Microsoft JET Database Engine]
+state=0
+  ! open without connection: 0  []
+  ! open with string: 3705 Operation is not allowed when the object is open. [ADODB.Recordset]
+string connection count=-1 active=Connection
+end

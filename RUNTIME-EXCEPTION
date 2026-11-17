@@ -1,0 +1,67 @@
+LinBASIC Studio Runtime Library Exception, version 1.0
+Copyright (C) 2026 Demosthenes Koptsis
+
+This exception is an additional permission under section 7 of the GNU General
+Public License, version 3 or (at your option) any later version ("GPLv3"). It
+applies to every file of LinBASIC Studio that bears a notice saying that it is
+covered by this exception.
+
+SPDX: GPL-3.0-or-later WITH LicenseRef-LinBASIC-Studio-Runtime-Exception
+
+
+0. Definitions
+
+"Runtime Library" means the runtime of the programs made with LinBASIC Studio:
+libvbrt, libvbforms and libvbdb, that is the files in the folder runtime/ of
+LinBASIC Studio that bear this notice, with their header files (such as vbrt.h)
+and the files made from them (generated .inc files, object files, static and
+shared libraries: .a, .so, .dll, .def). Software of other authors that is in
+that folder (SQLite, libmdb of MDB Tools, the Tiny C Compiler and its headers,
+Qt) is not part of the Runtime Library and keeps its own license.
+
+"Compiler Output" means the C source, object files and executables that the
+LinBASIC Studio compiler (lbvc), or the IDE through it, produces from a
+program's source, including the code that lbvc writes into that output.
+
+"Program" means a work of a user (VB6-style projects, forms, modules, classes,
+user controls, resources and any other code or data of the user) that is
+compiled with LinBASIC Studio and combined with the Runtime Library, and
+"Independent Modules" means the parts of a Program that are not derived from
+the Runtime Library.
+
+
+1. Grant of additional permission
+
+You may combine the Runtime Library with Independent Modules, by static or
+dynamic linking, by including its header files, or through the Compiler
+Output, and convey the resulting Program in object code or executable form
+under terms of your choice, even if the Program would otherwise be a work
+based on the Runtime Library under the GPLv3. You do not have to release the
+source of your Independent Modules or license them under the GPLv3, provided
+that the terms you choose are consistent with the licenses of the other
+software the Program contains (for example the LGPL of Qt and of libmdb, see
+licenses/README.md).
+
+The Compiler Output is not covered by the GPLv3 because it was produced by
+LinBASIC Studio; it belongs to the author of the program's source.
+
+
+2. Modified versions of the Runtime Library
+
+The Runtime Library itself remains under the GPLv3. If you convey a Program
+that contains a modified version of the Runtime Library, the permission of
+section 1 still applies to your Independent Modules, but you must make the
+complete corresponding source of the modified Runtime Library available under
+the GPLv3, as section 6 of the GPLv3 requires for any object code.
+
+If you modify the Runtime Library, you may extend this exception to your
+version of it, but you are not obliged to do so. If you do not wish to do so,
+delete the exception notice from the files of your version.
+
+
+3. The rest of LinBASIC Studio
+
+This exception covers only the Runtime Library. The IDE, the compiler and the
+other parts of LinBASIC Studio are under the GPLv3 without this exception.
+Using them to write and compile a program does not, by itself, place the
+program under the GPLv3.

@@ -1,0 +1,18 @@
+Δοκιμή του αρχείου .frx (LinBASIC Studio, Φάση 3, βήμα 4)
+
+Η Form1 φτιάχτηκε στο LinBASIC Studio: εικόνες (Icon, Picture, MouseIcon, DragIcon σε bmp,
+ico, gif, jpg), λίστες List/ItemData, κείμενα με αλλαγή γραμμής και μεγάλα κείμενα.
+Η Form2 έχει τρία controls χωρίς τιμές: τις βάζεις εσύ στο VB6 (τις ίδιες έβαλα κι εγώ).
+
+1. ’νοιξε το Frx.vbp στο VB6. Δεν πρέπει να βγει μήνυμα λάθους ούτε αρχείο .log.
+   ’νοιξε τη Form1: πρέπει να φαίνονται οι εικόνες, οι λίστες και τα κείμενα.
+
+2. ’νοιξε τη Form2 και στο παράθυρο Properties:
+   - Picture1, Picture: πάτα ... και διάλεξε το test.bmp του φακέλου.
+   - List1, List: γράψε  One  (Ctrl+Enter)  Two  (Ctrl+Enter)  Three  και Enter.
+   - List1, ItemData: γράψε  5  (Ctrl+Enter)  -7  (Ctrl+Enter)  300  και Enter.
+   - Text1, Text: άνοιξε το βελάκι, γράψε  A  (Ctrl+Enter)  B  και Enter.
+
+3. File > Save Form2.frm
+4. Επίλεξε τη Form1 και File > Save Form1.frm As... με το ίδιο όνομα, Yes.
+5. Κλείσε το VB6 (No αν ρωτήσει για το Frx.vbp).

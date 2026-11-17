@@ -1,0 +1,62 @@
+== client
+update criteria=2
+c1 at @2 Bob
+c1 edit=1
+c1 edit=0 born=D2003-01-02 00:00:00 salary=Do5.25
+c2 edit=0 salary=Do11.5
+c3 @3 Cat edit=0 born=D2004-05-06 00:00:00
+c4 @4 Dan edit=0
+  ! c5 the same column changed on the server: -2147217864 Row cannot be located for updating. Some values may have been changed since it was last read. [Microsoft Cursor Engine]
+c5 @5 Eli edit=1
+c8 edit=0 id=Null born=Null count=6 pos=6
+-- server after client
+  L1 S'Ann' I33 D2000-01-01 00:00:00 Do11.5 S'long'
+  L2 S'Bob' I40 D2003-01-02 00:00:00 Do5.25 Null
+  L3 S'Cat' I50 D2004-05-06 00:00:00 Do20 S'n3'
+  L4 S'Dan' I61 D2002-03-04 00:00:00 Do30 S'srv'
+  L5 S'Eli' I71 Null Do40 S'n5'
+  L6 S'Fay' I80 Null Null Null
+  rows 6
+== keyset
+k1 edit=0 age=I31
+k2 edit=0 age=I32
+k3 at Bob
+  ! k3 delete a row with nulls: -2147467259 Query-based delete failed because the row to delete could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+k4 at Bob
+  ! k4 delete a row without nulls: -2147467259 Query-based delete failed because the row to delete could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+k5 at Bob
+  ! k5 delete a row with a null long text only: -2147467259 Query-based delete failed because the row to delete could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+  ! k6 addnew: -2147467259 Query-based delete failed because the row to delete could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+k6 edit=4 id=L2 count=6 pos=-1 eof=False
+  ! k7 update the new row: -2147467259 Query-based delete failed because the row to delete could not be found. [Microsoft OLE DB Provider for ODBC Drivers]
+k8 last Fay count=6
+k9 count=6
+-- server after keyset
+  L1 S'Ann' I32 D2000-01-01 00:00:00 Do11.5 S'long'
+  L2 S'Bob' I40 D2003-01-02 00:00:00 Do5.25 Null
+  L3 S'Cat' I50 D2004-05-06 00:00:00 Do20 S'n3'
+  L4 S'Dan' I61 D2002-03-04 00:00:00 Do30 S'srv'
+  L5 S'Eli' I71 Null Do40 S'n5'
+  L6 S'Fay' I80 Null Null Null
+  rows 6
+== other cursors
+fwd cursortype=0 locktype=3 count=-1 addnew=True
+dyn cursortype=3 locktype=3 count=-1
+pess cursortype=3 locktype=2 count=6
+ro cursortype=3 locktype=1 count=6
+  ! ro assign: 3251 Current Recordset does not support updating. This may be a limitation of the provider, or of the selected locktype. [ADODB.Recordset]
+  ! bare name: -2147217887 ODBC driver does not support the requested properties. [Microsoft OLE DB Provider for ODBC Drivers]
+bare state=0 source=T
+  ! join: 3704 Operation is not allowed when the object is closed. [ADODB.Recordset]
+join fields=Name,Name attr=100
+cn client execute cursortype=3 locktype=1 count=6
+expr attr=100,116
+-- server at end
+  L1 S'Zed' I32 D2000-01-01 00:00:00 Do11.5 S'fwd'
+  L2 S'Bob' I40 D2003-01-02 00:00:00 Do5.25 Null
+  L3 S'Cat' I50 D2004-05-06 00:00:00 Do20 S'n3'
+  L4 S'Dan' I61 D2002-03-04 00:00:00 Do30 S'srv'
+  L5 S'Eli' I71 Null Do40 S'n5'
+  L6 S'Fay' I80 Null Null Null
+  rows 6
+end

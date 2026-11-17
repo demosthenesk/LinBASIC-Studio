@@ -1,0 +1,16 @@
+multi n=1 objects=2 mains=1 total=5
+multi n=2 objects=2 mains=1 total=5
+single n=3 objects=3 mains=1 total=12
+single n=1 objects=1 mains=1 total=0
+single n=3 objects=3 mains=1 total=12
+single n=1 objects=1 mains=1 total=100
+multi n=1 objects=3 mains=1 total=12
+multi n=4 objects=4 mains=1 total=13
+single n=3 objects=4 mains=1 total=13
+multi n=2 objects=4 mains=1 total=13
+glob objects=5 mains=1 total=13
+glob objects=6 mains=1 total=13
+CSingle CMulti CGlob
+single n=1 objects=1 mains=1 total=0
+multi n=1 objects=6 mains=1 total=13
+end

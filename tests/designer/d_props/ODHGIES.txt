@@ -1,0 +1,25 @@
+Δοκιμή του παραθύρου Properties και του Menu Editor (LinBASIC Studio, Φάση 3, βήμα 3)
+
+Η Form1 φτιάχτηκε στο LinBASIC Studio: ιδιότητες κάθε είδους (λίστες τιμών, True/False,
+χρώματα, γραμματοσειρές, κείμενα) και μενού από τον Menu Editor.
+Η Form2 είναι άδεια: σε αυτήν κάνεις τα ίδια βήματα που έκανα κι εγώ στο LinBASIC Studio.
+
+1. ’νοιξε το Props.vbp στο VB6. Δεν πρέπει να βγει μήνυμα λάθους ούτε να γραφτεί αρχείο .log.
+   Δες τη Form1 (διπλό κλικ στο Project Explorer) αν φαίνεται σωστά.
+
+2. Διπλό κλικ στη Form2. Στο παράθυρο Properties:
+   BorderStyle = 3 - Fixed Dialog
+
+3. Tools > Menu Editor (Ctrl+E):
+   Caption: &File      Name: mnuFile      πάτα Next
+   πάτα το βελάκι δεξιά (->)
+   Caption: E&xit      Name: mnuExit      Shortcut: Ctrl+Q
+   OK
+
+4. Στο παράθυρο Properties της Form2:
+   Width  = 6000   (Enter)
+   Height = 4500   (Enter)
+
+5. File > Save Form2.frm
+6. Επίλεξε τη Form1 στο Project Explorer και File > Save Form1.frm As... με το ίδιο όνομα, Yes.
+7. Κλείσε το VB6 (No αν ρωτήσει για το Props.vbp).

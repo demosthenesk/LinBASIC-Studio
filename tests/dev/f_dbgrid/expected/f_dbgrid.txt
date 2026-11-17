@@ -1,0 +1,89 @@
+db made
+== the grid
+  TypeName DBGrid Caption=String '' AllowAddNew=False AllowDelete=False AllowUpdate=True ColumnHeaders=True RecordSelectors=True HeadLines=1 DataMode=0 MarqueeStyle=6
+  ScrollBars=4 Enabled=True ApproxCount=4 LeftCol=0 FirstRow=String VisibleRows>=4=True VisibleCols>0=True DataChanged=False EditActive=False AddNewMode=0
+  Splits.Count=1 SelBookmarks.Count=0 default=obj DBGrid
+  rec=Anna pos=0 | grid Row=0 Col=0 Text=String '1'!13
+  Columns.Count=4
+    col 0: Column Caption=String 'ID' DataField=String 'ID' ColIndex=0 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+    col 1: Column Caption=String 'Name' DataField=String 'Name' ColIndex=1 Visible=True Locked=False Alignment=0 Value=String 'Anna' Text=String 'Anna'
+    col 2: Column Caption=String 'Age' DataField=String 'Age' ColIndex=2 Visible=True Locked=False Alignment=1 Value=String '31' Text=String '31'
+    col 3: Column Caption=String 'GroupID' DataField=String 'GroupID' ColIndex=3 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+  Columns("Name").Value=String 'Anna'
+  Columns(9): ! 9 Subscript out of range
+  Columns("Nope"): ! 6147 Column not found, Nope
+== moving
+  MoveNext -> rec=Bill pos=1 | grid Row=1 Col=0 Text=String '2'!13 ev[Val(3,0) LClick CChange Rep RCC(bm,0)]
+  MoveNext -> rec=Cleo pos=2 | grid Row=2 Col=0 Text=String '3'!13 ev[Val(3,0) LClick CChange Rep RCC(bm,0)]
+  Row=0 -> rec=Anna pos=0 | grid Row=0 Col=0 Text=String '1'!13 ev[Val(9,0) LClick CChange Rep RCC(bm,0)]
+  Row=2 -> rec=Cleo pos=2 | grid Row=2 Col=0 Text=String '3'!13 ev[Val(9,0) LClick CChange Rep RCC(bm,0)]
+  Row=9 ! 6148 Invalid row number -> rec=Cleo pos=2 | grid Row=2 Col=0 Text=String '3'!13
+  Col=2 -> rec=Cleo pos=2 | grid Row=2 Col=2 Text=String '42'!13 ev[RCC(bm,0)]
+  Col=7 ! 6145 Invalid column index -> rec=Cleo pos=2 | grid Row=2 Col=2 Text=String '42'!13
+  MoveLast -> rec=Dora pos=3 | grid Row=3 Col=2 Text=String '19'!13 ev[Val(4,0) LClick CChange Rep RCC(bm,2)]
+  MoveFirst -> rec=Anna pos=0 | grid Row=0 Col=2 Text=String '31'!13 ev[Val(1,0) LClick CChange Rep RCC(bm,2)]
+  Bookmark = last -> rec=Dora pos=3 | grid Row=3 Col=2 Text=String '19'!13 ev[Val(9,0) LClick CChange Rep RCC(bm,2)]
+  CellText(last)=String 'Dora' CellValue(last)=String '19'
+  GetBookmark(1)=2nd: ! 13 Type mismatch
+  rec=Anna pos=0 | grid Row=0 Col=2 Text=String '31'!13
+== changes in the recordset
+  Edit Anne: Columns(1).Text=String 'Anne' rec=Anne pos=0 | grid Row=0 Col=2 Text=String '31'!13 ev[Val(6,0) Rep]
+  Refresh -> rec=Anne pos=0 | grid Row=0 Col=2 Text=String '31'!13
+  AddNew Emil: ApproxCount=5 rec=Anne pos=0 | grid Row=0 Col=2 Text=String '31'!13 ev[Val(5,0) LClick CChange Rep BU Val(6,0) LClick CChange RCC(bm,2) AU Rep]
+  Refresh -> rec=Anne pos=0 | grid Row=0 Col=2 Text=String '31'!13
+  ApproxCount=5
+  Data1.Refresh -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String '1'!13 ev[Val(10,0) Rep RCC(bm,2)]
+  ApproxCount=5
+  Text=X -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String 'X'!13
+  Text after: String 'X' rec=Anne EditActive=False DataChanged=True
+== the columns
+  Caption Number, col 2 hidden: VisibleCols>0=True col1 Width=1995,024
+  Columns.Count=4
+    col 0: Column Caption=String 'Number' DataField=String 'ID' ColIndex=0 Visible=True Locked=False Alignment=1 Value=String 'X' Text=String 'X'
+    col 1: Column Caption=String 'Name' DataField=String 'Name' ColIndex=1 Visible=True Locked=False Alignment=0 Value=String 'Anne' Text=String 'Anne'
+    col 2: Column Caption=String 'Age' DataField=String 'Age' ColIndex=2 Visible=False Locked=False Alignment=1 Value=String '31' Text=String '31'
+    col 3: Column Caption=String 'GroupID' DataField=String 'GroupID' ColIndex=3 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+  ReBind -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String '1'!13 ev[RCC(bm,0)]
+  Columns.Count=4
+    col 0: Column Caption=String 'ID' DataField=String 'ID' ColIndex=0 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+    col 1: Column Caption=String 'Name' DataField=String 'Name' ColIndex=1 Visible=True Locked=False Alignment=0 Value=String 'Anne' Text=String 'Anne'
+    col 2: Column Caption=String 'Age' DataField=String 'Age' ColIndex=2 Visible=True Locked=False Alignment=1 Value=String '31' Text=String '31'
+    col 3: Column Caption=String 'GroupID' DataField=String 'GroupID' ColIndex=3 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+  HoldFields -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String '1'!13
+  ReBind -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String '1'!13 ev[RCC(bm,0)]
+  Columns.Count=4
+    col 0: Column Caption=String 'ID' DataField=String 'ID' ColIndex=0 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+    col 1: Column Caption=String 'Name' DataField=String 'Name' ColIndex=1 Visible=True Locked=False Alignment=0 Value=String 'Anne' Text=String 'Anne'
+    col 2: Column Caption=String 'Age' DataField=String 'Age' ColIndex=2 Visible=True Locked=False Alignment=1 Value=String '31' Text=String '31'
+    col 3: Column Caption=String 'GroupID' DataField=String 'GroupID' ColIndex=3 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+  ClearFields -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String '1'!13
+  Columns.Count=4
+    col 0: Column Caption=String 'ID' DataField=String 'ID' ColIndex=0 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+    col 1: Column Caption=String 'Name' DataField=String 'Name' ColIndex=1 Visible=True Locked=False Alignment=0 Value=String 'Anne' Text=String 'Anne'
+    col 2: Column Caption=String 'Age' DataField=String 'Age' ColIndex=2 Visible=True Locked=False Alignment=1 Value=String '31' Text=String '31'
+    col 3: Column Caption=String 'GroupID' DataField=String 'GroupID' ColIndex=3 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+  ReBind -> rec=Anne pos=0 | grid Row=0 Col=0 Text=String '1'!13 ev[RCC(bm,0)]
+  Columns.Count=4
+    col 0: Column Caption=String 'ID' DataField=String 'ID' ColIndex=0 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+    col 1: Column Caption=String 'Name' DataField=String 'Name' ColIndex=1 Visible=True Locked=False Alignment=0 Value=String 'Anne' Text=String 'Anne'
+    col 2: Column Caption=String 'Age' DataField=String 'Age' ColIndex=2 Visible=True Locked=False Alignment=1 Value=String '31' Text=String '31'
+    col 3: Column Caption=String 'GroupID' DataField=String 'GroupID' ColIndex=3 Visible=True Locked=False Alignment=1 Value=String '1' Text=String '1'
+  Caption=String 'People'
+  Columns.Add(1): Column count=5 DataField=String ''
+  Columns.Remove 1: count=4
+== DBList, DBCombo
+  ListField=String 'GName' BoundColumn=String 'GID' DataField=String 'GroupID' Style=0 MatchEntry=0 Locked=False TypeName DBList DBCombo
+  VisibleCount>0=True VisibleItems(0)=Byte() default=obj DBList
+  first: list Text=String 'Alpha' Bound=String '1' Matched=True Sel=Byte() Changed=False | combo Text=String 'Alpha' Bound=String '1' Matched=True Sel=Byte() Changed=False
+  MoveNext: list Text=String 'Beta' Bound=String '2' Matched=True Sel=Byte() Changed=False | combo Text=String 'Beta' Bound=String '2' Matched=True Sel=Byte() Changed=False ev[Val(3,0) LClick CChange Rep RCC(bm,0)]
+  list BoundText = 3: list Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=True | combo Text=String 'Beta' Bound=String '2' Matched=True Sel=Byte() Changed=False ev[LClick]
+  moved away and back: GroupID=3 list Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False | combo Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False ev[Val(3,-1) CChange Rep RCC(bm,0) Val(2,0) Rep RCC(bm,0)]
+  list Text = Alpha: list Text=String 'Alpha' Bound=String '1' Matched=True Sel=Byte() Changed=True | combo Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False ev[LClick]
+  list Text = Zeta: list Text=String '' Bound=String '' Matched=False Sel=String '' Changed=True | combo Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False ev[LClick]
+  combo Text = Gam: list Text=String '' Bound=String '' Matched=False Sel=String '' Changed=True | combo Text=String 'Gam' Bound=String '3' Matched=False Sel=Byte() Changed=True ev[CChange]
+  combo BoundText = 1: list Text=String '' Bound=String '' Matched=False Sel=String '' Changed=True | combo Text=String 'Alpha' Bound=String '1' Matched=True Sel=Byte() Changed=True ev[CChange]
+  combo Sel: 1,2 String 'lp'
+  UpdateControls: list Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False | combo Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False ev[LClick CChange]
+  ! 380 Invalid property value
+  ReFill: Byte() list Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False | combo Text=String 'Gamma' Bound=String '3' Matched=True Sel=Byte() Changed=False
+end

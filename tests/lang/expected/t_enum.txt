@@ -1,0 +1,11 @@
+count 3 
+default alpha  3,5   2 
+each 1 alpha
+each 2  2 
+each 3  3,5 
+late each 3 
+iunknown TrueFalse
+coll x
+coll y
+rnd True
+empty 0 

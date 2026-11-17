@@ -1,0 +1,65 @@
+db made
+form load People type=1 eof=0 bof=0 ro=False conn=Access
+rs in load Nothing
+set [||0|]
+  reposition [||0|] editmode=0
+form activate [Anna|31|1|1]
+step 1 [Anna|31|1|1]
+rs Recordset type=2 count=1 name=People db=Database True
+changed False field Name source Data
+  validate action=3 save=0 changed=False/False/False [Anna|31|1|1]
+  reposition [Bill|25|0|2] editmode=0
+after movenext [Bill|25|0|2]
+step 2 [Bill|25|0|2]
+edited changed=True field=Bill
+  validate action=3 save=-1 changed=True/False/False [Billy|25|0|2]
+  reposition [Cleo|42|1|3] editmode=0
+after movenext [Cleo|42|1|3]
+  validate action=2 save=0 changed=False/False/False [Cleo|42|1|3]
+  reposition [Billy|25|0|2] editmode=0
+back [Billy|25|0|2]
+step 3 [Billy|25|0|2]
+updatecontrols [Billy|25|0|2] changed=False
+updaterecord [Billy|26|0|2] field=26 changed=False
+step 4 [Billy|26|0|2]
+  validate action=4 save=0 changed=False/False/False [Billy|26|0|2]
+  reposition [Cleo|42|1|3] editmode=0
+  validate action=3 save=0 changed=False/False/False [Cleo|42|1|3]
+  reposition [||0|] editmode=0
+eof True [||0|]
+  validate action=1 save=0 changed=False/False/False [||0|]
+  reposition [Anna|31|1|1] editmode=0
+step 5 [Anna|31|1|1]
+  validate action=5 save=0 changed=False/False/False [Anna|31|1|1]
+  reposition [||0|4] editmode=2
+addnew [||0|4] editmode=2
+  validate action=6 save=-1 changed=True/True/False [Dora|19|0|4]
+  reposition [Anna|31|1|1] editmode=0
+update [Anna|31|1|1] count=4
+  validate action=4 save=0 changed=False/False/False [Anna|31|1|1]
+  reposition [Dora|19|0|4] editmode=0
+last [Dora|19|0|4]
+step 6 [Dora|19|0|4]
+recordsource set [Dora|19|0|4]
+  validate action=10 save=0 changed=False/False/False [Dora|19|0|4]
+  reposition [Cleo|42|1|3] editmode=0
+refreshed [Cleo|42|1|3] count=3
+  validate action=8 save=0 changed=False/False/False [Cleo|42|1|3]
+  reposition [Anna|31|1|1] editmode=0
+found False [Anna|31|1|1]
+step 7 [Anna|31|1|1]
+  validate action=7 save=0 changed=False/False/False [Anna|31|1|1]
+deleted [Anna|31|1|1]
+  validate action=3 save=0 changed=False/False/False [Anna|31|1|1]
+  reposition [Billy|26|0|2] editmode=0
+next [Billy|26|0|2]
+step 8 [Billy|26|0|2]
+  validate action=1 save=-1 changed=True/False/False [|26|0|2]
+  reposition [Cleo|42|1|3] editmode=0
+empty name [Cleo|42|1|3]
+step 9 [Cleo|42|1|3]
+  validate action=10 save=0 changed=False/False/False [Cleo|42|1|3]
+missing db 3024
+after [Cleo|42|1|3]
+step 10 [Cleo|42|1|3]
+form unload [Cleo|42|1|3]

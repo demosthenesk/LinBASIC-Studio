@@ -1,0 +1,200 @@
+== defaults
+  TypeName MaskEdBox Mask='' PromptChar='_' PromptInclude=True AllowPrompt=False AutoTab=False ClipMode=0 Format='' HideSelection=True
+  BorderStyle=1 Appearance=1 Enabled=True default='' Text='' Clip='' Fmt='' Max=64 Sel=0,0
+  MaskEdBox2: Mask='(###) ###-####' Text='(___) ___-____' Clip='' Fmt='(   )    -    ' Max=14
+== the masks
+  Mask = '##/##/####' -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0 ev[C]
+  Mask = '(###) ###-####' -> Text='(___) ___-____' Clip='' Fmt='(   )    -    ' Max=14 Sel=0,0 ev[C]
+  Mask = 'AAA-999' -> Text='___-___' Clip='' Fmt='   -   ' Max=7 Sel=0,0 ev[C]
+  Mask = 'aaa-999' -> Text='___-___' Clip='' Fmt='   -   ' Max=7 Sel=0,0 ev[C]
+  Mask = '&&&&' -> Text='____' Clip='' Fmt='    ' Max=4 Sel=0,0 ev[C]
+  Mask = 'CCC' -> Text='___' Clip='' Fmt='   ' Max=3 Sel=0,0 ev[C]
+  Mask = '??-??' -> Text='__-__' Clip='' Fmt='  -  ' Max=5 Sel=0,0 ev[C]
+  Mask = '>????' -> Text='____' Clip='' Fmt='    ' Max=4 Sel=0,0 ev[C]
+  Mask = '<????' -> Text='____' Clip='' Fmt='    ' Max=4 Sel=0,0 ev[C]
+  Mask = '>??<??' -> Text='____' Clip='' Fmt='    ' Max=4 Sel=0,0 ev[C]
+  Mask = '\##\#' -> Text='#_#' Clip='' Fmt='# #' Max=3 Sel=0,0 ev[C]
+  Mask = '##:##' -> Text='__:__' Clip='' Fmt='  :  ' Max=5 Sel=0,0 ev[C]
+  Mask = '#,###.##' -> Text='_,___.__' Clip='' Fmt=' ,   .  ' Max=8 Sel=0,0 ev[C]
+  Mask = '99.99' -> Text='__.__' Clip='' Fmt='  .  ' Max=5 Sel=0,0 ev[C]
+  Mask = '#' -> Text='_' Clip='' Fmt=' ' Max=1 Sel=0,0 ev[C]
+  Mask = 'a\\b' -> Text='_\b' Clip='' Fmt=' \b' Max=3 Sel=0,0 ev[C]
+  Mask = 'A#?&C9a' -> Text='_______' Clip='' Fmt='       ' Max=7 Sel=0,0 ev[C]
+  Mask = 'x' -> Text='x' Clip='' Fmt='x' Max=1 Sel=0,0 ev[C]
+  Mask = '' -> Text='' Clip='' Fmt='' Max=64 Sel=0,0
+== Text with a mask
+  Text = '12/34/5678' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0 ev[C]
+  Text = '12345678' ! 380 Invalid property value -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0
+  Text = '1/2/3' ! 380 Invalid property value -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0
+  Text = '__/__/____' -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0 ev[C]
+  Text = 'ab/cd/efgh' ! 380 Invalid property value -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0
+  Text = '12/34/5678x' ! 380 Invalid property value -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0
+  Text = '1_/__/____' -> Text='1_/__/____' Clip='1' Fmt='1 /  /    ' Max=10 Sel=0,0 ev[C]
+  Text = '12-34-5678' ! 380 Invalid property value -> Text='1_/__/____' Clip='1' Fmt='1 /  /    ' Max=10 Sel=0,0
+  Text = '' ! 380 Invalid property value -> Text='1_/__/____' Clip='1' Fmt='1 /  /    ' Max=10 Sel=0,0
+  Text = '12/34/567' ! 380 Invalid property value -> Text='1_/__/____' Clip='1' Fmt='1 /  /    ' Max=10 Sel=0,0
+  Text = '12/34/5678' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0 ev[C]
+  Text = '(555) 123-4567' -> Text='(555) 123-4567' Clip='5551234567' Fmt='(555) 123-4567' Max=14 Sel=0,0 ev[C]
+  Text = '5551234567' ! 380 Invalid property value -> Text='(555) 123-4567' Clip='5551234567' Fmt='(555) 123-4567' Max=14 Sel=0,0
+  Text = '(555) 123-456' ! 380 Invalid property value -> Text='(555) 123-4567' Clip='5551234567' Fmt='(555) 123-4567' Max=14 Sel=0,0
+  Text = '(555)_123-4567' ! 380 Invalid property value -> Text='(555) 123-4567' Clip='5551234567' Fmt='(555) 123-4567' Max=14 Sel=0,0
+  Text = 'abc-123' -> Text='abc-123' Clip='abc123' Fmt='abc-123' Max=7 Sel=0,0 ev[C]
+  Text = 'ab1-12_' -> Text='ab1-12_' Clip='ab112' Fmt='ab1-12 ' Max=7 Sel=0,0 ev[C]
+  Text = 'ABC-12' ! 380 Invalid property value -> Text='ab1-12_' Clip='ab112' Fmt='ab1-12 ' Max=7 Sel=0,0
+  Text = 'a c-1 3' ! 380 Invalid property value -> Text='ab1-12_' Clip='ab112' Fmt='ab1-12 ' Max=7 Sel=0,0
+  Text = '___-___' -> Text='___-___' Clip='' Fmt='   -   ' Max=7 Sel=0,0 ev[C]
+  Text = 'abcd' -> Text='ABCD' Clip='ABCD' Fmt='ABCD' Max=4 Sel=0,0 ev[C]
+  Text = 'AbCd' -> Text='ABCD' Clip='ABCD' Fmt='ABCD' Max=4 Sel=0,0 ev[C]
+  Text = 'ab1d' ! 380 Invalid property value -> Text='ABCD' Clip='ABCD' Fmt='ABCD' Max=4 Sel=0,0
+  Text = 'ab__' -> Text='AB__' Clip='AB' Fmt='AB  ' Max=4 Sel=0,0 ev[C]
+  Text = 'ABcd' -> Text='abCD' Clip='abCD' Fmt='abCD' Max=4 Sel=0,0 ev[C]
+  Text = '1,234.56' -> Text='1,234.56' Clip='123456' Fmt='1,234.56' Max=8 Sel=0,0 ev[C]
+  Text = '1.234,56' ! 380 Invalid property value -> Text='1,234.56' Clip='123456' Fmt='1,234.56' Max=8 Sel=0,0
+  Text = '1234.56' ! 380 Invalid property value -> Text='1,234.56' Clip='123456' Fmt='1,234.56' Max=8 Sel=0,0
+  Text = '_,___.__' -> Text='_,___.__' Clip='' Fmt=' ,   .  ' Max=8 Sel=0,0 ev[C]
+  Text = 'a b!' -> Text='a b!' Clip='a b!' Fmt='a b!' Max=4 Sel=0,0 ev[C]
+  Text = 'ab' ! 380 Invalid property value -> Text='a b!' Clip='a b!' Fmt='a b!' Max=4 Sel=0,0
+  Text = 'ab<9>c' ! 380 Invalid property value -> Text='a b!' Clip='a b!' Fmt='a b!' Max=4 Sel=0,0
+  Text = '____' -> Text='____' Clip='' Fmt='    ' Max=4 Sel=0,0 ev[C]
+  Text = 'a b' -> Text='a b' Clip='a b' Fmt='a b' Max=3 Sel=0,0 ev[C]
+  Text = '1!2' -> Text='1!2' Clip='1!2' Fmt='1!2' Max=3 Sel=0,0 ev[C]
+  Text = '   ' -> Text='   ' Clip='   ' Fmt='   ' Max=3 Sel=0,0 ev[C]
+  Text = '#1#' -> Text='#1#' Clip='1' Fmt='#1#' Max=3 Sel=0,0 ev[C]
+  Text = '#a#' ! 380 Invalid property value -> Text='#1#' Clip='1' Fmt='#1#' Max=3 Sel=0,0
+  Text = '#_#' -> Text='#_#' Clip='' Fmt='# #' Max=3 Sel=0,0 ev[C]
+  Default = '11/22/3333' -> Text='11/22/3333' Clip='11223333' Fmt='11/22/3333' Max=10 Sel=0,0 ev[C]
+== ClipText and FormattedText set
+  ClipText = '12345678' ! 383 Property is read-only -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0
+  FormattedText = '12/34/5678' ! 383 Property is read-only -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0
+== PromptChar
+  Text = '12/3_/____' -> Text='12/3_/____' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0 ev[C]
+  PromptChar = '*' -> Text='12/3*/****' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0 ev[C]
+  PromptChar = ' ' -> Text='12/3 /    ' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0 ev[C]
+  PromptChar = '' ! 380 Invalid property value -> Text='12/3 /    ' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0
+  PromptChar = 'ab' ! 380 Invalid property value -> Text='12/3 /    ' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0
+  PromptChar = '1' -> Text='12/31/1111' Clip='23' Fmt=' 2/3 /    ' Max=10 Sel=0,0 ev[C]
+  Text = '12/3*/****' ! 380 Invalid property value -> Text='12/31/1111' Clip='23' Fmt=' 2/3 /    ' Max=10 Sel=0,0
+  Text = '12/3 /    ' ! 380 Invalid property value -> Text='12/31/1111' Clip='23' Fmt=' 2/3 /    ' Max=10 Sel=0,0
+  PromptChar = '#' -> Text='' Clip='' Fmt='' Max=64 Sel=0,0 ev[C]
+== PromptInclude
+  Text = '12/3_/____' -> Text='12/3_/____' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0 ev[C]
+  PromptInclude = 'False' -> Text='123' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0
+  Text = '12/34/    ' -> Text='1234' Clip='1234' Fmt='12/34/    ' Max=10 Sel=0,0 ev[C]
+  Text = '12/34/5___' -> Text='12345' Clip='12345' Fmt='12/34/5   ' Max=10 Sel=0,0 ev[C]
+  Text = '12/34/5' -> Text='12345' Clip='12345' Fmt='12/34/5   ' Max=10 Sel=0,0 ev[C]
+  PromptInclude = 'True' -> Text='12/34/5___' Clip='12345' Fmt='12/34/5   ' Max=10 Sel=0,0
+== AllowPrompt
+  AllowPrompt = 'True' -> Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0
+  Text = '12/3_/____' -> Text='12/3_/____' Clip='123' Fmt='12/3 /    ' Max=10 Sel=0,0 ev[C]
+== SelStart SelLength SelText ClipMode
+  Text = '12/34/5678' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0 ev[C]
+  SelStart = '1' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=1,0
+  SelLength = '4' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=1,4
+    SelText='2/34'
+  ClipMode = '1' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=1,4
+    SelText='234'
+  ClipMode = '0' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=1,4
+  SelText = '99' -> Text='19/95/678_' Clip='1995678' Fmt='19/95/678 ' Max=10 Sel=0,0 ev[C]
+  SelStart = '0' -> Text='19/95/678_' Clip='1995678' Fmt='19/95/678 ' Max=10 Sel=0,0
+  SelLength = '2' -> Text='19/95/678_' Clip='1995678' Fmt='19/95/678 ' Max=10 Sel=0,2
+  SelText = '7' -> Text='79/56/78__' Clip='795678' Fmt='79/56/78  ' Max=10 Sel=0,0 ev[C]
+  SelStart = '3' -> Text='79/56/78__' Clip='795678' Fmt='79/56/78  ' Max=10 Sel=3,0
+  SelLength = '0' -> Text='79/56/78__' Clip='795678' Fmt='79/56/78  ' Max=10 Sel=3,0
+  SelText = '5' -> Text='79/55/678_' Clip='7955678' Fmt='79/55/678 ' Max=10 Sel=0,0 ev[C]
+  SelText = 'x' -> Text='79/55/678_' Clip='7955678' Fmt='79/55/678 ' Max=10 Sel=0,0
+  SelStart = '20' -> Text='79/55/678_' Clip='7955678' Fmt='79/55/678 ' Max=10 Sel=10,0
+  SelStart = '-1' ! 380 Invalid property value -> Text='79/55/678_' Clip='7955678' Fmt='79/55/678 ' Max=10 Sel=10,0
+  SelLength = '50' -> Text='79/55/678_' Clip='7955678' Fmt='79/55/678 ' Max=10 Sel=10,0
+== MaxLength
+  MaxLength = '5' -> Text='' Clip='' Fmt='' Max=5 Sel=0,0
+  Text = 'abcdefg' -> Text='abcdefg' Clip='abcdefg' Fmt='abcdefg' Max=7 Sel=0,0 ev[C]
+  Text = 'abc' -> Text='abc' Clip='abc' Fmt='abc' Max=7 Sel=0,0 ev[C]
+  MaxLength = '2' -> Text='ab' Clip='ab' Fmt='ab' Max=2 Sel=0,0 ev[C]
+  MaxLength = '0' ! 380 Invalid property value -> Text='ab' Clip='ab' Fmt='ab' Max=2 Sel=0,0
+  MaxLength = '-1' ! 380 Invalid property value -> Text='ab' Clip='ab' Fmt='ab' Max=2 Sel=0,0
+  MaxLength = '65' ! 380 Invalid property value -> Text='ab' Clip='ab' Fmt='ab' Max=2 Sel=0,0
+  MaxLength = '3' -> Text='__/' Clip='' Fmt='  /' Max=3 Sel=0,0 ev[C]
+  MaxLength = '10' -> Text='__/' Clip='' Fmt='  /' Max=10 Sel=0,0
+  MaxLength = '12' -> Text='__/' Clip='' Fmt='  /' Max=12 Sel=0,0
+== Mask over a text
+  Text = '12345' -> Text='12345' Clip='12345' Fmt='12345' Max=64 Sel=0,0 ev[C]
+  Mask = '###' -> Text='123' Clip='123' Fmt='123' Max=3 Sel=0,0 ev[C C]
+  Text = '1234' -> Text='1234' Clip='1234' Fmt='1234' Max=64 Sel=0,0 ev[C]
+  Mask = '##/##' -> Text='__/__' Clip='' Fmt='  /  ' Max=5 Sel=0,0 ev[C]
+  Text = 'abc' -> Text='abc' Clip='abc' Fmt='abc' Max=64 Sel=0,0 ev[C]
+  Mask = '###' -> Text='___' Clip='' Fmt='   ' Max=3 Sel=0,0 ev[C]
+  Text = '12/34/5678' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0 ev[C]
+  Mask = '##-##-####' -> Text='__-__-____' Clip='' Fmt='  -  -    ' Max=10 Sel=0,0 ev[C]
+  Mask = '' -> Text='__-__-____' Clip='__-__-____' Fmt='__-__-____' Max=64 Sel=0,0 ev[C]
+== Change
+  Text = 'abc' -> Text='abc' Clip='abc' Fmt='abc' Max=64 Sel=0,0 ev[C]
+  Text = 'abc' -> Text='abc' Clip='abc' Fmt='abc' Max=64 Sel=0,0 ev[C]
+  Mask = '###' -> Text='___' Clip='' Fmt='   ' Max=3 Sel=0,0 ev[C]
+  Text = '123' -> Text='123' Clip='123' Fmt='123' Max=3 Sel=0,0 ev[C]
+  Text = '123' -> Text='123' Clip='123' Fmt='123' Max=3 Sel=0,0 ev[C]
+  PromptChar = '*' -> Text='123' Clip='123' Fmt='123' Max=3 Sel=0,0 ev[C]
+  Mask = '' -> Text='123' Clip='123' Fmt='123' Max=64 Sel=0,0 ev[C]
+== Format
+  Format = '$#,##0.00' -> Text='' Clip='' Fmt='' Max=64 Sel=0,0 ev[C]
+  Text = '1234.5' -> Text='1234.5' Clip='1234.5' Fmt='$12.345,00' Max=64 Sel=0,0 ev[C]
+    focus elsewhere: Text='1234.5' Clip='1234.5' Fmt='$12.345,00' Max=64 Sel=0,0 ev[L1 GT]
+    focus back: Text='1234.5' Clip='1234.5' Fmt='$12.345,00' Max=64 Sel=0,0
+  Format = '0.00%' -> Text='1234.5' Clip='1234.5' Fmt='1234500,00%' Max=64 Sel=0,0 ev[C]
+  Text = '0.256' -> Text='0.256' Clip='0.256' Fmt='25600,00%' Max=64 Sel=0,0 ev[C]
+    focus elsewhere: Text='0.256' Clip='0.256' Fmt='25600,00%' Max=64 Sel=0,0 ev[L1 GT]
+  Text = 'abc' -> Text='abc' Clip='abc' Fmt='abc' Max=64 Sel=0,0 ev[C]
+    after: Text='abc' Clip='abc' Fmt='abc' Max=64 Sel=0,0
+  Format = '0.00' -> Text='__/__/____' Clip='' Fmt='__/__/____' Max=10 Sel=0,0 ev[C]
+  Text = '12/34/5678' -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=0,0 ev[C]
+== typing, the mask ##/##/####
+  focus: Text='__/__/____' Clip='' Fmt='  /  /    ' Max=10 Sel=0,0
+  keys 12 -> Text='12/__/____' Clip='12' Fmt='12/  /    ' Max=10 Sel=3,0 ev[K49 C K50 C]
+  keys a -> Text='12/__/____' Clip='12' Fmt='12/  /    ' Max=10 Sel=3,0 ev[K97 V('12/a_/____',3)]
+  keys 34 -> Text='12/34/____' Clip='1234' Fmt='12/34/    ' Max=10 Sel=6,0 ev[K51 C K52 C]
+  keys / -> Text='12/34/____' Clip='1234' Fmt='12/34/    ' Max=10 Sel=6,0 ev[K47 V('12/34//___',6)]
+  keys 5678 -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=10,0 ev[K53 C K54 C K55 C K56 C]
+  keys 9 -> Text='12/34/5678' Clip='12345678' Fmt='12/34/5678' Max=10 Sel=10,0 ev[K57 V('12/34/5678',10)]
+  keys {BACKSPACE} -> Text='12/34/567_' Clip='1234567' Fmt='12/34/567 ' Max=10 Sel=9,0 ev[K8 C]
+  keys {HOME} -> Text='12/34/567_' Clip='1234567' Fmt='12/34/567 ' Max=10 Sel=0,0
+  keys {DELETE} -> Text='23/45/67__' Clip='234567' Fmt='23/45/67  ' Max=10 Sel=0,0 ev[C]
+  keys {RIGHT}{RIGHT}{RIGHT} -> Text='23/45/67__' Clip='234567' Fmt='23/45/67  ' Max=10 Sel=3,0
+  keys {BACKSPACE} -> Text='24/56/7___' Clip='24567' Fmt='24/56/7   ' Max=10 Sel=1,0 ev[K8 C]
+  keys {END}{LEFT}{LEFT}{LEFT}{LEFT}{LEFT} -> Text='24/56/7___' Clip='24567' Fmt='24/56/7   ' Max=10 Sel=5,0
+  keys _ -> Text='24/56/7___' Clip='24567' Fmt='24/56/7   ' Max=10 Sel=5,0 ev[K95 V('24/56/____',6)]
+  keys   -> Text='24/56/7___' Clip='24567' Fmt='24/56/7   ' Max=10 Sel=5,0 ev[K32 V('24/56/ ___',6)]
+  keys +{HOME} -> Text='24/56/7___' Clip='24567' Fmt='24/56/7   ' Max=10 Sel=0,5
+  keys 0 -> Text='07/__/____' Clip='07' Fmt='07/  /    ' Max=10 Sel=1,0 ev[K48 C]
+== typing, AllowPrompt
+  AllowPrompt = 'True' -> Text='__/__' Clip='' Fmt='  /  ' Max=5 Sel=0,0
+  keys 1_ -> Text='1_/__' Clip='1' Fmt='1 /  ' Max=5 Sel=3,0 ev[K49 C K95 C]
+  keys 2 -> Text='1_/2_' Clip='12' Fmt='1 /2 ' Max=5 Sel=4,0 ev[K50 C]
+== typing, letters
+  keys abcd -> Text='AB-cd' Clip='ABcd' Fmt='AB-cd' Max=5 Sel=5,0 ev[K97 C K98 C K99 C K100 C]
+  keys {HOME}AB -> Text='AB-cd' Clip='ABcd' Fmt='AB-cd' Max=5 Sel=0,0 ev[K65 V('AA-bc',5) K66 V('BA-bc',5)]
+  keys 1 -> Text='AB-cd' Clip='ABcd' Fmt='AB-cd' Max=5 Sel=0,0 ev[K49 V('1_-__',0)]
+  keys a1! -> Text='a1_' Clip='a1' Fmt='a1 ' Max=3 Sel=2,0 ev[K97 C K49 C K33 V('a1!',2)]
+  keys a ! -> Text='a !' Clip='a !' Fmt='a !' Max=3 Sel=3,0 ev[K97 C K32 C K33 C]
+  keys 1234 -> Text='1,234.__' Clip='1234' Fmt='1,234.  ' Max=8 Sel=6,0 ev[K49 C K50 C K51 C K52 C]
+  keys . -> Text='1,234.__' Clip='1234' Fmt='1,234.  ' Max=8 Sel=6,0 ev[K46 V('1,234.._',6)]
+  keys , -> Text='1,234.__' Clip='1234' Fmt='1,234.  ' Max=8 Sel=6,0 ev[K44 V('1,234.,_',6)]
+  keys 56 -> Text='1,234.56' Clip='123456' Fmt='1,234.56' Max=8 Sel=8,0 ev[K53 C K54 C]
+== typing, no mask
+  MaxLength = '3' -> Text='' Clip='' Fmt='' Max=3 Sel=0,0
+  keys abcd -> Text='abc' Clip='abc' Fmt='abc' Max=3 Sel=3,0 ev[K97 C K98 C K99 C K100]
+  keys {BACKSPACE}x -> Text='abx' Clip='abx' Fmt='abx' Max=3 Sel=3,0 ev[K8 C K120 C]
+== typing, PromptInclude False
+  PromptInclude = 'False' -> Text='' Clip='' Fmt='  /  ' Max=5 Sel=0,0
+  keys 1 -> Text='1' Clip='1' Fmt='1 /  ' Max=5 Sel=1,0 ev[K49 C]
+  keys {RIGHT}{RIGHT}{RIGHT}3 -> Text='13' Clip='13' Fmt='1 / 3' Max=5 Sel=5,0 ev[K51 C]
+== AutoTab
+  AutoTab = 'True' -> Text='__' Clip='' Fmt='  ' Max=2 Sel=0,0
+  keys 1 -> Text='1_' Clip='1' Fmt='1 ' Max=2 Sel=1,0 ev[K49 C]
+  keys 2 -> Text='12' Clip='12' Fmt='12' Max=2 Sel=2,0 ev[K50 C L1 GT]
+    ActiveControl Text1
+  AutoTab = 'False' -> Text='__' Clip='' Fmt='  ' Max=2 Sel=0,0
+  keys 12 -> Text='12' Clip='12' Fmt='12' Max=2 Sel=2,0 ev[K49 C K50 C]
+  keys 3 -> Text='12' Clip='12' Fmt='12' Max=2 Sel=2,0 ev[K51 V('12',2)]
+    ActiveControl MaskEdBox1
+== MaskEdBox2 typing
+  MaskEdBox2: Text='(555) 123-4567' Clip='5551234567' Sel=14 ev[C2 C2 C2 C2 C2 C2 C2 C2 C2 C2]
+end

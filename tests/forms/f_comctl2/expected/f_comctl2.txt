@@ -1,0 +1,43 @@
+tree 0 7 1 TreeView
+list 3 2 Size 2
+grid 3 3 1 1 1 1
+sstab 3 0 Beta -74760 240
+updown 0 5 2 1
+step 1
+nodes 9 Root1 7
+children of r1 4 Child05,Child1,Child15,Child2,
+roots Root0 Root3 Root1
+path Root1\Child1\Grand1 Child1 Root0
+expanded False visible False
+expanded True True visible True
+relative missing err 35601
+node dup err 35602
+moved Root2 3 1
+parent loop err 35614
+removed 7 2 Child05
+selected r2 True
+columns 3 date 2
+items 3 gamma 2 20
+subitem 5 err 380
+find b
+sorted gamma,beta,alpha, 1
+desc b,a,c,
+selected b True False
+after remove 2 2
+item dup err 35602
+grid rows 5 y 10 b
+grid text set 2 1
+clip [set|/|b]
+grid sorted set,,2,10,
+grid removed 4 
+grid row 10 err 30009
+grid textmatrix err 381
+format Name Mid 7 3
+sstab click 0 -> 1
+sstab 1 240 -74760
+sstab 5 err 380
+caption G
+updown change 4
+updown 9 err 380
+updown 4
+step 2

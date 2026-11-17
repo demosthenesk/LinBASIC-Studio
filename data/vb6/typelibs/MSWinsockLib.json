@@ -1,0 +1,1167 @@
+{
+ "library": "MSWinsockLib",
+ "short": "MSWinsockLib",
+ "guid": "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "MSWNSK98.chm",
+ "file": "MSWINSCK.ocx",
+ "types": [
+  {
+   "name": "ProtocolConstants",
+   "kind": "enum",
+   "guid": "{248DD895-BB45-11CF-9ABC-0080C7E7B78D}",
+   "flags": [],
+   "helpcontext": 340047,
+   "members": [
+    {
+     "name": "sckTCPProtocol",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 340032
+    },
+    {
+     "name": "sckUDPProtocol",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 340033
+    }
+   ]
+  },
+  {
+   "name": "IMSWinsockControl",
+   "kind": "dispatch",
+   "guid": "{248DD892-BB45-11CF-9ABC-0080C7E7B78D}",
+   "flags": [
+    "hidden",
+    "dual",
+    "nonextensible",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 340024,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "AboutBox",
+     "memid": -552,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Protocol",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ProtocolConstants",
+     "params": [
+      {
+       "name": "Protocol",
+       "type": "ProtocolConstants",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340031
+    },
+    {
+     "name": "Protocol",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ProtocolConstants",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 340031
+    },
+    {
+     "name": "RemoteHostIP",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "RemoteHostIP",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340025
+    },
+    {
+     "name": "LocalHostName",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "LocalHostName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340026
+    },
+    {
+     "name": "LocalIP",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "LocalIP",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340027
+    },
+    {
+     "name": "SocketHandle",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "SocketHandle",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340028
+    },
+    {
+     "name": "_RemoteHost",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "RemoteHost",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "_RemoteHost",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "RemotePort",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "RemotePort",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340012
+    },
+    {
+     "name": "RemotePort",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 340012
+    },
+    {
+     "name": "LocalPort",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "LocalPort",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340013
+    },
+    {
+     "name": "LocalPort",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 340013
+    },
+    {
+     "name": "State",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Integer",
+     "params": [
+      {
+       "name": "State",
+       "type": "Integer",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340014
+    },
+    {
+     "name": "BytesReceived",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "BytesReceived",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340015
+    },
+    {
+     "name": "Connect",
+     "memid": 64,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "RemoteHost",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "RemotePort",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "helpcontext": 340016
+    },
+    {
+     "name": "Listen",
+     "memid": 65,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 340017
+    },
+    {
+     "name": "Accept",
+     "memid": 66,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "requestID",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 340018
+    },
+    {
+     "name": "SendData",
+     "memid": 67,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "data",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 340019
+    },
+    {
+     "name": "GetData",
+     "memid": 68,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "data",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "type",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "maxLen",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "helpcontext": 340020
+    },
+    {
+     "name": "PeekData",
+     "memid": 69,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "data",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "type",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "maxLen",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "helpcontext": 340021
+    },
+    {
+     "name": "Close",
+     "memid": 70,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "helpcontext": 340022
+    },
+    {
+     "name": "Bind",
+     "memid": 71,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "LocalPort",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "LocalIP",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2,
+     "helpcontext": 340048
+    },
+    {
+     "name": "RemoteHost",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "RemoteHost",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "helpcontext": 340011
+    },
+    {
+     "name": "RemoteHost",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "helpcontext": 340011
+    }
+   ]
+  },
+  {
+   "name": "DMSWinsockControlEvents",
+   "kind": "dispatch",
+   "guid": "{248DD893-BB45-11CF-9ABC-0080C7E7B78D}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 340029,
+   "members": [
+    {
+     "name": "Error",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Number",
+       "type": "Integer",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Description",
+       "type": "String",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Scode",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Source",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "HelpFile",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "HelpContext",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "CancelDisplay",
+       "type": "Boolean",
+       "byref": true,
+       "flags": []
+      }
+     ],
+     "helpcontext": 340040
+    },
+    {
+     "name": "DataArrival",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "bytesTotal",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 340041
+    },
+    {
+     "name": "Connect",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 340042
+    },
+    {
+     "name": "ConnectionRequest",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "requestID",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 340043
+    },
+    {
+     "name": "Close",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 340044
+    },
+    {
+     "name": "SendProgress",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "bytesSent",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "bytesRemaining",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ],
+     "helpcontext": 340045
+    },
+    {
+     "name": "SendComplete",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [],
+     "helpcontext": 340046
+    }
+   ]
+  },
+  {
+   "name": "Winsock",
+   "kind": "coclass",
+   "guid": "{248DD896-BB45-11CF-9ABC-0080C7E7B78D}",
+   "flags": [
+    "cancreate",
+    "control"
+   ],
+   "helpcontext": 340023,
+   "implements": [
+    {
+     "name": "IMSWinsockControl",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DMSWinsockControlEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "Winsock2",
+   "kind": "coclass",
+   "guid": "{39977C62-C383-463D-AF61-C71220634656}",
+   "flags": [
+    "cancreate",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 340023,
+   "implements": [
+    {
+     "name": "IMSWinsockControl",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DMSWinsockControlEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "Winsock3",
+   "kind": "coclass",
+   "guid": "{6E5311A1-325D-4FFD-9AF4-B373F02AE458}",
+   "flags": [
+    "cancreate",
+    "hidden",
+    "control"
+   ],
+   "helpcontext": 340023,
+   "implements": [
+    {
+     "name": "IMSWinsockControl",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DMSWinsockControlEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "StateConstants",
+   "kind": "enum",
+   "guid": "{248DD894-BB45-11CF-9ABC-0080C7E7B78D}",
+   "flags": [],
+   "helpcontext": 340050,
+   "members": [
+    {
+     "name": "sckClosed",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0,
+     "helpcontext": 340001
+    },
+    {
+     "name": "sckOpen",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1,
+     "helpcontext": 340002
+    },
+    {
+     "name": "sckListening",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2,
+     "helpcontext": 340003
+    },
+    {
+     "name": "sckConnectionPending",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3,
+     "helpcontext": 340004
+    },
+    {
+     "name": "sckResolvingHost",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4,
+     "helpcontext": 340005
+    },
+    {
+     "name": "sckHostResolved",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5,
+     "helpcontext": 340006
+    },
+    {
+     "name": "sckConnecting",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6,
+     "helpcontext": 340007
+    },
+    {
+     "name": "sckConnected",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 340008
+    },
+    {
+     "name": "sckClosing",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 8,
+     "helpcontext": 340009
+    },
+    {
+     "name": "sckError",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 9,
+     "helpcontext": 340010
+    }
+   ]
+  },
+  {
+   "name": "ErrorConstants",
+   "kind": "enum",
+   "guid": "{248DD891-BB45-11CF-9ABC-0080C7E7B78D}",
+   "flags": [],
+   "helpcontext": 340049,
+   "members": [
+    {
+     "name": "sckInvalidPropertyValue",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 380,
+     "helpcontext": 380
+    },
+    {
+     "name": "sckGetNotSupported",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 394,
+     "helpcontext": 394
+    },
+    {
+     "name": "sckSetNotSupported",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 383,
+     "helpcontext": 383
+    },
+    {
+     "name": "sckOutOfMemory",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 7,
+     "helpcontext": 7
+    },
+    {
+     "name": "sckBadState",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 40006,
+     "helpcontext": 40006
+    },
+    {
+     "name": "sckInvalidArg",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 40014,
+     "helpcontext": 40014
+    },
+    {
+     "name": "sckSuccess",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 40017,
+     "helpcontext": 40017
+    },
+    {
+     "name": "sckUnsupported",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 40018,
+     "helpcontext": 40018
+    },
+    {
+     "name": "sckInvalidOp",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 40020,
+     "helpcontext": 40020
+    },
+    {
+     "name": "sckOutOfRange",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 40021,
+     "helpcontext": 40021
+    },
+    {
+     "name": "sckWrongProtocol",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 40026,
+     "helpcontext": 40026
+    },
+    {
+     "name": "sckOpCanceled",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 10004,
+     "helpcontext": 10004
+    },
+    {
+     "name": "sckInvalidArgument",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 10014,
+     "helpcontext": 10014
+    },
+    {
+     "name": "sckWouldBlock",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 10035,
+     "helpcontext": 10035
+    },
+    {
+     "name": "sckInProgress",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 10036,
+     "helpcontext": 10036
+    },
+    {
+     "name": "sckAlreadyComplete",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 10037,
+     "helpcontext": 10037
+    },
+    {
+     "name": "sckNotSocket",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 10038,
+     "helpcontext": 10038
+    },
+    {
+     "name": "sckMsgTooBig",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 10040,
+     "helpcontext": 10040
+    },
+    {
+     "name": "sckPortNotSupported",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 10043,
+     "helpcontext": 10043
+    },
+    {
+     "name": "sckAddressInUse",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 10048,
+     "helpcontext": 10048
+    },
+    {
+     "name": "sckAddressNotAvailable",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 10049,
+     "helpcontext": 10049
+    },
+    {
+     "name": "sckNetworkSubsystemFailed",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 10050,
+     "helpcontext": 10050
+    },
+    {
+     "name": "sckNetworkUnreachable",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 10051,
+     "helpcontext": 10051
+    },
+    {
+     "name": "sckNetReset",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 10052,
+     "helpcontext": 10052
+    },
+    {
+     "name": "sckConnectAborted",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 10053,
+     "helpcontext": 10053
+    },
+    {
+     "name": "sckConnectionReset",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 10054,
+     "helpcontext": 10054
+    },
+    {
+     "name": "sckNoBufferSpace",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 10055,
+     "helpcontext": 10055
+    },
+    {
+     "name": "sckAlreadyConnected",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 10056,
+     "helpcontext": 10056
+    },
+    {
+     "name": "sckNotConnected",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 10057,
+     "helpcontext": 10057
+    },
+    {
+     "name": "sckSocketShutdown",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 10058,
+     "helpcontext": 10058
+    },
+    {
+     "name": "sckTimedout",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 10060,
+     "helpcontext": 10060
+    },
+    {
+     "name": "sckConnectionRefused",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 10061,
+     "helpcontext": 10061
+    },
+    {
+     "name": "sckNotInitialized",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 10093,
+     "helpcontext": 10093
+    },
+    {
+     "name": "sckHostNotFound",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 11001,
+     "helpcontext": 11001
+    },
+    {
+     "name": "sckHostNotFoundTryAgain",
+     "memid": 1073741858,
+     "kind": "const",
+     "type": "Long",
+     "value": 11002,
+     "helpcontext": 11002
+    },
+    {
+     "name": "sckNonRecoverableError",
+     "memid": 1073741859,
+     "kind": "const",
+     "type": "Long",
+     "value": 11003,
+     "helpcontext": 11003
+    },
+    {
+     "name": "sckNoData",
+     "memid": 1073741860,
+     "kind": "const",
+     "type": "Long",
+     "value": 11004,
+     "helpcontext": 11004
+    }
+   ]
+  }
+ ]
+}

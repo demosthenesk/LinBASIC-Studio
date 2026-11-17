@@ -1,0 +1,99 @@
+== start
+load: name=[] ctl=Nothing bindings=0 props=Null
+  no such ! 32001 [DataRepeater] Invalid ProgID or class object not supported
+after no such: name=[] ctl=Nothing
+  ctl init
+  ctl init
+after name: name=[RepCtl.RowCtl] ctl=RowCtl props=String()(0 To 2) PName PAge PActive
+  binding key=[] index=1
+before data: rows=0 active=0 count=0 cur=(Null) ctl=//False ! 91 Object variable or With block variable not set
+after data: rows=4 active=1 count=8 cur=Anna rs=Anna ctl=Anna//True
+  ev repeatedcontrolloaded ctl=RowCtl
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anna
+  ev activerowchanged active=1
+activate: rows=4 active=1 count=8 cur=Anna rs=Anna ctl=Anna//True
+  ev dataupdate cancel=False record=Anna field=[Name]
+updated: rows=4 active=1 count=8 cur=Anne rs=Anne ctl=Anne//True
+  ev dataupdate cancel=False record=(new) field=[ID]
+  ev dataupdate cancel=False record=(new) field=[Name]
+  ev dataupdate cancel=False record=(new) field=[Age]
+  ev dataupdate cancel=False record=(new) field=[Active]
+added: rows=4 active=4 count=9 cur=Ivan rs=Ivan ctl=Ivan//True
+movefirst: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne//True
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev currentrecordchanged cur=Anne
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+requery: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne//True
+refresh: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne//True
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  item 1=PName item act=Active
+  add nofield ! 42000 [Binding] Invalid field name supplied
+  add info ! 35701 [RepeaterBindings] Property is not bindable
+  bindings=2
+cur 5th: rows=4 active=1 count=9 cur=Eve rs=Eve ctl=Eve//True
+  cur 5th visible: Eve Finn Gus Hana
+activerow last: rows=4 active=4 count=9 cur=Eve rs=Eve ctl=Eve//True
+  activerow last visible: Bill Cleo Dino Eve
+activerow 1: rows=4 active=1 count=9 cur=Eve rs=Eve ctl=Eve//True
+  activerow 1 visible: Eve Finn Gus Hana
+activerow 2 at top: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne//True
+  activerow 2 at top visible: Anne Bill Cleo Dino
+activerow 1 at bottom: rows=4 active=4 count=9 cur=Ivan rs=Ivan ctl=Ivan//True
+  activerow 1 at bottom visible: Finn Gus Hana Ivan
+visiblerecords 1: rows=4 active=0 count=9 cur=Ivan rs=Ivan ctl=Ivan//True
+  visiblerecords 1 visible: Cleo Dino Eve Finn
+  visiblerecords 0 ! 32006 [DataRepeater] The row index must be between one and VisibleRows
+movefirst: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne//True
+  movefirst visible: Anne Bill Cleo Dino
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev currentrecordchanged cur=Anne
+  ev visiblerecordschanged
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev currentrecordchanged cur=Anne
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev visiblerecordschanged
+  ev activerowchanged active=1
+  ev visiblerecordschanged
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+  ev currentrecordchanged cur=Anne
+  ev activerowchanged active=1
+no bindings: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne//True
+page bound: rows=4 active=1 count=9 cur=Anne rs=Anne ctl=Anne/31/True
+deleted: rows=4 active=2 count=8 cur=Cleo rs=Cleo ctl=Anne/42/True
+after delete next: rows=4 active=3 count=8 cur=Dino rs=Dino ctl=Anne/37/True
+  db: 1:Anne:31:True 3:Cleo:42:True 4:Dino:37:False 5:Eve:28:True 6:Finn:50:False 7:Gus:19:True 8:Hana:64:False 9:Ivan:33:True
+filter: rows=4 active=1 count=6 cur=Anne rs=Anne ctl=Anne/31/True
+no filter: rows=4 active=1 count=8 cur=Anne rs=Anne ctl=Anne/31/True
+  ev repeatedcontrolunload
+  ctl term
+  ctl term
+no control: rows=0 active=0 count=8 cur=(Null) rs=Anne ! 91 Object variable or With block variable not set
+end

@@ -1,0 +1,26 @@
+#!/bin/sh
+# LinBASIC Studio AppImage entry point
+#   LinBASIC-Studio-<version>-x86_64.AppImage [project.vbp]     the IDE
+#   LinBASIC-Studio-<version>-x86_64.AppImage --lbvc <args>     the compiler (lbvc --help)
+HERE="$(dirname "$(readlink -f "$0")")"
+SHARE="$HERE/usr/share/linbasic-studio"
+QTLIB="$SHARE/lib/PyQt6/Qt6/lib"
+export LBSTUDIO_APPDIR="$HERE"
+# the programs the IDE builds: the bundled Tiny C Compiler (no gcc needed) and the Qt 6 of the AppImage
+export LBVC_LINUX_TCC="$SHARE/runtime/tcc-linux"
+export LBVC_QT_LIBDIR="$QTLIB"
+export LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="$QTLIB:$HERE/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+unset QT_PLUGIN_PATH PYTHONHOME PYTHONPATH
+if [ "$1" = "--lbvc" ]; then
+    shift
+    exec "$HERE/usr/bin/python3.12" "$SHARE/compiler/lbvc.py" "$@"
+fi
+exec "$HERE/usr/bin/python3.12" -I -c '
+import sys, os
+share = os.path.join(os.environ["LBSTUDIO_APPDIR"], "usr/share/linbasic-studio")
+sys.path[:0] = [os.path.join(share, "lib"), os.path.join(share, "ide")]
+sys.argv[0] = os.environ.get("APPIMAGE", "linbasic-studio")
+from lbstudio.app import main
+sys.exit(main())
+' "$@"

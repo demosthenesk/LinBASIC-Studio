@@ -1,0 +1,143 @@
+== the object
+event DataEnvironment_Initialize conn state=0
+typename=deTest
+connections=1 commands=2 recordsets=2
+conn1 Connection state=0 cs=Provider=MSDataShape.1;Persist Security Info=True;Data Source=\\VBoxSvr\VMShared\DAO\d_de1\de1.mdb;Data Provider=MICROSOFT.JET.OLEDB.4.0
+conn1 cursorloc=3 provider=MSDataShape.1
+event Conn1_WillConnect status=1
+event Conn1_ConnectComplete status=1
+commands(1)=Command Customers_Grouping
+commands(2)=Command Germans
+recordsets(1) state=0
+recordsets(2) state=0
+command Customers_Grouping type=1 params=0 text= SHAPE ( SHAPE {SELECT * FROM `Customers`}  AS Customers APPEND (( SHAPE {SELECT * FROM `Orders`}  AS Orders APPEND ({SELECT OrderID, Product, Qty, Price FROM Items ORDER BY ItemID}  AS Items RELATE 'OrderID' TO 'OrderID') AS Items, SUM(Items.'Qty') AS TotQty, COUNT(Items.'Product') AS NItems) AS Orders RELATE 'CustID' TO 'CustID') AS Orders) COMPUTE Customers BY 'Country'
+  ! command Germans: 5 Invalid procedure call or argument [DeTest1]
+command Germans type=1 params=0 text=SELECT * FROM Customers WHERE Country = 'Germany' ORDER BY CustID
+rsGermans Recordset state=0
+== a plain command
+event Conn1_WillExecute cursortype=-1 locktype=-1 options=-1 source=SELECT * FROM Customers WHERE Country = 'Germany' ORDER BY CustID
+event rsGermans_MoveComplete reason=10
+event Conn1_ExecuteComplete status=1
+state=1 cursortype=3 locktype=1 cursorloc=3 count=2 source=SELECT * FROM Customers WHERE Country = 'Germany' ORDER BY CustID
+conn1 state=1 provider=MSDataShape.1 cursorloc=3
+  field CustID type=202 size=5 attr=106
+  field Name type=202 size=30 attr=106
+  field Country type=202 size=15 attr=106
+event rsGermans_MoveComplete reason=10
+event rsGermans_MoveComplete reason=12
+  row S'ALFKI' S'Alfreds' S'Germany'
+event rsGermans_MoveComplete reason=13
+  row S'BLAUS' S'Blauer See' S'Germany'
+event rsGermans_MoveComplete reason=13
+event Conn1_WillExecute cursortype=-1 locktype=-1 options=-1 source=SELECT * FROM Customers WHERE Country = 'Germany' ORDER BY CustID
+  ! Germans again (open): 3705 Operation is not allowed when the object is open. [ADODB.Connection]
+event Conn1_WillExecute cursortype=-1 locktype=-1 options=-1 source=SELECT * FROM Customers WHERE Country = 'Germany' ORDER BY CustID
+event rsGermans_MoveComplete reason=10
+event Conn1_ExecuteComplete status=1
+count=2
+== the hierarchy
+event Conn1_WillExecute cursortype=-1 locktype=-1 options=-1 source= SHAPE ( SHAPE {SELECT * FROM `Customers`}  AS Customers APPEND (( SHAPE {SELECT * FROM `Orders`}  AS Orders APPEND ({SELECT OrderID, Product, Qty, Price FROM Items ORDER BY ItemID}  AS Items RELATE 'OrderID' TO 'OrderID') AS Items, SUM(Items.'Qty') AS TotQty, COUNT(Items.'Product') AS NItems) AS Orders RELATE 'CustID' TO 'CustID') AS Orders) COMPUTE Customers BY 'Country'
+event Conn1_ExecuteComplete status=1
+state=1 cursortype=3 locktype=1 count=3
+source= SHAPE ( SHAPE {SELECT * FROM `Customers`}  AS Customers APPEND (( SHAPE {SELECT * FROM `Orders`}  AS Orders APPEND ({SELECT OrderID, Product, Qty, Price FROM Items ORDER BY ItemID}  AS Items RELATE 'OrderID' TO 'OrderID') AS Items, SUM(Items.'Qty') AS TotQty, COUNT(Items.'Product') AS NItems) AS Orders RELATE 'CustID' TO 'CustID') AS Orders) COMPUTE Customers BY 'Country'
+  field Customers type=136 size=4 attr=8208
+  field Country type=202 size=15 attr=98
+  row Customers=[1] S'France'
+      field CustID type=202 size=5 attr=106
+      field Name type=202 size=30 attr=106
+      field Country type=202 size=15 attr=106
+      field Orders type=136 size=4 attr=8208
+      row S'BONAP' S'Bon app' S'France' Orders=[1]
+          field OrderID type=3 size=4 attr=122
+          field CustID type=202 size=5 attr=106
+          field Amount type=6 size=8 attr=122
+          field ODate type=7 size=8 attr=122
+          field Items type=136 size=4 attr=8208
+          field TotQty type=5 size=8 attr=80
+          field NItems type=3 size=4 attr=80
+          row L12 S'BONAP' C7.25 D2026-02-03 00:00:00 Items=[1] Do1 L1
+              field OrderID type=3 size=4 attr=122
+              field Product type=202 size=20 attr=106
+              field Qty type=2 size=2 attr=122
+              field Price type=6 size=8 attr=122
+              row L12 S'Bread' I1 C7.25
+  row Customers=[2] S'Germany'
+      field CustID type=202 size=5 attr=106
+      field Name type=202 size=30 attr=106
+      field Country type=202 size=15 attr=106
+      field Orders type=136 size=4 attr=8208
+      row S'ALFKI' S'Alfreds' S'Germany' Orders=[3]
+          field OrderID type=3 size=4 attr=122
+          field CustID type=202 size=5 attr=106
+          field Amount type=6 size=8 attr=122
+          field ODate type=7 size=8 attr=122
+          field Items type=136 size=4 attr=8208
+          field TotQty type=5 size=8 attr=80
+          field NItems type=3 size=4 attr=80
+          row L10 S'ALFKI' C100.5 D2026-01-05 00:00:00 Items=[2] Do3 L2
+              field OrderID type=3 size=4 attr=122
+              field Product type=202 size=20 attr=106
+              field Qty type=2 size=2 attr=122
+              field Price type=6 size=8 attr=122
+              row L10 S'Tea' I2 C10
+              row L10 S'Jam' I1 C80.5
+          row L11 S'ALFKI' C20 D2026-02-01 00:00:00 Items=[1] Do4 L1
+              field OrderID type=3 size=4 attr=122
+              field Product type=202 size=20 attr=106
+              field Qty type=2 size=2 attr=122
+              field Price type=6 size=8 attr=122
+              row L11 S'Tea' I4 C5
+          row L14 S'ALFKI' C1 D2026-03-09 00:00:00 Items=[0] Null L0
+              field OrderID type=3 size=4 attr=122
+              field Product type=202 size=20 attr=106
+              field Qty type=2 size=2 attr=122
+              field Price type=6 size=8 attr=122
+              (no rows)
+      row S'BLAUS' S'Blauer See' S'Germany' Orders=[1]
+          field OrderID type=3 size=4 attr=122
+          field CustID type=202 size=5 attr=106
+          field Amount type=6 size=8 attr=122
+          field ODate type=7 size=8 attr=122
+          field Items type=136 size=4 attr=8208
+          field TotQty type=5 size=8 attr=80
+          field NItems type=3 size=4 attr=80
+          row L13 S'BLAUS' C300 D2026-03-01 00:00:00 Items=[1] Do10 L1
+              field OrderID type=3 size=4 attr=122
+              field Product type=202 size=20 attr=106
+              field Qty type=2 size=2 attr=122
+              field Price type=6 size=8 attr=122
+              row L13 S'Ale' I10 C30
+  row Customers=[1] S'Netherlands'
+      field CustID type=202 size=5 attr=106
+      field Name type=202 size=30 attr=106
+      field Country type=202 size=15 attr=106
+      field Orders type=136 size=4 attr=8208
+      row S'NOORD' S'Noord' S'Netherlands' Orders=[0]
+          field OrderID type=3 size=4 attr=122
+          field CustID type=202 size=5 attr=106
+          field Amount type=6 size=8 attr=122
+          field ODate type=7 size=8 attr=122
+          field Items type=136 size=4 attr=8208
+          field TotQty type=5 size=8 attr=80
+          field NItems type=3 size=4 attr=80
+          (no rows)
+== the commands of the hierarchy, through Commands
+  ! commands customers: 5 Invalid procedure call or argument [DeTest1]
+  ! recordsets(Customers): 5 Invalid procedure call or argument [DeTest1]
+recordsets(Customers) Recordset state=0
+== update through the hierarchy
+event Conn1_WillExecute cursortype=-1 locktype=-1 options=-1 source= SHAPE ( SHAPE {SELECT * FROM `Customers`}  AS Customers APPEND (( SHAPE {SELECT * FROM `Orders`}  AS Orders APPEND ({SELECT OrderID, Product, Qty, Price FROM Items ORDER BY ItemID}  AS Items RELATE 'OrderID' TO 'OrderID') AS Items, SUM(Items.'Qty') AS TotQty, COUNT(Items.'Product') AS NItems) AS Orders RELATE 'CustID' TO 'CustID') AS Orders) COMPUTE Customers BY 'Country'
+event Conn1_ExecuteComplete status=1
+locktype=1
+chapter locktype=1 first=S'Alfreds'
+  ! update: 3251 Current Recordset does not support updating. This may be a limitation of the provider, or of the selected locktype. [ADODB.Recordset]
+event Conn1_WillExecute cursortype=-1 locktype=-1 options=-1 source=SELECT * FROM Customers WHERE Country = 'Germany' ORDER BY CustID
+event rsGermans_MoveComplete reason=10
+event Conn1_ExecuteComplete status=1
+event rsGermans_MoveComplete reason=10
+server S'Alfreds'
+== close
+conn1 state=0
+  ! Germans after conn close: 3704 Operation is not allowed when the object is closed. [ADODB.Connection]
+rsGermans state=0 conn1 state=0
+end

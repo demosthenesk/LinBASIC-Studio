@@ -1,0 +1,15 @@
+Δοκιμή του Data control στον σχεδιαστή φορμών (LinBASIC Studio, Φάση 4.4)
+
+Η Form1 φτιάχτηκε στο LinBASIC Studio: ένα Data control (Align Bottom, ιδιότητες βάσης
+δεδομένων) και TextBox, CheckBox, Label, ListBox δεμένα σε αυτό (DataSource, DataField).
+
+1. ’νοιξε το DataForm.vbp στο VB6. Δεν πρέπει να βγει μήνυμα λάθους ούτε να γραφτεί αρχείο .log.
+   Δες τη Form1: το Data1 πρέπει να είναι στο κάτω μέρος, σε όλο το πλάτος.
+
+2. Κλικ στο Data1. Στο παράθυρο Properties άνοιξε τη λίστα της DefaultType
+   και σημείωσε τις δύο γραμμές της, όπως ακριβώς φαίνονται (π.χ. "1 - ...", "2 - ...").
+   Μην αλλάξεις την τιμή (κλείσε τη λίστα με Esc).
+
+3. File > Save Form1.frm As... με το ίδιο όνομα, Yes.
+
+4. Κλείσε το VB6 (No αν ρωτήσει για το DataForm.vbp).

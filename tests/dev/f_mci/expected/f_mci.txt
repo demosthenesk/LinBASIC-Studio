@@ -1,0 +1,109 @@
+load
+MMControl1 MMControl
+  type='' file='' auto=True notify=False wait=False share=False orient=0 tf=0 upd=1000 silent=False recmode=1 border=1 enabled=True cmd=''
+  en=FFFFFFFFF vis=TTTTTTTTT
+  mode=524 error=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.' id=0 from=0 to=0 track=1 frames=1 notifyvalue=0 hwnddisplay=0 usewin=False
+  len=0
+  pos=0
+  start=0
+  tracks=0
+  tracklen=0
+  trackpos=0
+  can play=False record=False eject=False step=False
+MMControl2
+  type='WaveAudio' file='' auto=False notify=False wait=False share=False orient=0 tf=0 upd=1000 silent=False recmode=1 border=1 enabled=True cmd=''
+  en=FFTFFFFFF vis=TTTTTTFFF
+  mode=524 error=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.' id=0 from=0 to=0 track=1 frames=1 notifyvalue=0 hwnddisplay=0 usewin=False
+  len=0
+  pos=0
+  start=0
+  tracks=0
+  tracklen=0
+  trackpos=0
+  can play=False record=False eject=False step=False
+tf 11: 380 Invalid property value
+orient 2: 380 Invalid property value
+upd -1: 380 Invalid property value upd=1000
+mode set: 383 Property is read-only
+len set: 383 Property is read-only
+error set: 383 Property is read-only
+== open without a file
+  Open: ok mode=524 pos=0 len=0 err=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.'
+== bad command
+  Bogus: ok mode=524 pos=0 len=0 err=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.'
+  Play: ok mode=524 pos=0 len=0 err=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.'
+== missing file
+  Open: ok mode=525 pos=0 len=0 err=0 msg=''
+  open devices=1
+== open tone.wav
+  Open: ok mode=525 pos=0 len=1500 err=0 msg=''
+  open devices=2 wait=False from=0 to=0
+  type='WaveAudio' file='<dir>\tone.wav' auto=True notify=False wait=False share=False orient=0 tf=0 upd=1000 silent=False recmode=1 border=1 enabled=True cmd='Open'
+  en=FFFFFFFFF vis=TTTTTTTTT
+  mode=525 error=0 msg='' id=2 from=0 to=0 track=1 frames=1 notifyvalue=0 hwnddisplay=0 usewin=False
+  len=1500
+  pos=0
+  start=0
+  tracks=1
+  tracklen=1500
+  trackpos=0
+  can play=True record=True eject=False step=False
+  bytes: len=66150 tf=8
+  samples: len=33075
+== play with wait
+  Play: ok mode=525 pos=200 len=1500 err=0 msg=''
+  after: wait=True notify=False from=0 to=200
+  en=FFFFFFFFF vis=TTTTTTTTT
+== seek / prev / next / step / back
+  Seek: ok mode=525 pos=700 len=1500 err=0 msg=''
+  position set: 383 Property is read-only | mode=525 pos=700 len=1500 err=0 msg=''
+  open devices=2
+  Next: ok mode=525 pos=1500 len=1500 err=0 msg=''
+  Prev: ok mode=525 pos=0 len=1500 err=0 msg=''
+  Step: ok mode=525 pos=0 len=1500 err=0 msg=''
+  Back: ok mode=525 pos=0 len=1500 err=0 msg=''
+  Eject: ok mode=525 pos=0 len=1500 err=0 msg=''
+  Sound: ok mode=525 pos=0 len=1500 err=0 msg=''
+  Pause: ok mode=525 pos=0 len=1500 err=0 msg=''
+  Stop: ok mode=525 pos=0 len=1500 err=0 msg=''
+== wait: one command or all?
+  play 1: mode=525 wait=True
+  play 2: mode=526 wait=True
+== probes of Notify / Done (the codes in the order they came)
+  A1 notify, play to the end: [1] mode=525 notify=True value=1
+  A2 notify, play from 0 to 400: [1] mode=525 notify=True value=1
+  A3 play, no notify set again: [1] mode=525 notify=True value=1
+  A4 notify play, notify play: [2 1] mode=525 notify=True value=1
+  A5 notify play, stop: [1] mode=525 notify=True value=1
+  A6 notify play, notify stop: [1 1] mode=525 notify=True value=1
+  A7 notify, then reading Mode and Position: 525 0: [] mode=525 notify=True value=1
+  A8 notify seek: [1 1] mode=525 notify=True value=1
+  A9 notify step (waveaudio): [] mode=525 notify=True value=1
+  updates>0=True
+== close
+  Close: ok mode=524 pos=0 len=0 err=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.'
+  open devices=1
+  type='WaveAudio' file='<dir>\tone.wav' auto=True notify=True wait=False share=False orient=0 tf=0 upd=0 silent=False recmode=1 border=1 enabled=True cmd='Close'
+  en=FFFFFFFFF vis=TTTTTTTTT
+  mode=524 error=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.' id=0 from=0 to=400 track=1 frames=1 notifyvalue=1 hwnddisplay=0 usewin=False
+  len=0
+  pos=0
+  start=0
+  tracks=0
+  tracklen=0
+  trackpos=0
+  can play=True record=True eject=False step=False
+== avivideo in a picture box
+  Open: ok mode=525 pos=0 len=10 err=0 msg=''
+  tf=3 len=10 frames=1 usewin=True canstep=True hwnd ok=True
+  Step: ok mode=525 pos=1 len=10 err=0 msg=''
+  Step: ok mode=525 pos=2 len=10 err=0 msg=''
+  Back: ok mode=525 pos=1 len=10 err=0 msg=''
+  Step: ok mode=525 pos=4 len=10 err=0 msg=''
+  Play: ok mode=525 pos=6 len=10 err=0 msg=''
+  Close: ok mode=524 pos=0 len=0 err=257 msg='Invalid MCI device ID.  Use the ID returned when opening the MCI device.'
+== MMControl2 (AutoEnable off)
+  Open: ok mode=525 pos=0 len=1500 err=0 msg=''
+  en=FFTFFFFFF vis=TTTTTTFFF
+end
+  open devices=1

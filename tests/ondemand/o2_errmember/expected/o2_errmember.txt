@@ -1,0 +1,7 @@
+start
+good 5
+typo start
+typo end 0
+value 438 Object doesn't support this property or method []
+after typo 438
+end
