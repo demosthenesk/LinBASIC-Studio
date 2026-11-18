@@ -2,7 +2,7 @@
 Properties, Immediate) around the code windows, which use the editor of Linpad++."""
 import os
 
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QSize
 from PyQt6.QtGui import QAction, QKeySequence, QFont, QColor, QPalette, QIcon
 from PyQt6.QtWidgets import (QMainWindow, QMdiArea, QMdiSubWindow, QDockWidget, QTreeWidget, QTreeWidgetItem,
                              QPlainTextEdit, QFileDialog, QMessageBox, QTabWidget,
@@ -204,12 +204,22 @@ class MainWindow(QMainWindow):
         self.tree.currentItemChanged.connect(self._tree_current)
         self.tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self._tree_menu)
+        self.tree.itemExpanded.connect(self._tree_expanded)
+        self.tree.itemCollapsed.connect(self._tree_expanded)
         w = QWidget()
         lay = QVBoxLayout(w)
         lay.setContentsMargins(0, 0, 0, 0)
+        # VB6's buttons (DEV-8/me5 pictures 2-4): View Code, View Object | Toggle Folders (pressed: folders)
         tb = QToolBar()
-        tb.addAction("View Code", self.view_code)
-        tb.addAction("View Object", self.view_object)
+        tb.setIconSize(QSize(16, 16))
+        self.a_pe_code = tb.addAction(edicons.icon("view_code"), "View Code", self.view_code)
+        self.a_pe_object = tb.addAction(edicons.icon("view_object"), "View Object", self.view_object)
+        tb.addSeparator()
+        self.a_pe_folders = tb.addAction(edicons.icon("toggle_folders"), "Toggle Folders", self.toggle_folders)
+        self.a_pe_folders.setCheckable(True)
+        self.a_pe_folders.setChecked(True)
+        self.pe_folders = True                  # the modules in their folders (Forms, Modules ...)
+        self.pe_expanded = {}                   # (project, folder) -> open; what the user opened stays open
         lay.addWidget(tb)
         lay.addWidget(self.tree)
         self.dock_project = self._dock("Project", "Project Explorer", w, Qt.DockWidgetArea.RightDockWidgetArea)
@@ -267,10 +277,12 @@ class MainWindow(QMainWindow):
         self.resizeDocks([self.dock_bottom], [190], Qt.Orientation.Vertical)
         # Dockable (Tools > Options > Docking, the right button of each tool window: DEV-8/me4)
         self.free_docks = {}                    # Immediate / Locals / Watches out of the bottom dock
-        for key, w, extras in (("props", self.props.grid, None), ("immediate", self.immediate, self._immediate_menu),
-                               ("locals", self.locals_win, None), ("watch", self.watch_win, None),
-                               ("toolbox", self.toolbox, None), ("palette", self.palette_win, None)):
+        for key, w, extras in (("props", self.props.grid, self._props_menu), ("props", self.props.desc, self._props_menu),
+                               ("immediate", self.immediate, self._immediate_menu),
+                               ("locals", self.locals_win, self._locals_menu), ("watch", self.watch_win, self._watch_menu),
+                               ("toolbox", self.toolbox, self._toolbox_menu), ("palette", self.palette_win, None)):
             self.tool_menu(key, w, extras)
+        self.props.desc.setVisible(bool(self.S.get("props_description", True)))
         for key, _title in self.TOOL_WINDOWS:
             if key not in ("layout", "objbrowser") and not self.is_dockable(key):
                 self._apply_dockable(key)
@@ -421,6 +433,12 @@ class MainWindow(QMainWindow):
         self.a_view_toolbox = self._act(m, "Toolbo&x", lambda: self._show_dock(self.dock_toolbox, self.toolbox))
         self.a_view_palette = self._act(m, "Color Pa&lette", self.show_palette)
         m.addSeparator()
+        # View > Zoom: the zoom of the code windows without Ctrl+Mouse Wheel (a laptop touchpad), not in VB6
+        zm = m.addMenu("&Zoom")
+        self.a_zoom_in = self._act(zm, "Zoom &In", lambda: self.code_zoom_step(1))
+        self.a_zoom_in.setShortcuts([QKeySequence("Ctrl+="), QKeySequence("Ctrl++")])
+        self.a_zoom_out = self._act(zm, "Zoom &Out", lambda: self.code_zoom_step(-1), "Ctrl+-")
+        self.a_zoom_reset = self._act(zm, "Zoom &Reset", lambda: self.code_zoom_step(0), "Ctrl+0")
 
         m = mb.addMenu("&Project")             # VB6's Project menu (DEV-8/me1, picture 10)
         self._act(m, "Add &Form", lambda: self.add_module("Form"))
@@ -812,8 +830,8 @@ class MainWindow(QMainWindow):
         self._objbrowser = None
 
     def tool_menu(self, key, widget, extras=None):
-        """the right button of a tool window: its own commands (extras: [(text, slot, enabled) or None]),
-        then Dockable and Hide, as in VB6 (DEV-8/me4 pictures 2, 3)"""
+        """the right button of a tool window: its own commands (extras: [(text, slot, enabled[, icon[, checked]])
+        or None]), then Dockable and Hide, as in VB6 (DEV-8/me4 pictures 2, 3; me8)"""
         widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
         def show(pos):
@@ -823,8 +841,16 @@ class MainWindow(QMainWindow):
                 if e is None:
                     menu.addSeparator()
                 else:
-                    a = menu.addAction(e[0], e[1])
+                    a = menu.addAction(e[0])
+                    if e[1] is not None:
+                        a.triggered.connect(lambda _c=False, f=e[1]: f())
                     a.setEnabled(bool(e[2]))
+                    ic = e[3] if len(e) > 3 else None
+                    if ic is not None:
+                        a.setIcon(ic if isinstance(ic, QIcon) else edicons.icon(ic))
+                    if len(e) > 4 and e[4] is not None:
+                        a.setCheckable(True)
+                        a.setChecked(bool(e[4]))
             if not menu.isEmpty():
                 menu.addSeparator()
             a = menu.addAction("Doc&kable", lambda: self.set_dockable(key, not self.is_dockable(key)))
@@ -841,6 +867,111 @@ class MainWindow(QMainWindow):
             holder = holder.parentWidget()
         if holder is not None:
             holder.hide()
+
+    def _toolbox_menu(self):
+        """VB6's menu of the Toolbox (on a tool or on its empty space): Components..., Add Tab... | Dockable,
+        Hide (DEV-8/me6 pictures 1, 2)"""
+        return [("C&omponents...", self.components_dialog, self.project is not None),
+                ("&Add Tab...", lambda: self.toolbox.add_tab(), True)]
+
+    def _run_items(self):
+        """Start (Continue in break) and End, with their pictures, in the menus of Watches / Locals (me8-17..23)"""
+        state = self.runner.state
+        return [("&Continue" if state == "break" else "&Start", self.run_start, state in ("design", "break"),
+                 self.a_start.icon()),
+                ("&End", self.run_end, state != "design", self.a_end.icon())]
+
+    def _props_menu(self):
+        """the menu of the Properties window (its list and its description): Description | Dockable, Hide
+        (DEV-8/me8-03, 04)"""
+        return [("&Description", lambda: self.set_props_description(not self.props.desc.isVisible()), True, None,
+                 self.props.desc.isVisible())]
+
+    def set_props_description(self, on):
+        """Properties > Description: the box of the description under the list, shown or not (kept)"""
+        self.props.desc.setVisible(bool(on))
+        self.S["props_description"] = bool(on)
+
+    def _watch_menu(self):
+        """the menu of Watches (DEV-8/me8-17, 18, 22): Cut, Copy, Paste | Edit Watch..., Add Watch..., Delete Watch |
+        Collapse Parent | Start / Continue, End | Definition (then Dockable, Hide)"""
+        i = self.watch_win.current()
+        return [("Cu&t", None, False, "cut"), ("&Copy", self.watch_win.copy, i >= 0, "copy"),
+                ("&Paste", None, False, "paste"), None,
+                ("&Edit Watch...", lambda: self.edit_watch(i), i >= 0), ("&Add Watch...", self.add_watch, True),
+                ("&Delete Watch", lambda: self.delete_watch(i), i >= 0), None,
+                ("Co&llapse Parent", None, False), None] + self._run_items() + [None, ("&Definition", None, False)]
+
+    def _locals_menu(self):
+        """the menu of Locals (DEV-8/me8-19, 20, 23): Cut, Copy, Paste | Collapse Parent (a line inside an other
+        one) | Start / Continue, End (then Dockable, Hide)"""
+        lw = self.locals_win
+        return [("Cu&t", None, False, "cut"), ("&Copy", lw.copy, lw.tree.currentItem() is not None, "copy"),
+                ("&Paste", None, False, "paste"), None,
+                ("Co&llapse Parent", lw.collapse_parent, lw.can_collapse_parent()), None] + self._run_items()
+
+    # ================================================================ the menu of a form designer (DEV-8/me8)
+    def designer_menu_items(self, d, item):
+        """[(icon name or None, text, slot, enabled, checked or None) or None] of the right button in a designer:
+        the form (item None): View Code, Menu Editor... | Lock Controls, Paste | Properties | Update UserControls
+        (me8-01, 05, 12); a control: Cut, Copy, Paste, Delete | Bring to Front, Send to Back | View Code, Align to
+        Grid | Properties (me8-02, 06..09); an ActiveX control (a user control, an .ocx): the same without the
+        pictures and without Properties, \"Bring To Front\", \"Send To Back\" (me8-13)"""
+        paste = d.can_paste()
+
+        def after(f):
+            def run():
+                f()
+                self.update_format_menu()
+                self.update_toolbar_pos()
+            return run
+        if item is None:
+            return [("view_code", "View C&ode", self.view_code, True, None),
+                    ("menu_editor", "&Menu Editor...", after(d.menu_editor), True, None), None,
+                    ("lock", "&Lock Controls", after(d.toggle_lock), True, bool(d.locked)),
+                    ("paste", "&Paste", after(d.paste), paste, None), None,
+                    ("properties", "Prope&rties", self.show_properties, True, None), None,
+                    (None, "Update &UserControls", d.update_user_controls, bool(d.user_controls_used()), None)]
+        front, back = d.z_order_state()
+        cut = after(lambda: (d.copy_selection(), d.delete_selection()))
+        if item.ctl.cls.lower().startswith("vb."):
+            return [("cut", "Cu&t", cut, True, None), ("copy", "&Copy", d.copy_selection, True, None),
+                    ("paste", "&Paste", after(d.paste), paste, None),
+                    (None, "&Delete", after(d.delete_selection), True, None), None,
+                    ("front", "&Bring to Front", after(lambda: d.z_order(True)), front, None),
+                    ("back", "&Send to Back", after(lambda: d.z_order(False)), back, None), None,
+                    ("view_code", "View C&ode", self.view_code, True, None),
+                    ("align_grid", "Align to &Grid", after(lambda: d.align("grid")), True, None), None,
+                    ("properties", "Prope&rties", self.show_properties, True, None)]
+        return [(None, "Cu&t", cut, True, None), (None, "&Copy", d.copy_selection, True, None),
+                (None, "&Paste", after(d.paste), paste, None), (None, "&Delete", after(d.delete_selection), True, None),
+                None, (None, "&Bring To Front", after(lambda: d.z_order(True)), front, None),
+                (None, "Se&nd To Back", after(lambda: d.z_order(False)), back, None), None,
+                (None, "&View Code", self.view_code, True, None),
+                (None, "Align to &Grid", after(lambda: d.align("grid")), True, None)]
+
+    def designer_menu(self, d, gpos, item):
+        from PyQt6.QtWidgets import QMenu
+        menu = QMenu(self)
+        for e in self.designer_menu_items(d, item):
+            if e is None:
+                menu.addSeparator()
+                continue
+            ic, text, slot, on, checked = e
+            a = menu.addAction(text)
+            if ic:
+                a.setIcon(edicons.icon(ic))
+            a.triggered.connect(lambda _c=False, f=slot: f())
+            a.setEnabled(bool(on))
+            if checked is not None:
+                a.setCheckable(True)
+                a.setChecked(checked)
+        self._last_designer_menu = menu
+        menu.exec(gpos)
+
+    def show_properties(self):
+        """Properties of the menus: the Properties window, in front"""
+        self._show_dock(self.dock_props, self.props.grid)
 
     def _immediate_menu(self):
         """VB6's menu of the Immediate window: Cut, Copy, Paste | Object Browser, Definition | Start, End"""
@@ -1042,6 +1173,9 @@ class MainWindow(QMainWindow):
         snd(S.SCI_SETMARGINMASKN, 1, mask | (1 << MARK_BP) | (1 << MARK_CUR))
         snd(S.SCI_SETMARGINWIDTHN, 1, max(16, snd(S.SCI_GETMARGINWIDTHN, 1)))
         snd(S.SCI_SETREADONLY, self.runner.state in ("running", "break"))
+        z = self._code_zoom()
+        if snd(S.SCI_GETZOOM) != z:             # the zoom of the last session (on_zoom keeps it)
+            snd(S.SCI_SETZOOM, z)
         if not getattr(ed, "_dwell", False):
             ed._dwell = True
             ed.SCN_MODIFYATTEMPTRO.connect(lambda e=ed: self.edit_while_running(e))
@@ -1093,8 +1227,37 @@ class MainWindow(QMainWindow):
     def on_double_click(self, ed, pos, line, mods):
         pass
 
+    def _code_zoom(self):
+        try:
+            return max(-10, min(60, int(self.S["code_zoom"] or 0)))
+        except (TypeError, ValueError):
+            return 0
+
     def on_zoom(self, ed):
-        pass
+        """Ctrl+Mouse Wheel in a code window: every code window (and both panes of a split one) takes
+        the same zoom, and it is saved with the settings so the next session starts with it, as
+        Notepad++ / Linpad++ keep their zoom"""
+        if self._cw_of(ed) is None:
+            return
+        z = int(ed.SendScintilla(S.SCI_GETZOOM))
+        if z == self._code_zoom():
+            return
+        self.set_code_zoom(z)
+
+    def code_zoom_step(self, step):
+        """View > Zoom: Zoom In (+1), Zoom Out (-1), Zoom Reset (0) of the code windows"""
+        z = 0 if step == 0 else max(-10, min(20, self._code_zoom() + step))
+        self.set_code_zoom(z)
+
+    def set_code_zoom(self, z):
+        """every code window (both panes of a split one) at zoom z; kept in the settings for the next session"""
+        self.S["code_zoom"] = z
+        for sw in list(self.code_windows.values()):
+            cw = sw.widget()
+            if isinstance(cw, CodeWindow):
+                for e in cw.panes():
+                    if e.SendScintilla(S.SCI_GETZOOM) != z:
+                        e.SendScintilla(S.SCI_SETZOOM, z)
 
     def on_macro_record(self, ed, msg, wparam, lparam):
         pass
@@ -1441,12 +1604,21 @@ class MainWindow(QMainWindow):
     # ================================================================ project explorer, properties
     PROJECT_ROLE = Qt.ItemDataRole.UserRole + 1
     RELDOC_ROLE = Qt.ItemDataRole.UserRole + 2
+    KIND_ROLE = Qt.ItemDataRole.UserRole + 3     # project, folder, module, reldoc
+    MODULE_ICON = {"Form": "form", "MDIForm": "mdiform", "Module": "module", "Class": "class",
+                   "UserControl": "usercontrol", "PropertyPage": "proppage", "UserDocument": "userdoc"}
 
-    def fill_tree(self):
+    def fill_tree(self, fresh=False):
         """the Project Explorer again; the module that was selected stays selected (a Save, a new related
-        document ... do not empty the Properties window)"""
+        document ... do not empty the Properties window), the folders the user opened or closed stay so.
+        fresh (a project just opened): the folders closed and the project selected, as VB6 (DEV-8/rs1 stage 8)"""
         it = self.tree.currentItem()
         keep = it.data(0, Qt.ItemDataRole.UserRole) if it is not None else None
+        keep_proj = it.data(0, self.PROJECT_ROLE) if it is not None and self.pe_kind(it) == "project" else None
+        if fresh:
+            self.pe_expanded = {}
+        else:
+            self._pe_remember()
         self.tree.blockSignals(True)
         self.tree.clear()
         self.tree.blockSignals(False)
@@ -1454,59 +1626,161 @@ class MainWindow(QMainWindow):
         self.refresh_toolbox()
         if p is None:
             self.dock_project.setWindowTitle("Project Explorer")
+            self.update_pe_buttons()
             return
         g = self.group
         if g is not None:                       # Project Group - Group1, a branch for each project
             self.dock_project.setWindowTitle(f"Project Group - {g.name}")
             for q in g.projects:
-                self._tree_project(q, bold=q is g.startup)
+                self._tree_project(q, bold=q is g.startup, fresh=fresh)
         else:
-            self.dock_project.setWindowTitle("Project Explorer")
-            self._tree_project(p, bold=True)
-        self.tree.expandAll()
+            self.dock_project.setWindowTitle(f"Project - {p.name}")
+            self._tree_project(p, bold=True, fresh=fresh)
+        self.tree.blockSignals(True)
+        self.tree.setAutoScroll(False)          # (selecting a module in a closed folder does not open it)
         if keep is not None:
-            self.tree.blockSignals(True)
             self.select_in_tree(keep)
-            self.tree.blockSignals(False)
+        elif keep_proj is not None:
+            self.select_project_in_tree(keep_proj)
+        self.tree.setAutoScroll(True)
+        self.tree.blockSignals(False)
         self.fill_properties()
+        self.update_pe_buttons()
 
-    def _tree_project(self, p, bold):
-        """the branch of one project: its name and file, its modules by kind (VB6's folders)"""
-        root = QTreeWidgetItem([f"{p.name} ({os.path.basename(p.path) if p.path else p.name + '.vbp'})"])
+    def _pe_key(self, it):
+        """the key of a branch whose open / closed state is kept: (project, folder name or None)"""
+        q = it.data(0, self.PROJECT_ROLE)
+        kind = self.pe_kind(it)
+        if q is None or kind not in ("project", "folder"):
+            return None
+        return (id(q), it.text(0) if kind == "folder" else None)
+
+    def _pe_remember(self):
+        stack = [self.tree.invisibleRootItem()]
+        while stack:
+            x = stack.pop()
+            for i in range(x.childCount()):
+                c = x.child(i)
+                k = self._pe_key(c)
+                if k is not None:
+                    self.pe_expanded[k] = c.isExpanded()
+                stack.append(c)
+
+    def _pe_expand(self, it, fresh, default=True):
+        """open a branch as it was; a new one opens (VB6: a project or folder that appears is open), except in
+        a project just opened, where the folders are closed"""
+        k = self._pe_key(it)
+        if k in self.pe_expanded:
+            it.setExpanded(self.pe_expanded[k])
+        else:
+            it.setExpanded(default and not fresh)
+
+    def _tree_project(self, p, bold, fresh=False):
+        """the branch of one project: its name and file, its modules by kind (VB6's folders); Toggle Folders
+        off: the modules under the project, by name (DEV-8/me5 picture 12)"""
+        file = os.path.basename(p.path) if p.path else p.name     # unsaved: "Project1 (Project1)" (me5-01)
+        root = QTreeWidgetItem([f"{p.name} ({file})"])
         root.setData(0, self.PROJECT_ROLE, p)
+        root.setData(0, self.KIND_ROLE, "project")
+        root.setIcon(0, edicons.icon("project"))
         f = root.font(0)
         f.setBold(bold)
         root.setFont(0, f)
         self.tree.addTopLevelItem(root)
-        folders = {}
+        items = []
         for m in p.modules:
-            fname = FOLDER_OF_KIND.get(m.display_kind, m.kind)
-            if fname not in folders:
-                folders[fname] = QTreeWidgetItem([fname])
             it = QTreeWidgetItem([self._tree_label(m)])
             it.setData(0, Qt.ItemDataRole.UserRole, m)
-            folders[fname].addChild(it)
-        order = ["Forms", "Modules", "Class Modules", "User Controls", "Property Pages", "User Documents", "Designers"]
-        for name in sorted(folders, key=lambda n: order.index(n) if n in order else 99):
-            root.addChild(folders[name])
-            folders[name].sortChildren(0, Qt.SortOrder.AscendingOrder)
-            for i in range(folders[name].childCount()):
-                folders[name].child(i).setData(0, self.PROJECT_ROLE, p)
-            folders[name].setData(0, self.PROJECT_ROLE, p)
+            it.setData(0, self.PROJECT_ROLE, p)
+            it.setData(0, self.KIND_ROLE, "module")
+            it.setIcon(0, edicons.icon(self.MODULE_ICON.get(m.display_kind, "designer")))
+            items.append((FOLDER_OF_KIND.get(m.display_kind, m.kind), it))
         docs = []                               # Related Documents: "(s1.RES)" (DEV-8/rs1 picture 12)
         res = (p.vbp.get("ResFile32") or "").strip('"')
         if res:
             docs.append(("res", res))
         docs += [("doc", v.strip().strip('"')) for v in p.vbp.get_all("RelatedDoc")]
-        if docs:
-            f = QTreeWidgetItem(["Related Documents"])
-            f.setData(0, self.PROJECT_ROLE, p)
-            for kind, path in docs:
-                it = QTreeWidgetItem([f"({os.path.basename(path.replace(chr(92), '/'))})"])
-                it.setData(0, self.RELDOC_ROLE, (kind, path))
-                it.setData(0, self.PROJECT_ROLE, p)
-                f.addChild(it)
-            root.addChild(f)
+        for kind, path in docs:
+            it = QTreeWidgetItem([f"({os.path.basename(path.replace(chr(92), '/'))})"])
+            it.setData(0, self.RELDOC_ROLE, (kind, path))
+            it.setData(0, self.PROJECT_ROLE, p)
+            it.setData(0, self.KIND_ROLE, "reldoc")
+            it.setIcon(0, edicons.icon("reldoc"))
+            items.append(("Related Documents", it))
+        if not self.pe_folders:
+            for _, it in sorted(items, key=lambda x: x[1].text(0).lower()):
+                root.addChild(it)
+        else:
+            folders = {}
+            for fname, it in items:
+                if fname not in folders:
+                    fo = QTreeWidgetItem([fname])
+                    fo.setData(0, self.PROJECT_ROLE, p)
+                    fo.setData(0, self.KIND_ROLE, "folder")
+                    folders[fname] = fo
+                folders[fname].addChild(it)
+            order = ["Forms", "Modules", "Class Modules", "User Controls", "Property Pages", "User Documents",
+                     "Designers", "Related Documents"]
+            for name in sorted(folders, key=lambda n: order.index(n) if n in order else 99):
+                fo = folders[name]
+                root.addChild(fo)
+                fo.sortChildren(0, Qt.SortOrder.AscendingOrder)
+                self._pe_expand(fo, fresh)
+                self._pe_folder_icon(fo)
+        self._pe_expand(root, False)            # the project itself is open, also in a project just opened
+
+    def _pe_folder_icon(self, fo):
+        fo.setIcon(0, edicons.icon("folder_open" if fo.isExpanded() else "folder"))
+
+    def pe_kind(self, it):
+        """what an item of the Project Explorer is: project, folder, module, reldoc (None: no item)"""
+        return it.data(0, self.KIND_ROLE) if it is not None else None
+
+    def select_project_in_tree(self, q):
+        for i in range(self.tree.topLevelItemCount()):
+            root = self.tree.topLevelItem(i)
+            if root.data(0, self.PROJECT_ROLE) is q:
+                self.tree.setCurrentItem(root)
+                return root
+        return None
+
+    def pe_opened(self):
+        """a project just opened: its folders closed and the project selected (the designer of the startup
+        form opened meanwhile selected the form), Properties "Project1 Project" (DEV-8/rs1 stage 8)"""
+        self.pe_expanded = {}
+        for i in range(self.tree.topLevelItemCount()):
+            root = self.tree.topLevelItem(i)
+            for k in range(root.childCount()):
+                c = root.child(k)
+                if self.pe_kind(c) == "folder":
+                    c.setExpanded(False)
+                    self._pe_folder_icon(c)
+        if self.project is not None:
+            self.select_project_in_tree(self.project)
+        self.fill_properties()
+        self.update_pe_buttons()
+
+    def toggle_folders(self):
+        """Toggle Folders: the modules without their folders, by name; back again: the folders closed
+        (DEV-8/me5 pictures 12, 13)"""
+        self.pe_folders = not self.pe_folders
+        self.a_pe_folders.setChecked(self.pe_folders)
+        it = self.tree.currentItem()
+        if self.pe_kind(it) == "folder":        # a folder that goes away: its project stays selected
+            self.tree.blockSignals(True)
+            self.tree.setCurrentItem(it.parent())
+            self.tree.blockSignals(False)
+        self.fill_tree(fresh=self.pe_folders)   # the folders come back closed
+
+    def update_pe_buttons(self):
+        """View Code with a module, View Object with a form (grey with a project, a folder, a class or a
+        module: DEV-8/me5 pictures 7, 11)"""
+        if not hasattr(self, "a_pe_code"):
+            return
+        it = self.tree.currentItem()
+        m = it.data(0, Qt.ItemDataRole.UserRole) if self.pe_kind(it) == "module" else None
+        self.a_pe_code.setEnabled(m is not None and m.kind != "Designer")
+        self.a_pe_object.setEnabled(m is not None and m.has_designer)
 
     def tree_project(self, it=None):
         """the project of an item of the Project Explorer"""
@@ -1519,6 +1793,11 @@ class MainWindow(QMainWindow):
         if q is not None and q is not self.project:
             self.set_active(q)
         self.fill_properties()
+        self.update_pe_buttons()
+
+    def _tree_expanded(self, it):
+        if self.pe_kind(it) == "folder":
+            self._pe_folder_icon(it)
 
     def set_active(self, p):
         """the project the menus work on (Add Form, References, Make ...)"""
@@ -1529,56 +1808,116 @@ class MainWindow(QMainWindow):
         self.update_title()
 
     def _tree_menu(self, pos):
+        """the menus of the Project Explorer, as VB6's (DEV-8/me5 pictures 5-10, 17, 18; rs1 picture 29). The
+        item under the mouse becomes the selected one first, as in VB6."""
         it = self.tree.itemAt(pos)
-        q = self.tree_project(it)
         from PyQt6.QtWidgets import QMenu
         menu = QMenu(self)
-        if q is not None and self.group is not None and it.data(0, Qt.ItemDataRole.UserRole) is None:
-            a = menu.addAction("Set as Start &Up", lambda: self.set_startup(q))
-            a.setEnabled(q is not self.group.startup)
-            menu.addAction("&Remove Project", lambda: self.remove_project(q))
-            menu.addSeparator()
-        doc = it.data(0, self.RELDOC_ROLE) if it is not None else None
-        if doc is not None and doc[0] == "res" and q is not None:
-            self.set_active(q)
-            self.res_doc_menu(menu, q, os.path.basename(doc[1].replace(chr(92), '/')))
-            menu.exec(self.tree.viewport().mapToGlobal(pos))
-            return
+        if it is not None:
+            self.tree.setCurrentItem(it)
+        self.pe_menu(menu, it)
+        self._last_tree_menu = menu
+        menu.exec(self.tree.viewport().mapToGlobal(pos))
+
+    def pe_menu(self, menu, it):
+        """the menu of an item of the Project Explorer (and of its empty space: Dockable, Hide)"""
+        kind = self.pe_kind(it)
+        q = self.tree_project(it)
         if q is not None:
             self.set_active(q)
-            menu.addAction(f"{q.name} Propert&ies...", self.project_properties)
+        if kind == "reldoc":
+            doc = it.data(0, self.RELDOC_ROLE)
+            if doc[0] == "res":
+                self.res_doc_menu(menu, q, os.path.basename(doc[1].replace(chr(92), '/')))
+                return menu
+            kind = None
+        if kind == "module":
+            m = it.data(0, Qt.ItemDataRole.UserRole)
+            if m.has_designer:
+                menu.addAction(edicons.icon("view_object"), "View O&bject", lambda: self.open_designer(m))
+            if m.kind != "Designer":
+                menu.addAction(edicons.icon("view_code"), "View C&ode", lambda: self.open_code(m))
+            menu.addSeparator()
+            menu.addAction(edicons.icon("properties"), "Prope&rties",
+                           lambda: self._show_dock(self.dock_props, self.props.grid))
+            menu.addSeparator()
+            self._pe_add_menu(menu)
+            menu.addAction(f"&Save {m.name}", self.save_file)
+            menu.addAction(f"Save {m.name} &As...", self.save_file_as)
+            menu.addAction(f"&Remove {m.name}", self.remove_module)
+            menu.addSeparator()
+            menu.addAction(edicons.icon("print"), "&Print...", self.print_dialog)
+        elif kind == "folder":
+            for icon, text in (("view_code", "View C&ode"), ("view_object", "View O&bject")):
+                menu.addAction(edicons.icon(icon), text).setEnabled(False)
+            menu.addSeparator()
+            menu.addAction(f"{q.name} Prop&erties...", self.project_properties)
+            menu.addSeparator()
+            self._pe_add_menu(menu)
+            menu.addAction("Save").setEnabled(False)
+            menu.addAction("Save As...").setEnabled(False)
+            menu.addAction(edicons.icon("print"), "&Print...", self.print_dialog)
+        elif kind == "project":
+            # Set as Start Up: on also with one project and for the start-up project itself (me5-09, me5-18)
+            menu.addAction("Set as Start &Up", lambda: self.set_startup(q))
+            menu.addAction(f"{q.name} Prop&erties...", self.project_properties)
+            menu.addSeparator()
+            menu.addAction("Sa&ve Project", self.save_project)
+            menu.addAction("&Remove Project", lambda: self.remove_project(q))
+            menu.addSeparator()
+            self._pe_add_menu(menu)
+            menu.addSeparator()
+            menu.addAction(edicons.icon("print"), "&Print...", self.print_dialog)
         if not menu.isEmpty():
-            menu.exec(self.tree.viewport().mapToGlobal(pos))
+            menu.addSeparator()
+        self._pe_dock_items(menu)
+        return menu
+
+    def _pe_dock_items(self, menu):
+        dockable = self.is_dockable("project")
+        a = menu.addAction("Doc&kable", lambda: self.set_dockable("project", not dockable))
+        a.setCheckable(True)
+        a.setChecked(dockable)
+        menu.addAction("&Hide", self.dock_project.hide)
+
+    def _pe_add_menu(self, menu):
+        """Add >, as VB6's (DEV-8/me5 picture 10, rs1 picture 30): the kinds LinBASIC Studio does not make are
+        grey; Resource File only with the VB 6 Resource Editor loaded"""
+        add = menu.addMenu("&Add")
+        q = self.project
+        mdi = q is not None and q.mdi_form() is not None
+        for text, kind, icon in (("&Form", "Form", "form"), ("MD&I Form", "MDIForm", "mdiform"),
+                                 ("&Module", "Module", "module"), ("&Class Module", "Class", "class"),
+                                 ("&User Control", "UserControl", "usercontrol"),
+                                 ("P&roperty Page", "PropertyPage", "proppage"), ("User &Document", None, "userdoc"),
+                                 ("WebClass", None, None), ("Data Report", "DataReport", None),
+                                 ("DHTML Page", None, None), ("Data Environment", "DataEnvironment", None)):
+            slot = self.add_mdi_form if kind == "MDIForm" else (lambda k=kind: self.add_module(k))
+            a = add.addAction(text, slot)
+            if icon is not None:
+                a.setIcon(edicons.icon(icon))
+            a.setEnabled(kind is not None and q is not None and not (kind == "MDIForm" and mdi))
+        more = add.addMenu("More ActiveX Desi&gners...")
+        more.setEnabled(False)
+        add.addAction("&Add File...", self.add_file)
+        if self.res_loaded:
+            add.addAction("Resource File", self.add_new_resource_file)
+        return add
 
     def res_doc_menu(self, menu, q, name):
         """the menu of the resource file in the Project Explorer, as VB6's (DEV-8/rs1 stage 4, stage 8 picture
         29: all of it enabled): Properties | Add >, Save, Save As..., Remove <file> | Print... | Dockable, Hide"""
-        menu.addAction("Prope&rties", lambda: self._show_dock(self.dock_props, self.props.grid))
+        menu.addAction(edicons.icon("properties"), "Prope&rties",
+                       lambda: self._show_dock(self.dock_props, self.props.grid))
         menu.addSeparator()
-        add = menu.addMenu("&Add")
-        # VB6's list (stage 8, picture 30); the kinds LinBASIC Studio does not make yet are grey
-        for text, kind in (("&Form", "Form"), ("MD&I Form", None), ("&Module", "Module"),
-                           ("&Class Module", "Class"), ("&User Control", "UserControl"),
-                           ("P&roperty Page", "PropertyPage"), ("User &Document", None), ("WebClass", None),
-                           ("Data Report", "DataReport"), ("DHTML Page", None),
-                           ("Data Environment", "DataEnvironment")):
-            a = add.addAction(text, lambda k=kind: self.add_module(k))
-            a.setEnabled(kind is not None)
-        more = add.addMenu("More ActiveX Desi&gners...")
-        more.setEnabled(False)
-        add.addAction("&Add File...", self.add_file)
-        add.addAction("Resource File", self.add_new_resource_file)
+        self._pe_add_menu(menu)
         menu.addAction("Save", lambda: self.show_res_editor().save())
         menu.addAction("Save As...", lambda: self.show_res_editor().save_as())
         menu.addAction(f"&Remove {name}", lambda: self.remove_res_file(q))
         menu.addSeparator()
-        menu.addAction("&Print...", self.print_dialog)
+        menu.addAction(edicons.icon("print"), "&Print...", self.print_dialog)
         menu.addSeparator()
-        a = menu.addAction("Doc&kable", lambda: self.set_dockable("project", not dockable))
-        dockable = self.is_dockable("project")
-        a.setCheckable(True)
-        a.setChecked(dockable)
-        menu.addAction("&Hide", self.dock_project.hide)
+        self._pe_dock_items(menu)
 
     def set_dock_dockable(self, dock, on):
         """Dockable of a tool window: without it the window floats and no side takes it"""
@@ -1613,7 +1952,10 @@ class MainWindow(QMainWindow):
         self.toolbox.set_components(keys)
 
     def _tree_label(self, m):
-        return f"{m.name} ({os.path.basename(m.rel.replace(chr(92), '/'))})" + (" *" if m.dirty else "")
+        """"Form1 (Form1.frm)"; a module not saved yet has its name in the brackets: "Form1 (Form1)" (DEV-8/me5)"""
+        saved = not m.project.untitled and os.path.exists(m.path)
+        file = os.path.basename(m.rel.replace(chr(92), '/')) if saved else m.name
+        return f"{m.name} ({file})" + (" *" if m.dirty else "")
 
     def update_tree_marks(self):
         it = self.tree.invisibleRootItem()
@@ -1664,8 +2006,18 @@ class MainWindow(QMainWindow):
                 self.open_code(m)
 
     def fill_properties(self):
-        """the Properties window: the selected module, with its designer when it is open"""
+        """the Properties window: the selected module, with its designer when it is open; the project ("Project1
+        Project", (Name)); nothing for a folder, or for a form that has no window open (DEV-8/me5 pictures 8,
+        11, 14)"""
         self.refresh_toolbox()                  # the properties of the user controls follow their code
+        it = self.tree.currentItem()
+        kind = self.pe_kind(it)
+        if kind == "project":
+            self.props.show_project(self.tree_project(it))
+            return
+        if kind == "folder":
+            self.props.show_object(None, None, None)
+            return
         m = self.selected_module()
         sw = self.design_windows.get(m) if m is not None else None
         d = sw.widget() if sw is not None else None
@@ -1674,9 +2026,29 @@ class MainWindow(QMainWindow):
         elif d is not None:
             self.props.show_object(m, d, d.primary.ctl if d.primary else d.root)
         elif m is not None and m.sf is not None and m.sf.root is not None:
-            self.props.show_object(m, None, m.sf.root)
+            if m in self.code_windows:
+                self.props.show_object(m, None, m.sf.root)
+            else:
+                self.props.show_object(None, None, None)
         else:
             self.props.show_object(m, None, None)
+
+    def rename_project(self, q, new):
+        """(Name) of a project: Name= of the .vbp"""
+        import re
+        if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,39}", new or ""):
+            return "Invalid property value"
+        others = self.group.projects if self.group is not None else [q]
+        if any(x is not q and x.name.lower() == new.lower() for x in others) or \
+                any(m.name.lower() == new.lower() for m in q.modules):
+            return f"Name '{new}' conflicts with existing module, project, or object library"
+        if new == q.name:
+            return None
+        q.vbp.set("Name", new, quote=True)
+        q.dirty = True
+        self.fill_tree()
+        self.update_title()
+        return None
 
     def rename_module(self, m, new):
         """(Name) of a form, module or class: VB_Name, the Begin line of a form and the .vbp"""
@@ -1829,7 +2201,7 @@ class MainWindow(QMainWindow):
         self.res_rebind()
         self.S["last_dir"] = os.path.dirname(path)
         self.add_recent(path)
-        self.fill_tree()
+        self.fill_tree(fresh=True)
         self.update_title()
         self.immediate.clear()
         # VB6 opens the startup object
@@ -1842,6 +2214,10 @@ class MainWindow(QMainWindow):
                 self.open_designer(m)
             else:
                 self.open_code(m)
+        # the Project Explorer: folders closed, the project selected (also after the window activation that
+        # the event loop delivers later)
+        self.pe_opened()
+        QTimer.singleShot(0, self.pe_opened)
         return True
 
     def save_project(self):
@@ -2239,7 +2615,11 @@ class MainWindow(QMainWindow):
         if self.project is None:
             return
         if ComponentsDialog(self, self.project).exec():
-            self.refresh_toolbox()
+            self.toolbox.adding = True          # the new controls go into the open tab (DEV-8/me6-19)
+            try:
+                self.refresh_toolbox()
+            finally:
+                self.toolbox.adding = False
             self.update_title()
 
     def project_properties(self):
@@ -3505,9 +3885,40 @@ class MainWindow(QMainWindow):
         cur = self.mdi.activeSubWindow()
         for i, sw in enumerate(subs[:9]):
             a = m.addAction(f"&{i + 1} {sw.windowTitle().replace('&', '&&')}",
-                            lambda w=sw: (w.showNormal() if w.isMinimized() else None, self.mdi.setActiveSubWindow(w)))
+                            lambda w=sw: self.activate_sub(w))
             a.setCheckable(True)
             a.setChecked(sw is cur)
+        if len(subs) > 9:                       # Windows: the tenth window and on (VB6's "&More Windows...")
+            m.addAction("&More Windows...", lambda: self.more_windows(subs))
+
+    def activate_sub(self, w):
+        if w.isMinimized():
+            w.showNormal()
+        self.mdi.setActiveSubWindow(w)
+
+    def more_windows(self, subs=None):
+        """Window > More Windows...: "Select Window", the list of all the windows (as Windows has it)"""
+        from PyQt6.QtWidgets import QDialog, QListWidget, QDialogButtonBox, QVBoxLayout, QLabel
+        if subs is None:
+            subs = [sw for sw in self.mdi.subWindowList() if sw.isVisible() or sw.isMinimized()]
+        dlg = QDialog(self)
+        dlg.setWindowTitle("Select Window")
+        lay = QVBoxLayout(dlg)
+        lay.addWidget(QLabel("&Select Window:"))
+        lst = QListWidget()
+        for sw in subs:
+            lst.addItem(sw.windowTitle())
+        cur = self.mdi.activeSubWindow()
+        lst.setCurrentRow(subs.index(cur) if cur in subs else 0)
+        lst.itemDoubleClicked.connect(lambda _: dlg.accept())
+        lay.addWidget(lst)
+        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        bb.accepted.connect(dlg.accept)
+        bb.rejected.connect(dlg.reject)
+        lay.addWidget(bb)
+        self._more_windows_dlg = dlg
+        if dlg.exec() and 0 <= lst.currentRow() < len(subs):
+            self.activate_sub(subs[lst.currentRow()])
 
     def tile_windows(self, horizontally):
         """Tile Horizontally: the windows one above the other, as wide as the area; Tile Vertically: side by side"""

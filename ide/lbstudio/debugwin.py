@@ -7,7 +7,7 @@ from PyQt6.QtGui import QColor, QTextCharFormat, QTextCursor, QIcon, QPixmap, QP
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTreeWidget, QTreeWidgetItem, QToolButton,
                              QDialog, QListWidget, QPushButton, QLineEdit, QDialogButtonBox, QFormLayout,
                              QPlainTextEdit, QHeaderView, QAbstractItemView, QGroupBox, QComboBox, QRadioButton,
-                             QGridLayout)
+                             QGridLayout, QApplication)
 
 # the kinds of a watch (the Watch Type of VB6's Add Watch)
 WATCH_EXPR, WATCH_TRUE, WATCH_CHANGE = 0, 1, 2
@@ -126,6 +126,24 @@ class LocalsWindow(QWidget):
         if ready:
             self.where.setText("<Ready>")
 
+    def copy(self):
+        """Copy of the menu: the line (Expression, Value, Type)"""
+        it = self.tree.currentItem()
+        if it is not None:
+            QApplication.clipboard().setText("\t".join(it.text(i) for i in range(self.tree.columnCount())))
+
+    def can_collapse_parent(self):
+        it = self.tree.currentItem()
+        return it is not None and it.parent() is not None
+
+    def collapse_parent(self):
+        """Collapse Parent (VB6, DEV-8/me8-19): the line that holds the current one is closed and chosen"""
+        it = self.tree.currentItem()
+        if it is not None and it.parent() is not None:
+            par = it.parent()
+            par.setExpanded(False)
+            self.tree.setCurrentItem(par)
+
     def fill(self, where, rows, module_label):
         self.where.setText(where)
         self.tree.clear()
@@ -223,6 +241,12 @@ class WatchWindow(QWidget):
     def current(self):
         it = self.tree.currentItem()
         return self.tree.indexOfTopLevelItem(it) if it is not None else -1
+
+    def copy(self):
+        """Copy of the menu: the line (Expression, Value, Type, Context)"""
+        it = self.tree.currentItem()
+        if it is not None:
+            QApplication.clipboard().setText("\t".join(it.text(i) for i in range(self.tree.columnCount())))
 
 
 class CallStackDialog(QDialog):

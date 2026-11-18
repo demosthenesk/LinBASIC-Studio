@@ -40,6 +40,7 @@ DEFAULTS = {
     "tab_multiline": False,
     "add_mdi_nodialog": False,         # Project > Add MDI Form: "Don't show this dialog in the future"
     "custom_colors": [],               # View > Color Palette: the last row (Define Colors...), 0xRRGGBB
+    "toolbox_tabs": [],                # the Toolbox: the user's tabs [{"name": "MyTab", "tools": ["Timer", ...]}]
     "dark_mode": "system",             # light | dark | system (Tools > Options > Theme; system: as the OS is)
     "theme": "",                       # "" = stylers.xml
     "light_theme": "",                 # theme remembered for light mode
@@ -184,6 +185,8 @@ DEFAULTS = {
     "sync_v": False,
     "sync_h": False,
     "zoom_sync": False,
+    "props_description": True,         # Properties > Description (the right button): the box under the list
+    "code_zoom": 0,                    # zoom of the code windows (Ctrl+Mouse Wheel), kept between sessions
     "panels": {},
     "geometry": "",
     "window_state": "",

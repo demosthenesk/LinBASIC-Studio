@@ -8,11 +8,12 @@ written back exactly as they were. Sizes are in twips (15 per pixel), the grid i
 import copy
 import os
 
-from PyQt6.QtCore import Qt, QPoint, QRect, QSize, pyqtSignal, QMimeData
+from PyQt6.QtCore import Qt, QPoint, QRect, QSize, pyqtSignal, QMimeData, QTimer
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QPalette, QPolygon, QKeySequence
 from PyQt6.QtWidgets import (QWidget, QScrollArea, QPushButton, QLabel, QLineEdit, QPlainTextEdit, QCheckBox,
                              QRadioButton, QComboBox, QListWidget, QGroupBox, QFrame, QScrollBar, QApplication,
-                             QMessageBox, QRubberBand, QToolButton, QGridLayout, QSizePolicy, QStyleFactory)
+                             QMessageBox, QRubberBand, QToolButton, QGridLayout, QSizePolicy, QStyleFactory,
+                             QVBoxLayout)
 
 from lbvc.project.source import Control, Property, PropertyBlock, parse_source
 from . import vbprops as V
@@ -906,6 +907,10 @@ class Surface(QWidget):
     # ------------------------------------------------------------ the mouse on the form
     def mousePressEvent(self, e):
         self.setFocus()
+        if e.button() == Qt.MouseButton.RightButton and not self.d.current_tool():
+            self.d.select([])                   # the right button on the form: the form, and its menu (me8-01)
+            self.d.context_menu(e.globalPosition().toPoint(), None)
+            return
         if e.button() != Qt.MouseButton.LeftButton:
             return
         self.band_origin = e.position().toPoint()
@@ -946,6 +951,11 @@ class Surface(QWidget):
     # ------------------------------------------------------------ the mouse on a control
     def item_pressed(self, item, e):
         self.setFocus()
+        if e.button() == Qt.MouseButton.RightButton and not self.d.current_tool():
+            if item not in self.d.selection:    # the right button on a control: it (the selection stays when
+                self.d.select([item])           # it is one of them), and its menu (DEV-8/me8-02, 07)
+            self.d.context_menu(e.globalPosition().toPoint(), item)
+            return
         if e.button() != Qt.MouseButton.LeftButton:
             return
         tool = self.d.current_tool()
@@ -1615,6 +1625,70 @@ class FormDesigner(QScrollArea):
         self.surface.place_handles()
         self.changed()
 
+    def z_order_state(self):
+        """(Bring to Front, Send to Back) of the menu of a control: on when they change something: an other
+        control of the same container in front of (behind) a selected one (DEV-8/me8-02, 06, 07, 09)"""
+        sel = [it.ctl for it in self.selection]
+        front = back = False
+        for c in sel:
+            p = c.parent
+            if p is None:
+                continue
+            kids = [x for x in p.children if x.type_name != "Menu"]
+            i = kids.index(c) if c in kids else -1
+            if any(x not in sel for x in kids[:i]):
+                front = True
+            if any(x not in sel for x in kids[i + 1:]):
+                back = True
+        return front, back
+
+    def context_menu(self, gpos, item):
+        """the right button on the form or on a control (the menu: MainWindow.designer_menu)"""
+        if hasattr(self.main, "designer_menu"):
+            self.main.designer_menu(self, gpos, item)
+
+    def can_paste(self):
+        """Paste of the menus: controls copied (on the form and on every control), or a picture (only on the
+        form: its Picture, DEV-8/me8-01, 02, 05, 08, 16)"""
+        md = QApplication.clipboard().mimeData()
+        if md is None:
+            return False
+        if md.hasFormat("application/x-lbstudio-controls"):
+            return True
+        return md.hasImage() and not self.selection and V.prop_def(self.root.type_name, "Picture") is not None
+
+    def paste_picture(self):
+        """a picture on the clipboard into the Picture of the form (VB6, DEV-8/me8-16): a .bmp in the .frx"""
+        from PyQt6.QtCore import QBuffer, QIODevice
+        img = QApplication.clipboard().image()
+        p = V.prop_def(self.root.type_name, "Picture")
+        if img.isNull() or p is None:
+            return False
+        buf = QBuffer()
+        buf.open(QIODevice.OpenModeFlag.WriteOnly)
+        img.save(buf, "BMP")
+        err = self.set_property(self.root, p, bytes(buf.data()))
+        return err is None
+
+    def user_controls_used(self):
+        """the modules of the user controls of the project that are on this form"""
+        out = []
+        for c in self.all_controls():
+            uc = uctl_of(c.cls)
+            if uc is not None and uc[4] not in out:
+                out.append(uc[4])
+        return out
+
+    def update_user_controls(self):
+        """Update UserControls (the menu of the form): the user controls drawn again from their designers"""
+        mods = self.user_controls_used()
+        for m in mods:
+            forget_uctl_look(m)
+        if mods:
+            keep = [it.ctl for it in self.selection]
+            self.build()
+            self.select([self.items[c] for c in keep if c in self.items])
+
     def z_order(self, front):
         """Format > Order: Bring to Front (Ctrl+J) / Send to Back (Ctrl+K)"""
         if not self.selection:
@@ -1815,6 +1889,8 @@ class FormDesigner(QScrollArea):
     def paste(self):
         md = QApplication.clipboard().mimeData()
         if not md.hasFormat("application/x-lbstudio-controls"):
+            if md.hasImage() and not self.selection:
+                self.paste_picture()
             return
         text = bytes(md.data("application/x-lbstudio-controls")).decode("utf-8")
         sf = parse_source("VERSION 5.00\r\nBegin VB.Form Clip \r\n" + text + "\r\nEnd\r\n", None, "Form")
@@ -2287,29 +2363,142 @@ def ocx_icon(p, cls, size=24):
         f = QFont(); f.setPixelSize(8); p.setFont(f); p.drawText(QRect(3, 3, 18, 18), Qt.AlignmentFlag.AlignCenter, (cls or "?")[:3])
 
 
+TOOL_MIME = "application/x-lbstudio-tool"
+
+
+class ToolTab:
+    """a tab of the user in the Toolbox; VB6 does not check the names: two tabs may have one name, "General"
+    too, or none (DEV-8/me7-04, 05), so a tab is this object, not its name"""
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"ToolTab({self.name!r})"
+
+
+class _TabButton(QPushButton):
+    """a tab of the Toolbox: a button (General, MyTab ...), as VB6's (DEV-8/me6); a tool dragged over it opens
+    the tab, dropped on it goes into the tab. tab None: General"""
+
+    def __init__(self, box, tab):
+        super().__init__("General" if tab is None else tab.name)
+        self.box = box
+        self.tab = tab
+        self.setAcceptDrops(True)
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setMinimumHeight(self.fontMetrics().height() + 8)     # (a tab without a name keeps its height)
+        self.clicked.connect(lambda: box.set_tab(self.tab))
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(lambda pos: box.tab_menu(self.tab, self.mapToGlobal(pos)))
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasFormat(TOOL_MIME):
+            e.acceptProposedAction()
+            if self.box.cur is not self.tab:   # (VB6: the tab opens under the tool)
+                QTimer.singleShot(0, lambda: self.box.set_tab(self.tab))
+
+    def dropEvent(self, e):
+        cls = bytes(e.mimeData().data(TOOL_MIME)).decode()
+        self.box.move_tool(cls, self.tab)
+        e.acceptProposedAction()
+
+
 class Toolbox(QWidget):
-    """the General tab of the VB6 Toolbox, with the controls of the project's components (.ocx)"""
+    """the VB6 Toolbox: the tab General and the user's tabs (DEV-8/me6, me7), each with its tools (the intrinsic
+    controls, those of the project's components (.ocx) and its user controls). Add Tab... puts the new tab right
+    after the open one; a tool dragged onto a tab moves there; a deleted tab gives its tools back to General, in
+    their places; the controls Components adds go into the open tab. The tabs are LinBASIC Studio's settings
+    (toolbox_tabs), not the project's: they stay after the IDE is closed, as in VB6.
+    A tab is given as a ToolTab, None (General), or a name (the first tab of that name; "General": General)."""
 
     def __init__(self, main):
         super().__init__()
         self.main = main
-        self.grid = QGridLayout(self)
+        self.lay = QVBoxLayout(self)
+        self.lay.setContentsMargins(0, 0, 0, 0)
+        self.lay.setSpacing(1)
+        self.top = QVBoxLayout()
+        self.top.setSpacing(1)
+        self.panel = QWidget()
+        self.panel.setAcceptDrops(True)
+        self.panel.dragEnterEvent = self._panel_drag
+        self.panel.dropEvent = self._panel_drop
+        self.grid = QGridLayout(self.panel)
         self.grid.setSpacing(1)
         self.grid.setContentsMargins(2, 2, 2, 2)
-        self.buttons = {}
+        self.bottom = QVBoxLayout()
+        self.bottom.setSpacing(1)
+        self.lay.addLayout(self.top)
+        self.lay.addWidget(self.panel, 1)
+        self.lay.addLayout(self.bottom)
+        self.buttons = {}                       # every tool there is (None: the Pointer), in all the tabs
+        self.entries = []                       # (cls, tip) in VB6's order: General shows them in it
         self.components = None
+        self.adding = False                     # Project > Components: the new controls go into the open tab
+        self.tabs = []                          # the user's tabs (ToolTab), in order
+        self.tab_of = {}                        # tool -> its ToolTab (not there: General)
+        self.cur = None                         # the open tab (None: General)
+        self.tab_buttons = []
+        self._drag_from = None
+        self._load()
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         self.set_components([])
 
+    # ------------------------------------------------------------ the tabs
+    def tab(self, t):
+        """a ToolTab from a ToolTab, None or a name"""
+        if t is None or isinstance(t, ToolTab):
+            return t if t is None or t in self.tabs else None
+        if t == "General":
+            return None
+        return next((x for x in self.tabs if x.name == t), None)
+
+    @property
+    def cur_tab(self):
+        """the name of the open tab"""
+        return "General" if self.cur is None else self.cur.name
+
+    def names(self):
+        return [t.name for t in self.tabs]
+
+    def _settings(self):
+        return getattr(self.main, "S", None)
+
+    def _load(self):
+        S = self._settings()
+        self.tabs, self.tab_of = [], {}
+        for d in (S["toolbox_tabs"] if S is not None else []) or []:
+            t = ToolTab(str(d.get("name", "")))
+            self.tabs.append(t)
+            for cls in d.get("tools", []):
+                self.tab_of[cls] = t
+
+    def _save(self):
+        S = self._settings()
+        if S is None:
+            return
+        S["toolbox_tabs"] = [{"name": t.name, "tools": [c for c, x in self.tab_of.items() if x is t]}
+                             for t in self.tabs]
+        S.save()
+
+    def tab_tools(self, t=None):
+        """the tools a tab shows: the Pointer, then its tools in VB6's order"""
+        t = self.tab(t)
+        if t is None:                           # General (a tool of a tab that is no more: General)
+            return [None] + [c for c, _ in self.entries if c is not None and self.tab_of.get(c) not in self.tabs]
+        return [None] + [c for c, _ in self.entries if c is not None and self.tab_of.get(c) is t]
+
+    # ------------------------------------------------------------ the tools of the project
     def set_components(self, keys):
         keys = list(keys)
         if keys == self.components:
             return
+        before = {c for c, _ in self.entries}
         self.components = keys
-        while self.grid.count():
-            w = self.grid.takeAt(0).widget()
-            if w is not None:
-                w.deleteLater()
+        for b in self.buttons.values():
+            b.deleteLater()
         self.buttons = {}
         entries = [(None, "Pointer")] + [(t[0], t[0]) for t in TOOLS]
         for key in keys:
@@ -2321,8 +2510,15 @@ class Toolbox(QWidget):
             lib = ocxlib.LIB_BY_KEY.get(key.lower())
             if lib is not None:
                 entries += [(f"{lib.key}.{c.cls}", f"{c.cls} ({lib.file})") for c in lib.controls]
-        for i, (cls, tip) in enumerate(entries):
-            b = QToolButton()
+        self.entries = entries
+        if self.adding and self.cur is not None:        # (DEV-8/me6-19: CommonDialog into the open tab Saved)
+            new = [c for c, _ in entries if c is not None and c not in before]
+            for c in new:
+                self.tab_of[c] = self.cur
+            if new:
+                self._save()
+        for cls, tip in entries:
+            b = QToolButton(self.panel)
             b.setIcon(tool_icon("UserControl" if cls and uctl_of(cls) else cls.split(".")[-1] if cls else None))
             b.setIconSize(QSize(24, 24))
             b.setToolTip(tip)
@@ -2330,11 +2526,180 @@ class Toolbox(QWidget):
             b.setAutoRaise(True)
             b.clicked.connect(lambda checked=False, c=cls: self._clicked(c))
             b.mouseDoubleClickEvent = lambda e, c=cls: self._double(c)
-            self.grid.addWidget(b, i // 2, i % 2)
+            if cls is not None:
+                b.installEventFilter(self)
+                b.setProperty("tool", cls)
+            b.hide()
             self.buttons[cls] = b
-        self.grid.setRowStretch(len(entries) // 2 + 1, 1)
+        self.fill()
         self.reset()
 
+    def fill(self):
+        """the tab buttons (the open one and those before it on top, the others below) and the tools of the
+        open tab (DEV-8/me6-05, 06, 09)"""
+        if self.cur is not None and self.cur not in self.tabs:
+            self.cur = None
+        for lay in (self.top, self.bottom):
+            while lay.count():
+                w = lay.takeAt(0).widget()
+                if w is not None:
+                    w.deleteLater()
+        self.tab_buttons = []
+        order = [None] + self.tabs
+        cur = order.index(self.cur)
+        for i, t in enumerate(order):
+            tb = _TabButton(self, t)
+            (self.top if i <= cur else self.bottom).addWidget(tb)
+            self.tab_buttons.append(tb)
+        while self.grid.count():
+            self.grid.takeAt(0)
+        for b in self.buttons.values():
+            b.hide()
+        tools = self.tab_tools(self.cur)
+        for i, cls in enumerate(tools):
+            b = self.buttons.get(cls)
+            if b is not None:
+                self.grid.addWidget(b, i // 2, i % 2)
+                b.show()
+        for r in range(self.grid.rowCount() + 2):
+            self.grid.setRowStretch(r, 0)
+        self.grid.setRowStretch(len(tools) // 2 + 1, 1)
+        dock = getattr(self.main, "dock_toolbox", None)
+        if dock is not None:
+            dock.setWindowTitle(self.cur_tab)
+
+    def set_tab(self, t):
+        """open a tab: its button goes up, its tools show"""
+        t = self.tab(t)
+        if t is self.cur:
+            return
+        self.cur = t
+        self.reset()
+        self.fill()
+
+    # ------------------------------------------------------------ Add / Delete / Rename / Move Up, Down
+    def _ask_name(self, text=""):
+        from PyQt6.QtWidgets import QInputDialog
+        from . import APP_NAME
+        name, ok = QInputDialog.getText(self, APP_NAME, "New Tab Name:", QLineEdit.EchoMode.Normal, text)
+        return name if ok else None
+
+    def add_tab(self, name=None):
+        """Add Tab...: "New Tab Name:"; any name, also one there is or none (me7-04, 05); the tab goes right after
+        the open one, which stays open (me6-09, me7-05, 06)"""
+        if name is None:
+            name = self._ask_name()
+            if name is None:                    # Cancel
+                return None
+        t = ToolTab(name)
+        self.tabs.insert(0 if self.cur is None else self.tabs.index(self.cur) + 1, t)
+        self._save()
+        self.fill()
+        return t
+
+    def delete_tab(self, t):
+        """Delete Tab: no question, also with tools in it; its tools go back to General, General opens
+        (me6-13, 16)"""
+        t = self.tab(t)
+        if t is None:
+            return
+        self.tabs.remove(t)
+        self.tab_of = {c: x for c, x in self.tab_of.items() if x is not t}
+        self.cur = None
+        self._save()
+        self.reset()
+        self.fill()
+
+    def rename_tab(self, t, new=None):
+        """Rename Tab...: the same dialog with the name in it, selected (me6-12)"""
+        t = self.tab(t)
+        if t is None:
+            return
+        if new is None:
+            new = self._ask_name(t.name)
+            if new is None:
+                return
+        t.name = new
+        self._save()
+        self.fill()
+
+    def move_tab(self, t, step):
+        """Move Up / Move Down: among the user's tabs; General is always first (me6-08, 10, 11)"""
+        t = self.tab(t)
+        if t is None:
+            return
+        i = self.tabs.index(t)
+        j = i + step
+        if not 0 <= j < len(self.tabs):
+            return
+        self.tabs[i], self.tabs[j] = self.tabs[j], self.tabs[i]
+        self._save()
+        self.fill()
+
+    def move_tool(self, cls, t):
+        """a tool dragged onto a tab: it moves there and the tab opens (me6-14); onto General: back to its place"""
+        if cls is None or cls not in self.buttons:
+            return
+        t = self.tab(t)
+        if t is None:
+            self.tab_of.pop(cls, None)
+        else:
+            self.tab_of[cls] = t
+        self._save()
+        self.cur = t
+        self.reset()
+        self.fill()
+
+    def tab_menu(self, t, gpos=None):
+        """the menu of a tab button: Add Tab..., Delete Tab, Rename Tab... | Move Up, Move Down (General: only
+        Add Tab..., me6-03, 08)"""
+        from PyQt6.QtWidgets import QMenu
+        t = self.tab(t)
+        menu = QMenu(self)
+        user = t is not None
+        i = self.tabs.index(t) if user else -1
+        menu.addAction("&Add Tab...", lambda: self.add_tab())
+        menu.addAction("&Delete Tab", lambda: self.delete_tab(t)).setEnabled(user)
+        menu.addAction("&Rename Tab...", lambda: self.rename_tab(t)).setEnabled(user)
+        menu.addSeparator()
+        menu.addAction("Move &Up", lambda: self.move_tab(t, -1)).setEnabled(user and i > 0)
+        menu.addAction("Move Do&wn", lambda: self.move_tab(t, 1)).setEnabled(user and i < len(self.tabs) - 1)
+        self._last_menu = menu
+        if gpos is not None:
+            menu.exec(gpos)
+        return menu
+
+    # ------------------------------------------------------------ dragging a tool to a tab
+    def eventFilter(self, obj, e):
+        t = e.type()
+        if t == e.Type.MouseButtonPress and e.button() == Qt.MouseButton.LeftButton:
+            self._drag_from = (obj, e.position().toPoint())
+        elif t == e.Type.MouseMove and self._drag_from is not None and self._drag_from[0] is obj and \
+                e.buttons() & Qt.MouseButton.LeftButton:
+            if (e.position().toPoint() - self._drag_from[1]).manhattanLength() >= QApplication.startDragDistance():
+                self._drag_from = None
+                from PyQt6.QtGui import QDrag
+                drag = QDrag(obj)
+                md = QMimeData()
+                md.setData(TOOL_MIME, obj.property("tool").encode())
+                drag.setMimeData(md)
+                drag.setPixmap(obj.icon().pixmap(24, 24))
+                drag.exec(Qt.DropAction.MoveAction)
+                obj.setDown(False)              # (the release went to the drop: the button would stay down)
+                return True
+        elif t == e.Type.MouseButtonRelease:
+            self._drag_from = None
+        return False
+
+    def _panel_drag(self, e):
+        if e.mimeData().hasFormat(TOOL_MIME):
+            e.acceptProposedAction()
+
+    def _panel_drop(self, e):
+        self.move_tool(bytes(e.mimeData().data(TOOL_MIME)).decode(), self.cur)
+        e.acceptProposedAction()
+
+    # ------------------------------------------------------------ choosing a tool
     def _clicked(self, cls):
         for c, b in self.buttons.items():
             b.setChecked(c == cls)

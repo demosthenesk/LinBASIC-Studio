@@ -2767,8 +2767,8 @@ def t_resedit86(d):
         assert [t for t, _ in sub] == ["Form", "MDI Form", "Module", "Class Module", "User Control", "Property Page",
                                        "User Document", "WebClass", "Data Report", "DHTML Page", "Data Environment",
                                        "More ActiveX Designers...", "Add File...", "Resource File"], sub
-        assert [t for t, on in sub if not on] == ["MDI Form", "User Document", "WebClass", "DHTML Page",
-                                                   "More ActiveX Designers..."], sub
+        assert [t for t, on in sub if not on] == ["User Document", "WebClass", "DHTML Page",
+                                                   "More ActiveX Designers..."], sub     # (MDI Form: 8.7A)
         # Delete and one Undo; Duplicate: the largest id + 1
         item = next(it for it in ed.res.items if it.kind == "bitmap")
         ed.select(item)
@@ -3080,7 +3080,7 @@ def t_dock87(d):
         m.close()
     _QT.singleShot(0, grab)
     w.props.grid.customContextMenuRequested.emit(_QP(5, 5))
-    assert seen == {"items": ["Doc&kable", "&Hide"], "dockable": [True]}, seen
+    assert seen == {"items": ["&Description", "Doc&kable", "&Hide"], "dockable": [True]}, seen     # (me8-03)
     w.hide_tool("props", w.props.grid)
     assert w.dock_props.isHidden()
     w.dock_props.show()                         # the state of the window is kept for the next tests
@@ -3089,7 +3089,435 @@ def t_dock87(d):
     done(w)
 
 
-TESTS = {"t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+
+def t_pe87(d):
+    """the Project Explorer as VB6's (phase 8.7D, VB6 oracle DEV-8/me5): the names of what is not saved yet, the
+    buttons, the menus of a form, a module, a folder and the project, Properties of the project, Toggle Folders,
+    a project opened with its folders closed"""
+    from PyQt6.QtWidgets import QMenu as _QMenu
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    w.res_loaded = False                        # (Add > Resource File: only with the Resource Editor loaded)
+    w.new_project("Exe")
+    w.add_module("Module")
+    w.add_module("Class")
+    p = w.project
+
+    def kids(it):
+        return [it.child(i) for i in range(it.childCount())]
+
+    def label(it):
+        return it.text(0).replace(" *", "")
+
+    def item(text):
+        stack = [w.tree.topLevelItem(i) for i in range(w.tree.topLevelItemCount())]
+        while stack:
+            x = stack.pop()
+            if label(x) == text:
+                return x
+            stack += kids(x)
+        raise AssertionError(text)
+
+    def menu(it):
+        w.tree.setCurrentItem(it)
+        mn = _QMenu()
+        w.pe_menu(mn, it)
+        return mn, [a.text().replace("&", "") or "|" for a in mn.actions()]
+
+    # me5-01: unsaved, the name in the brackets; the folders; "Project - Project1"
+    root = w.tree.topLevelItem(0)
+    assert label(root) == "Project1 (Project1)" and root.font(0).bold() and w.dock_project.windowTitle() == "Project - Project1"
+    tree = [(label(f), [label(c) for c in kids(f)]) for f in kids(root)]
+    assert tree == [("Forms", ["Form1 (Form1)"]), ("Modules", ["Module1 (Module1)"]),
+                    ("Class Modules", ["Class1 (Class1)"])], tree
+    assert [a.toolTip() for a in (w.a_pe_code, w.a_pe_object, w.a_pe_folders)] == ["View Code", "View Object",
+                                                                                     "Toggle Folders"]
+    # the buttons: a form both, a class View Code only, the project / a folder none (me5-02..07, 11)
+    for text, code_on, obj_on in (("Form1 (Form1)", True, True), ("Class1 (Class1)", True, False),
+                                  ("Module1 (Module1)", True, False), ("Project1 (Project1)", False, False),
+                                  ("Forms", False, False)):
+        w.tree.setCurrentItem(item(text))
+        assert (w.a_pe_code.isEnabled(), w.a_pe_object.isEnabled()) == (code_on, obj_on), text
+    # the menus (me5-05..09)
+    mn, got = menu(item("Form1 (Form1)"))
+    assert got == ["View Object", "View Code", "|", "Properties", "|", "Add", "Save Form1", "Save Form1 As...",
+                   "Remove Form1", "|", "Print...", "|", "Dockable", "Hide"], got
+    raw = [a.text() for a in mn.actions()]
+    assert raw[:4] == ["View O&bject", "View C&ode", "", "Prope&rties"] and raw[6:9] == \
+        ["&Save Form1", "Save Form1 &As...", "&Remove Form1"], raw
+    assert all(not a.icon().isNull() for a in mn.actions() if a.text().replace("&", "") in
+               ("View Object", "View Code", "Properties", "Print..."))
+    _, got = menu(item("Class1 (Class1)"))
+    assert got == ["View Code", "|", "Properties", "|", "Add", "Save Class1", "Save Class1 As...", "Remove Class1",
+                   "|", "Print...", "|", "Dockable", "Hide"], got
+    mn, got = menu(item("Forms"))
+    assert got == ["View Code", "View Object", "|", "Project1 Properties...", "|", "Add", "Save", "Save As...",
+                   "Print...", "|", "Dockable", "Hide"], got
+    assert [a.text().replace("&", "") for a in mn.actions() if not a.isEnabled()] == ["View Code", "View Object",
+                                                                                       "Save", "Save As..."]
+    assert mn.actions()[3].text() == "Project1 Prop&erties..."
+    mn, got = menu(item("Project1 (Project1)"))
+    assert got == ["Set as Start Up", "Project1 Properties...", "|", "Save Project", "Remove Project", "|", "Add", "|",
+                   "Print...", "|", "Dockable", "Hide"], got
+    assert mn.actions()[0].isEnabled() and mn.actions()[0].text() == "Set as Start &Up"
+    assert mn.actions()[3].text() == "Sa&ve Project" and mn.actions()[-2].isChecked()
+    add = next(a for a in mn.actions() if a.text() == "&Add").menu()
+    sub = [(a.text().replace("&", ""), a.isEnabled()) for a in add.actions()]
+    assert [t for t, _ in sub] == ["Form", "MDI Form", "Module", "Class Module", "User Control", "Property Page",
+                                   "User Document", "WebClass", "Data Report", "DHTML Page", "Data Environment",
+                                   "More ActiveX Designers...", "Add File..."], sub          # (me5-10)
+    assert [t for t, on in sub if not on] == ["User Document", "WebClass", "DHTML Page", "More ActiveX Designers..."]
+    assert all(not a.icon().isNull() for a in add.actions()[:7])
+    # Properties of the project: "Project1 Project", (Name) only; a new name goes to the .vbp (me5-11)
+    w.tree.setCurrentItem(item("Project1 (Project1)"))
+    assert w.props.project is p and w.props.obj.currentText() == "Project1 Project"
+    assert [r.name for r in w.props.rows] == ["(Name)"] and w.dock_props.windowTitle() == "Properties - Project1"
+    assert w.rename_project(p, "1x") == "Invalid property value" and p.name == "Project1"
+    w.props.commit(w.props.rows[0], "MyProj")
+    assert p.name == "MyProj" and 'Name="MyProj"' in p.vbp.dumps().splitlines() and label(w.tree.topLevelItem(0)) == "MyProj (MyProj)"
+    assert w.dock_project.windowTitle() == "Project - MyProj" and w.props.obj.currentText() == "MyProj Project"
+    # a folder: nothing; a form with no window open: nothing; a module: (Name) (me5-01, 08, 14)
+    w.tree.setCurrentItem(item("Forms"))
+    assert w.props.project is None and w.props.module is None and w.dock_props.windowTitle() == "Properties"
+    w.close_all_code()
+    for _ in range(3):
+        app.processEvents()
+    w.tree.setCurrentItem(item("Forms"))        # (closing the windows may have selected Form1 already)
+    w.tree.setCurrentItem(item("Form1 (Form1)"))
+    assert w.props.module is None and w.props.rows == [], (w.props.module, w.code_windows, w.design_windows)
+    w.tree.setCurrentItem(item("Module1 (Module1)"))
+    assert w.props.module is p.module("Module1") and [r.name for r in w.props.rows] == ["(Name)"]
+    assert w.dock_props.windowTitle() == "Properties - Module1"
+    # Toggle Folders: the modules by name under the project; again: the folders, closed (me5-12, 13)
+    w.toggle_folders()
+    root = w.tree.topLevelItem(0)
+    assert not w.a_pe_folders.isChecked() and [label(c) for c in kids(root)] == \
+        ["Class1 (Class1)", "Form1 (Form1)", "Module1 (Module1)"], [label(c) for c in kids(root)]
+    w.toggle_folders()
+    root = w.tree.topLevelItem(0)
+    assert w.a_pe_folders.isChecked() and [label(c) for c in kids(root)] == ["Forms", "Modules", "Class Modules"]
+    assert root.isExpanded() and not any(c.isExpanded() for c in kids(root))
+    # a folder the user opens stays open when the tree is filled again
+    item("Modules").setExpanded(True)
+    w.fill_tree()
+    assert item("Modules").isExpanded() and not item("Forms").isExpanded()
+    # saved: the files in the brackets; opened again: the folders closed, the project selected, Properties
+    # "MyProj Project" (rs1 stage 8)
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Class1.cls"),
+          os.path.join(d, "MyProj.vbp"))
+    assert w.save_project_as()
+    assert label(item("Form1 (Form1.frm)")) == "Form1 (Form1.frm)" and label(w.tree.topLevelItem(0)) == \
+        "MyProj (MyProj.vbp)"
+    done(w)
+    w.new_project("Exe")
+    done(w)
+    assert w.open_project(os.path.join(d, "MyProj.vbp"))
+    for _ in range(5):
+        app.processEvents()
+    root = w.tree.topLevelItem(0)
+    assert w.tree.currentItem() is root and root.isExpanded() and not any(c.isExpanded() for c in kids(root))
+    assert w.props.project is w.project and w.props.obj.currentText() == "MyProj Project"
+    assert w.current_designer() is not None and w.current_designer().module.name == "Form1"   # (Startup)
+    # a group: the same menu for both projects, Set as Start Up on also for the start-up one (me5-17, 18)
+    w.add_project("Exe")
+    _, got1 = menu(item("MyProj (MyProj.vbp)"))
+    _, got2 = menu(item("Project1 (Project1)"))
+    want = ["Set as Start Up", "{} Properties...", "|", "Save Project", "Remove Project", "|", "Add", "|", "Print...",
+            "|", "Dockable", "Hide"]
+    assert got1 == [x.format("MyProj") for x in want] and got2 == [x.format("Project1") for x in want], (got1, got2)
+    assert w.dock_project.windowTitle().startswith("Project Group - ")
+    done(w)
+
+
+
+def t_tb87(d):
+    """the Toolbox as VB6's (phase 8.7E, VB6 oracles DEV-8/me6, me7): the tab General and the user's tabs, their
+    menus, a new tab right after the open one, any name (also one there is, "General" or none), a tool dragged
+    onto a tab, Delete Tab gives the tools back, the tabs stay (settings), Components puts the new controls into
+    the open tab"""
+    from PyQt6.QtCore import QTimer as _QT, QPoint as _QP
+    from lbstudio.designer import Toolbox
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    tb = w.toolbox
+    for t in list(tb.tabs):                     # (a clean start)
+        tb.delete_tab(t)
+    seen = {}
+
+    def grab():
+        m = w._last_tool_menu
+        seen["items"] = [a.text() for a in m.actions()]
+        m.close()
+    # the menu of a tool and of the empty space: Components..., Add Tab... | Dockable, Hide (me6-01, 02)
+    _QT.singleShot(0, grab)
+    tb.customContextMenuRequested.emit(_QP(5, 5))
+    assert seen["items"] == ["C&omponents...", "&Add Tab...", "", "Doc&kable", "&Hide"], seen
+    # the menu of General: only Add Tab... (me6-03, 08)
+    m = tb.tab_menu(None)
+    assert [a.text() for a in m.actions()] == ["&Add Tab...", "&Delete Tab", "&Rename Tab...", "", "Move &Up",
+                                               "Move Do&wn"], [a.text() for a in m.actions()]
+
+    def on(t):
+        return [a.isEnabled() for a in tb.tab_menu(t).actions() if a.text()]
+    assert on(None) == [True, False, False, False, False]
+
+    def names(lay):
+        return [lay.itemAt(i).widget().text() for i in range(lay.count())]
+    general = [c for c, _ in tb.entries]
+    # Add Tab: the tab goes right after the open one, which stays open (me6-05, 06, 09)
+    my = tb.add_tab("MyTab")
+    assert tb.names() == ["MyTab"] and tb.cur is None and tb.cur_tab == "General"
+    assert names(tb.top) == ["General"] and names(tb.bottom) == ["MyTab"]
+    tb.set_tab(my)
+    assert names(tb.top) == ["General", "MyTab"] and names(tb.bottom) == [] and tb.tab_tools(my) == [None]
+    assert w.dock_toolbox.windowTitle() == "MyTab"
+    t2 = tb.add_tab("Tab2")
+    assert tb.cur is my and tb.names() == ["MyTab", "Tab2"] and names(tb.bottom) == ["Tab2"]
+    assert on(my) == [True, True, True, False, True] and on(t2) == [True, True, True, True, False]
+    tb.move_tab(t2, -1)
+    assert tb.names() == ["Tab2", "MyTab"]
+    tb.move_tab(t2, 1)
+    assert tb.names() == ["MyTab", "Tab2"]
+    tb.rename_tab(t2, "Tools2")                 # (me6-12)
+    assert tb.names() == ["MyTab", "Tools2"] and names(tb.bottom) == ["Tools2"]
+    tb.delete_tab(t2)                           # empty: no question (me6-13)
+    assert tb.names() == ["MyTab"] and tb.cur is None
+    # any name: "General" again, none; after the open tab (me7-04, 05, 06)
+    g2 = tb.add_tab("General")
+    assert tb.names() == ["General", "MyTab"] and tb.tab("General") is None and names(tb.bottom) == ["General", "MyTab"]
+    tb.set_tab(my)
+    blank = tb.add_tab("")
+    assert tb.names() == ["General", "MyTab", ""] and names(tb.bottom) == [""]
+    tb.set_tab(None)
+    zed = tb.add_tab("Zed")
+    assert tb.names() == ["Zed", "General", "MyTab", ""]
+    my2 = tb.add_tab("MyTab")                   # a name there is
+    assert tb.names() == ["MyTab", "Zed", "General", "MyTab", ""] and my2 is not my
+    for t in (g2, blank, zed, my2):
+        tb.delete_tab(t)
+    assert tb.names() == ["MyTab"]
+    # a tool dragged onto MyTab moves there and MyTab opens (me6-14)
+    tb.move_tool("Timer", my)
+    assert tb.cur is my and tb.tab_tools(my) == [None, "Timer"] and "Timer" not in tb.tab_tools(None)
+    assert not tb.buttons["Timer"].isHidden() and tb.buttons["CommandButton"].isHidden()
+    # the tabs stay after the IDE is closed: LinBASIC Studio's settings, not the project's (me6-17, 18)
+    assert w.S["toolbox_tabs"] == [{"name": "MyTab", "tools": ["Timer"]}], w.S["toolbox_tabs"]
+    tb2 = Toolbox(w)
+    assert tb2.names() == ["MyTab"] and tb2.tab_of["Timer"] is tb2.tabs[0] and tb2.cur is None
+    tb2.deleteLater()
+    tb.fill()                                   # (the second Toolbox named the dock)
+    # Delete Tab with tools: no question, General opens, the Timer is back in its place (me6-16)
+    tb.delete_tab(my)
+    assert tb.tab_tools(None) == general and tb.cur is None and w.S["toolbox_tabs"] == []
+    # Project > Components: the new controls go into the open tab (me6-19)
+    saved = tb.add_tab("Saved")
+    tb.set_tab(saved)
+    keys = list(tb.components)
+    tb.adding = True
+    tb.set_components(keys + ["MSComDlg"])
+    tb.adding = False
+    assert tb.tab_tools(saved) == [None, "MSComDlg.CommonDialog"], tb.tab_tools(saved)
+    assert "MSComDlg.CommonDialog" not in tb.tab_tools(None)
+    tb.delete_tab(saved)
+    tb.set_components(keys)
+    assert w.S["toolbox_tabs"] == [] and tb.tab_tools(None) == general
+    done(w)
+
+
+def t_zoom87(d):
+    """View > Zoom (user, 2026-11-18; a touchpad has no Ctrl+Mouse Wheel): Zoom In / Zoom Out / Zoom Reset with
+    their keys; every code window and both panes of a split one take the same zoom, Ctrl+Mouse Wheel in one pane
+    too; the zoom is kept in the settings (code_zoom) and a new code window opens with it"""
+    settings.S["code_zoom"] = 0
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    view = {t: a for t, _, a in _menu_items(next(a.menu() for a in w.menuBar().actions() if a.text() == "&View"))}
+    items = [(t, k) for t, k, _ in _menu_items(view["&Zoom"].menu())]
+    assert items == [("Zoom &In", "Ctrl+="), ("Zoom &Out", "Ctrl+-"), ("Zoom &Reset", "Ctrl+0")], items
+    w.view_code()
+    cw = w.current_cw()
+
+    def zoom(e):
+        return e.SendScintilla(2374)            # SCI_GETZOOM
+    w.a_zoom_in.trigger()
+    w.a_zoom_in.trigger()
+    assert zoom(cw.editor) == 2 and settings.S["code_zoom"] == 2
+    w.a_zoom_out.trigger()
+    assert zoom(cw.editor) == 1 and settings.S["code_zoom"] == 1
+    cw.set_split(True)
+    assert [zoom(e) for e in cw.panes()] == [1, 1]
+    cw.panes()[1].SendScintilla(2373, 4)        # SCI_SETZOOM, as Ctrl+Mouse Wheel does: the other pane follows
+    assert [zoom(e) for e in cw.panes()] == [4, 4] and settings.S["code_zoom"] == 4
+    cw.set_split(False)
+    w.add_module("Module")                      # a new code window: the same zoom
+    cw2 = w.current_cw()
+    assert cw2 is not cw and zoom(cw2.editor) == 4
+    w.a_zoom_reset.trigger()
+    assert zoom(cw.editor) == 0 and zoom(cw2.editor) == 0 and settings.S["code_zoom"] == 0
+    for _ in range(40):
+        w.a_zoom_out.trigger()
+    assert zoom(cw2.editor) == -10 and settings.S["code_zoom"] == -10       # the smallest zoom of Scintilla
+    w.a_zoom_reset.trigger()
+    done(w)
+
+
+def t_ctxmenu87(d):
+    """the menus of the right button (phase 8.7F, VB6 oracle DEV-8/me8): the form and its controls, a user control,
+    Paste of controls / of a picture, Properties > Description, Watches, Locals, the Object Browser, Window > More
+    Windows..."""
+    from PyQt6.QtCore import QTimer as _QT
+    from PyQt6.QtGui import QImage, QColor as _QC
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    p = w.project
+    f = w.open_designer(p.module("Form1"))
+
+    def texts(items):
+        return [e[1] if e else None for e in items]
+
+    def on(items):
+        return {e[1]: bool(e[3]) for e in items if e}
+    cb = QApplication.clipboard()
+    cb.setText("abc")                           # only text: Paste grey (me8-05)
+    f.select([])
+    it = w.designer_menu_items(f, None)
+    assert texts(it) == ["View C&ode", "&Menu Editor...", None, "&Lock Controls", "&Paste", None, "Prope&rties", None,
+                         "Update &UserControls"], texts(it)
+    assert on(it) == {"View C&ode": True, "&Menu Editor...": True, "&Lock Controls": True, "&Paste": False,
+                      "Prope&rties": True, "Update &UserControls": False}, on(it)
+    assert [e[0] for e in it if e][:4] == ["view_code", "menu_editor", "lock", "paste"]
+    c1 = f.place_new("CommandButton", QRect(8, 8, 0, 0), None)
+    i1 = f.items[c1]
+    f.select([i1])
+    app.processEvents()                          # the title of Properties: the selected control (me8-02)
+    assert w.dock_props.windowTitle() == "Properties - Command1", w.dock_props.windowTitle()
+    it = w.designer_menu_items(f, i1)            # one control: Bring / Send grey (me8-02)
+    assert texts(it) == ["Cu&t", "&Copy", "&Paste", "&Delete", None, "&Bring to Front", "&Send to Back", None,
+                         "View C&ode", "Align to &Grid", None, "Prope&rties"], texts(it)
+    o = on(it)
+    assert not o["&Paste"] and not o["&Bring to Front"] and not o["&Send to Back"] and o["&Delete"], o
+    c2 = f.place_new("TextBox", QRect(150, 120, 0, 0), None)
+    i1, i2 = f.items[c1], f.items[c2]
+    f.select([i1])
+    o = on(w.designer_menu_items(f, i1))         # Text1 came later, in front of Command1 (me8-06)
+    assert o["&Bring to Front"] and not o["&Send to Back"], o
+    f.select([i1, i2])                           # both: nothing to change (me8-07)
+    o = on(w.designer_menu_items(f, i2))
+    assert not o["&Bring to Front"] and not o["&Send to Back"], o
+    f.select([i1])
+    f.copy_selection()                           # controls copied: Paste everywhere (me8-08, 09, 10)
+    assert on(w.designer_menu_items(f, i1))["&Paste"]
+    c3 = f.place_new("Frame", QRect(150, 8, 0, 0), None)
+    i1, i3 = f.items[c1], f.items[c3]
+    f.select([i3])
+    o = on(w.designer_menu_items(f, i3))
+    assert o["&Paste"] and not o["&Bring to Front"] and o["&Send to Back"], o
+    f.select([])
+    assert on(w.designer_menu_items(f, None))["&Paste"]
+    # the menu by the right button on the surface and on a control
+    seen = {}
+
+    def grab():
+        m = w._last_designer_menu
+        seen.setdefault("menus", []).append([a.text() for a in m.actions() if not a.isSeparator()])
+        m.close()
+    _QT.singleShot(0, grab)
+    QTest.mousePress(f.surface, Qt.MouseButton.RightButton, Qt.KeyboardModifier.NoModifier, QPoint(300, 250))
+    i1 = f.items[c1]                             # (a new control builds the items again)
+    _QT.singleShot(0, grab)
+    QTest.mousePress(i1, Qt.MouseButton.RightButton, Qt.KeyboardModifier.NoModifier, QPoint(3, 3))
+    assert seen["menus"][0][0] == "View C&ode" and seen["menus"][1][0] == "Cu&t", seen
+    assert f.selection == [i1]
+    # a picture on the clipboard: Paste on the form only, into its Picture (me8-01, 02, 16)
+    img = QImage(24, 16, QImage.Format.Format_RGB32)
+    img.fill(_QC(255, 0, 0))
+    cb.setImage(img)
+    app.processEvents()
+    assert not on(w.designer_menu_items(f, i1))["&Paste"]
+    f.select([])
+    assert on(w.designer_menu_items(f, None))["&Paste"]
+    f.paste()
+    data = f.module.frx_value(f.root, "Picture")
+    assert data and bytes(data)[:2] == b"BM", data[:8] if data else data
+    # a user control on the form: Update UserControls; its own menu without pictures or Properties (me8-12, 13)
+    w.add_module("UserControl")
+    w.fill_tree()
+    f = w.open_designer(p.module("Form1"))
+    cu = f.place_new("Project1.UserControl1", QRect(16, 200, 0, 0), None)
+    assert cu is not None
+    f.select([])
+    assert on(w.designer_menu_items(f, None))["Update &UserControls"]
+    f.update_user_controls()
+    iu = f.items[[c for c in f.items if c.name == "UserControl11"][0]]
+    f.select([iu])
+    it = w.designer_menu_items(f, iu)
+    assert texts(it) == ["Cu&t", "&Copy", "&Paste", "&Delete", None, "&Bring To Front", "Se&nd To Back", None,
+                         "&View Code", "Align to &Grid"], texts(it)
+    assert all(e[0] is None for e in it if e)
+    # Properties > Description (me8-03, 04)
+    assert w._props_menu()[0][0] == "&Description" and w._props_menu()[0][4] is True
+    w.set_props_description(False)
+    assert not w.props.desc.isVisible() and w.S["props_description"] is False and w._props_menu()[0][4] is False
+    w.set_props_description(True)
+    assert w.props.desc.isVisible()
+    # Watches (me8-17, 18, 22)
+    w.watch_win.fill([("x", "<Out of context>", "Empty", "Form1.Form_Load")])
+    w.watch_win.select(0)
+    it = w._watch_menu()
+    assert [e[0] if e else None for e in it] == ["Cu&t", "&Copy", "&Paste", None, "&Edit Watch...", "&Add Watch...",
+                                                 "&Delete Watch", None, "Co&llapse Parent", None, "&Start", "&End",
+                                                 None, "&Definition"], it
+    assert [bool(e[2]) for e in it if e] == [False, True, False, True, True, True, False, True, False, False], it
+    w.watch_win.copy()
+    assert cb.text() == "x\t<Out of context>\tEmpty\tForm1.Form_Load", cb.text()
+    # Locals (me8-19, 20, 23): Collapse Parent on a line inside an other one
+    lw = w.locals_win
+    lw.fill("Project1.Form1.Form_Load", [("mvar", "a", "Integer", "1"), ("var", "x", "Integer", "5")], "Me")
+    me = lw.tree.topLevelItem(0)
+    me.setExpanded(True)
+    lw.tree.setCurrentItem(me)
+    it = w._locals_menu()
+    assert [e[0] if e else None for e in it] == ["Cu&t", "&Copy", "&Paste", None, "Co&llapse Parent", None,
+                                                 "&Start", "&End"], it
+    assert not it[4][2]
+    lw.tree.setCurrentItem(me.child(0))
+    assert w._locals_menu()[4][2]
+    lw.collapse_parent()
+    assert lw.tree.currentItem() is me and not me.isExpanded()
+    # the Object Browser (me8-21)
+    w.object_browser()
+    ob = w._objbrowser.widget()
+    m = ob.menu_actions()
+    assert [a.text() for a in m.actions() if not a.isSeparator()] == [
+        "&Copy", "View &Definition", "&Find Whole Word Only", "Group &Members", "Show &Hidden Members",
+        "&References...", "&Properties...", "&Help", "Doc&kable", "&Hide"], [a.text() for a in m.actions()]
+    w._close_objbrowser()
+    # Window > More Windows... with more than nine windows
+    for _ in range(10):
+        w.add_module("Module")
+    app.processEvents()
+    w.fill_window_menu()
+    acts = [a.text() for a in w.window_menu.actions() if not a.isSeparator()]
+    assert acts[-1] == "&More Windows..." and acts[-2].startswith("&9 "), acts
+    subs = [sw for sw in w.mdi.subWindowList() if sw.isVisible() or sw.isMinimized()]
+
+    def choose():
+        dlg = w._more_windows_dlg
+        lst = dlg.findChildren(__import__("PyQt6.QtWidgets", fromlist=["QListWidget"]).QListWidget)[0]
+        assert lst.count() == len(subs) and dlg.windowTitle() == "Select Window"
+        lst.setCurrentRow(0)
+        dlg.accept()
+    _QT.singleShot(0, choose)
+    w.more_windows(subs)
+    assert w.mdi.activeSubWindow() is subs[0]
+    done(w)
+
+
+TESTS = {"t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

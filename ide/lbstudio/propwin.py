@@ -153,6 +153,7 @@ class PropertiesWindow(QWidget):
         self.module = None
         self.designer = None
         self.ctl = None
+        self.project = None                  # a project selected in the Project Explorer: (Name) only
         self.rows = []                       # P or a category name per row
         self.editor = None
         self.edit_row = -1
@@ -193,13 +194,34 @@ class PropertiesWindow(QWidget):
         """the module (and the control of its designer) whose properties are shown"""
         self.module, self.designer = module, designer
         self.ctl = ctl
+        self.project = None
         self._fill_objects()
         self.fill_rows()
+        # VB6: the selected object ("Properties - Command1", DEV-8/me8-02), the form / module without one
+        self._title(ctl.name if ctl is not None else module.name if module is not None else None)
+
+    def show_project(self, q):
+        """a project chosen in the Project Explorer: "Project1 Project" with (Name) (DEV-8/me5 picture 11)"""
+        self.module = self.designer = self.ctl = None
+        self.project = q
+        self._fill_objects()
+        self.fill_rows()
+        self._title(q.name if q is not None else None)
+
+    def _title(self, name):
+        """VB6: "Properties - Project1", "Properties - Form1", "Properties - Command1"; "Properties" with nothing"""
+        dock = getattr(self.main, "dock_props", None)
+        if dock is not None:
+            dock.setWindowTitle(f"Properties - {name}" if name else "Properties")
 
     def _fill_objects(self):
         self._busy = True
         self.obj.clear()
         m = self.module
+        if self.project is not None:
+            self.obj.addItem(f"{self.project.name} Project", None)
+            self._busy = False
+            return
         if m is None or m.sf is None:
             self._busy = False
             return
@@ -230,10 +252,12 @@ class PropertiesWindow(QWidget):
         self.grid.setRowCount(0)
         self.rows = []
         m = self.module
-        if m is None or m.sf is None:
+        if self.project is not None:             # a project: (Name) only
+            self.rows = [V.P("(Name)", "name")]
+        elif m is None or m.sf is None:
             self.desc.setText("")
             return
-        if self.ctl is None:                     # a module or class: (Name) and the class attributes
+        elif self.ctl is None:                   # a module or class: (Name) and the class attributes
             self.rows = [V.P("(Name)", "name")]
             if m.kind == "Class":
                 self.rows.append(V.P("Instancing", "enum", 1, f"instancing_{m.project.ptype.lower()}"))
@@ -279,6 +303,8 @@ class PropertiesWindow(QWidget):
                 self.grid.setCurrentCell(0, 1)
 
     def value(self, p):
+        if self.project is not None:
+            return self.project.name
         if self.ctl is None:
             if p.name == "Instancing":
                 return self.module.instancing()
@@ -767,6 +793,13 @@ class PropertiesWindow(QWidget):
             self._font_dialog(p)
 
     def commit(self, p, value):
+        if self.project is not None:
+            q = self.project
+            err = self.main.rename_project(q, value)
+            if err:
+                self._error(err)
+            self.show_project(q)
+            return
         if self.ctl is None:
             if p.kind == "name":
                 self.main.rename_module(self.module, value)

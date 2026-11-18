@@ -11,7 +11,7 @@ library it belongs to (links), its help context. Show Hidden Members and Group M
 import fnmatch
 import re
 
-from PyQt6.QtCore import Qt, pyqtSignal, QSize
+from PyQt6.QtCore import Qt, pyqtSignal, QSize, QTimer
 from PyQt6.QtGui import QIcon, QPixmap, QPainter, QColor, QFont, QBrush
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QToolButton, QSplitter, QListWidget,
                              QListWidgetItem, QTextBrowser, QTreeWidget, QTreeWidgetItem, QMenu, QApplication,
@@ -905,23 +905,51 @@ class ObjectBrowser(QWidget):
         if mem:
             self.select_member(mem)
 
-    def _menu(self, w, pos):
+    def menu_actions(self):
+        """the menu of the right button, as VB6's (DEV-8/me8-21): Copy, View Definition | Find Whole Word Only, Group
+        Members, Show Hidden Members | References..., Properties... | Help | Dockable, Hide"""
+        from . import edicons
         m = QMenu(self)
-        m.addAction("&Copy", self.copy)
-        a = m.addAction("View &Definition", self.view_definition)
+        a = m.addAction(edicons.icon("copy"), "&Copy")
+        a.triggered.connect(lambda _c=False: self.copy())
+        a.setEnabled(self.current() is not None)
+        a = m.addAction("View &Definition")
+        a.triggered.connect(lambda _c=False: self.view_definition())
         a.setEnabled(self.b_def.isEnabled())
         m.addSeparator()
-        a = m.addAction("Group &Members", lambda: self.set_group(not self.group))
-        a.setCheckable(True)
-        a.setChecked(self.group)
-        a = m.addAction("Show &Hidden Members", lambda: self.set_show_hidden(not self.show_hidden))
-        a.setCheckable(True)
-        a.setChecked(self.show_hidden)
-        a = m.addAction("&Find Whole Word Only", lambda: setattr(self, "whole_word", not self.whole_word))
+        a = m.addAction("&Find Whole Word Only")
+        a.triggered.connect(lambda _c=False: setattr(self, "whole_word", not self.whole_word))
         a.setCheckable(True)
         a.setChecked(self.whole_word)
+        a = m.addAction("Group &Members")
+        a.triggered.connect(lambda _c=False: self.set_group(not self.group))
+        a.setCheckable(True)
+        a.setChecked(self.group)
+        a = m.addAction("Show &Hidden Members")
+        a.triggered.connect(lambda _c=False: self.set_show_hidden(not self.show_hidden))
+        a.setCheckable(True)
+        a.setChecked(self.show_hidden)
         m.addSeparator()
-        m.addAction("He&lp", self.help)
+        a = m.addAction(edicons.icon("references"), "&References...")    # grey in VB6 too (me8-21)
+        a.setEnabled(False)
+        a = m.addAction("&Properties...")
+        a.setEnabled(False)
+        m.addSeparator()
+        a = m.addAction(edicons.icon("help"), "&Help")
+        a.triggered.connect(lambda _c=False: self.help())
+        m.addSeparator()
+        main = self.main
+        a = m.addAction("Doc&kable")
+        a.setCheckable(True)
+        a.setChecked(main.is_dockable("objbrowser"))
+        a.triggered.connect(lambda _c=False: main.set_dockable("objbrowser", not main.is_dockable("objbrowser")))
+        a = m.addAction("&Hide")
+        a.triggered.connect(lambda _c=False: QTimer.singleShot(0, main._close_objbrowser))
+        return m
+
+    def _menu(self, w, pos):
+        m = self.menu_actions()
+        self._last_menu = m
         m.exec(w.mapToGlobal(pos))
 
     def set_show_hidden(self, on):
