@@ -1647,27 +1647,39 @@ class FormDesigner(QScrollArea):
         if hasattr(self.main, "designer_menu"):
             self.main.designer_menu(self, gpos, item)
 
+    def picture_target(self):
+        """where a picture of the clipboard goes: the form (nothing selected) or the one selected PictureBox /
+        Image (VB6, DEV-8/me8-16, me9-03, 05); None for the other controls (a CommandButton: grey, me8-02)"""
+        if not self.selection:
+            ctl = self.root
+        elif len(self.selection) == 1 and self.selection[0].type in ("PictureBox", "Image"):
+            ctl = self.selection[0].ctl
+        else:
+            return None
+        return ctl if V.prop_def(ctl.type_name, "Picture") is not None else None
+
     def can_paste(self):
-        """Paste of the menus: controls copied (on the form and on every control), or a picture (only on the
-        form: its Picture, DEV-8/me8-01, 02, 05, 08, 16)"""
+        """Paste of the menus: controls copied (on the form and on every control), or a picture (the form, a
+        PictureBox, an Image: their Picture, DEV-8/me8-01, 02, 05, 08, 16, me9-02..05)"""
         md = QApplication.clipboard().mimeData()
         if md is None:
             return False
         if md.hasFormat("application/x-lbstudio-controls"):
             return True
-        return md.hasImage() and not self.selection and V.prop_def(self.root.type_name, "Picture") is not None
+        return md.hasImage() and self.picture_target() is not None
 
     def paste_picture(self):
-        """a picture on the clipboard into the Picture of the form (VB6, DEV-8/me8-16): a .bmp in the .frx"""
+        """a picture on the clipboard into the Picture of the form / PictureBox / Image (VB6): a .bmp in the
+        .frx; an Image without Stretch takes the size of the picture (me9-05), a PictureBox keeps its size"""
         from PyQt6.QtCore import QBuffer, QIODevice
         img = QApplication.clipboard().image()
-        p = V.prop_def(self.root.type_name, "Picture")
-        if img.isNull() or p is None:
+        ctl = self.picture_target()
+        if img.isNull() or ctl is None:
             return False
         buf = QBuffer()
         buf.open(QIODevice.OpenModeFlag.WriteOnly)
         img.save(buf, "BMP")
-        err = self.set_property(self.root, p, bytes(buf.data()))
+        err = self.set_property(ctl, V.prop_def(ctl.type_name, "Picture"), bytes(buf.data()))
         return err is None
 
     def user_controls_used(self):
@@ -1889,7 +1901,7 @@ class FormDesigner(QScrollArea):
     def paste(self):
         md = QApplication.clipboard().mimeData()
         if not md.hasFormat("application/x-lbstudio-controls"):
-            if md.hasImage() and not self.selection:
+            if md.hasImage():
                 self.paste_picture()
             return
         text = bytes(md.data("application/x-lbstudio-controls")).decode("utf-8")
@@ -1900,18 +1912,12 @@ class FormDesigner(QScrollArea):
         for c in list(sf.root.children):
             existing = [x for x in self.all_controls() if x.name.lower() == c.name.lower()]
             if existing:
-                r = QMessageBox.question(self, "LinBASIC Studio",
-                                         f"You already have a control named '{c.name}'. Do you want to create a control array?",
-                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
-                if r == QMessageBox.StandardButton.Cancel:
-                    return
-                if r == QMessageBox.StandardButton.Yes:
-                    idx = [geti(x, "Index", -1) for x in existing]
-                    if all(i < 0 for i in idx):         # the first one becomes element 0
-                        for x in existing:
-                            set_prop(x, "Index", 0)
-                        idx = [0]
-                    set_prop(c, "Index", max(idx) + 1)
+                # VB6 (DEV-8/me10): an array of that name already: the next Index, no question; else "create a
+                # control array?" (Yes / No / Help, Esc does nothing); No, or another type: a name of its own
+                same = all(x.type_name == c.type_name for x in existing)
+                is_array = any(geti(x, "Index", -1) >= 0 for x in existing)
+                if same and (is_array or self.ask_control_array(c.name)):
+                    self.join_array(existing, c)
                 else:
                     c.name = self.new_name(TOOL.get(c.type_name, (0, c.type_name))[1])
                     c.raw_begin = None
@@ -1927,6 +1933,38 @@ class FormDesigner(QScrollArea):
         self.build()
         self.select([self.items[c] for c in new if c in self.items])
         self.changed()
+
+    def ask_control_array(self, name):
+        """VB6's question (DEV-8/me10-01): "You already have a control named 'X'.  Do you want to create a control
+        array?" Yes / No / Help; Esc and the close button do nothing; Help opens the help and asks again"""
+        from . import APP_NAME
+
+        class Box(QMessageBox):
+            def reject(self):                   # Esc / the close button: VB6 keeps asking
+                pass
+        while True:
+            box = Box(QMessageBox.Icon.Warning, APP_NAME,
+                      f"You already have a control named '{name}'.  Do you want to create a control array?", parent=self)
+            yes = box.addButton(QMessageBox.StandardButton.Yes)
+            box.addButton(QMessageBox.StandardButton.No)
+            hlp = box.addButton(QMessageBox.StandardButton.Help)
+            box.setDefaultButton(yes)
+            self._array_box = box
+            box.exec()
+            if box.clickedButton() is hlp:
+                if hasattr(self.main, "help_keyword"):
+                    self.main.help_keyword("control arrays")
+                continue
+            return box.clickedButton() is yes
+
+    def join_array(self, existing, c):
+        """c becomes the next element of the array of the controls named as it (the first one element 0)"""
+        idx = [geti(x, "Index", -1) for x in existing]
+        if all(i < 0 for i in idx):
+            for x in existing:
+                set_prop(x, "Index", 0)
+            idx = [0]
+        set_prop(c, "Index", max(idx) + 1)
 
     def _clear_raw(self, c):
         """a pasted control is written in the layout of VB6 at its new depth"""
@@ -2112,11 +2150,27 @@ class FormDesigner(QScrollArea):
         if ctl is self.root:
             return self.main.rename_module(self.module, new)
         if new.lower() != ctl.name.lower():
-            for c in self.root.walk():
-                if c.name.lower() == new.lower():
-                    if c.type_name != ctl.type_name or c is self.root:
-                        return f"Ambiguous name detected: {new}"
+            existing = [c for c in self.root.walk() if c.name.lower() == new.lower()]
+            if existing:
+                is_array = any(c is not self.root and geti(c, "Index", -1) >= 0 for c in existing)
+                if any(c is self.root for c in existing):
+                    return f"Ambiguous name detected: {new}"
+                if any(c.type_name != ctl.type_name for c in existing):
+                    # VB6 (DEV-8/me10-09, 11): an array of another type / a control of another type
+                    return "Control must be same type as rest of array" if is_array else f"'{new}' is a control name"
+                if ctl.index is not None:       # a whole array into an other name: not VB6's case (me10)
                     return f"You already have a control named '{new}'."
+                if not is_array and not self.ask_control_array(new):
+                    return None                 # No: the name stays
+                # VB6 (DEV-8/me10-05, 10): Yes, or an array of that name already (no question): the next element
+                self.checkpoint()
+                self.join_array(existing, ctl)
+                ctl.name = existing[0].name
+                ctl.raw_begin = None
+                self.build()
+                self.select_control(ctl)
+                self.changed()
+                return None
         self.checkpoint()
         old = ctl.name
         targets = [c for c in self.root.walk() if c.name.lower() == old.lower()] if ctl.index is not None else [ctl]

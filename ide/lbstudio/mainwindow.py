@@ -3879,17 +3879,27 @@ class MainWindow(QMainWindow):
         m.addAction("&Arrange Icons", self.arrange_icons)
         m.addSeparator()
         m.addAction("Tabs / Windows", self.toggle_tabbed)
-        subs = [sw for sw in self.mdi.subWindowList() if sw.isVisible() or sw.isMinimized()]
+        subs = self.window_list()
         if subs:
             m.addSeparator()
         cur = self.mdi.activeSubWindow()
-        for i, sw in enumerate(subs[:9]):
+        for i, sw in enumerate(subs[:8]):       # VB6: the last activated first, at most 8 (DEV-8/me9-06..13)
             a = m.addAction(f"&{i + 1} {sw.windowTitle().replace('&', '&&')}",
                             lambda w=sw: self.activate_sub(w))
             a.setCheckable(True)
             a.setChecked(sw is cur)
-        if len(subs) > 9:                       # Windows: the tenth window and on (VB6's "&More Windows...")
+        if len(subs) >= 8:                      # VB6: from 8 windows on, also with all 8 listed (me9-13)
             m.addAction("&More Windows...", lambda: self.more_windows(subs))
+
+    def window_list(self):
+        """the open code / designer windows, the one in front first, then as they were activated (VB6)"""
+        order = self.mdi.subWindowList(QMdiArea.WindowOrder.ActivationHistoryOrder)
+        subs = [sw for sw in reversed(order) if sw.isVisible() or sw.isMinimized()]
+        cur = self.mdi.activeSubWindow()
+        if cur in subs:
+            subs.remove(cur)
+            subs.insert(0, cur)
+        return subs
 
     def activate_sub(self, w):
         if w.isMinimized():
@@ -3897,19 +3907,17 @@ class MainWindow(QMainWindow):
         self.mdi.setActiveSubWindow(w)
 
     def more_windows(self, subs=None):
-        """Window > More Windows...: "Select Window", the list of all the windows (as Windows has it)"""
-        from PyQt6.QtWidgets import QDialog, QListWidget, QDialogButtonBox, QVBoxLayout, QLabel
-        if subs is None:
-            subs = [sw for sw in self.mdi.subWindowList() if sw.isVisible() or sw.isMinimized()]
+        """Window > More Windows...: "Windows", all the windows by their titles (A-Z), the first one chosen,
+        OK / Cancel (VB6, DEV-8/me9-07)"""
+        from PyQt6.QtWidgets import QDialog, QListWidget, QDialogButtonBox, QVBoxLayout
+        subs = sorted(subs if subs is not None else self.window_list(), key=lambda sw: sw.windowTitle())
         dlg = QDialog(self)
-        dlg.setWindowTitle("Select Window")
+        dlg.setWindowTitle("Windows")
         lay = QVBoxLayout(dlg)
-        lay.addWidget(QLabel("&Select Window:"))
         lst = QListWidget()
         for sw in subs:
             lst.addItem(sw.windowTitle())
-        cur = self.mdi.activeSubWindow()
-        lst.setCurrentRow(subs.index(cur) if cur in subs else 0)
+        lst.setCurrentRow(0)
         lst.itemDoubleClicked.connect(lambda _: dlg.accept())
         lay.addWidget(lst)
         bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)

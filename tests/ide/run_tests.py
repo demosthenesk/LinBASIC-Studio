@@ -3443,6 +3443,20 @@ def t_ctxmenu87(d):
     f.paste()
     data = f.module.frx_value(f.root, "Picture")
     assert data and bytes(data)[:2] == b"BM", data[:8] if data else data
+    # ... a PictureBox (its size stays) and an Image (the size of the picture) take it too (me9-02..05)
+    cp = f.place_new("PictureBox", QRect(20, 150, 0, 0), None)
+    f.select([f.items[cp]])
+    assert on(w.designer_menu_items(f, f.items[cp]))["&Paste"]
+    size = (int(cp.get("Width")), int(cp.get("Height")))
+    f.paste()
+    assert bytes(f.module.frx_value(cp, "Picture") or b"")[:2] == b"BM"
+    assert (int(cp.get("Width")), int(cp.get("Height"))) == size
+    ci = f.place_new("Image", QRect(200, 150, 0, 0), None)
+    f.select([f.items[ci]])
+    assert on(w.designer_menu_items(f, f.items[ci]))["&Paste"]
+    f.paste()
+    assert bytes(f.module.frx_value(ci, "Picture") or b"")[:2] == b"BM"
+    assert (int(ci.get("Width")), int(ci.get("Height"))) == (24 * 15, 16 * 15), (ci.get("Width"), ci.get("Height"))
     # a user control on the form: Update UserControls; its own menu without pictures or Properties (me8-12, 13)
     w.add_module("UserControl")
     w.fill_tree()
@@ -3496,28 +3510,96 @@ def t_ctxmenu87(d):
         "&Copy", "View &Definition", "&Find Whole Word Only", "Group &Members", "Show &Hidden Members",
         "&References...", "&Properties...", "&Help", "Doc&kable", "&Hide"], [a.text() for a in m.actions()]
     w._close_objbrowser()
-    # Window > More Windows... with more than nine windows
+    # Window: the window in front first, then as activated, at most 8; More Windows... from 8 windows on (me9)
     for _ in range(10):
         w.add_module("Module")
     app.processEvents()
     w.fill_window_menu()
-    acts = [a.text() for a in w.window_menu.actions() if not a.isSeparator()]
-    assert acts[-1] == "&More Windows..." and acts[-2].startswith("&9 "), acts
-    subs = [sw for sw in w.mdi.subWindowList() if sw.isVisible() or sw.isMinimized()]
+    acts = [a for a in w.window_menu.actions() if not a.isSeparator()]
+    texts_ = [a.text() for a in acts]
+    assert texts_[-1] == "&More Windows..." and texts_[-2].startswith("&8 "), texts_
+    first = [a for a in acts if a.text().startswith("&1 ")][0]
+    assert first.isChecked() and first.text().endswith(w.mdi.activeSubWindow().windowTitle()), first.text()
+    subs = w.window_list()
+    assert subs[0] is w.mdi.activeSubWindow()
 
     def choose():
         dlg = w._more_windows_dlg
         lst = dlg.findChildren(__import__("PyQt6.QtWidgets", fromlist=["QListWidget"]).QListWidget)[0]
-        assert lst.count() == len(subs) and dlg.windowTitle() == "Select Window"
-        lst.setCurrentRow(0)
+        items = [lst.item(i).text() for i in range(lst.count())]
+        assert dlg.windowTitle() == "Windows" and items == sorted(sw.windowTitle() for sw in subs), items
+        assert lst.currentRow() == 0
         dlg.accept()
     _QT.singleShot(0, choose)
     w.more_windows(subs)
-    assert w.mdi.activeSubWindow() is subs[0]
+    assert w.mdi.activeSubWindow().windowTitle() == min(sw.windowTitle() for sw in subs)
     done(w)
 
 
-TESTS = {"t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+def t_ctlarray87(d):
+    """control arrays by Copy / Paste and by (Name), as VB6 (phase 8.7, VB6 oracle DEV-8/me10)"""
+    from PyQt6.QtCore import QTimer as _QT
+    from PyQt6.QtWidgets import QMessageBox as _MB
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    f = w.open_designer(w.project.module("Form1"))
+
+    def idx(name):
+        return sorted(int(c.get("Index")) for c in f.all_controls() if c.name == name)
+    c1 = f.place_new("CommandButton", QRect(160, 120, 0, 0), None)
+    f.select([f.items[c1]])
+    f.copy_selection()
+    seen = {}
+
+    def answer():
+        box = f._array_box
+        seen["text"] = box.text()
+        seen["buttons"] = sorted(b.text().replace("&", "") for b in box.buttons())
+        box.reject()                            # Esc / the close button: nothing (me10-08)
+        app.processEvents()
+        seen["after_esc"] = box.isVisible()
+        box.button(_MB.StandardButton.Yes).click()
+    f.select([])
+    _QT.singleShot(0, answer)
+    f.paste()                                   # the question, Yes: an array (me10-01, ca1 Form1.frm)
+    assert seen["text"] == "You already have a control named 'Command1'.  Do you want to create a control array?", seen
+    assert seen["buttons"] == ["Help", "No", "Yes"] and seen["after_esc"], seen
+    assert idx("Command1") == [0, 1], idx("Command1")
+    new = [c for c in f.all_controls() if c.name == "Command1" and int(c.get("Index")) == 1][0]
+    assert (int(new.get("Left")), int(new.get("Top"))) == (0, 0)
+    assert int(c1.get("Left")) > 0                # the first one stays where it was
+    # a Paste into the array: no question, the next Index, at 0, 0 again (me10-03, 07)
+    f.ask_control_array = lambda name: seen.setdefault("asked", True)
+    f.select([])
+    f.paste()
+    assert "asked" not in seen and idx("Command1") == [0, 1, 2], idx("Command1")
+    # No: a name of its own (me10-04)
+    t1 = f.place_new("TextBox", QRect(300, 250, 0, 0), None)
+    f.select([f.items[t1]])
+    f.copy_selection()
+    f.select([])
+    f.ask_control_array = lambda name: False
+    f.paste()
+    assert sorted(c.name for c in f.all_controls() if c.type_name == "TextBox") == ["Text1", "Text2"]
+    t2 = [c for c in f.all_controls() if c.name == "Text2"][0]
+    # (Name) of an array of another type (me10-09)
+    assert f.rename(t2, "Command1") == "Control must be same type as rest of array"
+    ck = f.place_new("CheckBox", QRect(20, 250, 0, 0), None)      # of another type, not an array (me10-11)
+    assert f.rename(t2, ck.name) == "'Check1' is a control name", f.rename(t2, ck.name)
+    # (Name) of a control of the same type, No: the name stays; Yes: an array (me10-05, ca1 Form1.frm)
+    assert f.rename(t2, "Text1") is None and t2.name == "Text2"
+    f.ask_control_array = lambda name: True
+    assert f.rename(t2, "Text1") is None and t2.name == "Text1" and idx("Text1") == [0, 1], idx("Text1")
+    # (Name) of an array: no question, the next element (me10-10, ca2 F2.frm)
+    t3 = f.place_new("TextBox", QRect(300, 50, 0, 0), None)
+    f.ask_control_array = lambda name: seen.setdefault("asked2", True)
+    assert f.rename(t3, "Text1") is None and "asked2" not in seen and idx("Text1") == [0, 1, 2], idx("Text1")
+    del f.ask_control_array
+    done(w)
+
+
+TESTS = {"t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 
