@@ -37,10 +37,10 @@ def profiles_dir():
 
 
 # ------------------------------------------------------------------------------------------------ the pictures
-def wizard_picture(kind, w=150, h=120):
-    """the picture on the left of a page: our own drawings"""
+def wizard_picture(kind, w=150, h=120, bg="#808080"):
+    """the picture on the left of a page: our own drawings (made for 150 x 120)"""
     pm = QPixmap(w, h)
-    pm.fill(QColor("#808080"))
+    pm.fill(QColor(bg) if bg else QColor(0, 0, 0, 0))
     p = QPainter(pm)
     p.setRenderHint(QPainter.RenderHint.Antialiasing, True)
     ink, paper, blue, gold = QColor("#202020"), QColor("#FFFFFF"), QColor("#2F6FD0"), QColor("#F2C230")
@@ -137,10 +137,16 @@ def wizard_picture(kind, w=150, h=120):
     return pm
 
 
+def wizard_small(kind, size, bg=None):
+    """a small picture: the drawing made at full size, its middle part scaled down"""
+    return wizard_picture(kind, bg=bg).copy(26, 10, 100, 100).scaled(
+        size, size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+
+
 def wizard_icon(size=16):
     """the icon of Add-Ins > Application Wizard... and of New Project (a wand)"""
-    return QIcon(wizard_picture("intro", 64, 64).scaled(size, size, Qt.AspectRatioMode.KeepAspectRatio,
-                                                         Qt.TransformationMode.SmoothTransformation))
+    return QIcon(wizard_small("intro", max(size, 32)).scaled(size, size, Qt.AspectRatioMode.KeepAspectRatio,
+                                                             Qt.TransformationMode.SmoothTransformation))
 
 
 # ------------------------------------------------------------------------------------------------ helpers
@@ -929,7 +935,7 @@ class CreatedDialog(QDialog):
         lay = QVBoxLayout(self)
         row = QHBoxLayout()
         pic = QLabel()
-        pic.setPixmap(wizard_picture("intro", 48, 48))
+        pic.setPixmap(wizard_small("intro", 48))
         row.addWidget(pic, 0, Qt.AlignmentFlag.AlignTop)
         row.addWidget(QLabel("The application has been created."), 1)
         lay.addLayout(row)
