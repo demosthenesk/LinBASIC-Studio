@@ -1,0 +1,32 @@
+shell missing 53 0
+shell missing args 53 0
+mdi load 1
+mdi loaded 1 MDIForm1
+child load 2
+child shown 2 MDIForm1 frmChild True
+after 2 MDIForm1 frmChild
+form1 load 3
+step 1
+imagelist ImageList 5 New 5
+buttons 6
+  b1 [New] style 0 value 0 image String [New]
+  b2 [] style 3 value 0 image Integer [0]
+  b3 [Left] style 2 value 0 image String [Left]
+  b4 [Center] style 2 value 0 image String [Center]
+  b5 [Right] style 2 value 1 image String [Right]
+  b6 [Bold] style 1 value 0 image String [Bold]
+button size 345 330
+align 0 True True 1 1 True
+menu [-] [E&xit] True
+step 2
+group 001
+group center 010
+group left 100
+group none 000
+check 1
+check off 0
+image key [New] style 0 value 0 image String [Bold]
+image index [New] style 0 value 0 image Integer [2]
+step 3
+end 3 MDIForm1 frmChild Form1
+mdi unload
