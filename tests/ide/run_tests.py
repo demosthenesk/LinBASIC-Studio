@@ -1417,7 +1417,7 @@ Sub Main()
     Load frmFlex
     Print #f, frmFlex.flxData.Rows & "|" & frmFlex.flxData.ColWidth(2)
     Load frmChart
-    Print #f, frmChart.chtData.RowCount & "|" & frmChart.chtData.TitleText
+    Print #f, frmChart.Controls("chtData").RowCount & "|" & frmChart.Controls("chtData").TitleText
     Close #f
     End
 End Sub

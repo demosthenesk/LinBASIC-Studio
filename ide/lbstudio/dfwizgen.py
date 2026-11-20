@@ -680,9 +680,7 @@ End Sub
 def _gen_chart(df):
     frm = Frm()
     w, gh = 6480, 3840
-    frm.obj(OBJ_CHART)
-    frm.ctl("MSChart20Lib.MSChart", "chtData", [("Height", gh), ("Left", 60), ("TabIndex", 0), ("Top", 60),
-                                               ("Width", w - 120)] + _ocx_size(w - 120, gh)[:2])
+    frm.obj(OBJ_CHART)                          # the chart itself: Controls.Add in Form_Load (below)
     frm.ctl("VB.CommandButton", "cmdClose", [("Cancel", "-1  'True"), ("Caption", vbstr("&Close")),
                                              ("Height", TW_BTN_H), ("Left", w - 60 - TW_BTN_W), ("TabIndex", 1),
                                              ("Top", gh + 120), ("Width", TW_BTN_W)])
@@ -699,9 +697,16 @@ Private Const CONNECT_STRING As String = {cs}
 Private Const CHART_SQL As String = {sql}
 Private Const HAS_Z As Boolean = {hasz}
 
+' the chart is made by Controls.Add: VB6 keeps the settings of a chart drawn on a form in a binary part of the
+' .frx of its own (OleObjectBlob), which it needs to load the form
+Private chtData As Object
+
 Private Sub Form_Load()
     Dim cn As ADODB.Connection, rs As ADODB.Recordset
     On Error GoTo Failed
+    Set chtData = Controls.Add("MSChart20Lib.MSChart", "chtData")
+    chtData.Move 60, 60, ScaleWidth - 120, ScaleHeight - cmdClose.Height - 180
+    chtData.Visible = True
     Set cn = New ADODB.Connection
     cn.CursorLocation = adUseClient
     cn.Open CONNECT_STRING
