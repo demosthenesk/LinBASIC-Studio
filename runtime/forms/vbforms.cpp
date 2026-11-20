@@ -723,6 +723,7 @@ struct Ctl {
     bool uc_loading = false, uc_ready = false;  /* in its ReadProperties / InitProperties; after them */
     DataCtl *data = nullptr;                    /* a Data control */
     QString datafield, datasource;              /* a bound control: DataField, DataSource (a Data control's name) */
+    QString datamember;                         /* DataMember: of a data source class (Set DataSource = obj) */
     bool datachanged = false;
     vbobj dsobj = nullptr;                      /* Set DataSource = an object (a Recordset, a class): counted */
     vbobj dsrs = nullptr;                       /* the ADO Recordset it listens to (counted) */

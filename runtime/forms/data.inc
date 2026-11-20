@@ -955,7 +955,7 @@ static vbvar bound_member(Ctl *c, const std::string &n, bool set, vbvar val, int
                 else if (is_adodc(d) && adodc_rs(d)) fill_ctl(c, adodc_rs(d), rs_has_record(adodc_rs(d)), true);
             } else if (o) {
                 c->dsobj = vb_oid(o); vb_oaddref(c->dsobj);
-                vbobj rs = source_rs(c->dsobj, QString());
+                vbobj rs = source_rs(c->dsobj, c->datamember);
                 bound_listen(c, rs);
                 if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
             }
@@ -985,7 +985,19 @@ static vbvar bound_member(Ctl *c, const std::string &n, bool set, vbvar val, int
         if (!c->dfmt) c->dfmt = vb_dfmt_new();  /* a control without a DataFormat has one, the binding does not use it */
         return vb_vtmp(vb_v_obj(c->dfmt));
     }
-    if (n == "datamember") return vb_v_empty();
+    if (n == "datamember") {                    /* the member of a data source class (the Data Form Wizard's Class
+                                                 * binding: DataMember = "Primary", then Set DataSource = obj) */
+        if (set) {
+            c->datamember = data_qs(val);
+            if (c->dsobj) {
+                vbobj rs = source_rs(c->dsobj, c->datamember);
+                bound_listen(c, rs);
+                if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
+            }
+            return vb_v_empty();
+        }
+        return vstr(c->datamember);
+    }
     *found = 0;
     return vb_v_empty();
 }
