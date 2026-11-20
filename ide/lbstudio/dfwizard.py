@@ -213,6 +213,20 @@ class Schema:
 
 
 # ------------------------------------------------------------------------------------------------ the widgets
+def buddy_label(text, w):
+    """a label whose access key (&) goes to its control, as in VB6"""
+    lab = QLabel(text)
+    lab.setBuddy(w)
+    return lab
+
+
+def plain_labels(root):
+    """the labels without a control of their own: their & is not an access key (Qt would show it)"""
+    for lab in root.findChildren(QLabel):
+        if "&" in lab.text() and lab.buddy() is None:
+            lab.setText(lab.text().replace("&&", "\x00").replace("&", "").replace("\x00", "&"))
+
+
 class SourcePicker(QWidget):
     """Record Source: the source, Available Fields -> Selected Fields, Column to Sort By"""
     changed = pyqtSignal()
@@ -225,10 +239,10 @@ class SourcePicker(QWidget):
         lay.addWidget(QLabel("Record Source:"), 0, 2, 1, 2)
         self.source = QComboBox()
         lay.addWidget(self.source, 1, 2, 1, 2)
-        lay.addWidget(QLabel("&Available Fields:"), 2, 0)
-        lay.addWidget(QLabel("&Selected Fields:"), 2, 2)
         self.avail = QListWidget()
         self.chosen = QListWidget()
+        lay.addWidget(buddy_label("&Available Fields:", self.avail), 2, 0)
+        lay.addWidget(buddy_label("&Selected Fields:", self.chosen), 2, 2)
         for lw in (self.avail, self.chosen):
             lw.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         lay.addWidget(self.avail, 3, 0)
@@ -522,6 +536,7 @@ class DataFormWizard(QDialog):
             self.pages[key] = self.stack.addWidget(w)
         for pk in (self.src, self.msrc, self.dsrc):
             pk.changed.connect(self.picker_changed)
+        plain_labels(self)
         self.resize(640, 460)
         self.key = "intro"
         self.load_settings()
@@ -569,8 +584,8 @@ class DataFormWizard(QDialog):
     def _database_page(self, lay):
         self._text(lay, "Click Browse... to select the database file.")
         lay.addStretch(1)
-        lay.addWidget(QLabel("&Database Name:"))
         self.db_name = QLineEdit()
+        lay.addWidget(buddy_label("&Database Name:", self.db_name))
         lay.addWidget(self.db_name)
         row = QHBoxLayout()
         row.addStretch(1)
@@ -603,13 +618,14 @@ class DataFormWizard(QDialog):
                     w.setEchoMode(QLineEdit.EchoMode.Password)
             self.odbc[k] = w
             gl.addWidget(w, i, 1)
+            gl.itemAtPosition(i, 0).widget().setBuddy(w)
         lay.addWidget(g)
 
     def _form_page(self, lay):
         self._text(lay, "Select the type of the form and how its controls reach the data.")
         lay.addStretch(1)
-        lay.addWidget(QLabel("&What name do you want for the form?"))
         self.form_name = QLineEdit()
+        lay.addWidget(buddy_label("&What name do you want for the form?", self.form_name))
         lay.addWidget(self.form_name)
         lay.addStretch(1)
         row = QHBoxLayout()
@@ -680,8 +696,8 @@ class DataFormWizard(QDialog):
 
     def _gridstyle_page(self, lay):
         self._text(lay, "Choose a grid style.")
-        lay.addWidget(QLabel("&Grid style:"))
         self.gridstyle_list = QListWidget()
+        lay.addWidget(buddy_label("&Grid style:", self.gridstyle_list))
         self.gridstyle_list.addItems(G.GRID_STYLES)
         self.gridstyle_list.setMaximumSize(180, 80)
         self.gridstyle_list.currentRowChanged.connect(self.show_style)
@@ -720,9 +736,10 @@ class DataFormWizard(QDialog):
         self._text(col, "Select the fields to group by on the X and Z axes. The Z axis is optional.")
         self.cx, self.cz, self.cy, self.cagg = QComboBox(), QComboBox(), QComboBox(), QComboBox()
         for label, w in (("&X Axis:", self.cx), ("&Z Axis:", self.cz)):
-            col.addWidget(QLabel(label))
+            col.addWidget(buddy_label(label, w))
             col.addWidget(w)
-        self._text(col, "Select the field to summarize on the &Y axis.")
+        t = self._text(col, "Select the field to summarize on the &Y axis.")
+        t.setBuddy(self.cy)
         col.addWidget(self.cy)
         self._text(col, "Select the function that summarizes the values of the Y axis.")
         self.cagg.addItems([a for a, _f in G.AGGREGATES])
@@ -737,8 +754,8 @@ class DataFormWizard(QDialog):
         row = QHBoxLayout()
         col = QVBoxLayout()
         self._text(col, "Select the style of chart you want.")
-        col.addWidget(QLabel("Chart &style:"))
         self.chartstyle_list = QListWidget()
+        col.addWidget(buddy_label("Chart &style:", self.chartstyle_list))
         for name, _t in G.CHART_STYLES:
             self.chartstyle_list.addItem(QListWidgetItem(chart_icon(name), name))
         self.chartstyle_list.currentRowChanged.connect(self.chart_look_changed)
@@ -759,13 +776,14 @@ class DataFormWizard(QDialog):
             col.addWidget(c)
             c.toggled.connect(lambda _v: self.chart_look_changed())
         col.addStretch(1)
-        self._text(col, "Move the slider to the degree of &rotation you want.")
+        rot_text = self._text(col, "Move the slider to the degree of &rotation you want.")
         self.rot_label = QLabel()
         self.rot_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         col.addWidget(self.rot_label)
         self.rot = QSlider(Qt.Orientation.Horizontal)
         self.rot.setRange(0, 360)
         self.rot.valueChanged.connect(lambda _v: self.chart_look_changed())
+        rot_text.setBuddy(self.rot)
         col.addWidget(self.rot)
         row.addLayout(col, 1)
         self.preview3 = ChartPreview()
@@ -776,13 +794,13 @@ class DataFormWizard(QDialog):
         row = QHBoxLayout()
         col = QVBoxLayout()
         self._text(col, "Select a caption and type its text.")
-        col.addWidget(QLabel("&Titles and footnote:"))
         self.cap_list = QListWidget()
+        col.addWidget(buddy_label("&Titles and footnote:", self.cap_list))
         self.cap_list.addItems([n for n, _h in G.CHART_CAPTIONS])
         self.cap_list.currentRowChanged.connect(self.caption_chosen)
         col.addWidget(self.cap_list)
-        col.addWidget(QLabel("Te&xt:"))
         self.cap_text = QLineEdit()
+        col.addWidget(buddy_label("Te&xt:", self.cap_text))
         self.cap_text.textEdited.connect(self.caption_typed)
         col.addWidget(self.cap_text)
         col.addStretch(1)
@@ -886,7 +904,8 @@ class DataFormWizard(QDialog):
             hh = self.cols_table.horizontalHeader()
             order = sorted(range(self.cols_table.columnCount()), key=hh.visualIndex)
             names = [self.cols_table.horizontalHeaderItem(i).text() for i in order]
-            df.col_widths = {self.cols_table.horizontalHeaderItem(i).text(): hh.sectionSize(i) * 15 for i in order}
+            df.col_widths = {self.cols_table.horizontalHeaderItem(i).text(): hh.sectionSize(i) * 15 for i in order
+                             if hh.sectionSize(i) != hh.defaultSectionSize()}     # the widths the user changed
             if sorted(names) == sorted(df.fields):
                 df.fields = names
         elif key == "uioptions":
