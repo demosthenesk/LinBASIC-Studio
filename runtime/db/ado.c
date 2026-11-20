@@ -303,8 +303,9 @@ static void ev_opened(ars *r)
     if ((cn_of(r) && cn_of(r)->shape) || (r->cursorloc == adUseClient && r->h.sinks)) {
         ev_willmove(r, adRsnMove, adStatusCantDeny);
         ev_willmove(r, adRsnMove, adStatusOK);
+        r->pendmove = 1;                        /* a look at the row in the handler of the first MoveComplete
+                                                 * gives the second there (VB6 oracle f_dfw: Requery) */
         ev_movecomplete(r, adRsnMove);
-        r->pendmove = 1;
         return;
     }
     ev_willmove(r, adRsnMove, adStatusCantDeny);
