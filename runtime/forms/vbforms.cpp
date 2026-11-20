@@ -292,7 +292,18 @@ static const unsigned sys_dark[] = {
     0x3A3A3A, 0x3A3A3A, 0x1A1A1A, 0x3584E4, 0xFFFFFF, 0x2D2D2D, 0x1E1E1E, 0x8A8A8A, 0xEEEEEE, 0xAAAAAA,
     0x505050, 0x0F0F0F, 0x454545, 0xEEEEEE, 0x383838, 0x000000, 0x78AEED, 0x303030, 0x2A2A2A, 0x3584E4, 0x2D2D2D };
 static long norm_color(double d) { return (long)(vb_i32)(vb_u32)(long long)d; }
-static QColor qcolor(long c)
+static QColor qcolor_in(long c, bool dark);
+static QColor qcolor(long c) { return qcolor_in(c, dark_theme); }
+/* the text color of a control: with a dark theme of the system, a system color (ButtonText ...) on a light
+ * BackColor of the program's own (&H00FFFFFF&) is the one of the light theme: the label of the Data Form
+ * Wizard's record bar was white on white (DEV-9 df3) */
+static QColor fore_on(long fore, long back)
+{
+    if (dark_theme && (fore & 0x80000000L) && !(back & 0x80000000L) && qcolor(back).lightness() >= 128)
+        return qcolor_in(fore, false);
+    return qcolor(fore);
+}
+static QColor qcolor_in(long c, bool dark)
 {
     if (c & 0x80000000L) {                      /* system colors of Windows 7 (dark: sys_dark) */
         static const unsigned sys[] = {
@@ -300,7 +311,7 @@ static QColor qcolor(long c)
             0xB4B4B4, 0xF4F7FC, 0xABABAB, 0x3399FF, 0xFFFFFF, 0xF0F0F0, 0xA0A0A0, 0x6D6D6D, 0x000000, 0x434E54,
             0xFFFFFF, 0x696969, 0xE3E3E3, 0x000000, 0xFFFFE1, 0x000000, 0x0066CC, 0xB9D1EA, 0xD7E4F2, 0xF0F0F0, 0x000000 };
         unsigned i = (unsigned)(c & 0xFF);
-        const unsigned *t = dark_theme ? sys_dark : sys;
+        const unsigned *t = dark ? sys_dark : sys;
         unsigned rgb = i < sizeof sys / sizeof sys[0] ? t[i] : 0;
         return QColor((rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255);
     }
@@ -1111,7 +1122,7 @@ static void apply_look(Ctl *c)
     QWidget *w = c->w;
     w->setFont(qfont(c->font));
     QPalette pal = w->palette();
-    QColor b = qcolor(c->back), f = qcolor(c->fore);
+    QColor b = qcolor(c->back), f = fore_on(c->fore, c->back);
     switch (c->kind) {
     case K_TEXT: case K_LIST: case K_COMBO:
         pal.setColor(QPalette::Base, b); pal.setColor(QPalette::Text, f); break;
