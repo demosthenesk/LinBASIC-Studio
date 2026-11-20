@@ -1362,6 +1362,11 @@ def t_appwizgen92(d):
                  '    frmB.StartingAddress = "http://www.microsoft.com"', '            Picture         =   "frmMain.frx":'):
         assert want in m, (want, m[:3000])
     assert os.path.getsize(os.path.join(pd, "frmMain.frx")) > 13 * 800
+    # the 13 ListImages of the ImageList: StdPicture with its CLSID, as VB6 writes the pictures of an ActiveX
+    # control (AW32)
+    from lbvc.project.frx import CLSID_STDPICTURE
+    fx = open(os.path.join(pd, "frmMain.frx"), "rb").read()
+    assert fx.count(CLSID_STDPICTURE) == 13, fx.count(CLSID_STDPICTURE)
     assert "Sub LoadResStrings(frm As Form)" in open(os.path.join(pd, "Module1.bas"), encoding="cp1252").read()
     b = frm(pd, "frmBrowser")
     assert '      Tag             =   "1048"' in b and "Public StartingAddress As String" in b, b[:2500]

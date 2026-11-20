@@ -1,0 +1,9 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 9.2α-5) — f_aw5
+
+Toolbar με ImageList γραμμένη μετά (ImageKey), ButtonWidth / ButtonHeight, Value σε ομάδα, σειρά των Align,
+separator μενού, Shell προγράμματος που δεν υπάρχει, New MDIForm (Sub Main όπως το Application Wizard).
+Το έργο κλείνει μόνο του σε 1-2 δευτερόλεπτα. Μην πατάς τίποτα όσο τρέχει.
+
+1. Άνοιξε το f_aw5\Aw5Tests.vbp με το VB6 και πάτα F5.
+   - Αν βγει σφάλμα, στείλε μου εικόνα.
+2. Πες μου «έτοιμο». Το αποτέλεσμα γράφεται στο f_aw5\expected\f_aw5.txt.

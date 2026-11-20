@@ -207,9 +207,15 @@ class FrxWriter:
     def _start(self):
         return len(self.buf)
 
-    def picture(self, img):
+    def picture(self, img, ole=False):
+        """a picture: [u32 size] "lt\\0\\0" [u32 len] data, as VB6 writes the Picture / Icon of a form and of
+        its intrinsic controls; ole: the picture of an ActiveX control (an ImageList's ListImage, a band of a
+        CoolBar ...) - a persisted StdPicture, its CLSID first (VB6: DEV-8 f_cool6 Form1.frx)"""
         off = self._start()
-        self.buf += struct.pack("<I", len(img) + 8) + PIC_MAGIC + struct.pack("<I", len(img)) + img
+        if ole and img:
+            self.buf += struct.pack("<I", len(img) + 24) + CLSID_STDPICTURE + PIC_MAGIC + struct.pack("<I", len(img)) + img
+        else:
+            self.buf += struct.pack("<I", len(img) + 8) + PIC_MAGIC + struct.pack("<I", len(img)) + img
         return off
 
     def string(self, s):
@@ -253,10 +259,11 @@ class FrxWriter:
         self.buf += data
         return off
 
-    def write(self, d):
-        """FrxData -> (offset, is_dollar)"""
+    def write(self, d, ole=False):
+        """FrxData -> (offset, is_dollar); ole: a property of an ActiveX control (its pictures are StdPicture
+        objects with their CLSID)"""
         if d.kind == "picture":
-            return self.picture(d.data), False
+            return self.picture(d.data, ole), False
         if d.kind == "string":
             return self.string(d.data)
         if d.kind == "text":

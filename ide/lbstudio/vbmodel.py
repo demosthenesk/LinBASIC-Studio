@@ -154,8 +154,9 @@ class Module:
         self.dirty = False
 
     # ------------------------------------------------------------ the .frx
-    def frx_props(self):
-        """the properties whose data is in the .frx (or will be), in the order of the .frm"""
+    def frx_props(self, owners=None):
+        """the properties whose data is in the .frx (or will be), in the order of the .frm; owners: a dict
+        that gets id(property) -> the type of its control ("VB.Form", "MSComctlLib.ImageList" ...)"""
         out = []
 
         def items(seq):
@@ -173,6 +174,8 @@ class Module:
                     for p in items([it]):
                         if isinstance(p.value, (FrxRef, FrxData)):
                             out.append(p)
+                            if owners is not None:
+                                owners[id(p)] = c.cls
         if self.sf is not None and self.sf.root is not None:
             walk(self.sf.root)
         return out
@@ -218,7 +221,8 @@ class Module:
                 with open(ci_path(os.path.splitext(target)[0] + ".dsx"), "wb") as f:
                     f.write(self.dsx_data)
             return
-        props = self.frx_props()
+        owners = {}
+        props = self.frx_props(owners)
         frx_name = os.path.splitext(os.path.basename(target))[0] + ".frx"
         need = any(isinstance(p.value, FrxData) or p.value.file.lower() != frx_name.lower() for p in props)
         if not need:
@@ -228,7 +232,10 @@ class Module:
         old = []
         for p in props:
             d = self.frx_data(p) or FrxData("raw", b"")
-            off, dollar = w.write(d)
+            # the pictures of an ActiveX control (ListImages of an ImageList ...) as VB6 writes them: StdPicture
+            # with its CLSID; VB6 reads no other form there (DEV-9 AW32)
+            owner = owners.get(id(p)) or ""
+            off, dollar = w.write(d, ole=not owner.lower().startswith("vb."))
             old.append((p, p.value))
             p.value = FrxRef(frx_name, off, dollar)
         with open(os.path.join(os.path.dirname(target), frx_name), "wb") as f:
