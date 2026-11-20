@@ -1413,7 +1413,7 @@ Sub Main()
     Load frmMD
     Print #f, frmMD.txtField(0).Text & "|" & frmMD.grdDetail.ApproxCount
     Load frmGrid
-    Print #f, frmGrid.grdData.ApproxCount
+    Print #f, CStr(frmGrid.grdData.ApproxCount)
     Load frmFlex
     Print #f, frmFlex.flxData.Rows & "|" & frmFlex.flxData.ColWidth(2)
     Load frmChart
