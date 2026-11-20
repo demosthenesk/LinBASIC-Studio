@@ -103,6 +103,10 @@ Private Sub Timer1_Timer()
         WriteLog "after movelast " & Cur()
         Timer1.Enabled = True
     Case 2
+        Src.Requery
+        WriteLog "after requery " & Cur()
+        Src.MoveNext
+        WriteLog "after movenext " & Cur()
         Src.MoveFirst
         WriteLog "after movefirst " & Cur()
         Form2.Show

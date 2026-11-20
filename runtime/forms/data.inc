@@ -625,6 +625,23 @@ static vbobj source_rs(vbobj src, const QString &member)
     return o && vb_dbhooks.is_ado_rs(o) ? vb_oid(o) : nullptr;
 }
 
+/* the recordset of a control bound to a data source object (Set DataSource = obj, DataMember): VB6 asks a
+ * data source class for its default member ("") at every binding of a control, and for the control's member
+ * only once: the controls of the form bound to the same object and member share its recordset (oracle f_dfw:
+ * getdatamember [] [Primary] at the first text box, getdatamember [] at the others) */
+static vbobj bound_source(Ctl *c)
+{
+    vbobj def = source_rs(c->dsobj, QString());
+    if (c->datamember.isEmpty()) return def;
+    if (c->form)
+        for (vbobj co : c->form->ctls) {
+            Ctl *b = C(co);
+            if (b && b != c && b->dsobj == c->dsobj && b->dsrs &&
+                !b->datamember.compare(c->datamember, Qt::CaseInsensitive)) return b->dsrs;
+        }
+    return source_rs(c->dsobj, c->datamember);
+}
+
 /* a DataFormat did not take the text of a bound control (store_ctl -2): the controls bound to rs show the record
  * again, the changed ones stay changed, and the move is canceled (VB6 oracle f_dfmt) */
 static void bound_cancel(Ctl *c, vbobj rs)
@@ -955,7 +972,7 @@ static vbvar bound_member(Ctl *c, const std::string &n, bool set, vbvar val, int
                 else if (is_adodc(d) && adodc_rs(d)) fill_ctl(c, adodc_rs(d), rs_has_record(adodc_rs(d)), true);
             } else if (o) {
                 c->dsobj = vb_oid(o); vb_oaddref(c->dsobj);
-                vbobj rs = source_rs(c->dsobj, c->datamember);
+                vbobj rs = bound_source(c);
                 bound_listen(c, rs);
                 if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
                 if (rs && rs != c->dsobj && vb_dbhooks.ado_consumer) vb_dbhooks.ado_consumer(rs);  /* a class */
@@ -991,7 +1008,7 @@ static vbvar bound_member(Ctl *c, const std::string &n, bool set, vbvar val, int
         if (set) {
             c->datamember = data_qs(val);
             if (c->dsobj) {
-                vbobj rs = source_rs(c->dsobj, c->datamember);
+                vbobj rs = bound_source(c);
                 bound_listen(c, rs);
                 if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
                 if (rs && rs != c->dsobj && vb_dbhooks.ado_consumer) vb_dbhooks.ado_consumer(rs);

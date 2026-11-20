@@ -54,3 +54,11 @@ End Sub
 Public Sub MoveFirst()
     rsW.MoveFirst
 End Sub
+
+' as the Refresh button of a data form: the same recordset again, its member changed
+Public Sub Requery()
+    rsW.Requery
+    WriteLog "  class: requeried"
+    DataMemberChanged "Primary"
+    WriteLog "  class: member changed"
+End Sub

@@ -1,7 +1,8 @@
 ﻿Το test f_dfw (LinBASIC Studio, Φάση 9.2β): ό,τι χρειάζονται από το runtime οι φόρμες ενός Data Form Wizard.
 
 Form1: τρία TextBox ως control array (For Each), δεμένα σε κλάση-πηγή δεδομένων με DataMember "Primary"
-       (DataMembers.Add, Class_GetDataMember), Label που γράφει «Record: n» στο MoveComplete της κλάσης.
+       (DataMembers.Add, Class_GetDataMember), Label που γράφει «Record: n» στο MoveComplete της κλάσης,
+       Requery με DataMemberChanged (το κουμπί Refresh μιας φόρμας του Wizard).
 Form2: master / detail με MSDataShape: TextBox στον master, DataGrid και TextBox στο chapter (UnderlyingValue)
        που ακολουθούν τη γραμμή του master.
 
