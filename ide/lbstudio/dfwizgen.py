@@ -1030,6 +1030,10 @@ class Output:
         self.modules = []                       # (kind "Form" | "Class", name, text with \n)
         self.references = [ADO_REF]
         self.libraries = []                     # ocxlib keys
+        # the chart is made by Controls.Add: VB6 adds it only when the project keeps the information of the
+        # controls that no form has (Project Properties > Make, "Remove information about unused ActiveX Controls"
+        # off: RemoveUnusedControlInfo=0; VB6 oracle dfw-win)
+        self.keep_unused_controls = False
 
 
 def generate(df):
@@ -1048,6 +1052,7 @@ def generate(df):
         out.libraries.append(LIB_HFLEX)
     if df.layout == L_CHART:
         out.libraries.append(LIB_CHART)
+        out.keep_unused_controls = True
     return out
 
 

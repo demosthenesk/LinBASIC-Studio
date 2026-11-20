@@ -1399,6 +1399,7 @@ def t_dfwiz92(d):
     libs = p.components()
     for k in ("MSAdodcLib", "MSDataGridLib", "MSHierarchicalFlexGridLib", "MSChart20Lib"):
         assert k in libs, libs
+    assert p.vbp.get("RemoveUnusedControlInfo") == "0"   # the chart by Controls.Add (VB6 dfw-win)
     # ---- the program
     code(w, p.module("Module1"), MAKE_DB + """
 Sub Main()

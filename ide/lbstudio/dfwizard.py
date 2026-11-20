@@ -1192,6 +1192,8 @@ def add_to_project(main, df, project=None, open_it=True):
         if kind == "Form":
             created = m
     p.add_references(out.references)
+    if out.keep_unused_controls:
+        p.vbp.set("RemoveUnusedControlInfo", "0")
     have = p.components()
     p.set_components(have + [k for k in out.libraries if k not in have])
     p.dirty = True
