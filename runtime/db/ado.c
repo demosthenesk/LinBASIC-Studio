@@ -129,6 +129,7 @@ typedef struct ars {
     int pendmove;                       /* a client cursor (MSDataShape too): the second MoveComplete of Open / Requery
                                          * comes with the first look at a row or a consumer that binds to it */
     void **kids; int nkids, capkids;    /* MSDataShape: its chapters given out (not counted): they follow its row */
+    int locset;                         /* CursorLocation set by the program (else Open takes the connection's) */
 } ars;
 
 typedef struct aflds { vbobjh h; vbobj rs; } aflds;
@@ -1270,6 +1271,9 @@ static vbvar rs_open_core(ars *r, vb_i32 argc, vbvar *argv, acn **execd, acmd **
     if (!missing(argc, argv, 3)) r->locktype = vb_v2l(argv[3]);
     int opts = along(argc, argv, 4, r->options);
     if (opts == -1) opts = adCmdUnknown;
+    /* "Recordset objects will automatically inherit this setting from their associated connections" (ADO): the
+     * Data Form Wizard's code sets CursorLocation on the Connection (VB6 oracle f_dfw) */
+    if (!r->locset && cn_of(r)) r->cursorloc = cn_of(r)->cursorloc;
     if (r->cursorloc == adUseClient) r->cursortype = adOpenStatic;
     else if (r->cursortype == adOpenDynamic) r->cursortype = adOpenKeyset;
 
@@ -1385,6 +1389,8 @@ static int do_move(ars *r, int how, int n)
     if (how == 3 && is_eof(v) && !v->editmode) { raise(3021, SRC_RS, MSG_BOFEOF); return -1; }
     if (how == 2 && is_bof(v) && !v->editmode) { raise(3021, SRC_RS, MSG_BOFEOF); return -1; }
     if (how == 5 && n != 0 && (is_bof(v) || is_eof(v)) && !v->editmode) { raise(3021, SRC_RS, MSG_BOFEOF); return -1; }
+    if ((how == 1 || how == 4) && !nalive(v) && !v->editmode) { raise(3021, SRC_RS, MSG_BOFEOF); return -1; }   /* empty
+                                                                    * (an empty chapter, VB6 oracle f_dfw) */
     int reason = how == 1 ? adRsnMoveFirst : how == 2 ? adRsnMovePrevious : how == 3 ? adRsnMoveNext : how == 4 ? adRsnMoveLast : adRsnMove;
     if (ev_willmove(r, reason, adStatusOK) == adStatusCancel) {
         raise(-2147217842, SRC_RS, "Operation was canceled.");
@@ -1705,7 +1711,7 @@ static vbvar rs_member2(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
     if (!strcmp(name, "state")) { is_open(r); return vb_v_l(r->state); }
     if (!strcmp(name, "cursortype")) { if (set) { r->cursortype = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(r->cursortype); }
     if (!strcmp(name, "locktype")) { if (set) { r->locktype = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(r->locktype); }
-    if (!strcmp(name, "cursorlocation")) { if (set) { r->cursorloc = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(r->cursorloc); }
+    if (!strcmp(name, "cursorlocation")) { if (set) { r->cursorloc = vb_v2l(argv[argc - 1]); r->locset = 1; return vb_v_empty(); } return vb_v_l(r->cursorloc); }
     if (!strcmp(name, "maxrecords")) { if (set) { r->maxrecords = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(r->maxrecords); }
     if (!strcmp(name, "cachesize")) { if (set) { r->cachesize = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(r->cachesize); }
     if (!strcmp(name, "pagesize")) { if (set) { r->pagesize = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(r->pagesize ? r->pagesize : 10); }

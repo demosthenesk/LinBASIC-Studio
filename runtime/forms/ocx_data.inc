@@ -482,6 +482,10 @@ static vbvar gcol_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
     if (n == "text" || n.empty() || n == "value") {
         if (g->no_rowset()) return vb_v_empty();
         if (set) { g->col_set(k, val); return vb_v_empty(); }
+        if (g->rs && c.col >= 0 && rsx_shape(g->rs, nullptr, nullptr) == 0) {   /* no rows (VB6 oracle f_dfw) */
+            vb_raise_full(6160, vs(QString("DataGrid")), vs(QString("Data access error")));
+            return vb_v_empty();
+        }
         return n == "value" ? g->col_value(k) : vstr(g->col_text(k));
     }
     if (n == "colindex") return vb_v_i((vb_i16)k);
