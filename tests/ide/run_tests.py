@@ -1146,6 +1146,282 @@ def t_mapi(d):
     done(w)
 
 
+WEB_BAG = '''      ViewMode        =   0
+      Offline         =   0
+      Silent          =   0
+      RegisterAsBrowser=   0
+      RegisterAsDropTarget=   1
+      AutoArrange     =   0   'False
+      NoClientEdge    =   0   'False
+      AlignLeft       =   0   'False
+      NoWebView       =   0   'False
+      HideFileNames   =   0   'False
+      SingleClick     =   0   'False
+      SingleSelection =   0   'False
+      NoFolders       =   0   'False
+      Transparent     =   0   'False
+      ViewID          =   "{0057D0E0-3573-11CF-AE69-08002B2E1262}"
+      Location        =   ""
+   End'''
+
+
+def t_appwiz92(d):
+    """the Application Wizard in the IDE (phase 9.2a-3, VB6 oracle DEV-9/aw1): New Project has "VB Application
+    Wizard"; the pages (SDI: Window not checked, the 17 buttons of the toolbar), Standard Forms, Form Templates,
+    Resources (the String Table in the Resource Editor, not saved), Internet; Finish: the new project in the IDE,
+    the profile .rwp; the designer draws the buttons of the toolbar with the pictures of the ImageList; Save, lbvc.
+    Add-Ins: the "VB 6 Application Wizard" loaded gives Application Wizard... and Toolbar Wizard... (aw18). The
+    Toolbar Wizard (9.2a-4, aw20 / aw21): Toolbar1 + imlToolbarIcons + Toolbar1_ButtonClick; without buttons only
+    Toolbar1"""
+    import subprocess
+    from lbstudio import appwizgen as G
+    from lbstudio.appwizard import AppWizard
+    from lbstudio.tbwizard import ToolbarWizard
+    from lbstudio.dialogs import NewProjectDialog
+    from lbstudio.resedit import AddInManagerDialog, APPWIZ
+    from lbstudio.designer import list_images
+    w = MainWindow()
+    w.show()
+    w.S["appwiz_no_created"] = True             # no "Application Created" in the test
+    npd = NewProjectDialog(w)
+    assert [npd.list.item(i).text() for i in range(npd.list.count())][-1] == "VB Application Wizard"
+    dlg = AppWizard(w)
+    assert dlg.windowTitle() == "Application Wizard - Introduction" and not dlg.b_finish.isEnabled()
+    dlg.go(1)
+    dlg.type_group.button(G.APP_SDI).click()
+    assert dlg.hint.text() == "All windows exist at the same level."
+    dlg.name.setText("Wiz1")
+    dlg.go(2)
+    caps = [(dlg.menu_list.item(i).text(), dlg.menu_list.item(i).checkState() == Qt.CheckState.Checked)
+            for i in range(dlg.menu_list.count())]
+    assert caps == [("&File", True), ("&Edit", True), ("&View", True), ("&Tools", False), ("&Window", False),
+                    ("&Help", True)], caps
+    dlg.menu_list.setCurrentRow(0)
+    assert dlg.sub_list.count() == 18 and dlg.sub_list.item(17).text() == "E&xit" and \
+        dlg.sub_list.item(16).text() == "MRU List", [dlg.sub_list.item(i).text() for i in range(dlg.sub_list.count())]
+    dlg.go(3)
+    assert dlg.tbed.chosen.count() == 17 and dlg.tbed.avail.item(0).text() == "[Separator]"
+    assert len(dlg.tbed.preview.actions()) == 17
+    dlg.go(4)
+    dlg.res_group.button(1).setChecked(True)
+    dlg.go(5)
+    dlg.net_group.button(1).setChecked(True)
+    dlg.go(6)
+    dlg.form_checks["About"].setChecked(True)
+    dlg.opts.templates = ["Tip of the Day"]
+    dlg.go(8)
+    assert not dlg.b_next.isEnabled() and dlg.b_finish.isEnabled()
+    prof = os.path.join(d, "wiz.rwp")
+    dlg.save_combo.addItem(prof)
+    dlg.save_combo.setCurrentIndex(dlg.save_combo.count() - 1)
+    dlg.finish()
+    p = w.project
+    assert [m.name for m in p.modules] == ["Module1", "frmMain", "frmBrowser", "frmAbout", "frmTip"], \
+        [m.name for m in p.modules]
+    assert p.name == "Wiz1" and (p.vbp.get("Startup") or "").strip('"') == "Sub Main"
+    rwp = open(prof, encoding="cp1252").read()
+    assert "ApplicationType=1" in rwp and "Resources=Yes" in rwp and "OtherForms3=1" in rwp, rwp
+    ed = w.res_editor
+    assert ed is not None and ed.modified and ed.res.strings[0][1000] == "&File", ed.res.strings
+    d1 = w.current_designer()
+    assert d1 is not None and d1.module.name == "frmMain"
+    keyed, listed = list_images(d1.module, d1.root, "imlToolbarIcons")
+    assert len(listed) == 13 and "bold" in keyed and keyed["new"].width() == 16, (len(listed), list(keyed))
+    pd = os.path.join(d, "wiz")
+    os.makedirs(pd)
+    ed.res.save(os.path.join(pd, "Wiz1.RES"))
+    from lbstudio.resedit import set_res_file
+    set_res_file(p, "Wiz1.RES")
+    p.save(os.path.join(pd, "Wiz1.vbp"))
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(pd, "Wiz1.vbp"),
+                         "-o", os.path.join(pd, "Wiz1")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    # Add-Ins: the add-in loaded gives its two commands (aw18-01)
+    assert not w.a_appwiz.isVisible() and not w.a_tbwiz.isVisible()
+    am = AddInManagerDialog(w)
+    am.state[APPWIZ] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.appwiz_loaded and w.a_appwiz.text() == "Application Wizard..." and w.a_tbwiz.text() == "Toolbar Wizard..."
+    # the Toolbar Wizard on a new form: three buttons
+    for m in p.modules:
+        m.dirty = False
+    p.dirty = False
+    ed.set_modified(False)
+    w.new_project("Exe")
+    d2 = w.current_designer()
+    tw = ToolbarWizard(w, d2)
+    assert tw.windowTitle() == "Toolbar Wizard - Introduction"
+    tw.go(1)
+    assert tw.tbed.chosen.count() == 0 and tw.tbed.avail.item(0).text() == "[Separator]"
+    tw.buttons += [G.TbButton("New"), G.TbButton(""), G.TbButton("Bold")]
+    tw.tbed.fill()
+    assert tw.tbed.chosen.count() == 3
+    tw.finish()
+    names = [c.name for c in d2.root.children]
+    assert names[:2] == ["Toolbar1", "imlToolbarIcons"], names
+    assert "Private Sub Toolbar1_ButtonClick(ByVal Button As MSComctlLib.Button)" in d2.module.code_text()
+    pd2 = os.path.join(d, "tb")
+    os.makedirs(pd2)
+    saves(os.path.join(pd2, "Form1.frm"), os.path.join(pd2, "Tb.vbp"))
+    assert w.save_project_as()
+    frm = open(os.path.join(pd2, "Form1.frm"), encoding="cp1252").read()
+    for want in ("Begin MSComctlLib.Toolbar Toolbar1", 'ImageKey        =   "Bold"', "NumListImages   =   2",
+                 'Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"',
+                 "Case \"New\""):
+        assert want.lower() in frm.lower(), (want, frm[:3000])
+    vbp = open(os.path.join(pd2, "Tb.vbp"), encoding="cp1252").read()
+    assert "object={831fdd16-0c5c-11d2-a9fc-0000f8754da1}#2.2#0; mscomctl.ocx" in vbp.lower(), vbp
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(pd2, "Tb.vbp"),
+                         "-o", os.path.join(pd2, "Tb")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    # the Toolbar Wizard without buttons: Toolbar2 only (aw20)
+    tw = ToolbarWizard(w, d2)
+    tw.finish()
+    names = [c.name for c in d2.root.children]
+    assert names[0] == "Toolbar2" and "imlToolbarIcons2" not in names, names
+    assert "Toolbar2_ButtonClick" not in d2.module.code_text()
+    done(w)
+
+
+def t_appwizgen92(d):
+    """what the Application Wizard writes (phase 9.2a-2, appwizgen): the profile of the default choices as VB6 wrote
+    it (VB6 oracle DEV-9/aw6 test1.rwp); four projects of the VB6 oracle aw1 (SDI with Resources, Internet and the
+    four form templates: the String Table of its .res from 1000; SDI with the standard forms; MDI; Explorer with
+    Options and About): their modules, .vbp, menus, toolbar pictures in the .frx; each compiled by lbvc"""
+    import subprocess
+    from lbstudio import appwizgen as G, tbicons
+    from lbstudio.resedit import set_res_file
+    rwp = open(os.path.join(HERE, "aw", "test1.rwp"), encoding="cp1252", newline="").read()
+    o = G.AppOptions(G.APP_MDI)
+    assert o.to_rwp() == rwp, "\n".join(f"{a!r} | {b!r}" for a, b in zip(o.to_rwp().splitlines(), rwp.splitlines())
+                                       if a != b)
+    back = G.AppOptions.from_rwp(rwp)
+    assert back.to_rwp() == rwp and back.app_type == G.APP_MDI
+    sdi = G.AppOptions(G.APP_SDI)
+    assert [m.key for m in sdi.menus if m.on] == ["File", "Edit", "View", "Help"], [m.key for m in sdi.menus]
+    exp = G.AppOptions(G.APP_EXPLORER)
+    assert [m.key for m in exp.menus if m.on] == ["File", "Edit", "View", "Help"]
+    assert [b.key for b in exp.toolbar][:3] == ["", "Back", "Forward"] and len(exp.toolbar) == 15
+
+    def make(name, o):
+        r = G.generate(o)
+        p = G.build_project(r, o, tbicons.bmp, "cp1252")
+        pd = os.path.join(d, name)
+        os.makedirs(pd)
+        res = G.result_res(r)
+        if res is not None:
+            res.save(os.path.join(pd, "Project1.RES"))
+            set_res_file(p, "Project1.RES")
+        p.save(os.path.join(pd, "Project1.vbp"))
+        vbp = open(os.path.join(pd, "Project1.vbp"), encoding="cp1252").read()
+        exe = os.path.join(pd, "Project1")
+        cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(pd, "Project1.vbp"),
+                             "-o", exe], capture_output=True, text=True, timeout=900)
+        assert cp.returncode == 0, (name, cp.stdout[-3000:], cp.stderr[-3000:])
+        return r, pd, vbp
+
+    def frm(pd, name):
+        return open(os.path.join(pd, name + ".frm"), encoding="cp1252").read()
+
+    # 1. SDI, Resources, Internet, the four templates (aw1 project-sdi-all)
+    o = G.AppOptions(G.APP_SDI)
+    o.resources = o.internet = True
+    o.templates = list(G.TEMPLATES)
+    r, pd, vbp = make("sdi-all", o)
+    assert [m.name for m in r.modules] == ["Module1", "frmMain", "frmBrowser", "Dialog", "frmODBCLogon", "frmTip",
+                                           "frmBrowser1"], [m.name for m in r.modules]
+    caps = ["&File", "&New", "&Open...", "&Close", "&Save", "Save &As...", "Save A&ll", "Propert&ies",
+            "Page Set&up...", "Print Pre&view", "&Print...", "Sen&d...", "E&xit", "&Edit", "&Undo", "Cu&t", "&Copy",
+            "&Paste", "Paste &Special...", "&View", "&Toolbar", "Status &Bar", "&Refresh", "&Options...",
+            "&Web Browser", "&Help", "&Contents", "&Search For Help On...", "&About ", "New", "Open", "Save", "Print",
+            "Cut", "Copy", "Paste", "Bold", "Italic", "Underline", "Align Left", "Center", "Align Right", "Back",
+            "Forward", "Stop", "Refresh", "Home", "Search", "&Address:"]
+    assert r.strings == {1000 + i: c for i, c in enumerate(caps)}, r.strings
+    from lbstudio.resmodel import ResFile
+    assert ResFile.load(os.path.join(pd, "Project1.RES")).strings[0][1048] == "&Address:"
+    lines = [x for x in vbp.splitlines() if x.split("=")[0] in ("Module", "Form", "Object", "Startup", "ResFile32")]
+    assert lines == ["Module=Module1; Module1.bas", "Form=frmMain.frm",
+                     "Object={F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0; ComDlg32.OCX",
+                     "Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0; mscomctl.OCX",
+                     "Object={EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}#1.1#0; ieframe.dll", "Form=frmBrowser.frm",
+                     "Form=Dialog.frm", "Form=frmODBCLogon.frm", "Form=frmTip.frm", "Form=frmBrowser1.frm",
+                     'ResFile32="Project1.RES"', 'Startup="Sub Main"'], lines
+    m = frm(pd, "frmMain")
+    for want in ('      Caption         =   "1000"', "      Begin VB.Menu mnuFileMRU ", '      Shortcut        =   ^N',
+                 '            Object.ToolTipText=   "1029"', "    LoadResStrings Me",
+                 '    frmB.StartingAddress = "http://www.microsoft.com"', '            Picture         =   "frmMain.frx":'):
+        assert want in m, (want, m[:3000])
+    assert os.path.getsize(os.path.join(pd, "frmMain.frx")) > 13 * 800
+    assert "Sub LoadResStrings(frm As Form)" in open(os.path.join(pd, "Module1.bas"), encoding="cp1252").read()
+    b = frm(pd, "frmBrowser")
+    assert '      Tag             =   "1048"' in b and "Public StartingAddress As String" in b, b[:2500]
+    assert os.path.exists(os.path.join(pd, "frmBrowser1.frx")) and os.path.exists(os.path.join(pd, "frmTip.frx"))
+    # 2. SDI, the standard forms (aw1 project-sdi-forms)
+    o = G.AppOptions(G.APP_SDI)
+    o.forms = list(G.STANDARD_FORMS)
+    r, pd, vbp = make("sdi-forms", o)
+    assert [m.name for m in r.modules] == ["Module1", "frmMain", "frmSplash", "frmLogin", "frmOptions", "frmAbout"]
+    mod = open(os.path.join(pd, "Module1.bas"), encoding="cp1252").read()
+    assert mod.index("frmLogin") < mod.index("frmSplash.Show") < mod.index("Unload frmSplash") \
+        < mod.index("fMainForm.Show"), mod
+    m = frm(pd, "frmMain")
+    assert "    frmOptions.Show vbModal, Me" in m and "    frmAbout.Show vbModal, Me" in m
+    assert "Begin MSComctlLib.TabStrip tbsOptions" in frm(pd, "frmOptions")
+    assert os.path.exists(os.path.join(pd, "frmSplash.frx")) and os.path.exists(os.path.join(pd, "frmAbout.frx"))
+    # 3. MDI (aw1 project-mdi)
+    r, pd, vbp = make("mdi", G.AppOptions(G.APP_MDI))
+    assert [m.name for m in r.modules] == ["Module1", "frmMain", "frmDocument"]
+    assert "Object={3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0; richtx32.Ocx" in vbp
+    m = frm(pd, "frmMain")
+    assert "Begin VB.MDIForm frmMain" in m and "WindowList      =   -1  'True" in m and "    Me.Arrange vbCascade" in m
+    assert "    LoadNewDoc" in m and "MDIChild        =   -1  'True" in frm(pd, "frmDocument")
+    # 4. Explorer Style, Options and About (aw1 project-explorer)
+    o = G.AppOptions(G.APP_EXPLORER)
+    o.forms = ["Options", "About"]
+    r, pd, vbp = make("explorer", o)
+    m = frm(pd, "frmMain")
+    for want in ("Begin MSComctlLib.TreeView tvTreeView", "Begin MSComctlLib.ListView lvListView",
+                 "Begin VB.Image imgSplitter", "Begin VB.Menu mnuListViewMode", "Private Sub SizeControls(",
+                 "    SetViewMode Index"):
+        assert want in m, want
+    assert 'Public Const LISTVIEW_MODE0 = "View Large Icons"' in open(os.path.join(pd, "Module1.bas"),
+                                                                      encoding="cp1252").read()
+
+
+def t_web92(d):
+    """the WebBrowser (Microsoft Internet Controls, phase 9.2) as the VB6 IDE writes it (VB6 oracle DEV-9/aw3
+    frmBrowser): Begin SHDocVwCtl.WebBrowser, ExtentX / ExtentY without "_" after Width, no _Version, its properties;
+    a new size changes ExtentX / ExtentY; the Properties window has its properties (VB6 oracle DEV-9 wb3-01, 02)"""
+    w = MainWindow()
+    w.show()
+    p = w.project
+    f = w.current_designer()
+    p.set_components(["SHDocVwCtl"])
+    c = f.place_new("SHDocVwCtl.WebBrowser", QRect(8, 8, 385, 249), None)
+    assert c is not None and c.name == "WebBrowser1", c
+    for n in ("AddressBar", "FullScreen", "MenuBar", "Offline", "RegisterAsBrowser", "RegisterAsDropTarget", "Silent",
+              "StatusBar", "TheaterMode", "ToolBar"):
+        assert V.prop_def("WebBrowser", n) is not None, n
+    f.set_rect(f.items[c], 120, 120, 5775, 3735)
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Web.vbp"))
+    assert w.save_project_as()
+    frm = open(os.path.join(d, "Form1.frm"), encoding="cp1252").read()
+    assert 'Object = "{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}#1.1#0"; "ieframe.dll"' in frm, frm[:300]
+    head = "   Begin SHDocVwCtl.WebBrowser WebBrowser1"
+    assert head in frm, frm
+    blk = frm[frm.index(head):]
+    got = [x.rstrip() for x in blk[:blk.index("\n   End") + len("\n   End")].splitlines()]
+    exp = [head, "      Height          =   3735", "      Left            =   120", "      TabIndex        =   0",
+           "      Top             =   120", "      Width           =   5775", "      ExtentX         =   10186",
+           "      ExtentY         =   6588"] + WEB_BAG.splitlines()
+    assert got == exp, "\n".join(f"{a!r} | {b!r}" for a, b in zip(got + [''] * len(exp), exp + [''] * len(got)) if a != b)
+    assert "_ExtentX" not in blk[:blk.index("\n   End")] and "_Version" not in blk[:blk.index("\n   End")], blk[:600]
+    vbp = open(os.path.join(d, "Web.vbp"), encoding="cp1252").read()
+    assert "Object={EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}#1.1#0; ieframe.dll" in vbp, vbp
+    done(w)
+
+
 def t_objbrowser(d):
     """the Object Browser (phase 8.1): the libraries, classes and members, the details as VB6 shows them (VB6
     oracle DEV-8/ob1), Show Hidden Members, Search, the members of the project and View Definition, Definition
@@ -3599,7 +3875,202 @@ def t_ctlarray87(d):
     done(w)
 
 
-TESTS = {"t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+def t_formname9(d):
+    """a control may not take the name of a form, nor a form the name of a control (the user's decision,
+    phase 9; VB6 oracle DEV-9/nm-01..04: VB6 accepts it and Form1 in the code is then the control)"""
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    w.add_module("Form")                        # Form2
+    f = w.open_designer(w.project.module("Form1"))
+    f.place_new("CommandButton", QRect(160, 120, 0, 0), None)
+    c1 = [c for c in f.all_controls() if c.name == "Command1"][0]
+    assert f.rename(c1, "Form1") == "Ambiguous name detected: Form1" and c1.name == "Command1"
+    assert f.rename(c1, "form2") == "Ambiguous name detected: form2" and c1.name == "Command1"
+    assert f.rename(c1, "Go") is None and c1.name == "Go"
+    # a form into the name of a control (of this form or of an other one)
+    m1, m2 = w.project.module("Form1"), w.project.module("Form2")
+    assert w.rename_module(m2, "Go") == "Ambiguous name detected: Go" and m2.name == "Form2"
+    assert w.rename_module(m1, "Go") == "Ambiguous name detected: Go" and m1.name == "Form1"
+    # a new control never gets a form's name: a form called Command1
+    assert w.rename_module(m2, "Command1") is None and m2.name == "Command1"
+    f.place_new("CommandButton", QRect(20, 20, 0, 0), None)
+    assert sorted(c.name for c in f.all_controls()) == ["Command2", "Go"], sorted(c.name for c in f.all_controls())
+    # nor a pasted one
+    c2 = [c for c in f.all_controls() if c.name == "Command2"][0]
+    c2.name = "Command1"                        # as one that came from a VB6 form (the clipboard keeps its name)
+    f.build()
+    f.select([f.items[c2]])
+    f.copy_selection()
+    c2.name = "Command2"
+    f.build()
+    f.select([])
+    f.paste()
+    names = sorted(c.name for c in f.all_controls())
+    assert "Command1" not in names and len(names) == 3, names
+    done(w)
+
+
+def t_pdw95(d):
+    """Add-Ins > Package and Deployment Wizard (phase 9.5, VB6 oracle DEV-9/pd1): loaded in the Add-In Manager,
+    the question of an unsaved project, the wizard's pages (Package Type, the question to recompile, Package
+    Folder made when missing, Included Files with Add... and a checkbox, Package Format, Finished!), the package
+    lbvc builds and the Packaging Report"""
+    from lbstudio import pdwizard as PW
+    from lbstudio.resedit import AddInManagerDialog, PDW
+    w = MainWindow()
+    w.show()
+    app.processEvents()
+    assert not w.a_pdw.isVisible() and w.a_pdw.text() == "Package and Deployment Wizard..."
+    assert not w.a_pdw.icon().isNull()           # VB6 (DEV-9/E5-01): with its picture, after a separator
+    acts = [a for a in w.menuBar().actions() if a.text() == "&Add-Ins"][0].menu().actions()
+    i = acts.index(w.a_pdw)
+    assert acts[i - 1] is w.sep_pdw and acts[i - 2].text() == "&Add-In Manager..." and acts[i - 3].isSeparator()
+    # the Add-In Manager loads it (pd1-03: its Description is its name)
+    dlg = AddInManagerDialog(w)
+    row = [dlg.list.item(i, 0).text() for i in range(dlg.list.rowCount())].index(PDW)
+    dlg.list.setCurrentCell(row, 0)
+    assert dlg.desc.toPlainText() == PDW and dlg.cb_loaded.isEnabled()
+    dlg.cb_loaded.setChecked(True)
+    assert dlg.list.item(row, 1).text() == "Loaded"
+    dlg._ok()
+    w.apply_addins()
+    assert w.a_pdw.isVisible() and w.pdw_loaded
+    # an unsaved project: VB6's question first (pd1-01); Cancel: no wizard
+    asked = []
+    w.pdw_ask = lambda text, buttons: asked.append(text) or "cancel"
+    assert w.package_wizard() is None and asked == [PW.SAVE_FIRST], asked
+    code(w, w.project.module("Form1"),
+         "Private Sub Form_Load()\n    Dim f As Integer\n    f = FreeFile\n"
+         "    Open App.Path & \"/out.txt\" For Output As #f\n    Print #f, \"pdw\"\n    Close #f\n    Unload Me\nEnd Sub\n")
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Project1.vbp"))
+    assert w.save_project()
+    vbp = os.path.join(d, "Project1.vbp")
+    # the main window (pd1-02)
+    wz = PW.Wizard(w)
+    assert wz.windowTitle() == "Package and Deployment Wizard" and wz.active.text() == vbp
+    assert wz.b_package.text() == "&Package" and wz.b_close.text() == "Close"
+    # Package: Package Type
+    pw = PW.PackageWizard(w, w.project)
+    assert pw.windowTitle() == "Package and Deployment Wizard - Package Type"
+    assert [pw.types.item(i).text() for i in range(pw.types.count())] == [
+        "Portable Package for Linux", "Portable Package for Windows (32-bit)", "Portable Package for Windows (64-bit)"]
+    assert pw.types.currentRow() == 0 and pw.type_desc.toPlainText().startswith("Use to create a folder")
+    assert not pw.b_back.isEnabled() and pw.b_next.isEnabled() and not pw.b_finish.isEnabled()
+    questions = []
+    answers = []
+    pw.ask = lambda text, buttons: questions.append(text) or answers.pop(0)
+    pw.next()                                   # no program yet: it is compiled, no question
+    exe = os.path.join(d, "Project1")
+    assert questions == [] and os.path.exists(exe) and pw.stack.currentIndex() == 1
+    assert pw.windowTitle() == "Package and Deployment Wizard - Package Folder"
+    # a source newer than the program: VB6's question (pd1-05); No: the program as it is
+    frm = os.path.join(d, "Form1.frm")
+    later = time.time() + 5
+    os.utime(frm, (later, later))
+    t0 = os.path.getmtime(exe)
+    pw.go(0)
+    answers[:] = ["no"]
+    pw.next()
+    assert questions == [PW.recompile_text(exe, [frm])], questions
+    assert questions[0].startswith("The following source files for this project are newer than the executable file")
+    assert questions[0].endswith("Do you want to recompile? Choose No to use the existing executable.")
+    assert pw.stack.currentIndex() == 1 and os.path.getmtime(exe) == t0
+    # Package Folder: <project>\Package, made when missing (pd1-08, 09); No: the page stays
+    folder = os.path.join(d, "Package")
+    assert pw.folder.text() == folder
+    answers[:] = ["no"]
+    pw.next()
+    assert questions[-1] == PW.folder_text(folder) and pw.stack.currentIndex() == 1 and not os.path.isdir(folder)
+    answers[:] = ["yes"]
+    pw.next()
+    assert os.path.isdir(folder) and pw.stack.currentIndex() == 2
+    assert pw.windowTitle() == "Package and Deployment Wizard - Included Files"
+    # Included Files: the program first (always in), its runtime, the licenses (pd1-10, 11)
+    names = [pw.list.topLevelItem(i).text(0) for i in range(pw.list.topLevelItemCount())]
+    first = pw.list.topLevelItem(0)
+    assert names[0] == "Project1" and not (first.flags() & Qt.ItemFlag.ItemIsUserCheckable), names
+    assert first.checkState(0) == Qt.CheckState.Checked and pw.list.columnWidth(0) <= 240
+    for n in ("lib/libQt6Core.so.6", "plugins/platforms/libqxcb.so", "qt.conf", "licenses/LGPL-3.0.txt",
+              "licenses/GPL-3.0.txt"):
+        assert n in names, (n, names)
+    gpl = pw.list.topLevelItem(names.index("licenses/GPL-3.0.txt"))
+    gpl.setCheckState(0, Qt.CheckState.Unchecked)
+    readme = os.path.join(d, "readme.txt")
+    open(readme, "w").write("a file of the user\n")
+    QFileDialog.getOpenFileName = lambda *a, **k: (readme, "")
+    pw.add_file()
+    names = [pw.list.topLevelItem(i).text(0) for i in range(pw.list.topLevelItemCount())]
+    assert names[-1] == "readme.txt", names
+    assert pw.list.topLevelItem(names.index("licenses/GPL-3.0.txt")).checkState(0) == Qt.CheckState.Unchecked
+    pw.next()
+    # Package Format (in the place of Cab Options): Linux tar.gz / AppImage / folder
+    assert pw.windowTitle() == "Package and Deployment Wizard - Package Format"
+    shown = [k for k, b in pw.fmt_buttons.items() if not b.isHidden()]
+    assert shown == ["tar.gz", "appimage", "folder"] and pw.fmt_buttons["tar.gz"].isChecked(), shown
+    assert pw.format() == "tar.gz"
+    pw.next()
+    assert pw.windowTitle() == "Package and Deployment Wizard - Finished!"
+    assert pw.script_name.text() == "Portable Package 1"
+    assert not pw.b_next.isEnabled() and pw.b_finish.isEnabled()
+    # Finish: the settings, lbvc --package, the report (pd1-20, 21)
+    PW.ReportDialog.exec = lambda self: 0
+    pw.finish()
+    rep = w._pdw_report
+    tgz = os.path.join(folder, "Project1-linux.tar.gz")
+    assert rep.windowTitle() == "Project1.vbp - Packaging Report"
+    assert rep.text.toPlainText().startswith(f"The portable package of your application has been built as '{tgz}'."), \
+        rep.text.toPlainText()
+    assert os.path.exists(tgz) and os.path.getmtime(exe) == t0
+    app_dir = os.path.join(folder, "Project1-linux")
+    assert os.path.exists(os.path.join(app_dir, "readme.txt"))
+    assert not os.path.exists(os.path.join(app_dir, "licenses", "GPL-3.0.txt"))
+    s = open(os.path.join(d, "Project1.lbpkg"), encoding="utf-8").read().splitlines()
+    assert s == ["[Root]", "Most Recent Package=Portable Package 1", "", "[Package|Portable Package 1]", "Target=linux",
+                 "Format=tar.gz", "PackageFolder=Package", "Added1=readme.txt", "Removed1=licenses/GPL-3.0.txt"], s
+    # the settings come back the next time; Windows: zip / folder
+    pw2 = PW.PackageWizard(w, w.project)
+    assert pw2.added == ["readme.txt"] and pw2.removed == ["licenses/GPL-3.0.txt"] and pw2.folder.text() == folder
+    # the next time through the pages: the file left out stays out, the file added stays in (DEV-9/E2, E3)
+    pw2.ask = lambda text, buttons: "no"
+    pw2.next()
+    pw2.next()
+    assert pw2.stack.currentIndex() == 2
+    items = {pw2.list.topLevelItem(i).text(0): pw2.list.topLevelItem(i) for i in range(pw2.list.topLevelItemCount())}
+    assert items["licenses/GPL-3.0.txt"].checkState(0) == Qt.CheckState.Unchecked
+    assert items["readme.txt"].checkState(0) == Qt.CheckState.Checked
+    pw2.next()
+    assert pw2.removed == ["licenses/GPL-3.0.txt"] and pw2.added == ["readme.txt"], (pw2.removed, pw2.added)
+    pw2.go(0)
+    pw2.types.setCurrentRow(2)
+    pw2.fill_formats()
+    assert [k for k, b in pw2.fmt_buttons.items() if not b.isHidden()] == ["zip", "folder"]
+    assert pw2.format() == "zip"
+    # an IDE that cannot make programs for Windows (the AppImage: no mingw-w64, no Windows runtime): the Windows
+    # systems shown but disabled, in the wizard and in Make (the user's decision, 2026-11-19)
+    from lbstudio.dialogs import MakeDialog
+    from lbvc import package as P
+    real = MakeDialog.__dict__["available"]
+    MakeDialog.available = classmethod(lambda cls, k: (k == "linux", "" if k == "linux" else cls.NOT_HERE))
+    try:
+        s = P.Settings.load(vbp)
+        s.scripts[s.recent]["Target"] = "win64"           # the last package was for Windows
+        s.save()
+        pw3 = PW.PackageWizard(w, w.project)
+        assert pw3.types.currentRow() == 0 and pw3.target() == "linux"
+        for i in (1, 2):
+            it = pw3.types.item(i)
+            assert not (it.flags() & Qt.ItemFlag.ItemIsEnabled) and it.toolTip() == MakeDialog.NOT_HERE
+        md = MakeDialog(w, d, "Project1", "win64")
+        assert md.buttons["linux"].isChecked() and md.buttons["linux"].isEnabled()
+        assert not md.buttons["win64"].isEnabled() and not md.buttons["win32"].isEnabled()
+        assert md.buttons["win64"].toolTip() == MakeDialog.NOT_HERE
+    finally:
+        MakeDialog.available = real
+    assert MakeDialog.available("win64")[0] in (True, False)
+    done(w)
+
+TESTS = {"t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

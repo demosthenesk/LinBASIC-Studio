@@ -157,6 +157,8 @@ class MainWindow(QMainWindow):
         self.design_windows = {}                # form module -> QMdiSubWindow
         self.find_dlg = None
         self.res_loaded = bool(self.S["addin_reseditor_startup"])   # Add-Ins: the VB 6 Resource Editor
+        self.pdw_loaded = bool(self.S["addin_pdw_startup"])         # and the Package and Deployment Wizard
+        self.appwiz_loaded = bool(self.S["addin_appwiz_startup"])   # and the VB 6 Application Wizard (phase 9.2)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -563,6 +565,16 @@ class MainWindow(QMainWindow):
         self.a_visdata.setEnabled(False)
         m.addSeparator()
         self._act(m, "&Add-In Manager...", self.addin_manager)
+        # a loaded add-in: its command at the end of the menu, after a separator, with its picture (VB6:
+        # DEV-9/E5-01)
+        self.sep_pdw = m.addSeparator()
+        from .pdwizard import package_icon
+        self.a_pdw = self._act(m, "Package and Deployment Wizard...", self.package_wizard, icon=package_icon(16))
+        # the VB 6 Application Wizard: Application Wizard... and Toolbar Wizard... (DEV-9/aw18-01)
+        self.sep_appwiz = m.addSeparator()
+        from .appwizard import wizard_icon, toolbar_wizard_icon
+        self.a_appwiz = self._act(m, "Application Wizard...", self.application_wizard, icon=wizard_icon(16))
+        self.a_tbwiz = self._act(m, "Toolbar Wizard...", self.toolbar_wizard, icon=toolbar_wizard_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2057,6 +2069,11 @@ class MainWindow(QMainWindow):
             return "Invalid property value"
         if any(x is not m and x.name.lower() == new.lower() for x in self.project.modules):
             return f"Name '{new}' conflicts with existing module, project, or object library"
+        if m.kind == "Form":        # nor the name of a control in a form (the user's decision, Phase 9 / DEV-9 nm)
+            for x in self.project.modules:
+                r = x.sf.root if x.kind == "Form" and x.sf is not None else None
+                if r is not None and any(c is not r and c.name.lower() == new.lower() for c in r.walk()):
+                    return f"Ambiguous name detected: {new}"
         old = m.name
         if new == old:
             return None
@@ -2159,6 +2176,9 @@ class MainWindow(QMainWindow):
             if not dlg.exec():
                 return
             ptype = dlg.ptype()
+        if ptype == "AppWizard":                # VB Application Wizard (phase 9.2): the wizard makes the project
+            self.application_wizard()
+            return
         if not self.confirm_discard() or not self.res_confirm():
             return
         self.close_all_code()
@@ -2366,10 +2386,36 @@ class MainWindow(QMainWindow):
         on = self.res_loaded
         for a in (self.sep_res, self.a_res_editor, self.a_new_res):
             a.setVisible(on)
+        for a in (self.sep_pdw, self.a_pdw):     # the Package and Deployment Wizard (phase 9.5)
+            a.setVisible(bool(self.pdw_loaded))
+        for a in (self.sep_appwiz, self.a_appwiz, self.a_tbwiz):   # the VB 6 Application Wizard (phase 9.2)
+            a.setVisible(bool(self.appwiz_loaded))
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
                 self.res_editor.close_strings()
+
+    def application_wizard(self):
+        """File > New Project > VB Application Wizard, Add-Ins > Application Wizard... (phase 9.2, appwizard.py)"""
+        from .appwizard import open_wizard
+        return open_wizard(self)
+
+    def toolbar_wizard(self):
+        """Add-Ins > Toolbar Wizard... (phase 9.2a-4)"""
+        from .tbwizard import open_wizard
+        return open_wizard(self)
+
+    def package_wizard(self):
+        """Add-Ins > Package and Deployment Wizard... (phase 9.5, pdwizard.py)"""
+        from .pdwizard import open_wizard
+        return open_wizard(self)
+
+    def pdw_ask(self, text, buttons):
+        """a question of the Package and Deployment Wizard before it opens (the tests answer it)"""
+        from .pdwizard import TITLE
+        B = QMessageBox.StandardButton
+        r = QMessageBox.question(self, TITLE, text, buttons)
+        return {B.Yes: "yes", B.No: "no", B.Cancel: "cancel"}.get(r, "cancel")
 
     def addin_manager(self):
         from .resedit import AddInManagerDialog
@@ -2728,7 +2774,7 @@ class MainWindow(QMainWindow):
         name = os.path.splitext(os.path.basename(p.vbp.exe_name.replace(chr(92), "/")))[0] if p.vbp else p.name
         from .dialogs import MakeDialog
         saved = self.S["make_target"]
-        if saved not in dict(MakeDialog.targets()):
+        if saved not in dict(MakeDialog.targets()) or not MakeDialog.available(saved)[0]:
             saved = paths.host_target()
         dlg = MakeDialog(self, start, name or p.name, saved)
         if not dlg.exec():
@@ -3739,7 +3785,7 @@ class MainWindow(QMainWindow):
             return
         projects = [g.projects[i] for i in dlg.chosen()]
         target = self.S["make_target"]
-        if target not in dict(MakeDialog.targets()):
+        if target not in dict(MakeDialog.targets()) or not MakeDialog.available(target)[0]:
             target = paths.host_target()
         jobs = []
         for q in projects:

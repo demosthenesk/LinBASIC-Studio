@@ -533,6 +533,18 @@ def qt_major(kit):
 def windows_dlls(kit, target, exe, forms):
     """the DLLs next to the .exe, so that the folder runs on any Windows (portable)"""
     dest = os.path.dirname(os.path.abspath(exe))
+    for src, rel in windows_dll_list(kit, target, forms):
+        if os.path.exists(src):
+            d = os.path.join(dest, os.path.dirname(rel))
+            os.makedirs(d, exist_ok=True)
+            shutil.copyfile(src, os.path.join(dest, rel))
+        elif rel.startswith(('Qt5', 'Qt6', 'platforms')) or rel.startswith('lib'):
+            raise SystemExit(f"lbvc: {src} not found (the Qt for {target} of LinBASIC Studio is missing)")
+
+
+def windows_dll_list(kit, target, forms):
+    """[(file, name in the folder of the .exe)]: the DLLs of Qt (and its plugins) and of the C++ runtime of
+    mingw that a program with forms needs next to it"""
     names = []
     qt = os.path.join(kit, 'qt')
     if forms:
@@ -550,13 +562,26 @@ def windows_dlls(kit, target, exe, forms):
             if not os.path.exists(p):
                 p = subprocess.run([mingw_cc(target), f'-print-file-name={n}'], capture_output=True, text=True).stdout.strip()
             names.append((p, n))
-    for src, rel in names:
-        if os.path.exists(src):
-            d = os.path.join(dest, os.path.dirname(rel))
-            os.makedirs(d, exist_ok=True)
-            shutil.copyfile(src, os.path.join(dest, rel))
-        elif rel.startswith(('Qt5', 'Qt6', 'platforms')) or rel.startswith('lib'):
-            raise SystemExit(f"lbvc: {src} not found (the Qt for {target} of LinBASIC Studio is missing)")
+    return names
+
+
+def runtime_files(csrc, rt, target, exe=None):
+    """[(file, name)]: what a made program needs next to it, so that its folder runs on another computer as
+    it is (the portable package, lbvc --package): on Windows the DLLs of the runtime (tcc) and of Qt, on
+    Linux libvbforms.so when the program was linked with it (tcc). Qt for Linux: the system's."""
+    forms, db = uses_forms(csrc), uses_db(csrc)
+    if target in TARGETS:
+        kit = os.path.join(rt, target)
+        files = []
+        if use_tcc(target):
+            files = [(os.path.join(kit, 'dll', n + '.dll'), n + '.dll')
+                     for n in ['vbrt'] + (['vbdb'] if db else []) + (['vbforms'] if forms else [])]
+        return files + windows_dll_list(kit, target, forms)
+    if forms and exe and os.path.exists(exe):
+        with open(exe, 'rb') as f:
+            if b'libvbforms.so' in f.read():
+                return [(os.path.join(rt, 'forms', 'libvbforms.so'), 'libvbforms.so')]
+    return []
 
 
 def write_units(csrc, td):
@@ -579,8 +604,16 @@ def uses_forms(csrc):
 
 def use_tcc(target):
     """the Windows programs are built by the bundled Tiny C Compiler on Windows (the IDE of Windows),
-    or here when LBVC_WIN_CC=tcc (to test that path); else by mingw-w64, the runtime linked in"""
-    return os.name == 'nt' or os.environ.get('LBVC_WIN_CC') == 'tcc'
+    here when LBVC_WIN_CC=tcc (the AppImage of LinBASIC Studio: its runtime/<target>/tcc/cross-tcc), or when
+    there is no mingw-w64 but the cross tcc is there; else by mingw-w64, the runtime linked in"""
+    if os.name == 'nt' or os.environ.get('LBVC_WIN_CC') == 'tcc':
+        return True
+    if os.environ.get('LBVC_WIN_CC') or target not in TARGETS:
+        return False
+    if any(shutil.which(f"{TARGETS[target]}-gcc{s}") for s in ('-posix', '')):
+        return False
+    rt = os.environ.get('LBVC_RUNTIME') or os.path.join(SRC_ROOT, 'runtime')
+    return os.path.exists(os.path.join(rt, target, 'tcc', 'cross-tcc'))
 
 
 def windows_tcc(rt, target):
@@ -687,6 +720,11 @@ def linux_tcc():
     return None
 
 
+# the Qt 6 of a portable package for Linux (lbvc --package): lib/ next to the program. A DT_RPATH (not RUNPATH: it is
+# used for the libraries of Qt too, and for its plugins) that finds it first; without lib/, the system's Qt.
+PACKAGE_LIBDIR = '$ORIGIN/lib'
+
+
 def qt_link_flags():
     """the Qt 6 of a program with forms: LBVC_QT_LIBDIR (the Qt of the AppImage), else pkg-config"""
     d = os.environ.get('LBVC_QT_LIBDIR')
@@ -705,7 +743,7 @@ def forms_so_for_tcc(rt, out):
     dest = os.path.dirname(os.path.abspath(out))
     os.makedirs(dest, exist_ok=True)
     shutil.copyfile(so, os.path.join(dest, 'libvbforms.so'))
-    rpath = '$ORIGIN' + (':' + os.environ['LBVC_QT_LIBDIR'] if os.environ.get('LBVC_QT_LIBDIR') else '')
+    rpath = '$ORIGIN:' + PACKAGE_LIBDIR + (':' + os.environ['LBVC_QT_LIBDIR'] if os.environ.get('LBVC_QT_LIBDIR') else '')
     return [os.path.join(dest, 'libvbforms.so'), '-Wl,-rpath=' + rpath]
 
 
@@ -736,7 +774,8 @@ def build_exe(csrc, out, rt, cc=None, optimize=True, debug_build=False, target='
             if tcc:                                 # tcc links the C++ of the forms as a shared library
                 libs = forms_so_for_tcc(rt, out) + libs
             else:
-                libs = [fl] + libs + qt_link_flags() + ['-lstdc++']
+                libs = [fl] + libs + ['-Wl,--disable-new-dtags', '-Wl,-rpath,' + PACKAGE_LIBDIR] + qt_link_flags() + \
+                    ['-lstdc++']
         if tcc:
             if uses_forms(csrc):                    # libvbforms.so calls libvbrt: all of it, exported
                 i = libs.index(os.path.join(rt, 'libvbrt.a'))
@@ -772,7 +811,30 @@ def main(argv=None):
     ap.add_argument('--ide', action='store_true',
                     help='a run of the IDE (as Run in VB6): the order of P-code, and Debug.Print (a made program has '
                          'no Debug.Print, as in VB6)')
+    pk = ap.add_argument_group('portable package (the Package and Deployment Wizard of VB6)')
+    pk.add_argument('--package', nargs='?', const='', default=None, metavar='FOLDER',
+                    help='make the portable package of a .vbp: FOLDER/<program>-<target>/ with all the program needs '
+                         'next to it, and its archive (default FOLDER: Package in the project folder, or the last one)')
+    pk.add_argument('--format', choices=['folder', 'zip', 'tar.gz', 'appimage'], default=None,
+                    help='the archive of the package, or an AppImage (Linux) (default: zip for Windows, tar.gz for Linux, '
+                         'or the last one)')
+    pk.add_argument('--add', action='append', default=[], metavar='FILE', help='a file of the user to put in the package')
+    pk.add_argument('--remove', action='append', default=[], metavar='NAME', help='a file of the list to leave out')
+    pk.add_argument('--recompile', choices=['auto', 'yes', 'no'], default='auto',
+                    help='make the program again: auto (when a source is newer than it, or there is none), yes, no')
+    pk.add_argument('--script', default=None, metavar='NAME', help='the name of the settings (<project>.lbpkg)')
     a = ap.parse_args(argv)
+    if a.package is not None:
+        if len(a.inputs) != 1 or not a.inputs[0].lower().endswith('.vbp'):
+            ap.error('--package: one .vbp')
+        from .package import run as package
+        try:
+            sys.stdout.write(package(a.inputs[0], a.target, a.package or None, a.format, a.add, a.remove,
+                                     a.recompile, a.script, a.codepage, log=lambda s: sys.stderr.write(s + '\n')))
+        except VBError as e:
+            sys.stderr.write(str(e) + '\n')
+            return 1
+        return 0
     try:
         order = parse_order(a.order) if a.order else None
     except ValueError as e:

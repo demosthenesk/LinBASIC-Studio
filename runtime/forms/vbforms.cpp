@@ -651,6 +651,7 @@ static bool ocx_inside(Ocx *x, QWidget *w, QPoint lp);
 static bool ocx_eat_mouse(Ocx *x, QMouseEvent *me);
 static void ocx_resized(Ctl *c);
 static void ocx_shown(FormState *st);
+static void ocx_loaded(FormState *st);
 static void ocx_delete(Ocx *x);
 static const char *ocx_default(const std::string &type);
 /* the CommonDialog control (MSComDlg.CommonDialog, comdlg32.ocx) */
@@ -690,6 +691,7 @@ struct Ctl {
     bool stretch = false, autosize = false, look_done = false, wordwrap = false;
     int alignment = 0;                          /* Label: 0 left, 1 right, 2 center */
     int align = 0;                              /* Align: 1 top, 2 bottom, 3 left, 4 right (PictureBox ...) */
+    bool align_keyed = false; double align_key = 0;   /* the place in the .frm: the order of the aligned controls */
     int shape = 0, backstyle = 0, borderstyle = 1, borderwidth = 1, fillstyle = 1;   /* Shape, Line */
     long bordercolor = 0x80000008, fillcolor = 0;
     double x1 = 0, y1 = 0, x2 = 0, y2 = 0;      /* Line */
@@ -2421,7 +2423,7 @@ static void menu_apply(Ctl *c)
 {
     QAction *a = c->act;
     if (!a) return;
-    a->setText(c->caption);
+    a->setText(a->isSeparator() ? QString() : c->caption);    /* a separator's "-" is not drawn (Fusion shows a text) */
     a->setEnabled(c->enabled);
     a->setVisible(c->visible);
     a->setCheckable(c->checked || a->isCheckable());
@@ -3606,7 +3608,29 @@ static void align_layout(FormState *st)
         if (!st->shown_once) { W = (int)std::lround(st->clientw / TPP); H = (int)std::lround(st->clienth / TPP); }
     }
     int l = 0, r = W, t = 0, b = H;
+    /* the controls aligned to the same side are stacked in the order of their places in the .frm (the order VB6
+     * keeps: a Toolbar at Top 0 above a PictureBox at Top 540 written before it, aw1 frmBrowser / Explorer); one
+     * that gets Align later goes after them */
+    std::vector<vbobj> order;
     for (vbobj co : st->ctls) {
+        Ctl *c = C(co);
+        if (!c->align || !c->w) continue;
+        if (!c->align_keyed) {
+            c->align_keyed = true;
+            c->align_key = c->align == 1 ? c->top : c->align == 2 ? -(c->top + c->height) :
+                           c->align == 3 ? c->left : -(c->left + c->width);
+            if (st->shown_once) c->align_key = 1e12;
+        }
+        order.push_back(co);
+    }
+    for (int side = 1; side <= 4; side++) {     /* sort each side in its own places */
+        std::vector<size_t> places;
+        std::vector<vbobj> same;
+        for (size_t i = 0; i < order.size(); i++) if (C(order[i])->align == side) { places.push_back(i); same.push_back(order[i]); }
+        std::stable_sort(same.begin(), same.end(), [](vbobj a, vbobj b) { return C(a)->align_key < C(b)->align_key; });
+        for (size_t k = 0; k < places.size(); k++) order[places[k]] = same[k];
+    }
+    for (vbobj co : order) {
         Ctl *c = C(co);
         if (!c->align || !c->w) continue;
         if (st->mdi && c->w->parentWidget() != st->w) { c->w->setParent(st->w); c->w->setVisible(c->visible); }
@@ -3789,7 +3813,15 @@ static void place_window(FormState *st)
 static vbobj *mdi_slot;
 static const vb_class *mdi_cls;
 extern "C" void vbf_mdi_register(vbobj *slot, const vb_class *cls) { mdi_slot = slot; mdi_cls = cls; }
-static vbobj mdi_form() { return mdi_slot ? vbf_default(mdi_slot, mdi_cls) : nullptr; }
+/* the MDIForm of the project: the instance that is loaded (Set fMainForm = New frmMain, as the Application Wizard
+ * writes it, aw25: not a second MDIForm for the children), else the predeclared one */
+static vbobj mdi_live;                          /* weak: loaded_forms holds it while it is loaded */
+static vbobj mdi_form()
+{
+    if (mdi_live) return mdi_live;
+    return mdi_slot ? vbf_default(mdi_slot, mdi_cls) : nullptr;
+}
+static vbobj mdi_current() { return mdi_live ? mdi_live : mdi_slot ? *mdi_slot : nullptr; }
 static void set_window(vbobj o, double w, double h, bool event);
 static QSize mdi_client_size(FormState *ps)
 {
@@ -3807,7 +3839,7 @@ static QSize mdi_client_size(FormState *ps)
 static void mdi_child_default(vbobj o)
 {
     FormState *st = fstate(o);
-    vbobj p = mdi_slot ? *mdi_slot : nullptr;
+    vbobj p = mdi_current();
     if (!p) return;
     QSize a = mdi_client_size(fstate(p));
     const int sp = 25;
@@ -3870,7 +3902,7 @@ static void child_activate(vbobj parent, vbobj child)
 }
 static void child_gone(vbobj child)             /* hidden or unloaded: another child becomes active */
 {
-    vbobj p = mdi_slot ? *mdi_slot : nullptr;
+    vbobj p = mdi_current();
     if (!p) return;
     FormState *ps = fstate(p);
     if (ps->active_child != child) return;
@@ -3927,6 +3959,7 @@ static void load_form(vbobj o)
     ensure_app();
     const vbf_formdef *d = st->def;
     st->mdi = d->mdi != 0;
+    if (d->mdi == 1 && !mdi_live) mdi_live = o;            /* this instance is the MDIForm of the children */
     st->mdichild = !st->mdi && propn(d->props, "MDIChild", 0) != 0;
     if (st->mdichild) {                         /* an MDI child loads its MDIForm first */
         vbobj p = mdi_form();
@@ -4046,6 +4079,7 @@ static void load_form(vbobj o)
     align_layout(st);
     set_tab_order(st);
     for (vbobj co : st->ctls) timer_update(C(co));
+    ocx_loaded(st);                             /* a Toolbar finds the ImageList written after it (aw24) */
     if (!vb_errpend) adodc_after_load(st);      /* an ADO Data control opens before Load (VB6 oracle f_dfmt3) */
     fire_form(o, "load");
     if (st->loaded && !vb_errpend) data_after_load(st);    /* the Data controls open their recordsets */
@@ -4196,6 +4230,7 @@ static void unload_destroy(vbobj o)            /* the Unload event; then the for
     std::vector<vbobj> ctls; ctls.swap(st->ctls);
     std::map<std::string, vbobj> names; names.swap(st->byname);
     st->loaded = false; st->visible = false; st->unloading = false; st->active_child = nullptr;
+    if (mdi_live == o) mdi_live = nullptr;
     for (auto &kv : names) if (kv.second->cls == &CLS_ARRAY) vb_orelease(kv.second);
     for (vbobj co : ctls) vb_orelease(co);
     auto it = std::find(loaded_forms.begin(), loaded_forms.end(), o);

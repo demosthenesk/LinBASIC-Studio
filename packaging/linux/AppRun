@@ -9,6 +9,8 @@ export LBSTUDIO_APPDIR="$HERE"
 # the programs the IDE builds: the bundled Tiny C Compiler (no gcc needed) and the Qt 6 of the AppImage
 export LBVC_LINUX_TCC="$SHARE/runtime/tcc-linux"
 export LBVC_QT_LIBDIR="$QTLIB"
+# the programs for Windows: the cross Tiny C Compiler and the DLLs of runtime/win32, runtime/win64 (no mingw-w64)
+export LBVC_WIN_CC=tcc
 export LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH:-}"
 export LD_LIBRARY_PATH="$QTLIB:$HERE/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 unset QT_PLUGIN_PATH PYTHONHOME PYTHONPATH

@@ -18,7 +18,8 @@ LIB_OF_FILE = {"mscomctl.ocx": "MSComctlLib", "comctl32.ocx": "ComctlLib", "msco
                "comct332.ocx": "ComCtl3", "comdlg32.ocx": "MSComDlg", "msflxgrd.ocx": "MSFlexGridLib",
                "richtx32.ocx": "RichTextLib", "tabctl32.ocx": "TabDlg", "scrrun.dll": "Scripting",
                "msado15.dll": "ADODB", "mschrt20.ocx": "MSChart20Lib", "picclp32.ocx": "PicClip",
-               "mci32.ocx": "MCI", "mscomm32.ocx": "MSCommLib"}
+               "mci32.ocx": "MCI", "mscomm32.ocx": "MSCommLib",
+               "ieframe.dll": "SHDocVw", "shdocvw.dll": "SHDocVw"}
 
 KEYWORDS = ("And As Boolean ByRef Byte ByVal Call Case Close Const Currency Date Declare Dim Do Double Each Else "
             "ElseIf End Enum Erase Error Event Exit False For Friend Function Get Global GoSub GoTo If Implements "

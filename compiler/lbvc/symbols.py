@@ -105,7 +105,7 @@ def vba_constants():
     base = os.path.join(here, '..', '..', 'data', 'vb6', 'typelibs')
     out = {}
     for lib in ('VBA', 'VBRUN', 'MSComDlg', 'Scripting', 'MSComctlLib', 'MSComCtl2', 'MSFlexGridLib', 'TabDlg',
-                'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'stdole'):   # MSComDlg: CommonDialog (cdl...); Scripting: ForReading ...
+                'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'SHDocVw', 'stdole'):   # MSComDlg: CommonDialog (cdl...); Scripting: ForReading ...
         p = os.path.join(base, lib + '.json')
         if not os.path.exists(p):
             continue
@@ -155,7 +155,7 @@ def lib_enums():
     base = os.path.join(here, '..', '..', 'data', 'vb6', 'typelibs')
     out = set()
     for lib in ('VBA', 'VBRUN', 'VB', 'stdole', 'MSComDlg', 'Scripting', 'MSComctlLib', 'MSComCtl2', 'MSFlexGridLib',
-                'TabDlg', 'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI'):
+                'TabDlg', 'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'SHDocVw'):
         p = os.path.join(base, lib + '.json')
         if not os.path.exists(p):
             continue

@@ -178,7 +178,9 @@ class OptionsDialog(QDialog):
                 sb.setValue(int(S[key]))
             except (TypeError, ValueError):
                 sb.setValue(120)
-            gl.addWidget(QLabel(text), i, 0)
+            lab = QLabel(text)                  # &Width: the & is a mnemonic (a buddy), not shown
+            lab.setBuddy(sb)
+            gl.addWidget(lab, i, 0)
             gl.addWidget(sb, i, 1)
         self.align_grid = QCheckBox("Align C&ontrols to Grid")
         self.align_grid.setChecked(bool(S["align_grid"]))
@@ -790,6 +792,28 @@ class MakeDialog(QDialog):
                 os.path.exists(os.path.join(paths.RUNTIME, k, "tcc", "tcc.exe"))] or \
             [(k, t) for k, t in cls.TARGETS if k == paths.host_target()]
 
+    NOT_HERE = ("Programs for Windows need the Windows runtime of LinBASIC Studio (runtime/win32, runtime/win64: "
+                "its Tiny C Compiler, DLLs and Qt for Windows) or mingw-w64; this LinBASIC Studio has neither.")
+
+    @classmethod
+    def available(cls, target):
+        """(can this IDE make programs for target?, why not): on Linux a Windows program needs the Tiny C Compiler
+        of LinBASIC Studio for Windows with its DLLs (runtime/<target>/tcc/cross-tcc, dll/: the AppImage carries
+        them), or mingw-w64 and the Windows runtime (runtime/<target>, or build-win.sh to make it: the source);
+        without them shown, but disabled (the user's decision, 2026-11-19)"""
+        if os.name == "nt" or target == "linux":
+            return True, ""
+        import shutil
+        from . import paths
+        tri = {"win64": "x86_64-w64-mingw32", "win32": "i686-w64-mingw32"}.get(target, "")
+        cc = any(shutil.which(f"{tri}-gcc{s}") for s in ("-posix", ""))
+        kit = os.path.exists(os.path.join(paths.RUNTIME, target, "libvbrt.a")) or \
+            os.path.exists(os.path.join(paths.RUNTIME, "build-win.sh"))
+        tcc = os.path.exists(os.path.join(paths.RUNTIME, target, "tcc", "cross-tcc")) and \
+            os.path.exists(os.path.join(paths.RUNTIME, target, "dll", "vbrt.dll"))
+        ok = (cc and kit) or tcc
+        return ok, ("" if ok else cls.NOT_HERE)
+
     def __init__(self, parent, project_dir, exe_name, target="linux"):
         from PyQt6.QtWidgets import QRadioButton, QButtonGroup, QHBoxLayout, QVBoxLayout, QGroupBox, QDialogButtonBox
         super().__init__(parent)
@@ -806,6 +830,9 @@ class MakeDialog(QDialog):
             self.buttons[key] = rb
             bl.addWidget(rb)
             rb.toggled.connect(lambda on, k=key: on and self._target_changed(k))
+            ok, why = self.available(key)
+            rb.setEnabled(ok)                   # the AppImage: Windows shown, disabled
+            rb.setToolTip(why)
         lay.addWidget(box)
         lay.addWidget(QLabel("File name:"))
         row = QHBoxLayout()
@@ -823,8 +850,8 @@ class MakeDialog(QDialog):
         bb.accepted.connect(self.accept)
         bb.rejected.connect(self.reject)
         lay.addWidget(bb)
-        if target not in self.buttons:
-            target = next(iter(self.buttons))
+        if target not in self.buttons or not self.buttons[target].isEnabled():
+            target = next(k for k, b in self.buttons.items() if b.isEnabled())
         self.buttons[target].setChecked(True)
         self._target_changed(target)
 
@@ -941,6 +968,11 @@ class NewProjectDialog(QDialog):
             it = QListWidgetItem(self.style().standardIcon(icons[key]), text)
             it.setData(Qt.ItemDataRole.UserRole, key)
             self.list.addItem(it)
+        if not existing:                        # VB6 (DEV-9/aw1-01): after ActiveX Control (not in Add Project)
+            from .appwizard import wizard_icon
+            it = QListWidgetItem(wizard_icon(32), "VB Application Wizard")
+            it.setData(Qt.ItemDataRole.UserRole, "AppWizard")
+            self.list.addItem(it)
         self.list.setCurrentRow(0)
         self.list.itemDoubleClicked.connect(lambda _: self.accept())
         lay.addWidget(self.list)
@@ -1049,8 +1081,10 @@ class AddProcedureDialog(QDialog):
         self.setWindowTitle("Add Procedure")
         grid = QGridLayout(self)
         row = QHBoxLayout()
-        row.addWidget(QLabel("&Name:"))
+        lab = QLabel("&Name:")
+        row.addWidget(lab)
         self.name = QLineEdit()
+        lab.setBuddy(self.name)
         row.addWidget(self.name)
         grid.addLayout(row, 0, 0)
         btns = QVBoxLayout()
@@ -1134,23 +1168,29 @@ class ProcedureAttributesDialog(QDialog):
         self.setWindowTitle("Procedure Attributes")
         g = QGridLayout(self)
         top = QHBoxLayout()
-        top.addWidget(QLabel("&Name:"))
+        lab = QLabel("&Name:")
+        top.addWidget(lab)
         self.name = QComboBox()
+        lab.setBuddy(self.name)
         for n, _ in self.procs:
             self.name.addItem(n)
         top.addWidget(self.name, 1)
         g.addLayout(top, 0, 0, 1, 2)
-        g.addWidget(QLabel("&Description:"), 1, 0, 1, 2)
+        lab = QLabel("&Description:")
+        g.addWidget(lab, 1, 0, 1, 2)
         self.desc = QPlainTextEdit()
+        lab.setBuddy(self.desc)
         self.desc.setFixedHeight(48)
         g.addWidget(self.desc, 2, 0, 1, 2)
         g.addWidget(QLabel("Project Help File:"), 3, 0)
-        g.addWidget(QLabel("&Help Context ID:"), 3, 1)
+        lab_help = QLabel("&Help Context ID:")
+        g.addWidget(lab_help, 3, 1)
         self.help_file = QLineEdit(help_file)
         self.help_file.setReadOnly(True)
         self.help_file.setEnabled(False)
         g.addWidget(self.help_file, 4, 0)
         self.helpid = QLineEdit("0")
+        lab_help.setBuddy(self.helpid)
         g.addWidget(self.helpid, 4, 1)
         col = QVBoxLayout()
         self.ok = QPushButton("OK")
@@ -1171,13 +1211,15 @@ class ProcedureAttributesDialog(QDialog):
         self.adv = QWidget()
         a = QGridLayout(self.adv)
         a.setContentsMargins(0, 6, 0, 0)
-        a.addWidget(QLabel("Procedure &ID:"), 0, 0, Qt.AlignmentFlag.AlignBottom)
-        a.addWidget(QLabel("Use this &Page in\nProperty Browser:"), 0, 1, Qt.AlignmentFlag.AlignBottom)
-        a.addWidget(QLabel("Property &Category:"), 0, 2, Qt.AlignmentFlag.AlignBottom)
+        labs = [QLabel("Procedure &ID:"), QLabel("Use this &Page in\nProperty Browser:"), QLabel("Property &Category:")]
+        for i, lab in enumerate(labs):
+            a.addWidget(lab, 0, i, Qt.AlignmentFlag.AlignBottom)
         self.procid = QComboBox()
         self.page = QComboBox()
         self.page.addItems(["(None)"] + self.pages)
         self.category = QComboBox()
+        for lab, w in zip(labs, (self.procid, self.page, self.category)):
+            lab.setBuddy(w)                     # the & is a mnemonic, not shown
         self.category.setEditable(True)            # a category of one's own, too
         self.category.addItems(codeops.CATEGORIES)
         a.addWidget(self.procid, 1, 0)
@@ -1327,8 +1369,10 @@ class PrintDialog(QDialog):
             wl.addWidget(cb)
         g.addWidget(wg, 1, 2)
         row = QHBoxLayout()
-        row.addWidget(QLabel("Print &Quality:"))
+        lab = QLabel("Print &Quality:")
+        row.addWidget(lab)
         self.quality = QComboBox()
+        lab.setBuddy(self.quality)
         self.quality.addItems(["High", "Medium", "Low", "Draft"])
         row.addWidget(self.quality)
         self.to_file = QCheckBox("Print to Fi&le")

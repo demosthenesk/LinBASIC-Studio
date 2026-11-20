@@ -316,9 +316,10 @@ def mci_glyph(p, b, color):
 class OcxLook(QWidget):
     """a control of an .ocx at design time, drawn as Windows draws it with its default properties"""
 
-    def __init__(self, ctl, kind, val):
+    def __init__(self, ctl, kind, val, images=None):
         super().__init__()
         self.ctl, self.kind, self.val = ctl, kind, val
+        self.images = images                    # name of an ImageList -> ({key: QPixmap}, [QPixmap])
 
     def paintEvent(self, e):
         p = QPainter(self)
@@ -362,6 +363,41 @@ class OcxLook(QWidget):
             p.fillRect(r, face)
             p.setPen(white); p.drawLine(r.topLeft(), r.topRight())
             p.setPen(dark); p.drawLine(r.bottomLeft(), r.bottomRight())
+            # its buttons as the VB6 IDE shows them (DEV-9/aw10-02): the pictures of the ImageList, the separators
+            keyed, listed = self.images(str(c.get("ImageList", "") or "")) if self.images else ({}, [])
+            hm = lambda v, d: max(4, int(round(float(v) * 1440 / 2540 / 15))) if v else d   # noqa: E731
+            bw, bh = hm(c.get("ButtonWidth"), 23), hm(c.get("ButtonHeight"), 22)
+            bh = min(bh, max(4, r.height() - 3))
+            flat = geti(c, "Style", 0) == 1
+            x = 2
+            for b in toolbar_buttons(c):
+                st = b.get("style", 0)
+                if st == 3:                     # a separator
+                    p.setPen(dark); p.drawLine(x + 3, 3, x + 3, 3 + bh - 4)
+                    p.setPen(white); p.drawLine(x + 4, 3, x + 4, 3 + bh - 4)
+                    x += 8
+                    continue
+                if st == 4:                     # a placeholder: its Width
+                    x += hm(b.get("width"), bw) if b.get("width") else bw
+                    continue
+                br = QRect(x, 2, bw, bh)
+                if not flat:
+                    p.setPen(white); p.drawLine(br.topLeft(), br.topRight()); p.drawLine(br.topLeft(), br.bottomLeft())
+                    p.setPen(dark); p.drawLine(br.bottomLeft(), br.bottomRight()); p.drawLine(br.topRight(), br.bottomRight())
+                img = b.get("image")
+                pm = keyed.get(str(img).lower()) if isinstance(img, str) else \
+                    (listed[img - 1] if isinstance(img, int) and 0 < img <= len(listed) else None)
+                cap = b.get("caption", "")
+                if pm is not None:
+                    iy = br.top() + (br.height() - pm.height()) // 2 if not cap else br.top() + 2
+                    p.drawPixmap(br.left() + (br.width() - pm.width()) // 2, iy, pm)
+                if cap:
+                    p.setPen(QColor("#000000"))
+                    p.drawText(br.adjusted(1, 0, -1, -1), Qt.AlignmentFlag.AlignHCenter |
+                               (Qt.AlignmentFlag.AlignBottom if pm is not None else Qt.AlignmentFlag.AlignVCenter), cap)
+                x += bw
+                if x > r.width():
+                    break
         elif k == "CoolBar":                    # its bands as the runtime lays them out (vbprops.cool_layout)
             p.fillRect(r, face)
             bands = V.cool_bands(c)
@@ -514,6 +550,9 @@ class OcxLook(QWidget):
                 p.drawLine(16 + (j + 1) * 90, 2, 16 + (j + 1) * 90, r.height() - 2)
             for i in range(2):
                 p.drawLine(2, 2 + hh * (i + 1), r.width() - 2, 2 + hh * (i + 1))
+        elif k == "WebBrowser":                 # a white page (VB6 shows a page of Internet Explorer there)
+            sunken(r)
+            p.fillRect(QRect(2, 2, r.width() - 3, r.height() - 3), white)
         elif k == "MaskEdBox":                  # the mask with its prompts, as the control shows it
             sunken(r)
             m, pc, shown, i = str(c.get("Mask", "")), (str(c.get("PromptChar", "_")) or "_")[:1], "", 0
@@ -584,8 +623,71 @@ class DataLook(QWidget):
                    Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, caption)
 
 
-def ocx_visual(ctl, kind, val):
-    return OcxLook(ctl, kind, val)
+def toolbar_buttons(c):
+    """the buttons of a Toolbar from its Buttons block: [{style, key, image (key or index), caption, width}]"""
+    out = []
+    blk = c.block("Buttons")
+    if blk is None:
+        return out
+    for it in blk.items:
+        if not isinstance(it, PropertyBlock) or not it.name.lower().startswith("button"):
+            continue
+        b = {"style": 0, "image": None, "caption": ""}
+        for q in it.items:
+            if not isinstance(q, Property):
+                continue
+            n = q.name.lower().replace("object.", "")
+            if n == "style":
+                b["style"] = int(q.value) if isinstance(q.value, (int, float)) else 0
+            elif n == "key":
+                b["key"] = str(q.value)
+            elif n in ("imagekey", "image") and str(q.value):
+                b["image"] = str(q.value) if not isinstance(q.value, int) else q.value
+            elif n == "imageindex" and isinstance(q.value, int) and q.value:
+                b["image"] = q.value
+            elif n == "caption":
+                b["caption"] = str(q.value)
+            elif n == "width":
+                b["width"] = q.value
+        out.append(b)
+    return out
+
+
+def list_images(module, root, name):
+    """the pictures of the ImageList <name> of a form: ({key in lower case: QPixmap}, [QPixmap]), masked"""
+    from PyQt6.QtGui import QPixmap, QImage
+    keyed, listed = {}, []
+    il = next((x for x in root.walk() if x.name.lower() == name.lower() and x.type_name == "ImageList"), None) \
+        if name else None
+    blk = il.block("Images") if il is not None else None
+    if blk is None:
+        return keyed, listed
+    mask = il.get("MaskColor", 0xC0C0C0)
+    mask = int(mask) if isinstance(mask, (int, float)) else 0xC0C0C0
+    use = il.get("UseMaskColor", -1)
+    for it in blk.items:
+        if not isinstance(it, PropertyBlock):
+            continue
+        key, pm = None, None
+        for q in it.items:
+            if isinstance(q, Property) and q.name.lower() == "key":
+                key = str(q.value)
+            elif isinstance(q, Property) and q.name.lower() == "picture":
+                d = module.frx_data(q)
+                img = QImage()
+                if d is not None and isinstance(d.data, (bytes, bytearray)) and img.loadFromData(bytes(d.data)):
+                    pm = QPixmap.fromImage(img)
+                    if use != 0 and not img.hasAlphaChannel():
+                        rgb = QColor(mask & 0xFF, (mask >> 8) & 0xFF, (mask >> 16) & 0xFF)
+                        pm.setMask(pm.createMaskFromColor(rgb))
+        listed.append(pm)
+        if key and pm is not None:
+            keyed[key.lower()] = pm
+    return keyed, listed
+
+
+def ocx_visual(ctl, kind, val, images=None):
+    return OcxLook(ctl, kind, val, images)
 
 
 # ---------------------------------------------------------------- one control on the form
@@ -688,7 +790,7 @@ class DesignItem(QWidget):
         elif t == "Data":
             w = DataLook(strip_amp(cap))
         elif ocxlib.control_of(c.cls) and t not in FIXED:
-            w = ocx_visual(c, t, val)
+            w = ocx_visual(c, t, val, lambda n: list_images(self.designer.module, self.designer.root, n))
         elif uctl_of(c.cls):                    # a user control: as its designer has it
             w = QLabel()
             w.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
@@ -1435,9 +1537,11 @@ class FormDesigner(QScrollArea):
         set_prop(c, "Height", int(h))
         if it.type == "PictureBox":            # the scale of a PictureBox follows its size
             self.rescale(c)
-        if ocxlib.control_of(c.cls):           # an .ocx keeps its size in HIMETRIC too
-            set_prop(c, "_ExtentX", ocxlib.extent(int(w)))
-            set_prop(c, "_ExtentY", ocxlib.extent(int(h)))
+        lc = ocxlib.control_of(c.cls)
+        if lc:                                 # an .ocx keeps its size in HIMETRIC too
+            px = getattr(lc[1], "extent", "_")
+            set_prop(c, px + "ExtentX", ocxlib.extent(int(w)))
+            set_prop(c, px + "ExtentY", ocxlib.extent(int(h)))
         it.place()
         self.geometry_changed.emit()
 
@@ -1720,8 +1824,18 @@ class FormDesigner(QScrollArea):
     def all_controls(self):
         return [c for c in self.root.walk() if c is not self.root]
 
+    def form_names(self):
+        """the names of the project's forms: a control may not take one (the user's decision, Phase 9 / DEV-9
+        nm-01..04: VB6 accepts it and then Form1 in the code is the control, not the form)"""
+        names = {self.root.name.lower()}
+        proj = getattr(getattr(self, "main", None), "project", None)
+        for m in getattr(proj, "modules", None) or []:
+            if m.kind == "Form":
+                names.add(m.name.lower())
+        return names
+
     def new_name(self, base):
-        names = {c.name.lower() for c in self.all_controls()}
+        names = {c.name.lower() for c in self.all_controls()} | self.form_names()
         i = 1
         while f"{base}{i}".lower() in names:
             i += 1
@@ -1837,6 +1951,9 @@ class FormDesigner(QScrollArea):
             from lbvc.project.oleblob import new_blob
             from lbvc.project.frx import FrxData
             set_prop(c, "OleObjectBlob", FrxData("raw", new_blob(name, w, h, x, y)))
+        elif getattr(oc, "extent", "_") != "_":   # the WebBrowser: ExtentX / ExtentY after Width, no _Version
+            append_prop(c, oc.extent + "ExtentX", ocxlib.extent(w))
+            append_prop(c, oc.extent + "ExtentY", ocxlib.extent(h))
         else:
             set_prop(c, "_ExtentX", ocxlib.extent(w))
             set_prop(c, "_ExtentY", ocxlib.extent(h))
@@ -1909,9 +2026,15 @@ class FormDesigner(QScrollArea):
         target = self.primary.ctl if self.primary is not None and self.primary.type in CONTAINERS else self.root
         self.checkpoint()
         new = []
+        forms = self.form_names()
         for c in list(sf.root.children):
             existing = [x for x in self.all_controls() if x.name.lower() == c.name.lower()]
-            if existing:
+            if c.name.lower() in forms:                 # the name of a form: a name of its own, no question
+                c.name = self.new_name(TOOL.get(c.type_name, (0, c.type_name))[1])
+                c.raw_begin = None
+                if c.type_name in CAPTIONED and c.prop("Caption") is not None:
+                    set_prop(c, "Caption", c.name)
+            elif existing:
                 # VB6 (DEV-8/me10): an array of that name already: the next Index, no question; else "create a
                 # control array?" (Yes / No / Help, Esc does nothing); No, or another type: a name of its own
                 same = all(x.type_name == c.type_name for x in existing)
@@ -2149,12 +2272,12 @@ class FormDesigner(QScrollArea):
             return None
         if ctl is self.root:
             return self.main.rename_module(self.module, new)
+        if new.lower() in self.form_names():
+            return f"Ambiguous name detected: {new}"
         if new.lower() != ctl.name.lower():
             existing = [c for c in self.root.walk() if c.name.lower() == new.lower()]
             if existing:
                 is_array = any(c is not self.root and geti(c, "Index", -1) >= 0 for c in existing)
-                if any(c is self.root for c in existing):
-                    return f"Ambiguous name detected: {new}"
                 if any(c.type_name != ctl.type_name for c in existing):
                     # VB6 (DEV-8/me10-09, 11): an array of another type / a control of another type
                     return "Control must be same type as rest of array" if is_array else f"'{new}' is a control name"
@@ -2396,6 +2519,10 @@ def ocx_icon(p, cls, size=24):
         pen = p.pen(); p.setPen(QColor("#E05050"))
         p.drawLine(6, 14, 6, 19); p.drawLine(6, 19, 17, 19); p.drawLine(17, 19, 17, 14)
         p.setPen(pen)
+    elif cls == "WebBrowser":                   # a page with a globe
+        p.setBrush(white); p.drawRect(QRect(2, 3, 20, 18)); p.fillRect(QRect(3, 4, 19, 3), blue)
+        p.setBrush(QColor("#7FB8E8")); p.drawEllipse(QRect(7, 9, 10, 10))
+        p.setBrush(Qt.BrushStyle.NoBrush); p.drawEllipse(QRect(10, 9, 4, 10)); p.drawLine(7, 14, 17, 14)
     elif cls == "Inet":                         # a globe
         p.setBrush(QColor("#7FB8E8")); p.drawEllipse(QRect(3, 3, 18, 18))
         p.setBrush(Qt.BrushStyle.NoBrush); p.drawEllipse(QRect(8, 3, 8, 18))

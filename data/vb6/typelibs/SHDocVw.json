@@ -1,0 +1,7013 @@
+{
+ "library": "SHDocVw",
+ "short": "SHDocVw",
+ "guid": "{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}",
+ "version": "1.1",
+ "lcid": 1033,
+ "helpfile": "",
+ "file": "ieframe.dll",
+ "types": [
+  {
+   "name": "IWebBrowser",
+   "kind": "dispatch",
+   "guid": "{EAB22AC1-30C1-11CF-A7EB-0000C05BAE0B}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "GoBack",
+     "memid": 100,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "GoForward",
+     "memid": 101,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "GoHome",
+     "memid": 102,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "GoSearch",
+     "memid": 103,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Navigate",
+     "memid": 104,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Headers",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 4
+    },
+    {
+     "name": "Refresh",
+     "memid": -550,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Refresh2",
+     "memid": 105,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Level",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "Stop",
+     "memid": 106,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Application",
+     "memid": 200,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "ppDisp",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Parent",
+     "memid": 201,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "ppDisp",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Container",
+     "memid": 202,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "ppDisp",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Document",
+     "memid": 203,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "ppDisp",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "TopLevelContainer",
+     "memid": 204,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Type",
+     "memid": 205,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Type",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Left",
+     "memid": 206,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pl",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Left",
+     "memid": 206,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Top",
+     "memid": 207,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pl",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Top",
+     "memid": 207,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Width",
+     "memid": 208,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pl",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Width",
+     "memid": 208,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Height",
+     "memid": 209,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pl",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Height",
+     "memid": 209,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "LocationName",
+     "memid": 210,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "LocationName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "LocationURL",
+     "memid": 211,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "LocationURL",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Busy",
+     "memid": 212,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DWebBrowserEvents",
+   "kind": "dispatch",
+   "guid": "{EAB22AC2-30C1-11CF-A7EB-0000C05BAE0B}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "BeforeNavigate",
+     "memid": 100,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Headers",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NavigateComplete",
+     "memid": 101,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "StatusTextChange",
+     "memid": 102,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ProgressChange",
+     "memid": 108,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Progress",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ProgressMax",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DownloadComplete",
+     "memid": 104,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "CommandStateChange",
+     "memid": 105,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Command",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Enable",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DownloadBegin",
+     "memid": 106,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "NewWindow",
+     "memid": 107,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Headers",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Processed",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "TitleChange",
+     "memid": 113,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FrameBeforeNavigate",
+     "memid": 200,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": []
+      },
+      {
+       "name": "Headers",
+       "type": "String",
+       "byref": false,
+       "flags": []
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FrameNavigateComplete",
+     "memid": 201,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FrameNewWindow",
+     "memid": 204,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Headers",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Processed",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Quit",
+     "memid": 103,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowMove",
+     "memid": 109,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "WindowResize",
+     "memid": 110,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "WindowActivate",
+     "memid": 111,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "PropertyChange",
+     "memid": 112,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Property",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CommandStateChangeConstants",
+   "kind": "enum",
+   "guid": "{34A226E0-DF30-11CF-89A9-00A0C9054129}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "CSC_UPDATECOMMANDS",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": -1
+    },
+    {
+     "name": "CSC_NAVIGATEFORWARD",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "CSC_NAVIGATEBACK",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "name": "IWebBrowserApp",
+   "kind": "dispatch",
+   "guid": "{0002DF05-0000-0000-C000-000000000046}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowser",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Quit",
+     "memid": 300,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "ClientToWindow",
+     "memid": 301,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pcx",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "pcy",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PutProperty",
+     "memid": 302,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Property",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "vtValue",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "GetProperty",
+     "memid": 303,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "Property",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvtValue",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Name",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Name",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "HWND",
+     "memid": -515,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pHWND",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FullName",
+     "memid": 400,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "FullName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Path",
+     "memid": 401,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "Path",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Visible",
+     "memid": 402,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Visible",
+     "memid": 402,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "StatusBar",
+     "memid": 403,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "StatusBar",
+     "memid": 403,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "StatusText",
+     "memid": 404,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "StatusText",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "StatusText",
+     "memid": 404,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ToolBar",
+     "memid": 405,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ToolBar",
+     "memid": 405,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "MenuBar",
+     "memid": 406,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "MenuBar",
+     "memid": 406,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FullScreen",
+     "memid": 407,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbFullScreen",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FullScreen",
+     "memid": 407,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IWebBrowser2",
+   "kind": "dispatch",
+   "guid": "{D30C1661-CDAF-11D0-8A3E-00C04FC9E26E}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowserApp",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Navigate2",
+     "memid": 500,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Headers",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 4
+    },
+    {
+     "name": "QueryStatusWB",
+     "memid": 501,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "OLECMDF",
+     "params": [
+      {
+       "name": "cmdID",
+       "type": "OLECMDID",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pcmdf",
+       "type": "OLECMDF",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ExecWB",
+     "memid": 502,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "cmdID",
+       "type": "OLECMDID",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cmdexecopt",
+       "type": "OLECMDEXECOPT",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvaIn",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "pvaOut",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "out",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2
+    },
+    {
+     "name": "ShowBrowserBar",
+     "memid": 503,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pvaClsid",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarShow",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "pvarSize",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2
+    },
+    {
+     "name": "ReadyState",
+     "memid": -525,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "tagREADYSTATE",
+     "params": [
+      {
+       "name": "plReadyState",
+       "type": "tagREADYSTATE",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "bindable"
+     ]
+    },
+    {
+     "name": "Offline",
+     "memid": 550,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbOffline",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Offline",
+     "memid": 550,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Silent",
+     "memid": 551,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbSilent",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Silent",
+     "memid": 551,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RegisterAsBrowser",
+     "memid": 552,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbRegister",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RegisterAsBrowser",
+     "memid": 552,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RegisterAsDropTarget",
+     "memid": 553,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbRegister",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RegisterAsDropTarget",
+     "memid": 553,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "TheaterMode",
+     "memid": 554,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pbRegister",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "TheaterMode",
+     "memid": 554,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "AddressBar",
+     "memid": 555,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "AddressBar",
+     "memid": 555,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Resizable",
+     "memid": 556,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "Value",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Resizable",
+     "memid": 556,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "OLECMDID",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "OLECMDID_OPEN",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "OLECMDID_NEW",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "OLECMDID_SAVE",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "OLECMDID_SAVEAS",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "OLECMDID_SAVECOPYAS",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 5
+    },
+    {
+     "name": "OLECMDID_PRINT",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 6
+    },
+    {
+     "name": "OLECMDID_PRINTPREVIEW",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 7
+    },
+    {
+     "name": "OLECMDID_PAGESETUP",
+     "memid": 1073741831,
+     "kind": "const",
+     "type": "Long",
+     "value": 8
+    },
+    {
+     "name": "OLECMDID_SPELL",
+     "memid": 1073741832,
+     "kind": "const",
+     "type": "Long",
+     "value": 9
+    },
+    {
+     "name": "OLECMDID_PROPERTIES",
+     "memid": 1073741833,
+     "kind": "const",
+     "type": "Long",
+     "value": 10
+    },
+    {
+     "name": "OLECMDID_CUT",
+     "memid": 1073741834,
+     "kind": "const",
+     "type": "Long",
+     "value": 11
+    },
+    {
+     "name": "OLECMDID_COPY",
+     "memid": 1073741835,
+     "kind": "const",
+     "type": "Long",
+     "value": 12
+    },
+    {
+     "name": "OLECMDID_PASTE",
+     "memid": 1073741836,
+     "kind": "const",
+     "type": "Long",
+     "value": 13
+    },
+    {
+     "name": "OLECMDID_PASTESPECIAL",
+     "memid": 1073741837,
+     "kind": "const",
+     "type": "Long",
+     "value": 14
+    },
+    {
+     "name": "OLECMDID_UNDO",
+     "memid": 1073741838,
+     "kind": "const",
+     "type": "Long",
+     "value": 15
+    },
+    {
+     "name": "OLECMDID_REDO",
+     "memid": 1073741839,
+     "kind": "const",
+     "type": "Long",
+     "value": 16
+    },
+    {
+     "name": "OLECMDID_SELECTALL",
+     "memid": 1073741840,
+     "kind": "const",
+     "type": "Long",
+     "value": 17
+    },
+    {
+     "name": "OLECMDID_CLEARSELECTION",
+     "memid": 1073741841,
+     "kind": "const",
+     "type": "Long",
+     "value": 18
+    },
+    {
+     "name": "OLECMDID_ZOOM",
+     "memid": 1073741842,
+     "kind": "const",
+     "type": "Long",
+     "value": 19
+    },
+    {
+     "name": "OLECMDID_GETZOOMRANGE",
+     "memid": 1073741843,
+     "kind": "const",
+     "type": "Long",
+     "value": 20
+    },
+    {
+     "name": "OLECMDID_UPDATECOMMANDS",
+     "memid": 1073741844,
+     "kind": "const",
+     "type": "Long",
+     "value": 21
+    },
+    {
+     "name": "OLECMDID_REFRESH",
+     "memid": 1073741845,
+     "kind": "const",
+     "type": "Long",
+     "value": 22
+    },
+    {
+     "name": "OLECMDID_STOP",
+     "memid": 1073741846,
+     "kind": "const",
+     "type": "Long",
+     "value": 23
+    },
+    {
+     "name": "OLECMDID_HIDETOOLBARS",
+     "memid": 1073741847,
+     "kind": "const",
+     "type": "Long",
+     "value": 24
+    },
+    {
+     "name": "OLECMDID_SETPROGRESSMAX",
+     "memid": 1073741848,
+     "kind": "const",
+     "type": "Long",
+     "value": 25
+    },
+    {
+     "name": "OLECMDID_SETPROGRESSPOS",
+     "memid": 1073741849,
+     "kind": "const",
+     "type": "Long",
+     "value": 26
+    },
+    {
+     "name": "OLECMDID_SETPROGRESSTEXT",
+     "memid": 1073741850,
+     "kind": "const",
+     "type": "Long",
+     "value": 27
+    },
+    {
+     "name": "OLECMDID_SETTITLE",
+     "memid": 1073741851,
+     "kind": "const",
+     "type": "Long",
+     "value": 28
+    },
+    {
+     "name": "OLECMDID_SETDOWNLOADSTATE",
+     "memid": 1073741852,
+     "kind": "const",
+     "type": "Long",
+     "value": 29
+    },
+    {
+     "name": "OLECMDID_STOPDOWNLOAD",
+     "memid": 1073741853,
+     "kind": "const",
+     "type": "Long",
+     "value": 30
+    },
+    {
+     "name": "OLECMDID_ONTOOLBARACTIVATED",
+     "memid": 1073741854,
+     "kind": "const",
+     "type": "Long",
+     "value": 31
+    },
+    {
+     "name": "OLECMDID_FIND",
+     "memid": 1073741855,
+     "kind": "const",
+     "type": "Long",
+     "value": 32
+    },
+    {
+     "name": "OLECMDID_DELETE",
+     "memid": 1073741856,
+     "kind": "const",
+     "type": "Long",
+     "value": 33
+    },
+    {
+     "name": "OLECMDID_HTTPEQUIV",
+     "memid": 1073741857,
+     "kind": "const",
+     "type": "Long",
+     "value": 34
+    },
+    {
+     "name": "OLECMDID_HTTPEQUIV_DONE",
+     "memid": 1073741858,
+     "kind": "const",
+     "type": "Long",
+     "value": 35
+    },
+    {
+     "name": "OLECMDID_ENABLE_INTERACTION",
+     "memid": 1073741859,
+     "kind": "const",
+     "type": "Long",
+     "value": 36
+    },
+    {
+     "name": "OLECMDID_ONUNLOAD",
+     "memid": 1073741860,
+     "kind": "const",
+     "type": "Long",
+     "value": 37
+    },
+    {
+     "name": "OLECMDID_PROPERTYBAG2",
+     "memid": 1073741861,
+     "kind": "const",
+     "type": "Long",
+     "value": 38
+    },
+    {
+     "name": "OLECMDID_PREREFRESH",
+     "memid": 1073741862,
+     "kind": "const",
+     "type": "Long",
+     "value": 39
+    },
+    {
+     "name": "OLECMDID_SHOWSCRIPTERROR",
+     "memid": 1073741863,
+     "kind": "const",
+     "type": "Long",
+     "value": 40
+    },
+    {
+     "name": "OLECMDID_SHOWMESSAGE",
+     "memid": 1073741864,
+     "kind": "const",
+     "type": "Long",
+     "value": 41
+    },
+    {
+     "name": "OLECMDID_SHOWFIND",
+     "memid": 1073741865,
+     "kind": "const",
+     "type": "Long",
+     "value": 42
+    },
+    {
+     "name": "OLECMDID_SHOWPAGESETUP",
+     "memid": 1073741866,
+     "kind": "const",
+     "type": "Long",
+     "value": 43
+    },
+    {
+     "name": "OLECMDID_SHOWPRINT",
+     "memid": 1073741867,
+     "kind": "const",
+     "type": "Long",
+     "value": 44
+    },
+    {
+     "name": "OLECMDID_CLOSE",
+     "memid": 1073741868,
+     "kind": "const",
+     "type": "Long",
+     "value": 45
+    },
+    {
+     "name": "OLECMDID_ALLOWUILESSSAVEAS",
+     "memid": 1073741869,
+     "kind": "const",
+     "type": "Long",
+     "value": 46
+    },
+    {
+     "name": "OLECMDID_DONTDOWNLOADCSS",
+     "memid": 1073741870,
+     "kind": "const",
+     "type": "Long",
+     "value": 47
+    },
+    {
+     "name": "OLECMDID_UPDATEPAGESTATUS",
+     "memid": 1073741871,
+     "kind": "const",
+     "type": "Long",
+     "value": 48
+    },
+    {
+     "name": "OLECMDID_PRINT2",
+     "memid": 1073741872,
+     "kind": "const",
+     "type": "Long",
+     "value": 49
+    },
+    {
+     "name": "OLECMDID_PRINTPREVIEW2",
+     "memid": 1073741873,
+     "kind": "const",
+     "type": "Long",
+     "value": 50
+    },
+    {
+     "name": "OLECMDID_SETPRINTTEMPLATE",
+     "memid": 1073741874,
+     "kind": "const",
+     "type": "Long",
+     "value": 51
+    },
+    {
+     "name": "OLECMDID_GETPRINTTEMPLATE",
+     "memid": 1073741875,
+     "kind": "const",
+     "type": "Long",
+     "value": 52
+    },
+    {
+     "name": "OLECMDID_PAGEACTIONBLOCKED",
+     "memid": 1073741876,
+     "kind": "const",
+     "type": "Long",
+     "value": 55
+    },
+    {
+     "name": "OLECMDID_PAGEACTIONUIQUERY",
+     "memid": 1073741877,
+     "kind": "const",
+     "type": "Long",
+     "value": 56
+    },
+    {
+     "name": "OLECMDID_FOCUSVIEWCONTROLS",
+     "memid": 1073741878,
+     "kind": "const",
+     "type": "Long",
+     "value": 57
+    },
+    {
+     "name": "OLECMDID_FOCUSVIEWCONTROLSQUERY",
+     "memid": 1073741879,
+     "kind": "const",
+     "type": "Long",
+     "value": 58
+    },
+    {
+     "name": "OLECMDID_SHOWPAGEACTIONMENU",
+     "memid": 1073741880,
+     "kind": "const",
+     "type": "Long",
+     "value": 59
+    },
+    {
+     "name": "OLECMDID_ADDTRAVELENTRY",
+     "memid": 1073741881,
+     "kind": "const",
+     "type": "Long",
+     "value": 60
+    },
+    {
+     "name": "OLECMDID_UPDATETRAVELENTRY",
+     "memid": 1073741882,
+     "kind": "const",
+     "type": "Long",
+     "value": 61
+    },
+    {
+     "name": "OLECMDID_UPDATEBACKFORWARDSTATE",
+     "memid": 1073741883,
+     "kind": "const",
+     "type": "Long",
+     "value": 62
+    },
+    {
+     "name": "OLECMDID_OPTICAL_ZOOM",
+     "memid": 1073741884,
+     "kind": "const",
+     "type": "Long",
+     "value": 63
+    },
+    {
+     "name": "OLECMDID_OPTICAL_GETZOOMRANGE",
+     "memid": 1073741885,
+     "kind": "const",
+     "type": "Long",
+     "value": 64
+    },
+    {
+     "name": "OLECMDID_WINDOWSTATECHANGED",
+     "memid": 1073741886,
+     "kind": "const",
+     "type": "Long",
+     "value": 65
+    },
+    {
+     "name": "OLECMDID_ACTIVEXINSTALLSCOPE",
+     "memid": 1073741887,
+     "kind": "const",
+     "type": "Long",
+     "value": 66
+    },
+    {
+     "name": "OLECMDID_UPDATETRAVELENTRY_DATARECOVERY",
+     "memid": 1073741888,
+     "kind": "const",
+     "type": "Long",
+     "value": 67
+    },
+    {
+     "name": "OLECMDID_SHOWTASKDLG",
+     "memid": 1073741889,
+     "kind": "const",
+     "type": "Long",
+     "value": 68
+    },
+    {
+     "name": "OLECMDID_POPSTATEEVENT",
+     "memid": 1073741890,
+     "kind": "const",
+     "type": "Long",
+     "value": 69
+    },
+    {
+     "name": "OLECMDID_VIEWPORT_MODE",
+     "memid": 1073741891,
+     "kind": "const",
+     "type": "Long",
+     "value": 70
+    },
+    {
+     "name": "OLECMDID_LAYOUT_VIEWPORT_WIDTH",
+     "memid": 1073741892,
+     "kind": "const",
+     "type": "Long",
+     "value": 71
+    },
+    {
+     "name": "OLECMDID_VISUAL_VIEWPORT_EXCLUDE_BOTTOM",
+     "memid": 1073741893,
+     "kind": "const",
+     "type": "Long",
+     "value": 72
+    },
+    {
+     "name": "OLECMDID_USER_OPTICAL_ZOOM",
+     "memid": 1073741894,
+     "kind": "const",
+     "type": "Long",
+     "value": 73
+    },
+    {
+     "name": "OLECMDID_PAGEAVAILABLE",
+     "memid": 1073741895,
+     "kind": "const",
+     "type": "Long",
+     "value": 74
+    },
+    {
+     "name": "OLECMDID_GETUSERSCALABLE",
+     "memid": 1073741896,
+     "kind": "const",
+     "type": "Long",
+     "value": 75
+    },
+    {
+     "name": "OLECMDID_UPDATE_CARET",
+     "memid": 1073741897,
+     "kind": "const",
+     "type": "Long",
+     "value": 76
+    },
+    {
+     "name": "OLECMDID_ENABLE_VISIBILITY",
+     "memid": 1073741898,
+     "kind": "const",
+     "type": "Long",
+     "value": 77
+    },
+    {
+     "name": "OLECMDID_MEDIA_PLAYBACK",
+     "memid": 1073741899,
+     "kind": "const",
+     "type": "Long",
+     "value": 78
+    },
+    {
+     "name": "OLECMDID_SETFAVICON",
+     "memid": 1073741900,
+     "kind": "const",
+     "type": "Long",
+     "value": 79
+    },
+    {
+     "name": "OLECMDID_SET_HOST_FULLSCREENMODE",
+     "memid": 1073741901,
+     "kind": "const",
+     "type": "Long",
+     "value": 80
+    },
+    {
+     "name": "OLECMDID_EXITFULLSCREEN",
+     "memid": 1073741902,
+     "kind": "const",
+     "type": "Long",
+     "value": 81
+    },
+    {
+     "name": "OLECMDID_SCROLLCOMPLETE",
+     "memid": 1073741903,
+     "kind": "const",
+     "type": "Long",
+     "value": 82
+    },
+    {
+     "name": "OLECMDID_ONBEFOREUNLOAD",
+     "memid": 1073741904,
+     "kind": "const",
+     "type": "Long",
+     "value": 83
+    }
+   ]
+  },
+  {
+   "name": "OLECMDF",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "OLECMDF_SUPPORTED",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "OLECMDF_ENABLED",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "OLECMDF_LATCHED",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "OLECMDF_NINCHED",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 8
+    },
+    {
+     "name": "OLECMDF_INVISIBLE",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 16
+    },
+    {
+     "name": "OLECMDF_DEFHIDEONCTXTMENU",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 32
+    }
+   ]
+  },
+  {
+   "name": "OLECMDEXECOPT",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "OLECMDEXECOPT_DODEFAULT",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "OLECMDEXECOPT_PROMPTUSER",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "OLECMDEXECOPT_DONTPROMPTUSER",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "OLECMDEXECOPT_SHOWHELP",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    }
+   ]
+  },
+  {
+   "name": "tagREADYSTATE",
+   "kind": "enum",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "READYSTATE_UNINITIALIZED",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "READYSTATE_LOADING",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "READYSTATE_LOADED",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "READYSTATE_INTERACTIVE",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "READYSTATE_COMPLETE",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    }
+   ]
+  },
+  {
+   "name": "SecureLockIconConstants",
+   "kind": "enum",
+   "guid": "{65507BE0-91A8-11D3-A845-009027220E6D}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "secureLockIconUnsecure",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "secureLockIconMixed",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "secureLockIconSecureUnknownBits",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "secureLockIconSecure40Bit",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    },
+    {
+     "name": "secureLockIconSecure56Bit",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "secureLockIconSecureFortezza",
+     "memid": 1073741829,
+     "kind": "const",
+     "type": "Long",
+     "value": 5
+    },
+    {
+     "name": "secureLockIconSecure128Bit",
+     "memid": 1073741830,
+     "kind": "const",
+     "type": "Long",
+     "value": 6
+    }
+   ]
+  },
+  {
+   "name": "NewProcessCauseConstants",
+   "kind": "enum",
+   "guid": "{A8317D46-03CB-4975-AE94-85E9F2E1D020}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "ProtectedModeRedirect",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    }
+   ]
+  },
+  {
+   "name": "DWebBrowserEvents2",
+   "kind": "dispatch",
+   "guid": "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",
+   "flags": [
+    "hidden",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "StatusTextChange",
+     "memid": 102,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ProgressChange",
+     "memid": 108,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Progress",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ProgressMax",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "CommandStateChange",
+     "memid": 105,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Command",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Enable",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DownloadBegin",
+     "memid": 106,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "DownloadComplete",
+     "memid": 104,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "TitleChange",
+     "memid": 113,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Text",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PropertyChange",
+     "memid": 112,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "szProperty",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "BeforeNavigate2",
+     "memid": 250,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Flags",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "TargetFrameName",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "PostData",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Headers",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NewWindow2",
+     "memid": 251,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ppDisp",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NavigateComplete2",
+     "memid": 252,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DocumentComplete",
+     "memid": 259,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnQuit",
+     "memid": 253,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "OnVisible",
+     "memid": 254,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Visible",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnToolBar",
+     "memid": 255,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ToolBar",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnMenuBar",
+     "memid": 256,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "MenuBar",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnStatusBar",
+     "memid": 257,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "StatusBar",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnFullScreen",
+     "memid": 258,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "FullScreen",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnTheaterMode",
+     "memid": 260,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "TheaterMode",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowSetResizable",
+     "memid": 262,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Resizable",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowSetLeft",
+     "memid": 264,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Left",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowSetTop",
+     "memid": 265,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Top",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowSetWidth",
+     "memid": 266,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Width",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowSetHeight",
+     "memid": 267,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "Height",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowClosing",
+     "memid": 263,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "IsChildWindow",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ClientToHostWindow",
+     "memid": 268,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "CX",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "CY",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetSecureLockIcon",
+     "memid": 269,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "SecureLockIcon",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "FileDownload",
+     "memid": 270,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ActiveDocument",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NavigateError",
+     "memid": 271,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Frame",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "StatusCode",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PrintTemplateInstantiation",
+     "memid": 225,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PrintTemplateTeardown",
+     "memid": 226,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "UpdatePageStatus",
+     "memid": 227,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "nPage",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fDone",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PrivacyImpactedStateChange",
+     "memid": 272,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "bImpacted",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NewWindow3",
+     "memid": 273,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "ppDisp",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      },
+      {
+       "name": "dwFlags",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrUrlContext",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetPhishingFilterStatus",
+     "memid": 282,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "PhishingFilterStatus",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowStateChanged",
+     "memid": 283,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "dwWindowStateFlags",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "dwValidFlagsMask",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NewProcess",
+     "memid": 284,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "lCauseFlag",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pWB2",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Cancel",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "in",
+        "out"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ThirdPartyUrlBlocked",
+     "memid": 285,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "URL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "dwCount",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RedirectXDomainBlocked",
+     "memid": 286,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDisp",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "StartURL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "RedirectURL",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Frame",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "StatusCode",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "BeforeScriptExecute",
+     "memid": 290,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "pDispWindow",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WebWorkerStarted",
+     "memid": 288,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "dwUniqueID",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrWorkerLabel",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WebWorkerFinsihed",
+     "memid": 289,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "dwUniqueID",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "WebBrowser_V1",
+   "kind": "coclass",
+   "guid": "{EAB22AC3-30C1-11CF-A7EB-0000C05BAE0B}",
+   "flags": [
+    "cancreate",
+    "control"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowser2",
+     "default": false,
+     "source": false
+    },
+    {
+     "name": "IWebBrowser",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DWebBrowserEvents2",
+     "default": false,
+     "source": true
+    },
+    {
+     "name": "DWebBrowserEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "WebBrowser",
+   "kind": "coclass",
+   "guid": "{8856F961-340A-11D0-A96B-00C04FD705A2}",
+   "flags": [
+    "cancreate",
+    "control"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowser2",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IWebBrowser",
+     "default": false,
+     "source": false
+    },
+    {
+     "name": "DWebBrowserEvents2",
+     "default": true,
+     "source": true
+    },
+    {
+     "name": "DWebBrowserEvents",
+     "default": false,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "InternetExplorer",
+   "kind": "coclass",
+   "guid": "{0002DF01-0000-0000-C000-000000000046}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowser2",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IWebBrowserApp",
+     "default": false,
+     "source": false
+    },
+    {
+     "name": "DWebBrowserEvents2",
+     "default": true,
+     "source": true
+    },
+    {
+     "name": "DWebBrowserEvents",
+     "default": false,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "InternetExplorerMedium",
+   "kind": "coclass",
+   "guid": "{D5E8041D-920F-45E9-B8FB-B1DEB82C6E5E}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowser2",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IWebBrowserApp",
+     "default": false,
+     "source": false
+    },
+    {
+     "name": "DWebBrowserEvents2",
+     "default": true,
+     "source": true
+    },
+    {
+     "name": "DWebBrowserEvents",
+     "default": false,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "ShellBrowserWindow",
+   "kind": "coclass",
+   "guid": "{C08AFD90-F2A1-11D1-8455-00A0C91F3880}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IWebBrowser2",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "IWebBrowserApp",
+     "default": false,
+     "source": false
+    },
+    {
+     "name": "DWebBrowserEvents2",
+     "default": true,
+     "source": true
+    },
+    {
+     "name": "DWebBrowserEvents",
+     "default": false,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "ShellWindowTypeConstants",
+   "kind": "enum",
+   "guid": "{F41E6981-28E5-11D0-82B4-00A0C90C29C5}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "SWC_EXPLORER",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "SWC_BROWSER",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "SWC_3RDPARTY",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "SWC_CALLBACK",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    },
+    {
+     "name": "SWC_DESKTOP",
+     "memid": 1073741828,
+     "kind": "const",
+     "type": "Long",
+     "value": 8
+    }
+   ]
+  },
+  {
+   "name": "ShellWindowFindWindowOptions",
+   "kind": "enum",
+   "guid": "{7716A370-38CA-11D0-A48B-00A0C90A8F39}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "SWFO_NEEDDISPATCH",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "SWFO_INCLUDEPENDING",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "SWFO_COOKIEPASSED",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 4
+    }
+   ]
+  },
+  {
+   "name": "DShellWindowsEvents",
+   "kind": "dispatch",
+   "guid": "{FE4106E0-399A-11D0-A48C-00A0C90A8F39}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "WindowRegistered",
+     "memid": 200,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "lCookie",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "WindowRevoked",
+     "memid": 201,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "lCookie",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellWindows",
+   "kind": "dispatch",
+   "guid": "{85CB6900-4D95-11CF-960C-0080C7F4EE85}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "Count",
+     "memid": 1610743808,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "Count",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Item",
+     "memid": 0,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "index",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Folder",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "_NewEnum",
+     "memid": -4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "IUnknown",
+     "params": [
+      {
+       "name": "ppunk",
+       "type": "IUnknown",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Register",
+     "memid": 1610743811,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pid",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "HWND",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "swClass",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "plCookie",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "RegisterPending",
+     "memid": 1610743812,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "lThreadId",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarloc",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarlocRoot",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "swClass",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "plCookie",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "Revoke",
+     "memid": 1610743813,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "lCookie",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "OnNavigate",
+     "memid": 1610743814,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "lCookie",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarloc",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "OnActivated",
+     "memid": 1610743815,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "lCookie",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fActive",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "FindWindowSW",
+     "memid": 1610743816,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "pvarloc",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarlocRoot",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "swClass",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pHWND",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out"
+       ]
+      },
+      {
+       "name": "swfwOptions",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ppdispOut",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "OnCreated",
+     "memid": 1610743817,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "lCookie",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "punk",
+       "type": "IUnknown",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "ProcessAttachDetach",
+     "memid": 1610743818,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fAttach",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ],
+     "flags": [
+      "hidden"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ShellWindows",
+   "kind": "coclass",
+   "guid": "{9BA05972-F6A8-11CF-A442-00A0C90A8F39}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellWindows",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DShellWindowsEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper",
+   "kind": "dispatch",
+   "guid": "{729FE2F8-1EA8-11D1-8F85-00C04FC2FBE1}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "ResetFirstBootMode",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "ResetSafeMode",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "RefreshOfflineDesktop",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [],
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "AddFavorite",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Title",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "AddChannel",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "AddDesktopComponent",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Type",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Left",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Top",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Width",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "Height",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 4
+    },
+    {
+     "name": "IsSubscribed",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NavigateAndFind",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "strQuery",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "varTargetFrame",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ImportExportFavorites",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fImport",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "strImpExpPath",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "AutoCompleteSaveForm",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Form",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "AutoScan",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "strSearch",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "strFailureUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarTargetFrame",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "AutoCompleteAttach",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Reserved",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1,
+     "flags": [
+      "hidden"
+     ]
+    },
+    {
+     "name": "ShowBrowserUI",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "bstrName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarIn",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarOut",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper2",
+   "kind": "dispatch",
+   "guid": "{A7FE6EDA-1932-4281-B881-87B31B8BC52C}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "AddSearchProvider",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RunOnceShown",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "SkipRunOnce",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "CustomizeSettings",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fSQM",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fPhishing",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrLocale",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SqmEnabled",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "PhishingEnabled",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "BrandImageUri",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrUri",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SkipTabsWelcome",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "DiagnoseConnection",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "CustomizeClearType",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fSet",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "IsSearchProviderInstalled",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ULong",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pdwResult",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "IsSearchMigrated",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfMigrated",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DefaultSearchProvider",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrName",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RunOnceRequiredSettingsComplete",
+     "memid": 27,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fComplete",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "RunOnceHasShown",
+     "memid": 28,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfShown",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SearchGuideUrl",
+     "memid": 29,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrUrl",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper3",
+   "kind": "dispatch",
+   "guid": "{528DF2EC-D419-40BC-9B6D-DCDBF9C1B25D}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper2",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "AddService",
+     "memid": 30,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "IsServiceInstalled",
+     "memid": 31,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "ULong",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Verb",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pdwResult",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "InPrivateFilteringEnabled",
+     "memid": 37,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "AddToFavoritesBar",
+     "memid": 32,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Title",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "Type",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "BuildNewTabPage",
+     "memid": 33,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "SetRecentlyClosedVisible",
+     "memid": 34,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fVisible",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetActivitiesVisible",
+     "memid": 35,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fVisible",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ContentDiscoveryReset",
+     "memid": 36,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "IsSuggestedSitesEnabled",
+     "memid": 38,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "EnableSuggestedSites",
+     "memid": 39,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fEnable",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "NavigateToSuggestedSites",
+     "memid": 40,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrRelativeUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "ShowTabsHelp",
+     "memid": 41,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "ShowInPrivateHelp",
+     "memid": 42,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper4",
+   "kind": "dispatch",
+   "guid": "{B36E6A53-8073-499E-824C-D776330A333E}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper3",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "msIsSiteMode",
+     "memid": 43,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfSiteMode",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msSiteModeShowThumbBar",
+     "memid": 47,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msSiteModeAddThumbBarButton",
+     "memid": 48,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "bstrIconURL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrTooltip",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarButtonID",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msSiteModeUpdateThumbBarButton",
+     "memid": 46,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "ButtonID",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fEnabled",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fVisible",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msSiteModeSetIconOverlay",
+     "memid": 44,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "IconUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarDescription",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "msSiteModeClearIconOverlay",
+     "memid": 45,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msAddSiteMode",
+     "memid": 49,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msSiteModeCreateJumpList",
+     "memid": 51,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrHeader",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msSiteModeAddJumpListItem",
+     "memid": 52,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrActionUri",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrIconUri",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarWindowType",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 1
+    },
+    {
+     "name": "msSiteModeClearJumpList",
+     "memid": 53,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msSiteModeShowJumpList",
+     "memid": 56,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msSiteModeAddButtonStyle",
+     "memid": 54,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "uiButtonID",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrIconURL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrTooltip",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "pvarStyleID",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msSiteModeShowButtonStyle",
+     "memid": 55,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "uiButtonID",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "uiStyleID",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msSiteModeActivate",
+     "memid": 58,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msIsSiteModeFirstRun",
+     "memid": 59,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "fPreserveState",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "puiFirstRun",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msAddTrackingProtectionList",
+     "memid": 57,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "URL",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrFilterName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msTrackingProtectionEnabled",
+     "memid": 60,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msActiveXFilteringEnabled",
+     "memid": 61,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pfEnabled",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper5",
+   "kind": "dispatch",
+   "guid": "{A2A08B09-103D-4D3F-B91C-EA455CA82EFA}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper4",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "msProvisionNetworks",
+     "memid": 62,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "bstrProvisioningXml",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "puiResult",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msReportSafeUrl",
+     "memid": 63,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msSiteModeRefreshBadge",
+     "memid": 64,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msSiteModeClearBadge",
+     "memid": 65,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msDiagnoseConnectionUILess",
+     "memid": 66,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msLaunchNetworkClientHelp",
+     "memid": 67,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msChangeDefaultBrowser",
+     "memid": 68,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fChange",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper6",
+   "kind": "dispatch",
+   "guid": "{987A573E-46EE-4E89-96AB-DDF7F8FDC98C}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper5",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "msStopPeriodicTileUpdate",
+     "memid": 69,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msStartPeriodicTileUpdate",
+     "memid": 70,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pollingUris",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "startTime",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "uiUpdateRecurrence",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2
+    },
+    {
+     "name": "msStartPeriodicTileUpdateBatch",
+     "memid": 75,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pollingUris",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "startTime",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "uiUpdateRecurrence",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2
+    },
+    {
+     "name": "msClearTile",
+     "memid": 71,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msEnableTileNotificationQueue",
+     "memid": 72,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fChange",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msPinnedSiteState",
+     "memid": 73,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvarSiteState",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msEnableTileNotificationQueueForSquare150x150",
+     "memid": 76,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fChange",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msEnableTileNotificationQueueForWide310x150",
+     "memid": 77,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fChange",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msEnableTileNotificationQueueForSquare310x310",
+     "memid": 78,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fChange",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msScheduledTileNotification",
+     "memid": 79,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrNotificationXml",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrNotificationId",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "bstrNotificationTag",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "startTime",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "expirationTime",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2
+    },
+    {
+     "name": "msRemoveScheduledTileNotification",
+     "memid": 80,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrNotificationId",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "msStartPeriodicBadgeUpdate",
+     "memid": 81,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "pollingUri",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "startTime",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      },
+      {
+       "name": "uiUpdateRecurrence",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in",
+        "optional"
+       ]
+      }
+     ],
+     "optcount": 2
+    },
+    {
+     "name": "msStopPeriodicBadgeUpdate",
+     "memid": 82,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "msLaunchInternetOptions",
+     "memid": 74,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper7",
+   "kind": "dispatch",
+   "guid": "{66DEBCF2-05B0-4F07-B49B-B96241A65DB2}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper6",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "GetCVListData",
+     "memid": 84,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "GetCVListLocalData",
+     "memid": 85,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "GetEMIEListData",
+     "memid": 86,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "GetEMIEListLocalData",
+     "memid": 87,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pbstrResult",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellUIHelper8",
+   "kind": "dispatch",
+   "guid": "{7E2D51B2-8B64-49A7-8C73-7BD7CB05CCBA}",
+   "flags": [
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper7",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "GetNeedIEAutoLaunchFlag",
+     "memid": 90,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "bstrUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "flag",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetNeedIEAutoLaunchFlag",
+     "memid": 91,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "flag",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "HasNeedIEAutoLaunchFlag",
+     "memid": 89,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "bstrUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "exists",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "LaunchIE",
+     "memid": 92,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "automated",
+       "type": "Boolean",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ShellUIHelper",
+   "kind": "coclass",
+   "guid": "{64AB4BB7-111E-11D1-8F79-00C04FC2FBE1}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellUIHelper8",
+     "default": true,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "DShellNameSpaceEvents",
+   "kind": "dispatch",
+   "guid": "{55136806-B2DE-11D1-B9F2-00A0C98BC547}",
+   "flags": [
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "FavoritesSelectionChange",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": [
+      {
+       "name": "cItems",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "hItem",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "strName",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "strUrl",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "cVisits",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "strDate",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "fAvailableOffline",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SelectionChange",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "DoubleClick",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    },
+    {
+     "name": "Initialized",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Void",
+     "params": []
+    }
+   ]
+  },
+  {
+   "name": "IShellFavoritesNameSpace",
+   "kind": "dispatch",
+   "guid": "{55136804-B2DE-11D1-B9F2-00A0C98BC547}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "MoveSelectionUp",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "MoveSelectionDown",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "ResetSort",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "NewFolder",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Synchronize",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Import",
+     "memid": 6,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "Export",
+     "memid": 7,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "InvokeContextMenuCommand",
+     "memid": 8,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "strCommand",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "MoveSelectionTo",
+     "memid": 9,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "SubscriptionsEnabled",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "CreateSubscriptionForSelection",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "DeleteSubscriptionForSelection",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Boolean",
+     "params": [
+      {
+       "name": "pBool",
+       "type": "Boolean",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetRoot",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "bstrFullPath",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IShellNameSpace",
+   "kind": "dispatch",
+   "guid": "{E572D3C9-37BE-4AE2-825D-D521763E3108}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellFavoritesNameSpace",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "EnumOptions",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pgrfEnumFlags",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "EnumOptions",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SelectedItem",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "pItem",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SelectedItem",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Root",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Variant",
+     "params": [
+      {
+       "name": "pvar",
+       "type": "Variant",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Root",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Depth",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "piDepth",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Depth",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Mode",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ULong",
+     "params": [
+      {
+       "name": "puMode",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Mode",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Flags",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ULong",
+     "params": [
+      {
+       "name": "pdwFlags",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Flags",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "TVFlags",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "ULong",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "TVFlags",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "ULong",
+     "params": [
+      {
+       "name": "dwFlags",
+       "type": "ULong",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Columns",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "String",
+     "params": [
+      {
+       "name": "bstrColumns",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Columns",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "let",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "arg1",
+       "type": "String",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "CountViewTypes",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "get",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "piTypes",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SetViewType",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "iType",
+       "type": "Long",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "SelectedItems",
+     "memid": 24,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Object",
+     "params": [
+      {
+       "name": "ppid",
+       "type": "Object",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Expand",
+     "memid": 25,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "var",
+       "type": "Variant",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "iDepth",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ]
+    },
+    {
+     "name": "UnselectAll",
+     "memid": 26,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    }
+   ]
+  },
+  {
+   "name": "ShellNameSpace",
+   "kind": "coclass",
+   "guid": "{55136805-B2DE-11D1-B9F2-00A0C98BC547}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IShellNameSpace",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "DShellNameSpaceEvents",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "IScriptErrorList",
+   "kind": "dispatch",
+   "guid": "{F3470F24-15FD-11D2-BB2E-00805FF7EFCA}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "advanceError",
+     "memid": 10,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "retreatError",
+     "memid": 11,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": []
+    },
+    {
+     "name": "canAdvanceError",
+     "memid": 12,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pfCanAdvance",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "canRetreatError",
+     "memid": 13,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pfCanRetreat",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getErrorLine",
+     "memid": 14,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plLine",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getErrorChar",
+     "memid": 15,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plChar",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getErrorCode",
+     "memid": 16,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "plCode",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getErrorMsg",
+     "memid": 17,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pstr",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getErrorUrl",
+     "memid": 18,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "String",
+     "params": [
+      {
+       "name": "pstr",
+       "type": "String",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getAlwaysShowLockState",
+     "memid": 23,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pfAlwaysShowLocked",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "getDetailsPaneOpen",
+     "memid": 19,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pfDetailsPaneOpen",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "setDetailsPaneOpen",
+     "memid": 20,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fDetailsPaneOpen",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ]
+    },
+    {
+     "name": "getPerErrorDisplay",
+     "memid": 21,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "Long",
+     "params": [
+      {
+       "name": "pfPerErrorDisplay",
+       "type": "Long",
+       "byref": true,
+       "flags": [
+        "out",
+        "retval"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "setPerErrorDisplay",
+     "memid": 22,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "fPerErrorDisplay",
+       "type": "Long",
+       "byref": false,
+       "flags": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CScriptErrorList",
+   "kind": "coclass",
+   "guid": "{EFD01300-160F-11D2-BB2E-00805FF7EFCA}",
+   "flags": [
+    "hidden"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IScriptErrorList",
+     "default": true,
+     "source": false
+    }
+   ]
+  }
+ ]
+}

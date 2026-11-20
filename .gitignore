@@ -19,6 +19,7 @@ tests/ide/work/
 tests/comp/work/
 tests/debugger/work/
 tests/vb6/work/
+tests/package/work/
 # the database runtime: objects, the design-time tool, SQLite copies of .mdb files
 runtime/db/obj/
 runtime/db/obj-*/

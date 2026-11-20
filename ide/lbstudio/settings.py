@@ -24,6 +24,9 @@ DEFAULTS = {
     "dockable": {},                     # Tools > Options > Docking: {"immediate": True, ... "objbrowser": False}
     "layout_dockable": True,           # Form Layout: Dockable (off: a window among the code and form windows)
     "addin_reseditor_startup": False,  # Add-In Manager: VB 6 Resource Editor, Load on Startup
+    "addin_pdw_startup": False,  # Add-In Manager: Package and Deployment Wizard, Load on Startup
+    "addin_appwiz_startup": False,  # Add-In Manager: VB 6 Application Wizard, Load on Startup (phase 9.2)
+    "appwiz_no_created": False,  # Application Wizard: "Don't show this dialog in the future." (Application Created)
     # General / UI
     "localization": "english.xml",
     "toolbar_hidden": False,

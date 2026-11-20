@@ -100,6 +100,32 @@ cp -a "$SRC/runtime/vbrt.h" "$SRC/runtime/libvbrt.a" "$SRC/runtime/libvbdb.a" "$
 cp -a "$SRC/runtime/db/lbdbinfo" "$SHARE/runtime/db/"
 cp -a "$SRC/runtime/forms/libvbforms.so" "$SHARE/runtime/forms/"
 cp -a "$SRC/runtime/tcc-linux" "$SHARE/runtime/"
+# the programs for Windows (Make, the Package and Deployment Wizard): the cross Tiny C Compiler, the runtime DLLs
+# and Qt 5 for Windows of runtime/win32, runtime/win64 (lbvc with LBVC_WIN_CC=tcc, set by AppRun; no mingw-w64)
+for k in win32 win64; do
+  kd="$SRC/runtime/$k"
+  if [ -x "$kd/tcc/cross-tcc" ] && [ -f "$kd/dll/vbrt.dll" ] && [ -f "$kd/qt/bin/Qt5Core.dll" ]; then
+    mkdir -p "$SHARE/runtime/$k/tcc" "$SHARE/runtime/$k/qt/bin" "$SHARE/runtime/$k/qt/plugins"
+    cp -a "$kd/tcc/cross-tcc" "$kd/tcc/include" "$kd/tcc/lib" "$kd/tcc/COPYING" "$SHARE/runtime/$k/tcc/"
+    cp -a "$kd/dll" "$SHARE/runtime/$k/"
+    cp -a "$kd"/qt/bin/*.dll "$SHARE/runtime/$k/qt/bin/"
+    for p in platforms imageformats styles; do
+      if [ -d "$kd/qt/plugins/$p" ]; then cp -a "$kd/qt/plugins/$p" "$SHARE/runtime/$k/qt/plugins/"; fi
+    done
+    echo "   + runtime/$k (programs for Windows)"
+  else
+    echo "   (no runtime/$k: no programs for $k - packaging/build-tcc.sh, build-qt-windows.sh, runtime/build-dll-win.sh)"
+  fi
+done
+# the AppImages of the users' programs (lbvc --package --format appimage): appimagetool and the type2 runtime
+mkdir -p "$SHARE/runtime/appimage"
+cp "$APPIMAGETOOL" "$SHARE/runtime/appimage/appimagetool"
+cp "$RUNTIME" "$SHARE/runtime/appimage/runtime-x86_64"
+for l in appimagetool runtime-x86_64; do
+  repo=$([ $l = appimagetool ] && echo appimagetool || echo type2-runtime)
+  [ -s "$TOOLS/$l.LICENSE" ] || curl -fsSL -o "$TOOLS/$l.LICENSE" "https://raw.githubusercontent.com/AppImage/$repo/main/LICENSE" || true
+  if [ -s "$TOOLS/$l.LICENSE" ]; then cp "$TOOLS/$l.LICENSE" "$SHARE/runtime/appimage/"; fi
+done
 find "$SHARE" -name '__pycache__' -prune -exec rm -rf {} +
 cp "$SRC/LICENSE" "$SRC/RUNTIME-EXCEPTION" "$SRC/README.md" "$SHARE/"
 cp -a "$SRC/licenses" "$SHARE/"

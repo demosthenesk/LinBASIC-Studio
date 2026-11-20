@@ -86,7 +86,7 @@ OCX_LIBS = {'mscomctllib', 'comctllib', 'mscomctl2', 'comct2lib', 'msflexgridlib
             'picclip', 'mschart20lib', 'mscomdlg', 'mci', 'mscommlib', 'msadodclib', 'msdatagridlib',
             'msdatalistlib', 'msdatareportlib', 'stdformat', 'sysinfolib', 'mswinsocklib', 'inetctlsobjects',
             'msmask', 'msdbgrid', 'msdbctls', 'comctl3', 'msrdc', 'msdatarepeaterlib', 'msmapi',
-            'mshierarchicalflexgridlib'}
+            'mshierarchicalflexgridlib', 'shdocvw', 'shdocvwctl'}
 OCX_TYPES = {'node', 'nodes', 'listitem', 'listitems', 'listsubitem', 'listsubitems', 'columnheader',
              'columnheaders', 'panel', 'panels', 'button', 'buttons', 'buttonmenu', 'buttonmenus', 'tab', 'tabs',
              'listimage', 'listimages', 'comboitem', 'comboitems', 'imagelist', 'treeview', 'listview', 'toolbar',
@@ -95,7 +95,7 @@ OCX_TYPES = {'node', 'nodes', 'listitem', 'listitems', 'listsubitem', 'listsubit
              'commondialog', 'adodc', 'datagrid', 'datalist', 'datacombo', 'column', 'columns', 'split', 'splits',
              'selbookmarks', 'mmcontrol', 'mscomm', 'sysinfo', 'winsock', 'inet', 'maskedbox', 'dbgrid', 'dblist',
              'dbcombo', 'coolbar', 'band', 'bands', 'msrdc', 'datarepeater', 'repeaterbindings', 'repeaterbinding',
-             'mapisession', 'mapimessages', 'mshflexgrid'}
+             'mapisession', 'mapimessages', 'mshflexgrid', 'webbrowser'}
 
 # the classes of the Data Formatting Object Library (runtime/stdfmt.c, MSSTDFMT.DLL), by their names in VB
 STDFMT_TYPES = {'stddataformat': 'stddataformat', 'stddataformat2': 'stddataformat', 'istddataformatdisp': 'stddataformat',
@@ -521,7 +521,8 @@ class Compiler:
         'msadodclib.adodc', 'msdatagridlib.datagrid', 'msdatalistlib.datalist', 'msdatalistlib.datacombo',
         'mci.mmcontrol', 'mscommlib.mscomm', 'sysinfolib.sysinfo', 'mswinsocklib.winsock', 'inetctlsobjects.inet',
         'msmask.maskedbox', 'msdbgrid.dbgrid', 'msdbctls.dblist', 'msdbctls.dbcombo', 'comctl3.coolbar',
-        'msrdc.msrdc', 'msdatarepeaterlib.datarepeater', 'msmapi.mapisession', 'msmapi.mapimessages'}
+        'msrdc.msrdc', 'msdatarepeaterlib.datarepeater', 'msmapi.mapisession', 'msmapi.mapimessages',
+        'shdocvwctl.webbrowser', 'shdocvw.webbrowser'}
     DB_OCX = {'msadodclib.adodc', 'msdatagridlib.datagrid', 'msdatalistlib.datalist', 'msdatalistlib.datacombo',
               'msdbgrid.dbgrid', 'msdbctls.dblist', 'msdbctls.dbcombo', 'msrdc.msrdc', 'msdatarepeaterlib.datarepeater'}
 

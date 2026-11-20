@@ -302,9 +302,13 @@ class AddWatchDialog(QDialog):
         self.mod_box.addItem(ALL_MODS)
         for name, _ in self.modules:
             self.mod_box.addItem(name)
-        g.addWidget(QLabel("&Procedure:"), 0, 0)
+        lab = QLabel("&Procedure:")             # the & is a mnemonic (Alt+P), not shown: the label has a buddy
+        lab.setBuddy(self.proc_box)
+        g.addWidget(lab, 0, 0)
         g.addWidget(self.proc_box, 0, 1)
-        g.addWidget(QLabel("&Module:"), 1, 0)
+        lab = QLabel("&Module:")
+        lab.setBuddy(self.mod_box)
+        g.addWidget(lab, 1, 0)
         g.addWidget(self.mod_box, 1, 1)
         g.addWidget(QLabel("Project:"), 2, 0)
         g.addWidget(QLabel(project), 2, 1)

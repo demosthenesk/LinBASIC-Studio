@@ -1,0 +1,29 @@
+Load: rs=1 busy=False loc=[] type=error -2147467259
+BeforeNavigate2 <app>/page1.html flags=256 target=[]
+after Navigate: busy=False rs=1
+NavigateComplete2 <app>/page1.html loc=page1.html busy=True
+DocumentComplete <app>/page1.html loc=page1.html name=page1.html busy=False rs=4 type=HTML Document
+step 1: back=False fwd=False loc=page1.html
+BeforeNavigate2 <app>/page2.html flags=256 target=[]
+NavigateComplete2 <app>/page2.html loc=page2.html busy=True
+DocumentComplete <app>/page2.html loc=page2.html name=page2.html busy=False rs=4 type=HTML Document
+step 2: back=True fwd=False loc=page2.html
+BeforeNavigate2 <app>/page1.html flags=320 target=[]
+NavigateComplete2 <app>/page1.html loc=page1.html busy=True
+DocumentComplete <app>/page1.html loc=page1.html name=page1.html busy=False rs=4 type=HTML Document
+step 3: back=False fwd=True loc=page1.html
+BeforeNavigate2 <app>/page2.html flags=320 target=[]
+NavigateComplete2 <app>/page2.html loc=page2.html busy=True
+DocumentComplete <app>/page2.html loc=page2.html name=page2.html busy=False rs=4 type=HTML Document
+step 4: back=True fwd=False loc=page2.html
+error -2147467259: Method 'GoForward' of object 'IWebBrowser2' failed
+step 5: back=True fwd=False loc=page2.html
+BeforeNavigate2 <app>/cancel.html flags=256 target=[]
+  cancelled
+step 6: back=True fwd=False loc=page2.html
+BeforeNavigate2 about:blank flags=256 target=[]
+NavigateComplete2 about:blank loc=about:blank busy=True
+DocumentComplete about:blank loc=about:blank name=about:blank busy=False rs=4 type=HTML Document
+step 7: back=True fwd=False loc=about:blank
+blank: loc=about:blank name=about:blank rs=4 busy=False
+end

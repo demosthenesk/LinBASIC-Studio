@@ -55,6 +55,8 @@ LIBS = [  # (file in VB6-REA, TYPELIB resource index, output name)
     ("System32/msrdc20.Ocx", 1, "MSRDC"),
     ("System32/msmapi32.Ocx", 1, "MSMAPI"),
     ("System32/msrdo20.dll", 1, "RDO"),          # phase 7.8: Microsoft Remote Data Object 2.0 (VB6 Enterprise)
+    # Phase 9.2: the WebBrowser control (Microsoft Internet Controls) of the Application Wizard
+    ("System32/ieframe.dll", 1, "SHDocVw"),
 ]
 PFLAGS = {1: "in", 2: "out", 4: "lcid", 8: "retval", 0x10: "optional", 0x20: "hasdefault"}
 

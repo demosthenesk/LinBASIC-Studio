@@ -267,6 +267,8 @@ struct Ocx {
     virtual QWidget *make(QWidget *parent) = 0;       /* 0: no window (ImageList, PictureClip) */
     virtual void load(const char *const *p) { (void)p; }
     virtual void shown() {}                     /* the form is shown (the CoolBar takes its children) */
+    virtual void loaded() {}                    /* all the controls of the form exist (before Form_Load): an ImageList
+                                                 * written after the control in the .frm can be found now */
     virtual void resized() {}                   /* its size changed (Align, Width ...) */
     virtual bool clicks() { return false; }     /* Click comes from the mouse events of the forms runtime */
     virtual bool inside(QWidget *w, QPoint lp) { return w->rect().contains(lp); }   /* where a release clicks */
@@ -805,9 +807,13 @@ struct OcxToolbar : Ocx {
     bool showtips = true;
     QPointer<QWidget> bar;
     ~OcxToolbar() { if (il) vb_orelease(il); }
+    void loaded() override { if (!ilname.isEmpty() && !il) sync(); }     /* the pictures of an ImageList after it */
     QWidget *make(QWidget *parent) override
     {
         bar = new QWidget(parent);
+        /* a pressed button (Value = tbrPressed, a group, a check) stands out in a dark theme too (aw25) */
+        bar->setStyleSheet("QToolButton:checked { background-color: palette(highlight); border: 1px solid palette(shadow);"
+                           " border-radius: 2px; }");
         auto *lay = new QHBoxLayout(bar);
         lay->setContentsMargins(2, 2, 2, 2);
         lay->setSpacing(0);
@@ -849,7 +855,8 @@ struct OcxToolbar : Ocx {
             if (!px.isNull()) b->btn->setIconSize(px.size());
             b->btn->setToolButtonStyle(b->caption.isEmpty() ? Qt::ToolButtonIconOnly : px.isNull() ? Qt::ToolButtonTextOnly :
                                        textalign ? Qt::ToolButtonTextBesideIcon : Qt::ToolButtonTextUnderIcon);
-            b->btn->setCheckable(b->style == 1 || b->style == 2);
+            /* a plain button with Value = tbrPressed is drawn pressed too (frmDocument of the wizard: Bold) */
+            b->btn->setCheckable(b->style == 1 || b->style == 2 || b->value != 0);
             b->btn->setChecked(b->value != 0);
             b->btn->setAutoRaise(style == 1);
             if (b->style == 5) menu_sync(b);
@@ -860,7 +867,9 @@ struct OcxToolbar : Ocx {
     void load(const char *const *p) override
     {
         prop(p, "ImageList", &ilname);
-        bw = propn(p, "ButtonWidth", 0); bh = propn(p, "ButtonHeight", 0);
+        /* the .frm keeps ButtonWidth / ButtonHeight in HIMETRIC like _ExtentX (VB6: Height 420 with ButtonHeight 582,
+         * aw1 frmMain, f_comctl): in twips here */
+        bw = propn(p, "ButtonWidth", 0) * 1440.0 / 2540.0; bh = propn(p, "ButtonHeight", 0) * 1440.0 / 2540.0;
         style = (int)propn(p, "Style", 0); textalign = (int)propn(p, "TextAlignment", 0);
         showtips = propn(p, "ShowTips", -1) != 0;
         int n = (int)propn(p, "Buttons.NumButtons", 0);
@@ -878,7 +887,10 @@ struct OcxToolbar : Ocx {
             b->visible = ipropn(p, base, "Visible", -1) != 0;
             b->mixed = ipropn(p, base, "MixedState", 0) != 0;
             b->width = ipropn(p, base, "Width", 0);
-            if (iprop(p, base, "Image", &img) && !img.isEmpty()) { vbvar t = vb_v_s(vs(img)); vb_vset(&b->image, t); }
+            /* Image as VB6 writes it: ImageIndex = n, or ImageKey = "key" (the Application Wizard: aw1 frmMain) */
+            if ((iprop(p, base, "Image", &img) || iprop(p, base, "ImageKey", &img)) && !img.isEmpty()) {
+                vbvar t = vb_v_s(vs(img)); vb_vset(&b->image, t);
+            }
             int ix = (int)ipropn(p, base, "ImageIndex", 0);
             if (ix) { vbvar t = vb_v_l(ix); vb_vset(&b->image, t); }
             int nm = (int)ipropn(p, base, "ButtonMenus.NumButtonMenus", 0);
@@ -960,8 +972,10 @@ vbvar TbButton::member(const std::string &n, vb_i32 kind, bool set, vbvar val, v
     (void)kind; (void)argc; (void)argv;
     OcxToolbar *tb = button_owner(this);
     if (n == "buttonmenus") return list_ret(menus, argc, argv);
-    if (n == "caption") { if (!set) return vstr(caption); caption = qs(vb_v2s(val)); return vb_v_empty(); }
-    if (n == "tooltiptext") { if (!set) return vstr(tip); tip = qs(vb_v2s(val)); return vb_v_empty(); }
+    /* a change shows at once (aw25: Value = tbrPressed from the SelChange of a RichTextBox) */
+    auto shown = [tb]() { if (tb) tb->sync(); return vb_v_empty(); };
+    if (n == "caption") { if (!set) return vstr(caption); caption = qs(vb_v2s(val)); return shown(); }
+    if (n == "tooltiptext") { if (!set) return vstr(tip); tip = qs(vb_v2s(val)); return shown(); }
     if (n == "description") { if (!set) return vstr(description); description = qs(vb_v2s(val)); return vb_v_empty(); }
     if (n == "style") {
         if (!set) return vb_v_l(style);
@@ -971,16 +985,25 @@ vbvar TbButton::member(const std::string &n, vb_i32 kind, bool set, vbvar val, v
         if (tb) tb->rebuild();
         return vb_v_empty();
     }
-    if (n == "value") { if (!set) return vb_v_l(value); value = vb_v2i(val) ? 1 : 0; return vb_v_empty(); }
+    if (n == "value") {
+        if (!set) return vb_v_l(value);
+        value = vb_v2i(val) ? 1 : 0;
+        if (value && style == 2 && tb) {        /* a group: the buttons of the group next to it go up */
+            int i = tb->buttons.index_of(this);
+            for (int j = i - 1; j >= 0 && ((TbButton *)tb->buttons.items[j])->style == 2; j--) ((TbButton *)tb->buttons.items[j])->value = 0;
+            for (int j = i + 1; j < (int)tb->buttons.items.size() && ((TbButton *)tb->buttons.items[j])->style == 2; j++) ((TbButton *)tb->buttons.items[j])->value = 0;
+        }
+        return shown();
+    }
     if (n == "image") {
         if (!set) return vb_vtmp(image);
         if (tb && !image_ok(imagelist_of(tb->c, &tb->il, tb->ilname), val)) return vb_v_empty();
         vb_vset(&image, val);
-        return vb_v_empty();
+        return shown();
     }
-    if (n == "enabled") { if (!set) return vbool(enabled); enabled = vb_v2bool(val) != 0; return vb_v_empty(); }
-    if (n == "visible") { if (!set) return vbool(visible); visible = vb_v2bool(val) != 0; return vb_v_empty(); }
-    if (n == "mixedstate") { if (!set) return vbool(mixed); mixed = vb_v2bool(val) != 0; return vb_v_empty(); }
+    if (n == "enabled") { if (!set) return vbool(enabled); enabled = vb_v2bool(val) != 0; return shown(); }
+    if (n == "visible") { if (!set) return vbool(visible); visible = vb_v2bool(val) != 0; return shown(); }
+    if (n == "mixedstate") { if (!set) return vbool(mixed); mixed = vb_v2bool(val) != 0; return shown(); }
     if (n == "width") {
         if (!set) {
             double t = btn ? btn->width() * TPP : space ? space->width() * TPP : width;
@@ -1111,6 +1134,7 @@ struct OcxTabStrip : Ocx {
     QPointer<TabStripWidget> wd;
     bool syncing = false;
     ~OcxTabStrip() { if (il) vb_orelease(il); }
+    void loaded() override { if (!ilname.isEmpty() && !il) sync(); }
     QWidget *make(QWidget *parent) override
     {
         wd = new TabStripWidget(parent);
@@ -1158,7 +1182,9 @@ struct OcxTabStrip : Ocx {
             if (iprop(p, base, "Tag", &tag)) { vbvar v = vb_v_s(vs(tag)); vb_vset(&t->tag, v); }
             int ix = (int)ipropn(p, base, "ImageIndex", 0);
             if (ix) { vbvar v = vb_v_l(ix); vb_vset(&t->image, v); }
-            else if (iprop(p, base, "Image", &img) && !img.isEmpty()) { vbvar v = vb_v_s(vs(img)); vb_vset(&t->image, v); }
+            else if ((iprop(p, base, "Image", &img) || iprop(p, base, "ImageKey", &img)) && !img.isEmpty()) {
+                vbvar v = vb_v_s(vs(img)); vb_vset(&t->image, v);
+            }
             if (!tabs.insert(t, -1, key)) break;
         }
         sync();
@@ -1240,6 +1266,7 @@ static OcxItem *tab_add(OcxTabStrip *ts, vb_i32 argc, vbvar *argv)
 #include "ocx_comm.inc"
 #include "ocx_winsock.inc"
 #include "ocx_inet.inc"
+#include "ocx_web.inc"
 #include "ocx_mapi.inc"
 #include "ocx_mask.inc"
 #include "ocx_cool.inc"
@@ -1351,6 +1378,7 @@ static const OcxType *ocx_type(const std::string &t)
         { "MSComm", nullptr, new_mscomm },
         { "Winsock", "remotehost", new_winsock },
         { "Inet", "url", new_inet },
+        { "WebBrowser", nullptr, new_webbrowser },
         { "MAPISession", nullptr, new_mapisession },
         { "MAPIMessages", nullptr, new_mapimessages },
         { "MaskEdBox", "text", new_maskedbox },
@@ -1450,6 +1478,11 @@ static bool ocx_clicks(Ocx *x) { return x && x->clicks(); }
 static bool ocx_inside(Ocx *x, QWidget *w, QPoint lp) { return x ? x->inside(w, lp) : w->rect().contains(lp); }
 static bool ocx_eat_mouse(Ocx *x, QMouseEvent *me) { return x && x->eat_mouse(me); }
 static void ocx_resized(Ctl *c) { if (c && c->ocx) c->ocx->resized(); }
+static void ocx_loaded(FormState *st)
+{
+    std::vector<vbobj> v = st->ctls;
+    for (vbobj o : v) { Ctl *c = C(o); if (c && c->ocx && c->form == st) c->ocx->loaded(); }
+}
 static void ocx_shown(FormState *st)
 {
     std::vector<vbobj> v = st->ctls;

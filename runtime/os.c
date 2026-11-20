@@ -304,6 +304,44 @@ int vbos_copyfile(const char *from, const char *to)
 }
 
 /* Shell: starts a program and does not wait; the task id (process id), or -1 */
+#ifndef _WIN32
+/* Shell of a program that does not exist: error 53 as VB6 (CreateProcess fails); "sh -c" alone always starts.
+ * The program is the first word of the command (in quotes when it has spaces): a path, or found in PATH; a
+ * builtin of the shell (cd, export ...) is let through. (aw24: Shell "gnome-system-monitor" without it) */
+static int shell_program_exists(const char *cmd)
+{
+    while (*cmd == ' ' || *cmd == '\t') cmd++;
+    char prog[1024]; size_t n = 0;
+    if (*cmd == '"' || *cmd == '\'') {
+        char q = *cmd++;
+        while (*cmd && *cmd != q && n < sizeof prog - 1) prog[n++] = *cmd++;
+    } else {
+        while (*cmd && *cmd != ' ' && *cmd != '\t' && *cmd != ';' && *cmd != '&' && *cmd != '|' &&
+               *cmd != '<' && *cmd != '>' && n < sizeof prog - 1) prog[n++] = *cmd++;
+    }
+    prog[n] = 0;
+    if (!n) return 0;
+    static const char *builtins[] = { "cd", "export", "exec", "set", "unset", "ulimit", "umask", ".", "source",
+                                      "eval", "test", "[", "true", "false", "exit", "nohup", 0 };
+    for (int i = 0; builtins[i]; i++) if (!strcmp(prog, builtins[i])) return 1;
+    if (strchr(prog, '=')) return 1;            /* VAR=value program ... */
+    if (strchr(prog, '/')) return access(prog, X_OK) == 0;
+    const char *path = getenv("PATH");
+    if (!path || !*path) path = "/usr/local/bin:/usr/bin:/bin";
+    char full[2048];
+    while (*path) {
+        const char *e = strchr(path, ':');
+        size_t len = e ? (size_t)(e - path) : strlen(path);
+        snprintf(full, sizeof full, "%.*s/%s", (int)len, len ? path : ".", prog);
+        struct stat stt;
+        if (access(full, X_OK) == 0 && stat(full, &stt) == 0 && S_ISREG(stt.st_mode)) return 1;
+        if (!e) break;
+        path = e + 1;
+    }
+    return 0;
+}
+#endif
+
 long vbos_shell(const char *cmd, int style)
 {
 #ifdef _WIN32
@@ -320,6 +358,7 @@ long vbos_shell(const char *cmd, int style)
     return (long)pi.dwProcessId;
 #else
     (void)style;
+    if (!shell_program_exists(cmd)) return -1;
     fflush(0);
     pid_t pid = fork();
     if (pid < 0) return -1;

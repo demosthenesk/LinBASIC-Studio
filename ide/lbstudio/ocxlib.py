@@ -12,8 +12,9 @@ class OcxControl:
     _Version VB6 writes, and the properties a new one gets"""
 
     def __init__(self, cls, base, w, h, version=393216, invisible=False, container=False, extra=None, bag=None,
-                 streamid=None):
+                 streamid=None, extent="_"):
         self.cls, self.base, self.w, self.h = cls, base, w, h
+        self.extent = extent                     # "_ExtentX" ...; the WebBrowser writes "ExtentX" (no _Version)
         self.streamid = streamid                 # _StreamID before _Version (the DataRepeater)
         self.version, self.invisible, self.container = version, invisible, container
         self.extra = extra or []
@@ -174,6 +175,21 @@ LIBS = [
     OcxLib("SysInfoLib", "{6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}", "1.0", "SysInfo.Ocx",
            "Microsoft SysInfo Control 6.0",
            [OcxControl("SysInfo", "SysInfo", 570, 570, invisible=True)]),
+    # phase 9.2: the WebBrowser of the Application Wizard (runtime/forms/ocx_web.inc, on QTextBrowser); as the VB6 IDE
+    # writes it (VB6 oracle DEV-9/aw3 frmBrowser): ExtentX / ExtentY without "_", no _Version, these properties
+    OcxLib("SHDocVwCtl", "{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}", "1.1", "ieframe.dll",
+           "Microsoft Internet Controls",
+           [OcxControl("WebBrowser", "WebBrowser", 3735, 2535, version=None, extent="",
+                       extra=[("ViewMode", 0), ("Offline", 0), ("Silent", 0), ("RegisterAsBrowser", 0),
+                              ("RegisterAsDropTarget", 1), ("AutoArrange", False), ("NoClientEdge", False),
+                              ("AlignLeft", False), ("NoWebView", False), ("HideFileNames", False),
+                              ("SingleClick", False), ("SingleSelection", False), ("NoFolders", False),
+                              ("Transparent", False), ("ViewID", "{0057D0E0-3573-11CF-AE69-08002B2E1262}"),
+                              ("Location", "")],
+                       bag=["ExtentX", "ExtentY", "ViewMode", "Offline", "Silent", "RegisterAsBrowser",
+                            "RegisterAsDropTarget", "AutoArrange", "NoClientEdge", "AlignLeft", "NoWebView",
+                            "HideFileNames", "SingleClick", "SingleSelection", "NoFolders", "Transparent", "ViewID",
+                            "Location"])]),
     OcxLib("PicClip", "{27395F88-0C0C-101B-A3C9-08002B2F49FB}", "1.1", "PICCLP32.OCX",
            "Microsoft PictureClip Control 6.0 (SP6)",
            [OcxControl("PictureClip", "PictureClip", 1215, 1215, extra=[("_StockProps", 0)])]),
