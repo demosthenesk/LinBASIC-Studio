@@ -2,6 +2,9 @@
 """Tests of the form designer of LinBASIC Studio: forms are built with the designer, as a user
 would build them (place controls, a frame with options, a control array by copy and paste),
 saved, and compared byte for byte with the same form saved by VB6 (<test>/expected/).
+The VB6 of these forms had the classic theme; a new form is written as the VB6 of Windows 7 writes it
+(8.7B, DEV-8 me2: ClientLeft 120, ClientTop 450, 4560 x 3030), so those lines of expected/ are the Windows 7 ones
+(ClientLeft / ClientTop +60 / +105, 2026-11-20).
 
     python3 tests/designer/run_tests.py
 """
@@ -73,9 +76,10 @@ def build_d_all(w):
             x, y = 8, y + 90
         d.place_new(cls, QRect(x, y, wpx, hpx), None)
         x += wpx + 16
-    fr = d.place_new("Frame", QRect(8, y + 90, 200, 100), None)
+    # sizes and places that end on the same grid lines as in VB6 with a half up (8.4, DEV-8 fd1)
+    fr = d.place_new("Frame", QRect(8, y + 90, 200, 99), None)
     for i in range(2):
-        d.place_new("OptionButton", QRect(16, y + 110 + 30 * i, 120, 20), d.items[fr])
+        d.place_new("OptionButton", QRect(16, y + 108 + 30 * i, 120, 19), d.items[fr])
     cmd = d.place_new("CommandButton", QRect(240, y + 100, 90, 32), None)
     QMessageBox.question = lambda *a, **k: QMessageBox.StandardButton.Yes
     d.ask_control_array = lambda name: True     # "... Do you want to create a control array?" Yes (its own box, 8.7)

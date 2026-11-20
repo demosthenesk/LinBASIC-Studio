@@ -4,8 +4,8 @@ Object = "{648A5603-2C6E-101B-82B6-000000000014}#1.1#0"; "MSComm32.Ocx"
 Begin VB.Form Form1 
    Caption         =   "Form1"
    ClientHeight    =   3600
-   ClientLeft      =   60
-   ClientTop       =   345
+   ClientLeft      =   120
+   ClientTop       =   450
    ClientWidth     =   6000
    LinkTopic       =   "Form1"
    ScaleHeight     =   3600

@@ -3,8 +3,8 @@ Begin VB.Form Form2
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Form2"
    ClientHeight    =   3780
-   ClientLeft      =   -15
-   ClientTop       =   570
+   ClientLeft      =   45
+   ClientTop       =   675
    ClientWidth     =   5910
    LinkTopic       =   "Form2"
    MaxButton       =   0   'False

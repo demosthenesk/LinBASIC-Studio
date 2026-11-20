@@ -2,8 +2,8 @@ VERSION 5.00
 Begin VB.Form Form1 
    Caption         =   "Form1"
    ClientHeight    =   6000
-   ClientLeft      =   60
-   ClientTop       =   345
+   ClientLeft      =   120
+   ClientTop       =   450
    ClientWidth     =   8400
    Icon            =   "Form1.frx":0000
    LinkTopic       =   "Form1"

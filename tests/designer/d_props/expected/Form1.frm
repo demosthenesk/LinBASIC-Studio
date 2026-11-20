@@ -3,7 +3,7 @@ Begin VB.Form Form1
    BackColor       =   &H00FFFFC0&
    Caption         =   "Δοκιμή ιδιοτήτων"
    ClientHeight    =   6600
-   ClientLeft      =   60
+   ClientLeft      =   120
    ClientTop       =   345
    ClientWidth     =   9000
    BeginProperty Font 

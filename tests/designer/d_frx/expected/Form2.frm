@@ -1,13 +1,13 @@
 VERSION 5.00
 Begin VB.Form Form2 
    Caption         =   "Form2"
-   ClientHeight    =   3195
-   ClientLeft      =   60
-   ClientTop       =   345
-   ClientWidth     =   4680
+   ClientHeight    =   3030
+   ClientLeft      =   120
+   ClientTop       =   450
+   ClientWidth     =   4560
    LinkTopic       =   "Form2"
-   ScaleHeight     =   3195
-   ScaleWidth      =   4680
+   ScaleHeight     =   3030
+   ScaleWidth      =   4560
    StartUpPosition =   3  'Windows Default
    Begin VB.TextBox Text1 
       Height          =   720
