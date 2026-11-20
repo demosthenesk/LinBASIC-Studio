@@ -1,0 +1,145 @@
+1 type 1
+1 legend True
+1 stacking err 394
+1 title [Title A]
+1 footnote [Foot B]
+1 size 5x4
+1 label levels 1/1
+1 data R1: 160 350 900 420;R2: 880 60 400 420;R3: 640 480 460 50;R4: 900 290 700 500;R5: 60 10 930 480;
+1 columns C1,C2,C3,C4,
+1 title font MS Sans Serif
+1 title size 825
+1 legend loc 4
+1 view3d 60 30
+1 y auto True
+1 y max 0
+1 colors  255,0,0 0,255,0
+2 type 1
+2 legend False
+2 stacking err 394
+2 title []
+2 footnote []
+2 size 5x4
+2 label levels 1/1
+2 data R1: 330 150 390 580;R2: 40 300 770 60;R3: 730 860 210 450;R4: 240 720 700 290;R5: 770 730 970 120;
+2 columns C1,C2,C3,C4,
+2 title font MS Sans Serif
+2 title size 825
+2 legend loc 4
+2 view3d 60 30
+2 y auto True
+2 y max 0
+2 colors  255,0,0 0,255,0
+3 type 1
+3 legend False
+3 stacking err 394
+3 title []
+3 footnote []
+3 size 2x2
+3 label levels 1/1
+3 data R1: 290 230;R2: 560 400;
+3 columns C1,C2,
+3 title font MS Sans Serif
+3 title size 825
+3 legend loc 4
+3 view3d 60 30
+3 y auto True
+3 y max 0
+3 colors  255,0,0 0,255,0
+4 type 0
+4 legend True
+4 stacking err 394
+4 title [Sales]
+4 footnote [2026]
+4 size 5x4
+4 label levels 1/1
+4 data R1: 240 810 0 610;R2: 620 20 480 950;R3: 840 160 370 70;R4: 930 840 440 590;R5: 210 580 430 680;
+4 columns C1,C2,C3,C4,
+4 title font MS Sans Serif
+4 title size 825
+4 legend loc 4
+4 view3d 60 30
+4 y auto True
+4 y max 0
+4 colors  255,0,0 0,255,0
+5 type 1
+5 legend False
+5 stacking err 394
+5 title []
+5 footnote []
+5 size 5x4
+5 label levels 1/1
+5 data R1: 350 50 370 40;R2: 370 230 640 700;R3: 80 680 810 850;R4: 520 730 520 940;R5: 760 260 960 720;
+5 columns C1,C2,C3,C4,
+5 title font MS Sans Serif
+5 title size 825
+5 legend loc 4
+5 view3d 60 30
+5 y auto False
+5 y max 200
+5 colors  255,0,0 0,255,0
+6 type 1
+6 legend False
+6 stacking err 394
+6 title []
+6 footnote []
+6 size 2x2
+6 label levels 1/1
+6 data X: 10 25;Y: 30 40;
+6 columns A,B,
+6 title font MS Sans Serif
+6 title size 825
+6 legend loc 4
+6 view3d 60 30
+6 y auto True
+6 y max 0
+6 colors  255,0,0 0,255,0
+7 type 1
+7 legend False
+7 stacking err 394
+7 title []
+7 footnote []
+7 size 5x4
+7 label levels 1/1
+7 data R1: 920 370 300 130;R2: 960 100 890 280;R3: 90 860 440 400;R4: 820 690 200 930;R5: 920 620 140 270;
+7 columns C1,C2,C3,C4,
+7 title font MS Sans Serif
+7 title size 825
+7 legend loc 4
+7 view3d 60 30
+7 y auto True
+7 y max 0
+7 colors  255,0,0 255,0,0
+8 type 1
+8 legend False
+8 stacking err 394
+8 title [T]
+8 footnote []
+8 size 5x4
+8 label levels 1/1
+8 data R1: 90 160 350 510;R2: 0 490 190 560;R3: 980 30 240 80;R4: 440 90 890 20;R5: 950 850 930 430;
+8 columns C1,C2,C3,C4,
+8 title font MS Sans Serif
+8 title size 1400
+8 legend loc 4
+8 view3d 60 30
+8 y auto True
+8 y max 0
+8 colors  255,0,0 0,255,0
+9 type 1
+9 legend False
+9 stacking err 394
+9 title []
+9 footnote []
+9 size 5x4
+9 label levels 1/1
+9 data R1: 300 500 200 400;R2: 450 250 600 350;R3: 550 400 350 700;R4: 400 650 500 450;R5: 700 350 450 600;
+9 columns C1,C2,C3,C4,
+9 title font MS Sans Serif
+9 title size 825
+9 legend loc 4
+9 view3d 60 30
+9 y auto True
+9 y max 0
+9 colors  255,0,0 0,255,0
+done

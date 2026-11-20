@@ -484,7 +484,8 @@ vbvar OcxChart::member(const std::string &n, vb_i32 kind, bool set, vbvar val, v
     if (n == "titletext") { if (!set) return vstr(bag.value("title.text").toString()); bag["title.text"] = qs(vb_v2s(val)); update(); return vb_v_empty(); }
     if (n == "footnotetext") { if (!set) return vstr(bag.value("footnote.text").toString()); bag["footnote.text"] = qs(vb_v2s(val)); update(); return vb_v_empty(); }
     if (n == "showlegend") { if (!set) return vbool(legend); legend = vb_v2bool(val) != 0; update(); return vb_v_empty(); }
-    if (n == "stacking") { if (!set) return vbool(stacking); stacking = vb_v2bool(val) != 0; update(); return vb_v_empty(); }
+    /* VB6: reading Stacking gives 394 "Property is write-only" (DEV-9 f_chart92) */
+    if (n == "stacking") { if (!set) { vb_raise(394); return vb_v_empty(); } stacking = vb_v2bool(val) != 0; update(); return vb_v_empty(); }
     if (n == "autoincrement") { if (!set) return vbool(autoinc); autoinc = vb_v2bool(val) != 0; return vb_v_empty(); }
     if (n == "repaint") { if (!set) return vbool(repaint); repaint = vb_v2bool(val) != 0; update(); return vb_v_empty(); }
     if (n == "randomfill") {
