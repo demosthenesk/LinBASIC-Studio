@@ -1,0 +1,9 @@
+﻿Το test f_dfw (LinBASIC Studio, Φάση 9.2β): ό,τι χρειάζονται από το runtime οι φόρμες ενός Data Form Wizard.
+
+Form1: τρία TextBox ως control array (For Each), δεμένα σε κλάση-πηγή δεδομένων με DataMember "Primary"
+       (DataMembers.Add, Class_GetDataMember), Label που γράφει «Record: n» στο MoveComplete της κλάσης.
+Form2: master / detail με MSDataShape: TextBox στον master, DataGrid και TextBox στο chapter (UnderlyingValue)
+       που ακολουθούν τη γραμμή του master.
+
+1. Άνοιξε το DfwTest.vbp με το VB6, πάτα F5 και περίμενε να κλείσουν μόνες τους οι δύο φόρμες.
+2. Κλείσε το VB6 χωρίς αποθήκευση. «έτοιμο».
