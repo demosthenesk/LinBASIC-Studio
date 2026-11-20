@@ -996,7 +996,7 @@ vbvar TbButton::member(const std::string &n, vb_i32 kind, bool set, vbvar val, v
         return shown();
     }
     if (n == "image") {
-        if (!set) return vb_vtmp(image);
+        if (!set) return image.vt == VT_EMPTY ? vb_v_i(0) : vb_vtmp(image);     /* VB6: 0 without a picture (f_aw5) */
         if (tb && !image_ok(imagelist_of(tb->c, &tb->il, tb->ilname), val)) return vb_v_empty();
         vb_vset(&image, val);
         return shown();
