@@ -4213,7 +4213,7 @@ class MainWindow(QMainWindow):
             self.a_proj_props.setText(f"{self.project.name} Prop&erties...")
 
     def update_title(self, mode=None):
-        mode = mode or {"design": "design", "compiling": "compiling", "running": "run"}[self.runner.state]
+        mode = mode or {"design": "design", "compiling": "compiling", "running": "run", "break": "break"}.get(self.runner.state, "design")
         name = self.project.name if self.project else ""
         if self.group is not None and self.project is not None:
             name = f"{self.group.name} ({self.project.name})"

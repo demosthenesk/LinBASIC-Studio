@@ -2037,6 +2037,12 @@ static vbvar fld_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
         return vb_vtmp(ado_value(v->d->r[v->cur].v[c]));
     }
     if (!strcmp(name, "underlyingvalue")) {
+        if (r->chaps && c < r->ndefs && r->chaps[c]) {     /* a chapter: its recordset, as Value (the Data Form
+                                                              * Wizard's Master/Detail: ("ChildCMD").UnderlyingValue) */
+            vbvar x;
+            if (cur_value(r, c, &x)) return vb_v_empty();
+            return vb_vtmp(x);
+        }
         if (r->cursorloc != adUseClient && !r->memdb) {
             raise(3251, SRC_FLD, "Current provider does not support refreshing underlying values.");
             return vb_v_empty();
