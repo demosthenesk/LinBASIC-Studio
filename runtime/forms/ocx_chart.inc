@@ -71,6 +71,54 @@ struct OcxChart : Ocx {
         row = col = 1; rowlabix = collabix = 1;
     }
     void update() { if (w && repaint) w->update(); }
+    /* the chart of the design: the settings of its OleObjectBlob as the compiler read them (lbvc/project/chartblob.py):
+     * "#size" rowlabels,collabels,rows,cols, "#data(r,c)" (empty: no value), "#rowlabel(level,r)", "#collabel(level,c)",
+     * the properties of the control (ChartType ...) and the parts by path ("plot.axis(1).valuescale.maximum") */
+    void load(const char *const *p) override
+    {
+        for (int i = 0; p && p[i]; i += 2) {
+            QString k = QString::fromUtf8(p[i]), v = QString::fromUtf8(p[i + 1] + 1);
+            bool isstr = p[i + 1][0] == 's';
+            double n = isstr ? 0 : v.toDouble();
+            auto two = [&](int *a, int *b2) {
+                int o = k.indexOf('('), c = k.indexOf(',');
+                *a = k.mid(o + 1, c - o - 1).toInt(); *b2 = k.mid(c + 1, k.indexOf(')') - c - 1).toInt();
+            };
+            if (k == "#size") {
+                QStringList q = v.split(',');
+                if (q.size() == 4) {
+                    rowlab.assign(1, {}); collab.assign(1, {});
+                    set_size(q[0].toInt(), q[1].toInt(), q[2].toInt(), q[3].toInt());
+                    for (auto &lv : rowlab) for (auto &t : lv) t.clear();
+                    for (auto &lv : collab) for (auto &t : lv) t.clear();
+                }
+            } else if (k.startsWith("#data(")) {
+                int r, c2; two(&r, &c2);
+                if (r >= 1 && r <= rows && c2 >= 1 && c2 <= cols) {
+                    nulls[r - 1][c2 - 1] = isstr;
+                    data[r - 1][c2 - 1] = isstr ? 0 : n;
+                }
+            } else if (k.startsWith("#rowlabel(")) {
+                int l, r; two(&l, &r);
+                if (l >= 1 && l <= (int)rowlab.size() && r >= 1 && r <= rows) rowlab[l - 1][r - 1] = v;
+            } else if (k.startsWith("#collabel(")) {
+                int l, c2; two(&l, &c2);
+                if (l >= 1 && l <= (int)collab.size() && c2 >= 1 && c2 <= cols) collab[l - 1][c2 - 1] = v;
+            } else if (k == "ChartType") type = (int)n;
+            else if (k == "ShowLegend") legend = n != 0;
+            else if (k == "Stacking") stacking = n != 0;
+            else if (k == "AutoIncrement") autoinc = n != 0;
+            else if (k == "Repaint") repaint = n != 0;
+            else if (k == "AllowSelections") allowsel = n != 0;
+            else if (k == "AllowSeriesSelection") allowseries = n != 0;
+            else if (k == "AllowDynamicRotation") allowrot = n != 0;
+            else if (k == "AllowDithering") dither = n != 0;
+            else if (k == "DoSetCursor") bag["dosetcursor"] = n != 0;
+            else if (k == "TextLengthType" || k == "DrawMode") bag[k.toLower()] = (int)n;
+            else if (k.contains('.')) bag[k] = isstr ? QVariant(v) : QVariant(n);
+        }
+        update();
+    }
     /* SetSize: labels and data; new rows get labels R<n>, new columns C<n> */
     void set_size(int rlc, int clc, int nr, int nc)
     {

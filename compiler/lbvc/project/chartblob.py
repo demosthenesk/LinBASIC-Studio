@@ -21,6 +21,9 @@ and our own values in the data grid (5 rows x 4 columns, objects 7-10, 12-15 ...
 numbers there). The places of the labels (objects 66, 82, 98) stay 0: MSChart works them out when it draws
 (VB6 saves 0 there for a small chart).
 
+read() / decode(): the chart of any blob VB6 wrote, object by object, and its settings as the runtime keeps them
+(the compiler gives them to the control, cgen.py; runtime/forms/ocx_chart.inc OcxChart::load).
+
 Checked against .frx files that VB6 saved (DEV-9/mc1: a new chart 1455 x 735 and one 6000 x 4005): apart from
 the values of the grid and a few bytes VB6 does not set (uninitialized memory in objects 62, 66, 78, 94),
 new_blob() gives them byte for byte.
@@ -446,3 +449,578 @@ def set_geometry(data, left, top, width, height):
         struct.pack_into('<ff', b, area - 8, width - 15, height - 15)
         struct.pack_into('<ffff', b, plot - 18, 240, 240, width - 255, height - 255)
     return bytes(b)
+
+
+
+# ---------------------------------------------------------------- reading a chart (phase 9.2)
+# The stream after CONST is the chart as objects. Each class writes its own data and calls its base class, which
+# writes [u32 class id] (with the name if new) and its data; members that are objects are written as object
+# references. Checked against 520 charts that VB6 wrote (DEV-9 mc1 - mc4: the .frx of the designer and the
+# PropertyBag of a running chart, one setting changed in each): the reader comes to the end of every one.
+# decode() gives the settings as the runtime keeps them: the properties of the control by name (ChartType ...),
+# the data grid ("#cell", "#rowlabel" ...) and the parts by path ("plot.axis(1).valuescale.maximum").
+
+class ChartError(Exception):
+    pass
+
+
+class _Obj:
+    __slots__ = ('cls', 'f')
+
+    def __init__(self, cls):
+        self.cls, self.f = cls, {}
+
+
+class _Reader:
+    def __init__(self, data, pos):
+        self.d, self.p, self.objs, self.classes = data, pos, [], []
+
+    def raw(self, n):
+        if self.p + n > len(self.d):
+            raise ChartError('the chart ends at %d' % self.p)
+        v = self.d[self.p:self.p + n]
+        self.p += n
+        return v
+
+    def u16(self):
+        return struct.unpack('<H', self.raw(2))[0]
+
+    def u32(self):
+        return struct.unpack('<I', self.raw(4))[0]
+
+    def cstr(self):
+        n = self.u16()
+        if not n:
+            return ''
+        v = self.raw(n).decode('cp1252', 'replace')
+        if self.raw(1) != b'\0':
+            raise ChartError('a string without its end at %d' % self.p)
+        return v
+
+    def classdef(self, cid):
+        if cid < len(self.classes):
+            return self.classes[cid]
+        if cid != len(self.classes):
+            raise ChartError('class %d at %d' % (cid, self.p))
+        n = self.u16()
+        name = self.raw(n)[:-1].decode('ascii', 'replace')
+        self.u16()                              # the schema
+        self.classes.append(name)
+        return name
+
+    def obj(self, want=None):
+        oid = self.u32()
+        if oid == 0xFFFFFFFF:
+            return None
+        if oid < len(self.objs):
+            return self.objs[oid]
+        if oid != len(self.objs):
+            raise ChartError('object %d at %d' % (oid, self.p - 4))
+        o = _Obj(self.classdef(self.u32()))
+        self.objs.append(o)
+        if want and o.cls not in want:
+            raise ChartError('%s where %s' % (o.cls, want))
+        fn = _CLASSES.get(o.cls)
+        if fn is None:
+            raise ChartError('the class %s' % o.cls)
+        fn(self, o)
+        return o
+
+    def base(self, o, name):
+        n = self.classdef(self.u32())
+        if n != name:
+            raise ChartError('%s where %s' % (n, name))
+        _CLASSES[name](self, o)
+
+
+def _r_value(r, o):
+    r.base(o, 'VtObject')
+
+
+def _r_string(r, o):
+    o.f['s'] = r.cstr()
+    r.base(o, 'VtValue')
+
+
+def _r_integer(r, o):
+    o.f['v'] = struct.unpack('<i', r.raw(4))[0]
+    r.base(o, 'VtValue')
+
+
+def _r_double(r, o):
+    o.f['v'] = struct.unpack('<d', r.raw(8))[0]
+    r.raw(2)
+    r.base(o, 'VtValue')
+
+
+def _r_collection(r, o):
+    r.u16()                                     # the objects that are not none
+    r.base(o, 'VtObject')
+
+
+def _r_matrix(r, o):
+    r.base(o, 'VtCollection')
+    rows, cols = r.u16(), r.u16()
+    o.f['dims'] = (rows, cols)
+    o.f['cells'] = [r.obj() for _ in range(rows * cols)]
+
+
+def _r_datagrid(r, o):
+    r.base(o, 'VtMatrix')
+    o.f['labels'] = (r.u16(), r.u16())          # column label levels, row label levels
+    o.f['size'] = (r.u16(), r.u16())            # columns, rows
+
+
+def _r_array(r, o):
+    n = r.u16()
+    r.u16()
+    r.base(o, 'VtCollection')
+    o.f['items'] = [r.obj() for _ in range(n)]
+
+
+def _r_backdrop(r, o):
+    o.f['raw'] = r.raw(50)
+    o.f['fill'] = r.obj(['VtFill'])
+    r.base(o, 'VtObject')
+
+
+def _r_fill(r, o):
+    o.f['raw'] = r.raw(34)
+    o.f['pic'] = r.obj(['VtPicture'])
+    o.f['style'] = r.raw(2)
+    r.base(o, 'VtObject')
+
+
+def _r_picture(r, o):
+    r.raw(4)
+    r.obj()                                     # the picture itself
+    r.base(o, 'VtObject')
+
+
+def _r_text(r, o):
+    o.f['tb'] = r.obj(['VtTextBlock'])
+    r.base(o, 'VtChartSection')
+
+
+def _r_section(r, o):
+    o.f['loc'] = r.raw(26)
+    o.f['backdrop'] = r.obj(['VtBackdrop'])
+    r.base(o, 'VtObject')
+
+
+def _r_textblock(r, o):
+    o.f['layout'] = r.raw(12)
+    o.f['backdrop'] = r.obj(['VtBackdrop'])
+    o.f['font'] = r.obj(['VtFont'])
+    r.raw(26)                                   # where it was drawn
+    o.f['text'] = r.obj(['VtString'])
+    r.raw(30)
+
+
+def _r_font(r, o):
+    o.f['name'] = r.obj(['VtString'])
+    o.f['raw'] = r.raw(16)
+
+
+def _r_legend(r, o):
+    o.f['font'] = r.obj(['VtFont'])
+    o.f['layout'] = r.raw(12)
+    r.base(o, 'VtChartSection')
+
+
+def _r_plot(r, o):
+    r.obj(['VtArray'])
+    o.f['raw'] = r.raw(136)
+    o.f['light'] = r.obj(['VtLight3'])
+    o.f['axes'] = [r.obj(['VtAxis']) for _ in range(4)]
+    o.f['raw2'] = r.raw(30)
+    r.obj(['VtSurfaceDesc'])
+    r.obj(['VtCLineItem'])
+    r.obj(['VtCLineItem'])
+    o.f['raw3'] = r.raw(34)
+    r.base(o, 'VtChartSection')
+    o.f['series'] = r.obj(['VtArray'])
+
+
+def _r_light(r, o):
+    o.f['sources'] = r.obj(['VtArray'])
+    o.f['raw'] = r.raw(10)
+    r.base(o, 'VtObject')
+
+
+def _r_inflight(r, o):
+    o.f['raw'] = r.raw(16)
+    r.base(o, 'VtObject')
+
+
+def _r_axis(r, o):
+    o.f['h'] = r.raw(8)
+    o.f['pens'] = r.raw(66)
+    o.f['tick'] = r.raw(8)
+    o.f['title'] = r.obj(['VtTextBlock'])
+    r.obj(['VtArray'])                          # the labels it drew
+    o.f['t'] = r.raw(34)
+    o.f['scale'] = r.raw(24) if o.f['h'][6] & 1 else None
+    o.f['t2'] = r.raw(20)
+
+
+def _r_scaleblock(r, o):
+    r.obj(['VtArray'])
+    r.raw(4)
+    r.base(o, 'VtValueBlock')
+
+
+def _r_valueblock(r, o):
+    r.obj()
+    r.obj()
+    r.raw(2)
+    r.obj(['VtString'])
+    r.raw(3)
+    r.base(o, 'VtTextBlock')
+
+
+def _r_surface(r, o):
+    r.raw(46)
+    r.obj(['VtArray'])
+    r.obj(['VtAxis'])
+    r.raw(2)
+
+
+def _r_lineitem(r, o):
+    r.raw(48)
+    r.obj()
+    r.base(o, 'VtObject')
+
+
+def _r_series(r, o):
+    o.f['raw'] = r.raw(62)
+    r.obj()
+    r.obj(['VtArray'])                          # its data points
+    o.f['raw2'] = r.raw(88)
+    o.f['legend'] = r.obj(['VtString'])
+    r.obj(['VtSeriesLabel'])
+    o.f['dpl'] = r.obj(['VtTextBlock'])         # DataPoints(-1).DataPointLabel and the LegendText
+    o.f['component'] = r.raw(2)
+    o.f['fmt1'] = r.obj(['VtTextFormat'])
+    o.f['fmt2'] = r.obj(['VtTextFormat'])
+    o.f['label2'] = r.obj(['VtSeriesLabel'])
+    o.f['raw3'] = r.raw(40)
+    r.obj(['VtPicture'])
+    o.f['tail'] = r.raw(106)
+
+
+def _r_serieslabel(r, o):
+    r.base(o, 'VtTextBlock')
+
+
+def _r_textformat(r, o):
+    r.raw(6)
+    o.f['s'] = r.obj(['VtString'])
+
+
+def _r_list(r, o):
+    o.f['raw'] = r.raw(38)
+    r.base(o, 'VtWindow')
+
+
+def _r_window(r, o):
+    o.f['wraw'] = r.raw(12)
+
+
+def _r_chart(r, o):
+    o.f['grid'] = r.obj(['VtDataGrid'])
+    r.raw(18)                                   # the area of the chart
+    o.f['backdrop'] = r.obj(['VtBackdrop'])
+    o.f['footnote'] = r.obj(['VtChartFootnote'])
+    o.f['legend'] = r.obj(['VtChartLegend'])
+    o.f['plot'] = r.obj(['VtChartPlot'])
+    o.f['title'] = r.obj(['VtChartTitle'])
+    o.f['list'] = r.obj(['VtList'])
+
+
+_CLASSES = {
+    'VtObject': lambda r, o: None, 'VtValue': _r_value, 'VtString': _r_string, 'VtInteger': _r_integer,
+    'VtDouble': _r_double, 'VtCollection': _r_collection, 'VtMatrix': _r_matrix, 'VtDataGrid': _r_datagrid,
+    'VtArray': _r_array, 'VtBackdrop': _r_backdrop, 'VtFill': _r_fill, 'VtPicture': _r_picture,
+    'VtChartFootnote': lambda r, o: r.base(o, 'VtChartText'), 'VtChartTitle': lambda r, o: r.base(o, 'VtChartText'),
+    'VtChartText': _r_text, 'VtChartSection': _r_section,
+    'VtTextBlock': _r_textblock, 'VtFont': _r_font, 'VtChartLegend': _r_legend, 'VtChartPlot': _r_plot,
+    'VtLight3': _r_light, 'VtInfLight3': _r_inflight, 'VtAxis': _r_axis, 'VtAxisScaleBlock': _r_scaleblock,
+    'VtValueBlock': _r_valueblock, 'VtSurfaceDesc': _r_surface, 'VtCLineItem': _r_lineitem, 'VtSeries': _r_series,
+    'VtSeriesLabel': _r_serieslabel, 'VtTextFormat': _r_textformat, 'VtList': _r_list, 'VtWindow': _r_window,
+    'VtChart': _r_chart,
+}
+
+
+def read(data):
+    """the chart of an OleObjectBlob: (the head of the control (34 bytes), the root object); ChartError"""
+    data = bytes(data)
+    if not is_chart_blob(data):
+        raise ChartError('not the OleObjectBlob of an MSChart')
+    at = HEAD + 16
+    r = _Reader(data, at + len(CONST))
+    root = r.obj(['VtChart'])
+    return data[at:at + len(CONST)], root
+
+
+def _i16(b, at):
+    return struct.unpack_from('<h', b, at)[0]
+
+
+def _f32(b, at):
+    return round(struct.unpack_from('<f', b, at)[0], 6)
+
+
+def _f64(b, at):
+    return struct.unpack_from('<d', b, at)[0]
+
+
+def _bool(b, at):
+    return _i16(b, at) != 0
+
+
+class _Out:
+    def __init__(self):
+        self.items = []
+
+    def put(self, key, value):
+        self.items.append((key, value))
+
+    def color(self, key, b, at):
+        """a VtColor: [u16][R][G][B][flags: 0x80 Automatic]"""
+        self.put(key + '.red', b[at + 2])
+        self.put(key + '.green', b[at + 3])
+        self.put(key + '.blue', b[at + 4])
+        self.put(key + '.automatic', bool(b[at + 5] & 0x80))
+
+    def pen(self, key, b, at):
+        self.put(key + '.style', _i16(b, at + 2))
+        self.put(key + '.join', _i16(b, at + 4))
+        self.put(key + '.cap', _i16(b, at + 6))
+        self.color(key + '.vtcolor', b, at + 8)
+        self.put(key + '.width', _f32(b, at + 14))
+        self.put(key + '.limit', _f32(b, at + 18))
+
+    def brush(self, key, b, at):
+        self.put(key + '.style', _i16(b, at))
+        self.color(key + '.fillcolor', b, at + 2)
+        self.color(key + '.patterncolor', b, at + 8)
+        self.put(key + '.index', _i16(b, at + 14))
+
+    def backdrop(self, key, bd):
+        if bd is None:
+            return
+        b = bd.f['raw']
+        self.brush(key + '.shadow.brush', b, 4)
+        self.put(key + '.shadow.offset.x', _f32(b, 20))
+        self.put(key + '.shadow.offset.y', _f32(b, 24))
+        self.put(key + '.shadow.style', _i16(b, 28))
+        self.color(key + '.frame.framecolor', b, 32)
+        self.color(key + '.frame.spacecolor', b, 38)
+        self.put(key + '.frame.width', _f32(b, 44))
+        self.put(key + '.frame.style', _i16(b, 48))
+        fill = bd.f['fill']
+        self.put(key + '.fill.style', _i16(fill.f['style'], 0))
+        self.brush(key + '.fill.brush', fill.f['raw'], 2)
+
+    def font(self, key, fo, name='MS Sans Serif'):
+        if fo is None:
+            return
+        n = fo.f['name']
+        self.put(key + '.name', n.f['s'] if n is not None else name)
+        b = fo.f['raw']
+        self.put(key + '.size', _f32(b, 0))
+        self.put(key + '.style', _i16(b, 4))
+        self.put(key + '.effect', _i16(b, 6))
+        self.color(key + '.vtcolor', b, 8)
+
+    def layout(self, key, b, at):
+        self.put(key + '.wordwrap', _bool(b, at + 2))
+        self.put(key + '.horzalignment', _i16(b, at + 4))
+        self.put(key + '.vertalignment', _i16(b, at + 6))
+        self.put(key + '.orientation', _i16(b, at + 8))
+
+    def location(self, key, loc, visible=True):
+        if visible:
+            self.put(key + '.visible', _bool(loc, 6))
+        for i, k in enumerate(('min.x', 'min.y', 'max.x', 'max.y')):
+            self.put(key + '.rect.' + k, _f32(loc, 8 + 4 * i))
+        self.put(key + '.locationtype', _i16(loc, 24))
+
+    def textblock(self, key, tb):
+        self.layout(key + '.textlayout', tb.f['layout'], 0)
+        self.backdrop(key + '.backdrop', tb.f['backdrop'])
+        self.font(key + '.vtfont', tb.f['font'])
+
+
+def decode(data):
+    """the settings of a chart in its OleObjectBlob: [(key, value)], value an int, a float, a bool or a str.
+    Keys without a dot are properties of the control (ChartType ...), "#..." the data grid, the others the
+    parts by path in lower case (title.vtfont.size, plot.axis(1).valuescale.maximum ...). ChartError if it
+    cannot be read."""
+    head, ch = read(data)
+    out = _Out()
+    put = out.put
+    # the control
+    put('AutoIncrement', _bool(head, 8))
+    put('Repaint', _bool(head, 14))
+    lst = ch.f['list'].f
+    lr, wr = lst['raw'], lst['wraw']
+    put('ChartType', _i16(lr, 32))
+    put('AllowDynamicRotation', _bool(lr, 22))
+    put('AllowSelections', _bool(lr, 28))
+    put('AllowSeriesSelection', _bool(lr, 30))
+    put('TextLengthType', _i16(lr, 34))
+    put('DrawMode', _i16(lr, 36))
+    put('AllowDithering', _bool(wr, 4))
+    put('DoSetCursor', _bool(wr, 6))
+    # the data grid: rows of the matrix = column label levels + rows, its columns = row label levels + columns
+    g = ch.f['grid'].f
+    clc, rlc = g['labels']
+    ncol, nrow = g['size']
+    R, C = g['dims']
+    put('#size', '%d,%d,%d,%d' % (rlc, clc, nrow, ncol))
+    for i in range(R):
+        for j in range(C):
+            o = g['cells'][i * C + j]
+            if i < clc and j >= rlc:            # the top row: the highest level
+                if o is not None:
+                    put('#collabel(%d,%d)' % (clc - i, j - rlc + 1), o.f.get('s', ''))
+            elif j < rlc and i >= clc:
+                if o is not None:
+                    put('#rowlabel(%d,%d)' % (rlc - j, i - clc + 1), o.f.get('s', ''))
+            elif i >= clc and j >= rlc:
+                key = '#data(%d,%d)' % (i - clc + 1, j - rlc + 1)
+                if o is None or 'v' not in o.f:
+                    put(key, '')
+                else:
+                    put(key, float(o.f['v']))
+    # the backdrop of the chart, the title, the footnote, the legend
+    out.backdrop('backdrop', ch.f['backdrop'])
+    for name in ('title', 'footnote'):
+        t = ch.f[name].f
+        tb = t['tb']
+        put(name + '.text', tb.f['text'].f['s'] if tb.f['text'] is not None else '')
+        out.textblock(name, tb)
+        out.location(name + '.location', t['loc'])
+        out.backdrop(name + '.backdrop', t['backdrop'])
+    lg = ch.f['legend'].f
+    put('ShowLegend', _bool(lg['loc'], 6))
+    out.layout('legend.textlayout', lg['layout'], 2)
+    out.font('legend.vtfont', lg['font'])
+    out.location('legend.location', lg['loc'], visible=False)
+    out.backdrop('legend.backdrop', lg['backdrop'])
+    # the plot
+    pl = ch.f['plot'].f
+    p = pl['raw']
+    put('plot.widthtoheightratio', _f32(p, 0))
+    put('plot.depthtoheightratio', _f32(p, 4))
+    put('plot.bargap', _f32(p, 8))
+    put('plot.xgap', _f32(p, 12))
+    put('plot.zgap', _f32(p, 16))
+    put('plot.plotbase.baseheight', _f32(p, 20))
+    out.brush('plot.plotbase.brush', p, 26)
+    out.pen('plot.plotbase.pen', p, 42)
+    put('plot.wall.width', _f32(p, 64))
+    out.brush('plot.wall.brush', p, 70)
+    out.pen('plot.wall.pen', p, 86)
+    put('plot.view3d.rotation', _f32(p, 112))
+    put('plot.view3d.elevation', _f32(p, 116))
+    p2, p3 = pl['raw2'], pl['raw3']
+    put('plot.clockwise', _bool(p2, 0))
+    put('plot.startingangle', _f32(p2, 2))
+    put('plot.uniformaxis', _bool(p3, 18))
+    put('plot.projection', _i16(p3, 22))
+    put('plot.subplotlabelposition', _i16(p3, 24))
+    put('plot.sort', _i16(p3, 26))
+    loc = pl['loc']
+    put('plot.autolayout', _i16(loc, 24) != 8)
+    for i, k in enumerate(('min.x', 'min.y', 'max.x', 'max.y')):
+        put('plot.locationrect.' + k, _f32(loc, 8 + 4 * i))
+    out.backdrop('plot.backdrop', pl['backdrop'])
+    li = pl['light'].f
+    put('plot.light.ambientintensity', _f32(li['raw'], 0))
+    put('plot.light.edgeintensity', _f32(li['raw'], 4))
+    put('plot.light.edgevisible', _bool(li['raw'], 8))
+    for k, s in enumerate(li['sources'].f['items']):
+        if s is not None:
+            b = s.f['raw']
+            base = 'plot.light.lightsources(%d)' % (k + 1)
+            for i, n in enumerate(('x', 'y', 'z', 'intensity')):
+                put(base + '.' + n, _f32(b, 4 * i))
+    # the axes: X 0, Y 1, Y2 2, Z 3
+    for a, ax in enumerate(pl['axes']):
+        f = ax.f
+        base = 'plot.axis(%d)' % a
+        h, t, t2 = f['h'], f['t'], f['t2']
+        put(base + '.axisscale.hide', _bool(h, 0))
+        put(base + '.axistitle.visible', _i16(h, 2) != 1)
+        put(base + '.axisscale.logbase', _i16(h, 4))
+        auto = not (h[6] & 1)
+        put(base + ('.valuescale.auto' if a in (1, 2) else '.categoryscale.auto'), auto)
+        out.pen(base + '.pen', f['pens'], 0)
+        out.pen(base + '.axisgrid.majorpen', f['pens'], 22)
+        out.pen(base + '.axisgrid.minorpen', f['pens'], 44)
+        put(base + '.tick.length', _f32(f['tick'], 0))
+        tb = f['title']
+        put(base + '.axistitle.text', tb.f['text'].f['s'] if tb.f['text'] is not None else '')
+        out.textblock(base + '.axistitle', tb)
+        put(base + '.intersection.auto', _i16(t, 20) == 0)
+        put(base + '.intersection.point', _f64(t, 22))
+        put(base + '.categoryscale.labeltick', _bool(t, 32))
+        sc = f['scale']
+        if sc is not None:
+            if a in (1, 2):
+                put(base + '.valuescale.minimum', _f64(sc, 0))
+                put(base + '.valuescale.maximum', _f64(sc, 8))
+                put(base + '.valuescale.majordivision', _i16(sc, 16))
+                put(base + '.valuescale.minordivision', _i16(sc, 18))
+            else:
+                put(base + '.categoryscale.divisionsperlabel', _i16(sc, 20))
+                put(base + '.categoryscale.divisionspertick', _i16(sc, 22))
+        put(base + '.axisscale.type', _i16(t2, 0))
+        put(base + '.axisscale.percentbasis', _i16(t2, 2))
+        put(base + '.tick.style', _i16(t2, 4))
+    # the series
+    stacked = False
+    combo = _i16(lr, 32) in (8, 9)
+    for k, se in enumerate(pl['series'].f['items']):
+        if se is None:
+            continue
+        f = se.f
+        base = 'plot.seriescollection(%d)' % (k + 1)
+        b, b2, b3, tl = f['raw'], f['raw2'], f['raw3'], f['tail']
+        out.pen(base + '.pen', b, 0)
+        out.pen(base + '.datapoints(-1).edgepen', b, 22)
+        out.brush(base + '.datapoints(-1).brush', b, 46)
+        put(base + '.showline', _bool(b2, 0))
+        out.pen(base + '.guidelinepen', b2, 8)
+        put(base + '.statline.flag', _i16(b2, 32))
+        put(base + '.position.excluded', _bool(b2, 34))
+        put(base + '.position.hidden', _bool(b2, 36))
+        put(base + '.position.order', _i16(b2, 42))
+        put(base + '.position.stackorder', _i16(b2, 44))
+        stacked = stacked or _i16(b2, 44) != 0
+        out.color(base + '.statline.vtcolor', b2, 74)
+        put(base + '.statline.width', _f32(b2, 80))
+        put(base + '.secondaryaxis', _bool(b3, 0))
+        put(base + '.seriesmarker.auto', _bool(b3, 2))
+        put(base + '.seriesmarker.show', _bool(b3, 32))
+        put(base + '.datapoints(-1).marker.visible', _bool(b3, 32))
+        out.pen(base + '.datapoints(-1).marker.pen', b3, 6)
+        put(base + '.datapoints(-1).marker.size', _f32(b3, 28))
+        put(base + '.datapoints(-1).marker.style', _i16(tl, 0))
+        if combo:
+            put(base + '.seriestype', _i16(tl, 42))
+        dpl = base + '.datapoints(-1).datapointlabel'
+        put(dpl + '.locationtype', _i16(tl, 98))
+        put(dpl + '.linestyle', _i16(tl, 100))
+        put(dpl + '.component', _i16(f['component'], 0))
+        put(dpl + '.valueformat', f['fmt1'].f['s'].f['s'] if f['fmt1'] and f['fmt1'].f['s'] else '')
+        put(dpl + '.percentformat', f['fmt2'].f['s'].f['s'] if f['fmt2'] and f['fmt2'].f['s'] else '')
+        out.font(dpl + '.vtfont', f['label2'].f['font'] if f['label2'] else None)
+        lt = f['dpl'].f['text'] if f['dpl'] is not None else None
+        if lt is not None:
+            put(base + '.legendtext', lt.f['s'])
+    put('Stacking', stacked)
+    return out.items

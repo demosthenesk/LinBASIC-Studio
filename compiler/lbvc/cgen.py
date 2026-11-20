@@ -1664,8 +1664,10 @@ class Compiler:
             return 'r' + str(v)
 
         def blob(it):
-            """the OleObjectBlob of a DBGrid: its design-time properties (project/oleblob.py)"""
-            from .project.oleblob import decode
+            """the OleObjectBlob of a DBGrid (project/oleblob.py) or of an MSChart (project/chartblob.py): its
+            design-time properties"""
+            from .project.oleblob import decode as grid_decode
+            from .project import chartblob
             from .project.fsutil import ci_path
             v = it.value
             path = ci_path(os.path.join(ci.form_dir or '.', v.file))
@@ -1677,8 +1679,18 @@ class Compiler:
                 offs = [x.value.offset for c in ci.form_root.walk() for x in c.items
                         if isinstance(x, Property) and isinstance(x.value, FrxRef) and x.value.file == v.file]
                 st = self.frx_cache[key] = FrxStore.load(path, offs, encoding=ci.form_enc or 'cp1252')
-            for k, x in decode(st.raw(v.offset)):
-                if isinstance(x, str):
+            data = st.raw(v.offset)
+            if chartblob.is_chart_blob(data):
+                try:
+                    items = chartblob.decode(data)
+                except chartblob.ChartError:
+                    items = []                  # a chart we cannot read: the defaults
+            else:
+                items = grid_decode(data)
+            for k, x in items:
+                if isinstance(x, bool):
+                    val = 'n' + ('-1' if x else '0')
+                elif isinstance(x, str):
                     val = 's' + x
                 elif isinstance(x, float):
                     val = 'n' + repr(x)

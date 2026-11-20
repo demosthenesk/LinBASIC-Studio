@@ -1429,6 +1429,8 @@ Sub Main()
     Print #f, frmFlex.flxData.Rows & "|" & frmFlex.flxData.ColWidth(2)
     Load frmChart
     Print #f, frmChart.chtData.RowCount & "|" & frmChart.chtData.TitleText
+    frmChart.MSChart1.Row = 1: frmChart.MSChart1.Column = 1
+    Print #f, frmChart.MSChart1.RowCount & "|" & frmChart.MSChart1.Plot.SeriesCollection(1).DataPoints(-1).Brush.FillColor.Red & "|" & frmChart.MSChart1.Data
     Close #f
     End
 End Sub
@@ -1454,7 +1456,7 @@ End Sub
     w.run_start()
     wait(w, 120)
     got = open(out, encoding="cp1252").read().splitlines()
-    assert got == ["Alfreds|Record 1 of 2", "10|Record 1 of 3", "ALFKI|2", "3", "3|0", "2|Amounts"], got
+    assert got == ["Alfreds|Record 1 of 2", "10|Record 1 of 3", "ALFKI|2", "3", "3|0", "2|Amounts", "5|255|30"], got
     # ---- the Application Wizard's Data Access Forms: the settings of Create New Form..., in its report
     from lbstudio.appwizard import AppWizard
     from lbstudio import appwizgen as AG
