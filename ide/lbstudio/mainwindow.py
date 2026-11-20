@@ -2746,7 +2746,17 @@ class MainWindow(QMainWindow):
         self.output.clear()
         self.message(f"------ {self.project.name}: compiling ------", "head")
         self.runner.error_seen = False
-        self.runner.start(self.project, self.codepage(), debug=True, first=first)
+        # F5 runs the project as it is in the editors: the resource file too, when the Resource Editor has
+        # changes not saved yet (the String Table of the Application Wizard, before the project is saved)
+        ed = self.res_editor
+        changed = [] if ed is None or not ed.modified or ed.res is None else [ed.project]
+        for p in changed:
+            p.res_unsaved = ed.res.to_bytes()
+        try:
+            self.runner.start(self.project, self.codepage(), debug=True, first=first)
+        finally:
+            for p in changed:
+                p.res_unsaved = None
 
     def run_end(self):
         self.runner.stop()

@@ -387,9 +387,23 @@ class VBProject:
             m.write_form(target, permanent=False)
         if src_dir:
             self._copy_res(src_dir, folder)
+        doc = self.vbp
+        data = getattr(self, "res_unsaved", None)
+        if data is not None:                    # the resource file as it is in the Resource Editor (not saved)
+            import copy
+            from . import projprops as P
+            rel = (doc.get("ResFile32") or "").strip('"').replace("\\", "/")
+            if not rel or os.path.isabs(rel) or re.match(r"^[A-Za-z]:", rel) or rel.startswith(".."):
+                rel = os.path.basename(rel) or self.name + ".RES"
+            target = os.path.join(folder, rel)
+            os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+            with open(target, "wb") as f:
+                f.write(data)
+            doc = copy.deepcopy(self.vbp)
+            P.put(doc, "ResFile32", rel.replace("/", "\\"), quote=True)
         vbp = os.path.join(folder, os.path.basename(self.path) if self.path else self.name + ".vbp")
         with open(vbp, "wb") as f:
-            f.write(self.vbp.dumps().encode(self.encoding, errors="surrogateescape"))
+            f.write(doc.dumps().encode(self.encoding, errors="surrogateescape"))
         return vbp
 
     # ---------------------------------------------------------------- members

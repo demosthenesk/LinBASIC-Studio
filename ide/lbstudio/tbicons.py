@@ -451,7 +451,32 @@ def image(name, size=16):
         p.scale(size / 16.0, size / 16.0)
     draw(p, name)
     p.end()
+    _halo(img)
     return img
+
+
+HALO = QColor(0xE8, 0xE8, 0xE8)
+
+
+def _halo(img):
+    """a light edge round the dark strokes (B, I, U, the lines of Align ...): the picture keeps its look on
+    a light toolbar and can still be seen on a dark one (the toolbar of a program in a dark theme)"""
+    w, h = img.width(), img.height()
+    mask = MASK.rgb() & 0xFFFFFF
+
+    def dark(x, y):
+        c = QColor(img.pixel(x, y))
+        return (c.rgb() & 0xFFFFFF) != mask and c.red() * 299 + c.green() * 587 + c.blue() * 114 < 125000
+    edge = []
+    for y in range(h):
+        for x in range(w):
+            if (img.pixel(x, y) & 0xFFFFFF) != mask:
+                continue
+            if any(0 <= x + dx < w and 0 <= y + dy < h and dark(x + dx, y + dy)
+                   for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                edge.append((x, y))
+    for x, y in edge:
+        img.setPixel(x, y, HALO.rgb())
 
 
 def bmp(name, size=16):

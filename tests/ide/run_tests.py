@@ -1227,6 +1227,15 @@ def t_appwiz92(d):
     assert d1 is not None and d1.module.name == "frmMain"
     keyed, listed = list_images(d1.module, d1.root, "imlToolbarIcons")
     assert len(listed) == 13 and "bold" in keyed and keyed["new"].width() == 16, (len(listed), list(keyed))
+    # F5 before Save: the copy that compiles has the String Table of the Resource Editor (AW29m)
+    p.res_unsaved = ed.res.to_bytes()
+    try:
+        cvbp = p.write_copy(os.path.join(d, "wizcopy"))
+    finally:
+        p.res_unsaved = None
+    assert 'ResFile32="Wiz1.RES"' in open(cvbp, encoding="cp1252").read() and p.vbp.get("ResFile32") is None
+    from lbstudio.resmodel import ResFile as _Res
+    assert _Res.load(os.path.join(d, "wizcopy", "Wiz1.RES")).strings[0][1000] == "&File"
     pd = os.path.join(d, "wiz")
     os.makedirs(pd)
     ed.res.save(os.path.join(pd, "Wiz1.RES"))
