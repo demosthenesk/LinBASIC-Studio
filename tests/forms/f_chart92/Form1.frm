@@ -111,10 +111,15 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub Dump(c As Object, ByVal nm As String)
-    Dim s As String, r As Integer, k As Integer, n As Integer
+    Dim s As String, v As Variant, r As Integer, k As Integer, n As Integer
     On Error Resume Next
-    WriteLog nm & " type " & c.chartType & " legend " & c.ShowLegend & " stack " & c.Stacking & " [" & c.TitleText & "] [" & _
-        c.FootnoteText & "] " & c.RowCount & "x" & c.ColumnCount & " labels " & c.RowLabelCount & "/" & c.ColumnLabelCount
+    v = Empty: v = c.chartType: Rep nm, "type", v
+    v = Empty: v = c.ShowLegend: Rep nm, "legend", v
+    v = Empty: v = c.Stacking: Rep nm, "stacking", v
+    v = Empty: v = c.TitleText: Rep nm, "title", "[" & v & "]"
+    v = Empty: v = c.FootnoteText: Rep nm, "footnote", "[" & v & "]"
+    v = Empty: v = c.RowCount & "x" & c.ColumnCount: Rep nm, "size", v
+    v = Empty: v = c.RowLabelCount & "/" & c.ColumnLabelCount: Rep nm, "label levels", v
     s = ""
     For r = 1 To c.RowCount
         c.Row = r
@@ -125,18 +130,19 @@ Private Sub Dump(c As Object, ByVal nm As String)
         Next
         s = s & ";"
     Next
-    WriteLog nm & " data " & s
+    Rep nm, "data", s
     s = ""
     For k = 1 To c.ColumnCount
         c.Column = k
         s = s & c.ColumnLabel & ","
     Next
-    WriteLog nm & " columns " & s
-    WriteLog nm & " title font " & c.Title.VtFont.Name & " " & CLng(c.Title.VtFont.Size * 100) & " legend loc " & _
-        c.Legend.Location.LocationType & " rot " & CLng(c.Plot.View3d.Rotation) & " elev " & CLng(c.Plot.View3d.Elevation)
-    s = nm & " y auto " & c.Plot.Axis(1).ValueScale.Auto
-    If Not c.Plot.Axis(1).ValueScale.Auto Then s = s & " max " & CLng(c.Plot.Axis(1).ValueScale.Maximum)
-    WriteLog s
+    Rep nm, "columns", s
+    v = Empty: v = c.Title.VtFont.Name: Rep nm, "title font", v
+    v = Empty: v = CLng(c.Title.VtFont.Size * 100): Rep nm, "title size", v
+    v = Empty: v = c.Legend.Location.LocationType: Rep nm, "legend loc", v
+    v = Empty: v = CLng(c.Plot.View3d.Rotation) & " " & CLng(c.Plot.View3d.Elevation): Rep nm, "view3d", v
+    v = Empty: v = c.Plot.Axis(1).ValueScale.Auto: Rep nm, "y auto", v
+    v = Empty: v = CLng(c.Plot.Axis(1).ValueScale.Maximum): Rep nm, "y max", v
     n = c.ColumnCount
     If n > 2 Then n = 2
     s = ""
@@ -145,6 +151,14 @@ Private Sub Dump(c As Object, ByVal nm As String)
             s = s & " " & .Red & "," & .Green & "," & .Blue
         End With
     Next
-    WriteLog nm & " colors" & s
-    If Err.Number <> 0 Then WriteLog nm & " err " & Err.Number: Err.Clear
+    Rep nm, "colors", s
+End Sub
+
+Private Sub Rep(ByVal nm As String, ByVal what As String, ByVal v As Variant)
+    If Err.Number <> 0 Then
+        WriteLog nm & " " & what & " err " & Err.Number
+        Err.Clear
+    Else
+        WriteLog nm & " " & what & " " & v
+    End If
 End Sub
