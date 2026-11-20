@@ -368,7 +368,8 @@ def style_grid(table, style, fields, rows=5):
         table.setItem(0, c, it)
         for r in range(1, rows):
             it = QTableWidgetItem("")
-            it.setBackground(QBrush(back if style != 1 or r % 2 else QColor("#D8D8D8")))
+            band = (style == 1 and r % 2 == 1) or (style == 2 and c % 2 == 1)     # the gray bands of the style
+            it.setBackground(QBrush(QColor("#E0E0E0") if band else back))
             it.setForeground(QBrush(fore))
             table.setItem(r, c, it)
 

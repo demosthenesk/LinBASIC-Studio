@@ -606,8 +606,8 @@ Private Sub Form_Unload(Cancel As Integer)
     cn.Close
 End Sub
 """.format(cs=vbstr(connect_string(df)), sql=vbstr(sql))
-    lines = ["", "' the widths of the columns and the bold headers", "Private Sub SetUpGrid()",
-             "    Dim c As Long", "    With flxData", "        .Redraw = False"]
+    lines = ["", "' the widths of the columns, the bold headers and the bands of the style", "Private Sub SetUpGrid()",
+             "    Dim c As Long, r As Long", "    With flxData", "        .Redraw = False"]
     for i, f in enumerate(df.fields):
         wdt = df.col_widths.get(f)
         if wdt is not None:
@@ -615,7 +615,18 @@ End Sub
     if df.grid_outline:
         lines += ["        For c = 0 To .Cols - 1", "            .MergeCol(c) = True", "        Next"]
     lines += ["        .Row = 0", "        For c = 0 To .Cols - 1", "            .Col = c", "            .CellFontBold = True",
-              "        Next", "        .Col = 0                    ' back to the first column (the grid shows the current one)",
+              "        Next"]
+    if df.grid_style == 1:                      # Professional: every other row gray
+        lines += ["        .FillStyle = 1", "        For r = .FixedRows To .Rows - 1 Step 2",
+                  "            .Row = r: .Col = 0: .RowSel = r: .ColSel = .Cols - 1",
+                  "            .CellBackColor = &HE0E0E0", "        Next", "        .FillStyle = 0"]
+    elif df.grid_style == 2:                    # Contemporary: every other column gray
+        lines += ["        If .Rows > .FixedRows Then", "            .FillStyle = 1",
+                  "            For c = 1 To .Cols - 1 Step 2",
+                  "                .Row = .FixedRows: .Col = c: .RowSel = .Rows - 1: .ColSel = c",
+                  "                .CellBackColor = &HE0E0E0", "            Next", "            .FillStyle = 0", "        End If"]
+    lines += ["        .Row = 0",
+              "        .Col = 0                    ' back to the first column (the grid shows the current one)",
               "        .Redraw = True", "    End With", "End Sub", ""]
     code += "\n".join(lines)
     if df.allow_sorting:
