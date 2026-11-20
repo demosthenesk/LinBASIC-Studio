@@ -959,7 +959,8 @@ class NewProjectDialog(QDialog):
         self.list = QListWidget()
         self.list.setViewMode(QListWidget.ViewMode.IconMode)
         self.list.setIconSize(QSize(32, 32))
-        self.list.setGridSize(QSize(120, 72))
+        self.list.setGridSize(QSize(120, 80))
+        self.list.setWordWrap(True)             # "VB Application Wizard" on two lines, as in VB6 (aw1-01)
         self.list.setMovement(QListWidget.Movement.Static)
         self.list.setMinimumSize(520, 120)
         icons = {"Exe": QStyle.StandardPixmap.SP_ComputerIcon, "OleExe": QStyle.StandardPixmap.SP_DriveNetIcon,
