@@ -3419,8 +3419,17 @@ static vbvar ctl_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
 /* ---------------------------------------------------------------- control arrays */
 static vbvar arr_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found);
 static void arr_clear(vbobj o) { delete (CtlArray *)o->ext; o->ext = nullptr; }
+/* For Each oText In Me.txtFields: the elements in the order of their Index (the Data Form Wizard, DEV-9 df3) */
+static vb_i32 arr_count(vbobj o) { return (vb_i32)((CtlArray *)vb_oid(o)->ext)->elems.size(); }
+static vbvar arr_item(vbobj o, vb_i32 i)
+{
+    CtlArray *a = (CtlArray *)vb_oid(o)->ext;
+    auto it = a->elems.begin();
+    std::advance(it, i);
+    return vb_vtmp(vb_v_obj(it->second));
+}
 static const vb_class CLS_ARRAY = { "Object", (vb_i32)sizeof(vbobjh), nullptr, nullptr, arr_clear, nullptr, 0, "item",
-                                    nullptr, nullptr, nullptr, arr_member, nullptr };
+                                    arr_count, arr_item, nullptr, arr_member, nullptr };
 
 static vbvar arr_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
