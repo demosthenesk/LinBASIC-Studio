@@ -110,8 +110,14 @@ Private Sub Timer1_Timer()
     ElseIf mStep = 4 Then
         rsP.MoveFirst
         WriteLog "master first " & rsP!PID & " " & Cur()
+        On Error Resume Next
         rsC.MoveLast
-        WriteLog "detail last " & Cur()
+        WriteLog "detail last on an empty chapter: " & Err.Number
+        Err.Clear
+        On Error GoTo 0
+        rsP.MoveNext
+        rsC.MoveLast
+        WriteLog "detail last " & rsP!PID & " " & Cur()
         Timer1.Enabled = True
     Else
         WriteLog "done"
