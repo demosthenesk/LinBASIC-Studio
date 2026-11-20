@@ -78,6 +78,7 @@ def build_d_all(w):
         d.place_new("OptionButton", QRect(16, y + 110 + 30 * i, 120, 20), d.items[fr])
     cmd = d.place_new("CommandButton", QRect(240, y + 100, 90, 32), None)
     QMessageBox.question = lambda *a, **k: QMessageBox.StandardButton.Yes
+    d.ask_control_array = lambda name: True     # "... Do you want to create a control array?" Yes (its own box, 8.7)
     d.select_control(cmd)
     d.copy_selection()
     d.paste()
