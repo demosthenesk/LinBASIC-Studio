@@ -642,6 +642,34 @@ static vbobj bound_source(Ctl *c)
     return source_rs(c->dsobj, c->datamember);
 }
 
+/* DataMemberChanged "member" of a data source class: the controls bound to it read the member again; VB6 asks the
+ * class once for each member (oracle f_dfw: one getdatamember [Primary] for three text boxes, after the Requery of
+ * a data form's Refresh button) */
+static void bound_listen(Ctl *c, vbobj rs);
+static void ds_changed_ctls(vbobj source, const char *member)
+{
+    QString m = QString::fromUtf8(member ? member : "");
+    std::vector<std::pair<QString, vbobj>> got;
+    std::vector<vbobj> forms = loaded_forms;
+    for (vbobj f : forms) {
+        FormState *st = fstate(f);
+        if (!st) continue;
+        std::vector<vbobj> list = st->ctls;
+        for (vbobj co : list) {
+            Ctl *c = C(co);
+            if (!c || !c->dsobj || c->dsobj != source) continue;
+            if (!m.isEmpty() && c->datamember.compare(m, Qt::CaseInsensitive)) continue;
+            vbobj rs = nullptr;
+            bool have = false;
+            for (auto &g : got)
+                if (!g.first.compare(c->datamember, Qt::CaseInsensitive)) { rs = g.second; have = true; break; }
+            if (!have) { rs = source_rs(source, c->datamember); got.push_back({c->datamember, rs}); }
+            bound_listen(c, rs);
+            if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
+        }
+    }
+}
+
 /* a DataFormat did not take the text of a bound control (store_ctl -2): the controls bound to rs show the record
  * again, the changed ones stay changed, and the move is canceled (VB6 oracle f_dfmt) */
 static void bound_cancel(Ctl *c, vbobj rs)
@@ -823,6 +851,8 @@ struct OcxAdodc : Ocx {
         vbvar ra[5] = { vstr(source), vb_v_obj(cn), vb_v_l(cursortype), vb_v_l(locktype), vb_v_l(cmdtype) };
         vb_late_o(rs, "open", VBM_METHOD, 5, ra);
         if (vb_errpend) return -1;
+        if (vb_dbhooks.ado_consumer) vb_dbhooks.ado_consumer(rs);   /* its bound controls take the row: the second
+                                                                     * MoveComplete of a client cursor (oracle f_ado) */
         reset_users();
         return 0;
     }

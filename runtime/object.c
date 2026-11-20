@@ -50,6 +50,7 @@ vbobj vb_oview(vbobj o, const vb_class *iface)
 
 void vb_oaddref(vbobj o) { o = vb_oid(o); if (o) o->refs++; }
 
+static void dsm_forget(vbobj o);              /* the DataMembers of a data source class (below) */
 void vb_orelease(vbobj o)
 {
     o = vb_oid(o);
@@ -65,6 +66,7 @@ void vb_orelease(vbobj o)
         vb_errpend = save;
     }
     if (o->cls->clear) o->cls->clear(o);
+    dsm_forget(o);
     while (o->sinks) { vb_sink *k = o->sinks; o->sinks = k->next; free(k); }
     while (o->views) { vbobj v = o->views; o->views = v->views; free(v); }
     free(o);
@@ -526,8 +528,20 @@ const vb_class vb_cls_collection = {
  * of a class that is a data source (the Data Form Wizard's class: DataMembers.Add "Primary" in Class_Initialize,
  * DataMemberChanged "Primary" after a Requery; DEV-9 df2 clsAuthors) */
 void (*vb_ds_changed_hook)(vbobj source, const char *member);
+void (*vb_ds_changed_ctls_hook)(vbobj source, const char *member);
 static struct dsm { vbobj owner, coll; } *dsm_tab;
 static int dsm_n, dsm_cap;
+
+static void dsm_forget(vbobj o)                 /* the object has gone: its DataMembers too */
+{
+    for (int i = 0; i < dsm_n; i++)
+        if (dsm_tab[i].owner == o) {
+            vbobj c = dsm_tab[i].coll;
+            dsm_tab[i] = dsm_tab[--dsm_n];
+            vb_orelease(c);
+            return;
+        }
+}
 
 vbvar vb_ds_datamembers(vbobj self, vb_i32 argc, vbvar *argv)
 {
@@ -540,6 +554,7 @@ vbvar vb_ds_datamembers(vbobj self, vb_i32 argc, vbvar *argv)
         dsm_tab = (struct dsm *)realloc(dsm_tab, (size_t)dsm_cap * sizeof *dsm_tab);
     }
     vbobj c = vb_onew(&vb_cls_collection);      /* kept for the object (its names stay while it lives) */
+    vb_oaddref(c);                              /* the table's reference (vb_onew's is the expression's) */
     dsm_tab[dsm_n].owner = self;
     dsm_tab[dsm_n].coll = c;
     dsm_n++;
@@ -553,6 +568,7 @@ vbvar vb_ds_datamemberchanged(vbobj self, vb_i32 argc, vbvar *argv)
         const char *s = vb_stoutf8(vb_v2s(argv[0]));
         snprintf(name, sizeof name, "%s", s ? s : "");
     }
-    if (vb_ds_changed_hook) vb_ds_changed_hook(vb_oid(self), name);
+    if (vb_ds_changed_hook) vb_ds_changed_hook(vb_oid(self), name);            /* BindingCollections */
+    if (vb_ds_changed_ctls_hook) vb_ds_changed_ctls_hook(vb_oid(self), name);  /* the controls of the forms */
     return vb_v_empty();
 }

@@ -5816,6 +5816,7 @@ static struct Init {
         vb_loadpicture_hook = loadpicture_hook; vb_savepicture_hook = savepicture_hook; vb_picture_data_hook = picture_data_hook;
         vb_msgbox_hook = msgbox_hook; vb_inputbox_hook = inputbox_hook;
         vb_api_hook = api_hook;
+        vb_ds_changed_ctls_hook = ds_changed_ctls;
         vb_obj_inner = uctl_inner;
         monkey_on = getenv("VBRT_MONKEY") != nullptr;
         vb_unhandled_hook = monkey_on ? monkey_error : error_box;

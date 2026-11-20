@@ -126,9 +126,9 @@ typedef struct ars {
     struct achap **chaps;               /* MSDataShape: the chapter columns (ndefs of them) */
     vbobj chparent; int chcol, chrow;   /* a chapter: its parent (counted), column, the parent row */
     char *chcrit;                       /* a chapter: the criteria of its rows */
-    int pendmove;                       /* MSDataShape: the second MoveComplete of Open comes with the first look at a row */
+    int pendmove;                       /* a client cursor (MSDataShape too): the second MoveComplete of Open / Requery
+                                         * comes with the first look at a row or a consumer that binds to it */
     void **kids; int nkids, capkids;    /* MSDataShape: its chapters given out (not counted): they follow its row */
-    int consumed;                       /* a control bound to it through a data source object (ado_consumer) */
 } ars;
 
 typedef struct aflds { vbobjh h; vbobj rs; } aflds;
@@ -297,7 +297,9 @@ static acn *cn_of(ars *r);
 static void ev_opened(ars *r)
 {
     if (!listening(r)) return;
-    if (cn_of(r) && cn_of(r)->shape) {          /* VB6 oracle d_de1 */
+    /* MSDataShape (VB6 oracle d_de1); a client cursor of a WithEvents variable (oracle f_dfw: a data source class;
+     * the ADO Data control gives both at its Refresh, f_ado) */
+    if ((cn_of(r) && cn_of(r)->shape) || (r->cursorloc == adUseClient && r->h.sinks)) {
         ev_willmove(r, adRsnMove, adStatusCantDeny);
         ev_willmove(r, adRsnMove, adStatusOK);
         ev_movecomplete(r, adRsnMove);
@@ -1692,6 +1694,7 @@ static vbvar rs_member2(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
     ars *r = (ars *)vb_oid(o);
     if (r->chparent) chap_sync(r);
     if (r->pendmove && (!strcmp(name, "bof") || !strcmp(name, "eof") || !strncmp(name, "move", 4) || !strcmp(name, "collect") ||
+                        !strcmp(name, "absoluteposition") ||
                         ((!strcmp(name, "fields") || !strcmp(name, "")) && argc > 0))) {
         r->pendmove = 0;
         ev_movecomplete(r, adRsnMove);
@@ -2593,14 +2596,15 @@ int ado_bmrow(vbobj o, vbvar bm)
     return k;
 }
 /* the user picks a row in a grid or list: a move with its events */
-/* the first control bound through a data source class: MoveComplete, as the row is fetched for it (the Data Form
- * Wizard's Class binding shows "Record: 1" from the start, DEV-9 df3-15) */
+/* a control (a grid, a list, the ADO Data control) binds to it: the second MoveComplete of Open / Requery that a
+ * client cursor keeps for the first look at a row (the Data Form Wizard's Class binding shows "Record: 1" from the
+ * start, DEV-9 df3-15; VB6 oracle f_dfw) */
 void ado_consumer(vbobj o)
 {
     ars *r = grid_rs(o);
-    if (!r || r->consumed || !r->state) return;
-    r->consumed = 1;
-    if (alive(VW(r), VW(r)->cur)) ev_movecomplete(r, adRsnMove);
+    if (!r || !r->pendmove) return;
+    r->pendmove = 0;
+    ev_movecomplete(r, adRsnMove);
 }
 
 int ado_goto(vbobj o, int row)

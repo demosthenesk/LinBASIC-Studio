@@ -1,0 +1,59 @@
+db made
+form1 load [||] status=[]
+  class: rs movecomplete 10
+  class: opened, members=0
+  class: members=1
+class made [||] status=[]
+  member set 1 [Primary]
+  class: getdatamember []
+  class: getdatamember [Primary]
+  class: rs movecomplete 10
+  form1: movecomplete Record: 1
+  bound 1 WID CWriters [1||] status=[Record: 1]
+  member set 2 [Primary]
+  class: getdatamember []
+  bound 2 Name CWriters [1|Ames, Ann|] status=[Record: 1]
+  member set 3 [Primary]
+  class: getdatamember []
+  bound 3 Born CWriters [1|Ames, Ann|1950] status=[Record: 1]
+form1 load end [1|Ames, Ann|1950] status=[Record: 1]
+form1 step 1 [1|Ames, Ann|1950] status=[Record: 1]
+  class: rs movecomplete 13
+  form1: movecomplete Record: 2
+after movenext [2|Boyd, Ben|1961] status=[Record: 2]
+  class: rs movecomplete 15
+  form1: movecomplete Record: 3
+after movelast [3|Cole, Cy|] status=[Record: 3]
+form1 step 2 [3|Cole, Cy|] status=[Record: 3]
+  class: rs movecomplete 7
+  form1: movecomplete Record: 3
+  class: rs movecomplete 10
+  class: rs movecomplete 10
+  form1: movecomplete Record: 1
+  form1: movecomplete Record: 1
+  class: requeried
+  class: getdatamember [Primary]
+  class: member changed
+after requery [1|Ames, Ann|1950] status=[Record: 1]
+  class: rs movecomplete 13
+  form1: movecomplete Record: 2
+after movenext [2|Boyd, Ben|1961] status=[Record: 2]
+  class: rs movecomplete 12
+  form1: movecomplete Record: 1
+after movefirst [1|Ames, Ann|1950] status=[Record: 1]
+form2 load
+chapter field type=136 value Recordset underlying Recordset
+same False
+form2 load end [Alpha|] chapter n=0 eof=True held n=0 eof=True grid cols=3 approx=0 ! 6160
+form2 step 1 [Alpha|] chapter n=0 eof=True held n=0 eof=True grid cols=3 approx=0 ! 6160
+master 2 [Beta|Rivers] chapter n=2 eof=False held n=2 eof=False grid cols=3 BID=10 Title=Rivers PID=2 approx=2
+form2 step 2 [Beta|Rivers] chapter n=2 eof=False held n=2 eof=False grid cols=3 BID=10 Title=Rivers PID=2 approx=2
+master 3 [Gamma|Clouds] chapter n=1 eof=False held n=1 eof=False grid cols=3 BID=12 Title=Clouds PID=3 approx=1
+form2 step 3 [Gamma|Clouds] chapter n=1 eof=False held n=1 eof=False grid cols=3 BID=12 Title=Clouds PID=3 approx=1
+master 4 [Delta|Roads] chapter n=3 eof=False held n=3 eof=False grid cols=3 BID=13 Title=Roads PID=4 approx=3
+form2 step 4 [Delta|Roads] chapter n=3 eof=False held n=3 eof=False grid cols=3 BID=13 Title=Roads PID=4 approx=3
+master first 1 [Alpha|] chapter n=0 eof=True held n=0 eof=True grid cols=3 approx=0 ! 6160
+detail last on an empty chapter: 3021
+detail last 2 [Beta|Stones] chapter n=2 eof=False held n=2 eof=False grid cols=3 BID=11 Title=Stones PID=2 approx=2
+form2 step 5 [Beta|Stones] chapter n=2 eof=False held n=2 eof=False grid cols=3 BID=11 Title=Stones PID=2 approx=2
+done

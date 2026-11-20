@@ -374,6 +374,7 @@ extern VB_IMPORT const vb_class vb_cls_collection;
 vbvar vb_ds_datamembers(vbobj self, vb_i32 argc, vbvar *argv);
 vbvar vb_ds_datamemberchanged(vbobj self, vb_i32 argc, vbvar *argv);
 extern VB_IMPORT void (*vb_ds_changed_hook)(vbobj source, const char *member);
+extern VB_IMPORT void (*vb_ds_changed_ctls_hook)(vbobj source, const char *member);   /* the forms runtime */
 vb_bool vb_implements(const vb_class *cls, const vb_class *iface);
 vbobj vb_oid(vbobj o);                         /* the object behind a reference (Is, method calls) */
 vbobj vb_oview(vbobj o, const vb_class *iface); /* the reference for an implemented interface */
