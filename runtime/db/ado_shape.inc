@@ -854,6 +854,11 @@ static vbvar chap_value(ars *p, int col)
     achap *a = p->chaps[col];
     ars *ch = (ars *)rs_new_for(cn_of(p));
     ch->chparent = (vbobj)p; vb_oaddref((vbobj)p);
+    if (p->nkids == p->capkids) {               /* the parent knows it (chap_follow) */
+        p->capkids = p->capkids ? p->capkids * 2 : 4;
+        p->kids = realloc(p->kids, sizeof *p->kids * (size_t)p->capkids);
+    }
+    p->kids[p->nkids++] = ch;
     ch->chcol = col;
     ch->cursortype = adOpenStatic; ch->cursorloc = adUseClient; ch->locktype = p->locktype;
     ch->exact = 1;
@@ -877,6 +882,24 @@ static vbvar chap_value(ars *p, int col)
     return v;
 }
 /* StayInSync: a chapter follows its parent */
+/* the parent moved: its chapters that something listens to (a DataGrid: Set DataSource =
+ * rs("ChildCMD").UnderlyingValue, the Data Form Wizard's Master/Detail) show the rows of the new row */
+static void chap_follow(ars *r)
+{
+    int n = r->nkids;
+    if (!n) return;
+    void **ks = malloc(sizeof *ks * (size_t)n);
+    memcpy(ks, r->kids, sizeof *ks * (size_t)n);
+    for (int i = 0; i < n; i++) {
+        ars *ch = (ars *)ks[i];
+        if (!ch->nhooks || !ch->state) continue;
+        vb_oaddref((vbobj)ch);
+        chap_sync(ch);
+        note_fill(ch);
+        vb_orelease((vbobj)ch);
+    }
+    free(ks);
+}
 static void chap_sync(ars *ch)
 {
     if (!ch->chparent || !ch->state) return;

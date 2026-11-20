@@ -127,6 +127,7 @@ typedef struct ars {
     vbobj chparent; int chcol, chrow;   /* a chapter: its parent (counted), column, the parent row */
     char *chcrit;                       /* a chapter: the criteria of its rows */
     int pendmove;                       /* MSDataShape: the second MoveComplete of Open comes with the first look at a row */
+    void **kids; int nkids, capkids;    /* MSDataShape: its chapters given out (not counted): they follow its row */
 } ars;
 
 typedef struct aflds { vbobjh h; vbobj rs; } aflds;
@@ -247,8 +248,10 @@ static int ev_willmove(ars *r, int reason, int status)
     fire((vbobj)r, "willmove", 3, a);
     return vb_v2l(a[1]);
 }
+static void chap_follow(ars *r);
 static void ev_movecomplete(ars *r, int reason)
 {
+    if (r->nkids) chap_follow(r);               /* the chapters of the row (a DataGrid bound to one) */
     if (!listening(r)) return;
     vbvar a[4] = { vb_v_l(reason), vb_v_obj(0), vb_v_l(adStatusOK), vb_v_obj((vbobj)r) };
     fire((vbobj)r, "movecomplete", 4, a);
@@ -1014,7 +1017,12 @@ static void rs_clear2(vbobj o)
     free(r->osql);
     for (int i = 0; i < r->novals; i++) vb_vfree(&r->ovals[i]);
     free(r->ovals);
-    if (r->chparent) vb_orelease(r->chparent);
+    if (r->chparent) {                          /* out of the parent's list of chapters */
+        ars *p = (ars *)vb_oid(r->chparent);
+        for (int i = 0; i < p->nkids; i++) if (p->kids[i] == r) { p->kids[i] = p->kids[--p->nkids]; break; }
+        vb_orelease(r->chparent);
+    }
+    free(r->kids);
     free(r->chcrit);
 }
 
