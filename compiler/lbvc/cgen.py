@@ -1798,6 +1798,11 @@ class Compiler:
         gdm = ci.members.get('class_getdatamember') or ci.members.get('usercontrol_getdatamember')
         if gdm is not None and gdm.kind == 'proc':
             members.append(('lb_getdatamember', 'VBM_METHOD', th.proc(gdm)))
+            # DataMembers / DataMemberChanged of a class that is a data source: the runtime's (object.c)
+            if not ci.is_uctl and 'datamembers' not in ci.members:
+                members.append(('datamembers', 'VBM_GET', 'vb_ds_datamembers'))
+            if not ci.is_uctl and 'datamemberchanged' not in ci.members:
+                members.append(('datamemberchanged', 'VBM_METHOD', 'vb_ds_datamemberchanged'))
         # Implements: the implementations by "<interface>.<member>", for interface calls of other programs
         for ik, _ in ci.implements:
             iface = self.classes[ik]
@@ -2910,6 +2915,10 @@ class ProcGen:
             return name.lower()
         if self.cls and self.c.classes[self.cls].is_uctl and name.lower() in {b.lower() for b in self.UCTL_BUILTINS}:
             return name.lower()
+        if self.cls and name.lower() in ('datamembers', 'datamemberchanged'):   # a class that is a data source
+            ci = self.c.classes[self.cls]
+            if not ci.is_form and not ci.is_uctl and 'class_getdatamember' in ci.members:
+                return name.lower()
         return None
 
     def prop_get(self, prop, args, node, self_code=None):

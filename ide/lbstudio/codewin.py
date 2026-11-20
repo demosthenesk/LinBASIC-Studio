@@ -116,10 +116,17 @@ class CodeWindow(QWidget):
     def set_text(self, text):
         ed = self.editor
         data = text.replace("\r\n", "\n").encode("utf-8")
+        # a code window opened while the program runs or waits in break mode is read-only (Edit and Continue): the
+        # text goes in all the same (it was empty, and the "reset your project" question came, DEV-9 df3)
+        ro = ed.SendScintilla(S.SCI_GETREADONLY)
+        if ro:
+            ed.SendScintilla(S.SCI_SETREADONLY, False)
         ed.SendScintilla(S.SCI_SETUNDOCOLLECTION, False)
         ed.SendScintilla(S.SCI_CLEARALL)
         if data:
             ed.SendScintilla(S.SCI_APPENDTEXT, len(data), data)
+        if ro:
+            ed.SendScintilla(S.SCI_SETREADONLY, True)
         ed.SendScintilla(S.SCI_SETUNDOCOLLECTION, True)
         ed.SendScintilla(S.SCI_EMPTYUNDOBUFFER)
         ed.SendScintilla(S.SCI_SETSAVEPOINT)

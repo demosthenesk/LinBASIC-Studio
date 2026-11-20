@@ -4084,7 +4084,27 @@ def t_pdw95(d):
     assert MakeDialog.available("win64")[0] in (True, False)
     done(w)
 
-TESTS = {"t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+
+def t_cwbreak92(d):
+    """a code window opened in break mode (the line of a run-time error in a module whose window was closed) has the
+    code of the module, read-only, and no "reset your project" question (DEV-9 df3-02, df3-05)"""
+    w = MainWindow()
+    w.show()
+    m = w.project.modules[0]
+    m.set_code("Private Sub Form_Load()\r\n    x = 1\r\nEnd Sub\r\n")
+    asked = []
+    w.edit_while_running = lambda ed: asked.append(ed)
+    w.runner.state = "break"
+    try:
+        cw = w.open_code(m)
+        assert "x = 1" in cw.text(), repr(cw.text())
+        assert cw.editor.SendScintilla(cw.editor.SCI_GETREADONLY) and not asked
+    finally:
+        w.runner.state = "design"
+    done(w)
+
+
+TESTS = {"t_cwbreak92": t_cwbreak92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

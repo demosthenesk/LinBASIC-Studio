@@ -366,6 +366,11 @@ void vb_each_begin(vbvar *v);                  /* For Each: an object with NewEn
 vb_i32 vb_each_count(vbvar v);                 /* For Each over a Collection */
 vbvar vb_each_item(vbvar v, vb_i32 i);
 extern VB_IMPORT const vb_class vb_cls_collection;
+/* a class that is a data source (DataSourceBehavior = vbDataSource): DataMembers (a Collection of the names it
+ * gives) and DataMemberChanged "name" (the bindings read the member again: BindingCollection, bind.c) */
+vbvar vb_ds_datamembers(vbobj self, vb_i32 argc, vbvar *argv);
+vbvar vb_ds_datamemberchanged(vbobj self, vb_i32 argc, vbvar *argv);
+extern VB_IMPORT void (*vb_ds_changed_hook)(vbobj source, const char *member);
 vb_bool vb_implements(const vb_class *cls, const vb_class *iface);
 vbobj vb_oid(vbobj o);                         /* the object behind a reference (Is, method calls) */
 vbobj vb_oview(vbobj o, const vb_class *iface); /* the reference for an implemented interface */

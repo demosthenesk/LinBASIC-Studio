@@ -257,9 +257,19 @@ static vbvar bind_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vb
 }
 
 /* ---------------------------------------------------------------- BindingCollection */
+static void bc_resolve(abc *b);
+/* DataMemberChanged "name" of a class that is a data source: the collections bound to that member read it again */
+static void ds_changed(vbobj source, const char *member)
+{
+    for (abc *b = all_bcs; b; b = b->next)
+        if (b->source && vb_oid(b->source) == source && (!*member || !b->member || !*b->member ||
+                                                         !strcasecmp(b->member, member)))
+            bc_resolve(b);
+}
 static void bc_init(vbobj o)
 {
     abc *b = (abc *)o;
+    vb_ds_changed_hook = ds_changed;
     b->member = strdup("");
     b->mode = vbUpdateWhenPropertyChanges;      /* VB6 oracle d_bind */
     b->next = all_bcs;
