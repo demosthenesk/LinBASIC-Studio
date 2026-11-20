@@ -159,6 +159,7 @@ class MainWindow(QMainWindow):
         self.res_loaded = bool(self.S["addin_reseditor_startup"])   # Add-Ins: the VB 6 Resource Editor
         self.pdw_loaded = bool(self.S["addin_pdw_startup"])         # and the Package and Deployment Wizard
         self.appwiz_loaded = bool(self.S["addin_appwiz_startup"])   # and the VB 6 Application Wizard (phase 9.2)
+        self.dfwiz_loaded = bool(self.S["addin_dfwiz_startup"])     # and the VB 6 Data Form Wizard (phase 9.2b)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -575,6 +576,10 @@ class MainWindow(QMainWindow):
         from .appwizard import wizard_icon, toolbar_wizard_icon
         self.a_appwiz = self._act(m, "Application Wizard...", self.application_wizard, icon=wizard_icon(16))
         self.a_tbwiz = self._act(m, "Toolbar Wizard...", self.toolbar_wizard, icon=toolbar_wizard_icon(16))
+        # the VB 6 Data Form Wizard: Data Form Wizard... (VB6 df1-01, phase 9.2b)
+        self.sep_dfwiz = m.addSeparator()
+        from .dfwizard import dfwizard_icon
+        self.a_dfwiz = self._act(m, "Data Form Wizard...", self.data_form_wizard, icon=dfwizard_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2390,6 +2395,8 @@ class MainWindow(QMainWindow):
             a.setVisible(bool(self.pdw_loaded))
         for a in (self.sep_appwiz, self.a_appwiz, self.a_tbwiz):   # the VB 6 Application Wizard (phase 9.2)
             a.setVisible(bool(self.appwiz_loaded))
+        for a in (self.sep_dfwiz, self.a_dfwiz):                    # the VB 6 Data Form Wizard (phase 9.2b)
+            a.setVisible(bool(self.dfwiz_loaded))
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
@@ -2398,6 +2405,11 @@ class MainWindow(QMainWindow):
     def application_wizard(self):
         """File > New Project > VB Application Wizard, Add-Ins > Application Wizard... (phase 9.2, appwizard.py)"""
         from .appwizard import open_wizard
+        return open_wizard(self)
+
+    def data_form_wizard(self):
+        """Add-Ins > Data Form Wizard... (phase 9.2b, dfwizard.py)"""
+        from .dfwizard import open_wizard
         return open_wizard(self)
 
     def toolbar_wizard(self):

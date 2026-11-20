@@ -186,6 +186,8 @@ struct OcxDataGrid : Ocx {
         if (rs) { vb_orelease(rs); rs = nullptr; }
         vbobj r = source_rs(src, dmember);
         if (r) { rs = r; vb_oaddref(rs); listen(true); }
+        if (r && vb_dbhooks.ado_consumer) vb_dbhooks.ado_consumer(r);   /* the kept MoveComplete of a client cursor
+                                                                         * (a data source class's, f_dfw) */
         make_columns();
         rebuild();
     }

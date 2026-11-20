@@ -72,6 +72,10 @@ LIBS = [
     OcxLib("MSFlexGridLib", "{5E9E78A0-531B-11CF-91F6-C2863C385E30}", "1.0", "MSFLXGRD.OCX",
            "Microsoft FlexGrid Control 6.0 (SP6)",
            [OcxControl("MSFlexGrid", "MSFlexGrid", 2775, 1455)]),
+    # the grid of the Data Form Wizard's "MS HFlexGrid" layout (phase 9.2b): the runtime's flex grid, bound
+    OcxLib("MSHierarchicalFlexGridLib", "{0ECD9B60-23AA-11D0-B351-00A0C9055D8E}", "6.0", "MSHFLXGD.OCX",
+           "Microsoft Hierarchical FlexGrid Control 6.0 (SP4) (OLEDB)",
+           [OcxControl("MSHFlexGrid", "MSHFlexGrid", 2775, 1455)]),
     OcxLib("RichTextLib", "{3B7C8863-D78F-101B-B9B5-04021C009402}", "1.2", "RICHTX32.OCX",
            "Microsoft Rich Textbox Control 6.0 (SP6)",
            [OcxControl("RichTextBox", "RichTextBox", 2055, 1215, version=393217, extra=[("Enabled", True)])]),

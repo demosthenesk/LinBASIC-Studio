@@ -190,6 +190,7 @@ class AppOptions:
         self.url = DEFAULT_URL
         self.forms = []            # of STANDARD_FORMS
         self.templates = []        # of TEMPLATES
+        self.data_forms = []       # the settings of the Data Form Wizard (dfwizgen.DataForm), Create New Form...
 
     def set_type(self, app_type):
         """the Interface Type page: the menus and the toolbar of the new type"""
@@ -1806,7 +1807,9 @@ def summary(opts):
               "", f"Resource file: {'yes' if opts.resources else 'no'}",
               f"Web browser: {opts.url if opts.internet else 'no'}",
               "Standard forms: " + (", ".join(opts.forms) if opts.forms else "(none)"),
-              "Form templates: " + (", ".join(opts.templates) if opts.templates else "(none)")]
+              "Form templates: " + (", ".join(opts.templates) if opts.templates else "(none)"),
+              "Data forms: " + (", ".join("%s (%s)" % (d.name, d.source) for d in opts.data_forms)
+                                if opts.data_forms else "(none)")]
     return "\r\n".join(lines) + "\r\n"
 
 

@@ -36,12 +36,14 @@ TITLE = "VB 6 Resource Editor"
 ADDIN = "VB 6 Resource Editor"
 PDW = "Package and Deployment Wizard"       # phase 9.5 (DEV-9/pd1-03: its Description is its name)
 APPWIZ = "VB 6 Application Wizard"         # phase 9.2 (DEV-9/aw18: Add-Ins > Application Wizard..., Toolbar Wizard...)
+DFWIZ = "VB 6 Data Form Wizard"            # phase 9.2b (DEV-9/df1-01: Add-Ins > Data Form Wizard...)
 ADDINS = [("DTC Framework Registrar", ""), (PDW, PDW), ("Source Code Control", ""),
           ("VB 6 ActiveX Ctrl Interface Wizard", ""), ("VB 6 ActiveX Doc Migration Wizard", ""),
           ("VB 6 Add-In Toolbar", ""), ("VB 6 API Viewer", ""),
           (APPWIZ, "Makes the start of a new application: its main form, menus, toolbar and standard forms "
                    "(Application Wizard), and toolbars of forms (Toolbar Wizard)"),
-          ("VB 6 Class Builder Utility", ""), ("VB 6 Data Form Wizard", ""), ("VB 6 Data Object Wizard", ""),
+          ("VB 6 Class Builder Utility", ""), (DFWIZ, "Makes forms whose controls show and change the records of a database (Data Form "
+                                                            "Wizard)"), ("VB 6 Data Object Wizard", ""),
           ("VB 6 Property Page Wizard", ""), (ADDIN, "Visual Basic 6 Resource Editor"),
           ("VB 6 Template Manager", ""), ("VB 6 Wizard Manager", "")]
 
@@ -250,7 +252,8 @@ class AddInManagerDialog(QDialog):
         S = main.S
         self.state = {ADDIN: [bool(main.res_loaded), bool(S["addin_reseditor_startup"]), False],
                       PDW: [bool(main.pdw_loaded), bool(S["addin_pdw_startup"]), False],
-                      APPWIZ: [bool(main.appwiz_loaded), bool(S["addin_appwiz_startup"]), False]}
+                      APPWIZ: [bool(main.appwiz_loaded), bool(S["addin_appwiz_startup"]), False],
+                      DFWIZ: [bool(main.dfwiz_loaded), bool(S["addin_dfwiz_startup"]), False]}
         lay = QGridLayout(self)
         self.list = QTableWidget(len(ADDINS), 2)
         self.list.setHorizontalHeaderLabels(["Available Add-Ins", "Load Behavior"])
@@ -339,6 +342,9 @@ class AddInManagerDialog(QDialog):
         loaded, startup, _ = self.state[APPWIZ]
         self.main.appwiz_loaded = loaded
         self.main.S["addin_appwiz_startup"] = startup
+        loaded, startup, _ = self.state[DFWIZ]
+        self.main.dfwiz_loaded = loaded
+        self.main.S["addin_dfwiz_startup"] = startup
         self.main.S.save()
         self.accept()
 

@@ -1293,6 +1293,161 @@ def t_appwiz92(d):
     done(w)
 
 
+def t_dfwiz92(d):
+    """the Data Form Wizard (phase 9.2b, VB6 oracle DEV-9/df1, df2; the code of the forms is our own: dfwizgen):
+    the Add-In Manager's "VB 6 Data Form Wizard" gives Add-Ins > Data Form Wizard...; the pages (Access, Single
+    Record / ADO Code on Customers, MS Chart only with ADO Code); Finish: the form in the project with the ADO
+    reference, the profile .rwp; the other layouts and bindings from their settings (a class with the member
+    "Primary", Master/Detail with MSDataShape, Grid with the ADO Data Control, MS HFlexGrid, MS Chart); lbvc and the
+    program: the first record in the text boxes and "Record 1 of 2" from the start, the class's records, the detail
+    grid of the master's record, the rows of the grids and of the chart. The Application Wizard's Data Access Forms:
+    the settings of Create New Form..., in its report"""
+    import subprocess
+    from lbstudio import dfwizgen as G
+    from lbstudio.dfwizard import DataFormWizard, add_to_project, page_keys
+    from lbstudio.resedit import AddInManagerDialog, DFWIZ
+    w = MainWindow()
+    w.show()
+    w.S["dfwiz_no_created"] = True              # no "Data Form Created" in the test
+    p = w.project
+    w.add_module("Module")
+    code(w, p.module("Module1"), MAKE_DB + "\nSub Main()\n    MakeDb\nEnd Sub\n")
+    p.vbp.set("Startup", "Sub Main", quote=True)
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Dfw.vbp"))
+    assert w.save_project_as()
+    w.run_start()                               # the database of the wizard
+    wait(w)
+    db = os.path.join(d, "ide.mdb")
+    assert os.path.isfile(db)
+    # ---- Add-Ins
+    assert not w.a_dfwiz.isVisible()
+    am = AddInManagerDialog(w)
+    am.state[DFWIZ] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.dfwiz_loaded and w.a_dfwiz.isVisible() and w.a_dfwiz.text() == "Data Form Wizard..."
+    # ---- the pages
+    dlg = DataFormWizard(w)
+    assert dlg.windowTitle() == "Data Form Wizard - Introduction" and not dlg.b_finish.isEnabled()
+    dlg.step(1)
+    assert dlg.windowTitle() == "Data Form Wizard - Database Type"
+    assert [dlg.dbtype_list.item(i).text() for i in range(dlg.dbtype_list.count())] == ["Access", "Remote(ODBC)"]
+    dlg.dbtype_list.setCurrentRow(0)
+    dlg.step(1)
+    assert dlg.windowTitle() == "Data Form Wizard - Database"
+    dlg.db_name.setText(db)
+    dlg.step(1)
+    assert dlg.windowTitle() == "Data Form Wizard - Form", dlg.windowTitle()
+    dlg.form_name.setText("frmCust")
+    dlg.layout_list.setCurrentRow(G.L_CHART)    # VB6 df1-10: MS Chart only with ADO Code
+    assert not dlg.bind_group.button(G.B_ADODC).isEnabled() and not dlg.bind_group.button(G.B_CLASS).isEnabled()
+    assert dlg.bind_group.checkedId() == G.B_CODE
+    dlg.layout_list.setCurrentRow(G.L_FLEX)     # VB6 df2-10: MS HFlexGrid without Class
+    assert dlg.bind_group.button(G.B_ADODC).isEnabled() and not dlg.bind_group.button(G.B_CLASS).isEnabled()
+    dlg.layout_list.setCurrentRow(G.L_SINGLE)
+    dlg.bind_group.button(G.B_CODE).setChecked(True)
+    dlg.step(1)
+    assert dlg.windowTitle() == "Data Form Wizard - Record Source"
+    assert [dlg.src.source.itemText(i) for i in range(dlg.src.source.count())] == ["Customers", "Orders"]
+    dlg.src.source.setCurrentIndex(0)
+    dlg.src.source_chosen()
+    assert dlg.src.fields() == ["CustID", "Name", "Country"], dlg.src.fields()
+    dlg.src.sort.setCurrentIndex(dlg.src.sort.findText("Name"))
+    dlg.picker_changed()
+    assert dlg.b_finish.isEnabled()
+    dlg.step(1)
+    assert dlg.windowTitle() == "Data Form Wizard - Control Selection" and not dlg.cb_datacontrol.isEnabled()
+    dlg.step(1)
+    assert dlg.windowTitle() == "Data Form Wizard - Finished!" and not dlg.b_next.isEnabled()
+    prof = os.path.join(d, "dfw.rwp")
+    dlg.save_combo.addItem(prof)
+    dlg.save_combo.setCurrentIndex(dlg.save_combo.count() - 1)
+    dlg.finish()
+    m = p.module("frmCust")
+    assert m is not None and m.dirty and dlg.created is m
+    assert "{00000205-0000-0010-8000-00aa006d2ea4}" in "".join(v or "" for k, v in p.vbp.entries).lower()
+    rwp = open(prof, encoding="cp1252").read()
+    assert "[VB 6 Data Form Wizard]" in rwp and "BindType=1" in rwp and "FormLayout=0" in rwp and db in rwp, rwp
+    back = G.load_profile(prof)
+    assert back.binding == G.B_CODE and back.database == db and back.buttons["Delete"]
+    assert page_keys(back) == ["intro", "dbtype", "database", "form", "source", "controls", "finished"]
+    # ---- the other layouts and bindings
+    def form(name, layout, binding, source, fields, sort=""):
+        df = G.DataForm()
+        df.database, df.name, df.layout, df.binding = db, name, layout, binding
+        df.source, df.fields, df.sort = source, fields, sort
+        return df
+    df = form("frmCls", G.L_SINGLE, G.B_CLASS, "Orders", ["OrderID", "CustID", "Amount"], "OrderID")
+    add_to_project(w, df)
+    assert p.module("clsOrders") is not None and p.module("clsOrders").kind == "Class"
+    df = form("frmMD", G.L_MD, G.B_CODE, "Customers", ["CustID", "Name"], "CustID")
+    df.detail_source, df.detail_fields, df.master_key, df.detail_key = "Orders", ["OrderID", "Amount"], "CustID", "CustID"
+    assert page_keys(df)[4:7] == ["master", "detail", "relation"]
+    add_to_project(w, df)
+    add_to_project(w, form("frmGrid", G.L_GRID, G.B_ADODC, "Orders", ["OrderID", "CustID", "Amount"]))
+    df = form("frmFlex", G.L_FLEX, G.B_CODE, "Customers", ["CustID", "Name", "Country"], "CustID")
+    df.grid_style, df.col_widths = 1, {"Country": 0}
+    add_to_project(w, df)
+    df = form("frmChart", G.L_CHART, G.B_CODE, "Orders", ["CustID", "Amount"])
+    df.chart_x, df.chart_y, df.chart_agg, df.chart_style = "CustID", "Amount", 4, 1
+    df.captions = {"Title": "Amounts"}
+    assert G.check(df) is None
+    df.chart_y = "CustID"
+    assert "one axis" in G.check(df)
+    df.chart_y = "Amount"
+    add_to_project(w, df)
+    libs = p.components()
+    for k in ("MSAdodcLib", "MSDataGridLib", "MSHierarchicalFlexGridLib", "MSChart20Lib"):
+        assert k in libs, libs
+    # ---- the program
+    code(w, p.module("Module1"), MAKE_DB + """
+Sub Main()
+    Dim f As Integer
+    MakeDb
+    f = FreeFile
+    Open App.Path & "/out.txt" For Output As #f
+    Load frmCust
+    Print #f, frmCust.txtField(1).Text & "|" & frmCust.lblStatus.Caption
+    Load frmCls
+    Print #f, frmCls.txtField(0).Text & "|" & frmCls.lblStatus.Caption
+    Load frmMD
+    Print #f, frmMD.txtField(0).Text & "|" & frmMD.grdDetail.ApproxCount
+    Load frmGrid
+    Print #f, frmGrid.grdData.ApproxCount
+    Load frmFlex
+    Print #f, frmFlex.flxData.Rows & "|" & frmFlex.flxData.ColWidth(2)
+    Load frmChart
+    Print #f, frmChart.chtData.RowCount & "|" & frmChart.chtData.TitleText
+    Close #f
+    End
+End Sub
+""")
+    assert w.save_project()
+    for n in ("frmCust.frm", "clsOrders.cls", "frmMD.frm", "frmChart.frm"):
+        assert os.path.isfile(os.path.join(d, n)), n
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Dfw.vbp"),
+                         "-o", os.path.join(d, "Dfw")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    out = os.path.join(d, "out.txt")
+    if os.path.exists(out):
+        os.remove(out)
+    w.run_start()
+    wait(w, 120)
+    got = open(out, encoding="cp1252").read().splitlines()
+    assert got == ["Alfreds|Record 1 of 2", "10|Record 1 of 3", "ALFKI|2", "3", "3|0", "2|Amounts"], got
+    # ---- the Application Wizard's Data Access Forms: the settings of Create New Form..., in its report
+    from lbstudio.appwizard import AppWizard
+    from lbstudio import appwizgen as AG
+    aw = AppWizard(w)
+    df = form("frmOrders", G.L_GRID, G.B_CODE, "Orders", ["OrderID", "Amount"])
+    aw.opts.data_forms.append(df)
+    aw.fill_data_forms()
+    assert aw.data_list.count() == 1 and aw.chosen_data_forms() == [df]
+    assert "Data forms: frmOrders (Orders)" in AG.summary(aw.opts)
+    aw.reject()
+    done(w)
+
+
 def t_appwizgen92(d):
     """what the Application Wizard writes (phase 9.2a-2, appwizgen): the profile of the default choices as VB6 wrote
     it (VB6 oracle DEV-9/aw6 test1.rwp); four projects of the VB6 oracle aw1 (SDI with Resources, Internet and the
@@ -4104,7 +4259,7 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_cwbreak92": t_cwbreak92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

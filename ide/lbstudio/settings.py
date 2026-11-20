@@ -27,6 +27,8 @@ DEFAULTS = {
     "addin_pdw_startup": False,  # Add-In Manager: Package and Deployment Wizard, Load on Startup
     "addin_appwiz_startup": False,  # Add-In Manager: VB 6 Application Wizard, Load on Startup (phase 9.2)
     "appwiz_no_created": False,  # Application Wizard: "Don't show this dialog in the future." (Application Created)
+    "addin_dfwiz_startup": False,  # Add-In Manager: VB 6 Data Form Wizard, Load on Startup (phase 9.2b)
+    "dfwiz_no_created": False,  # Data Form Wizard: "Don't show this dialog in the future." (Data Form Created)
     # General / UI
     "localization": "english.xml",
     "toolbar_hidden": False,

@@ -624,6 +624,7 @@ CLASSES.update({
                            _pic("Picture", "Appearance"), _b("VariantHeight", True, "Appearance"),
                            P("(Bands)", "cbbands", None, category="Misc")],
 })
+CLASSES["MSHFlexGrid"] = CLASSES["MSFlexGrid"]      # the hierarchical flex grid (Data Form Wizard, 9.2b)
 ENUMS["cc3orient"] = [(0, "cc3OrientationHorizontal"), (1, "cc3OrientationVertical")]
 
 # the frame of a form window at design time in pixels (left, top, right, bottom), as Windows 7

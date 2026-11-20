@@ -474,7 +474,7 @@ class OcxLook(QWidget):
             for day in range(1, d.daysInMonth() + 1):
                 i = first + day - 1
                 p.drawText(QRect(4 + (i % 7) * cw, top + (i // 7) * (fm.height() + 2), cw, fm.height()), Qt.AlignmentFlag.AlignCenter, str(day))
-        elif k == "MSFlexGrid":
+        elif k in ("MSFlexGrid", "MSHFlexGrid"):
             sunken(r)
             rows, cols = int(geti(c, "Rows", 2)), int(geti(c, "Cols", 2))
             cw, rh = 64, fm.height() + 4
@@ -2489,7 +2489,7 @@ def ocx_icon(p, cls, size=24):
                 p.drawPoint(x, y)
     elif cls == "FlatScrollBar":
         p.setBrush(white); p.drawRect(QRect(2, 8, 20, 8)); p.fillRect(QRect(9, 9, 6, 6), QColor("#A0A0A0"))
-    elif cls == "MSFlexGrid":
+    elif cls in ("MSFlexGrid", "MSHFlexGrid"):
         p.setBrush(white); p.drawRect(QRect(2, 3, 20, 18)); p.fillRect(QRect(3, 4, 19, 4), face); p.fillRect(QRect(3, 4, 5, 17), face)
         for y in (8, 12, 16):
             p.drawLine(2, y, 21, y)

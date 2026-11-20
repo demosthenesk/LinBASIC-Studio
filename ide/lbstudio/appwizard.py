@@ -637,8 +637,7 @@ class AppWizard(QDialog):
         row = QHBoxLayout()
         row.addStretch(1)
         b = QPushButton("&Create New Form...")
-        b.setEnabled(False)                     # the Data Form Wizard: phase 9.2b
-        b.setToolTip("The Data Form Wizard (a next stage of LinBASIC Studio)")
+        b.clicked.connect(self.new_data_form)   # the Data Form Wizard (phase 9.2b): its settings, the form at Finish
         row.addWidget(b)
         lay.addLayout(row)
 
@@ -865,6 +864,28 @@ class AppWizard(QDialog):
         self.opts.toolbar = G.default_toolbar(self.opts.app_type)
         self.fill_toolbar()
 
+    # ------------------------------------------------------------ Data Access Forms
+    def new_data_form(self):
+        """Create New Form...: the Data Form Wizard collects the settings of a form; Finish makes it with the
+        project"""
+        from .dfwizard import open_wizard as data_form_wizard
+        df = data_form_wizard(self.main, collect=True)
+        if df is not None:
+            self.opts.data_forms.append(df)
+            self.fill_data_forms()
+
+    def fill_data_forms(self):
+        self.data_list.clear()
+        for d in self.opts.data_forms:
+            it = QListWidgetItem("%s (%s)" % (d.name, d.source))
+            it.setFlags(it.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            it.setCheckState(Qt.CheckState.Checked)
+            self.data_list.addItem(it)
+
+    def chosen_data_forms(self):
+        return [d for i, d in enumerate(self.opts.data_forms)
+                if i < self.data_list.count() and self.data_list.item(i).checkState() == Qt.CheckState.Checked]
+
     # ------------------------------------------------------------ Standard Forms, report
     def form_templates(self):
         dlg = FormTemplatesDialog(self, self.opts.templates)
@@ -894,6 +915,10 @@ class AppWizard(QDialog):
             return
         gen = G.generate(self.opts)
         project = G.build_project(gen, self.opts, self.make_pic, main.codepage())
+        if self.opts.data_forms:                # Create New Form...: the data forms in the new project
+            from .dfwizard import add_to_project
+            for df in self.chosen_data_forms():
+                add_to_project(main, df, project=project, open_it=False)
         main.close_all_code()
         main.group = None
         main.project = project
