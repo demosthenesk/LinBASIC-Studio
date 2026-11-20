@@ -211,6 +211,53 @@ class Module:
         d = self.frx_data(p)
         return d.data if d is not None else None
 
+    def sync_ole_blobs(self):
+        """the controls that keep their state in an OleObjectBlob of the .frx: their place and size in it too,
+        and no _ExtentX / _ExtentY in the .frm (VB6 writes none for them). An MSChart without a blob gets
+        one: VB6 cannot load it without it (lbvc/project/chartblob.py). A blob that does not change stays
+        as it is (a form VB6 saved is saved byte for byte)."""
+        if self.sf is None or self.sf.root is None:
+            return
+        for c in self.sf.root.walk():
+            t = c.type_name
+            if t not in ("MSChart", "DBGrid"):
+                continue
+            ext = [p for p in c.items if isinstance(p, Property) and p.name in ("_ExtentX", "_ExtentY", "_Version")]
+            for p in ext:
+                c.items.remove(p)
+                c.order = [(k, it) for k, it in c.order if it is not p]
+            geo = []
+            for k, dflt in (("Left", 0), ("Top", 0), ("Width", 4095), ("Height", 3015)):
+                try:
+                    geo.append(int(float(c.get(k, dflt))))
+                except (TypeError, ValueError):
+                    geo.append(dflt)
+            p = c.prop("OleObjectBlob")
+            d = self.frx_data(p) if p is not None else None
+            old = bytes(d.data) if d is not None and isinstance(d.data, (bytes, bytearray)) else b""
+            if t == "MSChart":
+                from lbvc.project.chartblob import set_geometry
+                new = set_geometry(old, *geo)
+            else:                               # a DBGrid: its blob comes from the designer (oleblob.py)
+                import struct
+                from lbvc.project import oleblob
+                if len(old) < 24 or old[:4] != oleblob.MAGIC or list(struct.unpack_from("<4i", old, 8)) == geo:
+                    new = old
+                else:
+                    try:
+                        new = old
+                        for k, v in zip(("Left", "Top", "Width", "Height"), geo):
+                            new = oleblob.set_prop(new, k, v)
+                    except (ValueError, IndexError, KeyError, struct.error):
+                        new = old
+            if new == old:
+                continue
+            if p is None:
+                from .designer import set_prop
+                set_prop(c, "OleObjectBlob", FrxData("raw", new))
+            else:
+                p.value = FrxData("raw", new)
+
     def write_form(self, target, permanent):
         """the .frm (and its .frx when the designer changed what is in it) at target; permanent:
         the properties keep their new offsets (a save), else they come back (a copy for F5)"""
@@ -221,6 +268,7 @@ class Module:
                 with open(ci_path(os.path.splitext(target)[0] + ".dsx"), "wb") as f:
                     f.write(self.dsx_data)
             return
+        self.sync_ole_blobs()
         owners = {}
         props = self.frx_props(owners)
         frx_name = os.path.splitext(os.path.basename(target))[0] + ".frx"

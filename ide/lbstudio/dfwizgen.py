@@ -680,7 +680,11 @@ End Sub
 def _gen_chart(df):
     frm = Frm()
     w, gh = 6480, 3840
-    frm.obj(OBJ_CHART)                          # the chart itself: Controls.Add in Form_Load (below)
+    frm.obj(OBJ_CHART)
+    # the chart on the form, as VB6's wizard puts it: VB6 keeps its state in an OleObjectBlob of the .frx, which the
+    # project writes when it saves the form (vbmodel.sync_ole_blobs, lbvc/project/chartblob.py)
+    frm.ctl("MSChart20Lib.MSChart", "chtData", [("Height", gh), ("Left", 60), ("TabIndex", 0), ("Top", 60),
+                                               ("Width", w - 120)])
     frm.ctl("VB.CommandButton", "cmdClose", [("Cancel", "-1  'True"), ("Caption", vbstr("&Close")),
                                              ("Height", TW_BTN_H), ("Left", w - 60 - TW_BTN_W), ("TabIndex", 1),
                                              ("Top", gh + 120), ("Width", TW_BTN_W)])
@@ -697,16 +701,9 @@ Private Const CONNECT_STRING As String = {cs}
 Private Const CHART_SQL As String = {sql}
 Private Const HAS_Z As Boolean = {hasz}
 
-' the chart is made by Controls.Add: VB6 keeps the settings of a chart drawn on a form in a binary part of the
-' .frx of its own (OleObjectBlob), which it needs to load the form
-Private chtData As Object
-
 Private Sub Form_Load()
     Dim cn As ADODB.Connection, rs As ADODB.Recordset
     On Error GoTo Failed
-    Set chtData = Controls.Add("MSChart20Lib.MSChart", "chtData")
-    chtData.Move 60, 60, ScaleWidth - 120, ScaleHeight - cmdClose.Height - 180
-    chtData.Visible = True
     Set cn = New ADODB.Connection
     cn.CursorLocation = adUseClient
     cn.Open CONNECT_STRING
@@ -1030,10 +1027,6 @@ class Output:
         self.modules = []                       # (kind "Form" | "Class", name, text with \n)
         self.references = [ADO_REF]
         self.libraries = []                     # ocxlib keys
-        # the chart is made by Controls.Add: VB6 adds it only when the project keeps the information of the
-        # controls that no form has (Project Properties > Make, "Remove information about unused ActiveX Controls"
-        # off: RemoveUnusedControlInfo=0; VB6 oracle dfw-win)
-        self.keep_unused_controls = False
 
 
 def generate(df):
@@ -1052,7 +1045,6 @@ def generate(df):
         out.libraries.append(LIB_HFLEX)
     if df.layout == L_CHART:
         out.libraries.append(LIB_CHART)
-        out.keep_unused_controls = True
     return out
 
 

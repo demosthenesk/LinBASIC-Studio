@@ -1399,7 +1399,17 @@ def t_dfwiz92(d):
     libs = p.components()
     for k in ("MSAdodcLib", "MSDataGridLib", "MSHierarchicalFlexGridLib", "MSChart20Lib"):
         assert k in libs, libs
-    assert p.vbp.get("RemoveUnusedControlInfo") == "0"   # the chart by Controls.Add (VB6 dfw-win)
+    assert p.vbp.get("RemoveUnusedControlInfo") is None   # the chart on the form, with its OleObjectBlob
+    # a chart drawn in the designer: its OleObjectBlob at once (no _ExtentX), its new size in it when it is saved
+    from lbvc.project.chartblob import is_chart_blob, geometry
+    from lbstudio.designer import set_prop as dset
+    w.open_designer(p.module("frmChart"))
+    f = w.current_designer()
+    ch = f.place_new("MSChart20Lib.MSChart", QRect(8, 8, 120, 80), None)
+    assert ch is not None and ch.name == "MSChart1" and ch.prop("_ExtentX") is None, ch
+    assert is_chart_blob(ch.get("OleObjectBlob").data)
+    dset(ch, "Width", 3000)
+    dset(ch, "Height", 2000)
     # ---- the program
     code(w, p.module("Module1"), MAKE_DB + """
 Sub Main()
@@ -1418,7 +1428,7 @@ Sub Main()
     Load frmFlex
     Print #f, frmFlex.flxData.Rows & "|" & frmFlex.flxData.ColWidth(2)
     Load frmChart
-    Print #f, frmChart.Controls("chtData").RowCount & "|" & frmChart.Controls("chtData").TitleText
+    Print #f, frmChart.chtData.RowCount & "|" & frmChart.chtData.TitleText
     Close #f
     End
 End Sub
@@ -1426,6 +1436,15 @@ End Sub
     assert w.save_project()
     for n in ("frmCust.frm", "clsOrders.cls", "frmMD.frm", "frmChart.frm"):
         assert os.path.isfile(os.path.join(d, n)), n
+    # the charts: their state in the .frx (VB6 cannot load an MSChart without it), no _ExtentX in the .frm
+    import re
+    ft = open(os.path.join(d, "frmChart.frm"), encoding="cp1252").read()
+    offs = [int(x, 16) for x in re.findall(r'OleObjectBlob   =   "frmChart.frx":([0-9A-F]{4})', ft)]
+    assert len(offs) == 2 and "_ExtentX" not in ft, ft[:1500]
+    frx = open(os.path.join(d, "frmChart.frx"), "rb").read()
+    geos = [geometry(frx[o:]) for o in offs]
+    assert all(is_chart_blob(frx[o:]) for o in offs), geos
+    assert (60, 60, 6360, 3840) in geos and sorted(g[2:] for g in geos)[0] == (3000, 2000), geos
     cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Dfw.vbp"),
                          "-o", os.path.join(d, "Dfw")], capture_output=True, text=True, timeout=900)
     assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])

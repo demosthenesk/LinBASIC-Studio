@@ -1538,7 +1538,9 @@ class FormDesigner(QScrollArea):
         if it.type == "PictureBox":            # the scale of a PictureBox follows its size
             self.rescale(c)
         lc = ocxlib.control_of(c.cls)
-        if lc:                                 # an .ocx keeps its size in HIMETRIC too
+        if lc and lc[1].cls in ("DBGrid", "MSChart"):   # in its OleObjectBlob (vbmodel.sync_ole_blobs)
+            pass
+        elif lc:                               # an .ocx keeps its size in HIMETRIC too
             px = getattr(lc[1], "extent", "_")
             set_prop(c, px + "ExtentX", ocxlib.extent(int(w)))
             set_prop(c, px + "ExtentY", ocxlib.extent(int(h)))
@@ -1951,6 +1953,10 @@ class FormDesigner(QScrollArea):
             from lbvc.project.oleblob import new_blob
             from lbvc.project.frx import FrxData
             set_prop(c, "OleObjectBlob", FrxData("raw", new_blob(name, w, h, x, y)))
+        elif oc.cls == "MSChart":               # the chart and its size: in an OleObjectBlob (chartblob.py)
+            from lbvc.project.chartblob import new_blob
+            from lbvc.project.frx import FrxData
+            set_prop(c, "OleObjectBlob", FrxData("raw", new_blob(w, h, x, y)))
         elif getattr(oc, "extent", "_") != "_":   # the WebBrowser: ExtentX / ExtentY after Width, no _Version
             append_prop(c, oc.extent + "ExtentX", ocxlib.extent(w))
             append_prop(c, oc.extent + "ExtentY", ocxlib.extent(h))
