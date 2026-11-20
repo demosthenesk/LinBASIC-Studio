@@ -128,6 +128,7 @@ typedef struct ars {
     char *chcrit;                       /* a chapter: the criteria of its rows */
     int pendmove;                       /* MSDataShape: the second MoveComplete of Open comes with the first look at a row */
     void **kids; int nkids, capkids;    /* MSDataShape: its chapters given out (not counted): they follow its row */
+    int consumed;                       /* a control bound to it through a data source object (ado_consumer) */
 } ars;
 
 typedef struct aflds { vbobjh h; vbobj rs; } aflds;
@@ -2592,6 +2593,16 @@ int ado_bmrow(vbobj o, vbvar bm)
     return k;
 }
 /* the user picks a row in a grid or list: a move with its events */
+/* the first control bound through a data source class: MoveComplete, as the row is fetched for it (the Data Form
+ * Wizard's Class binding shows "Record: 1" from the start, DEV-9 df3-15) */
+void ado_consumer(vbobj o)
+{
+    ars *r = grid_rs(o);
+    if (!r || r->consumed || !r->state) return;
+    r->consumed = 1;
+    if (alive(VW(r), VW(r)->cur)) ev_movecomplete(r, adRsnMove);
+}
+
 int ado_goto(vbobj o, int row)
 {
     ars *r = grid_rs(o);

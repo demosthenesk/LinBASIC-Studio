@@ -958,6 +958,7 @@ static vbvar bound_member(Ctl *c, const std::string &n, bool set, vbvar val, int
                 vbobj rs = source_rs(c->dsobj, c->datamember);
                 bound_listen(c, rs);
                 if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
+                if (rs && rs != c->dsobj && vb_dbhooks.ado_consumer) vb_dbhooks.ado_consumer(rs);  /* a class */
             }
             return vb_v_empty();
         }
@@ -993,6 +994,7 @@ static vbvar bound_member(Ctl *c, const std::string &n, bool set, vbvar val, int
                 vbobj rs = source_rs(c->dsobj, c->datamember);
                 bound_listen(c, rs);
                 if (rs && !c->datafield.isEmpty()) fill_ctl(c, rs, rs_has_record(rs), true);
+                if (rs && rs != c->dsobj && vb_dbhooks.ado_consumer) vb_dbhooks.ado_consumer(rs);
             }
             return vb_v_empty();
         }

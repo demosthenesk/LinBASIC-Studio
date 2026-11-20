@@ -329,6 +329,9 @@ typedef struct vb_db_hooks {
      * column) before a field takes a new value */
     vbvar (*ado_bookmark)(vbobj rs, int row);
     int (*ado_bmrow)(vbobj rs, vbvar bm);
+    /* a control is bound to the Recordset through a data source object (a class: Set Text1.DataSource = obj): the
+     * first such binding fetches the row, and the Recordset tells MoveComplete (VB6 oracle DEV-9 df3-15) */
+    void (*ado_consumer)(vbobj rs);
 } vb_db_hooks;
 extern VB_IMPORT vb_db_hooks vb_dbhooks;
 void vb_prop_changed(vbobj o, vbs name);               /* PropertyChanged "Name" in a class */

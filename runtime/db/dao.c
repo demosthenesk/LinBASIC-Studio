@@ -1538,6 +1538,7 @@ extern vbvar ado_cell(vbobj o, int row, int col);
 extern const char *ado_colname(vbobj o, int col);
 extern int ado_coltype(vbobj o, int col);
 extern int ado_goto(vbobj o, int row);
+extern void ado_consumer(vbobj o);
 extern vbvar ado_bookmark(vbobj o, int row);
 extern int ado_bmrow(vbobj o, vbvar bm);
 extern int dao_rs_shape(vbobj o, int *ncols, int *cur);
@@ -1561,6 +1562,7 @@ void vb_db_init(void)
     vb_dbhooks.ado_colname = ado_colname;
     vb_dbhooks.ado_coltype = ado_coltype;
     vb_dbhooks.ado_goto = ado_goto;
+    vb_dbhooks.ado_consumer = ado_consumer;
     vb_dbhooks.ado_bookmark = ado_bookmark;
     vb_dbhooks.ado_bmrow = ado_bmrow;
     vb_dbhooks.ado_listen = ado_listen;
