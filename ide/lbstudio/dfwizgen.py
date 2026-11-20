@@ -615,7 +615,8 @@ End Sub
     if df.grid_outline:
         lines += ["        For c = 0 To .Cols - 1", "            .MergeCol(c) = True", "        Next"]
     lines += ["        .Row = 0", "        For c = 0 To .Cols - 1", "            .Col = c", "            .CellFontBold = True",
-              "        Next", "        .Redraw = True", "    End With", "End Sub", ""]
+              "        Next", "        .Col = 0                    ' back to the first column (the grid shows the current one)",
+              "        .Redraw = True", "    End With", "End Sub", ""]
     code += "\n".join(lines)
     if df.allow_sorting:
         code += """
