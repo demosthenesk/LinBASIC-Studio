@@ -658,7 +658,7 @@ def _r_axis(r, o):
     o.f['pens'] = r.raw(66)
     o.f['tick'] = r.raw(8)
     o.f['title'] = r.obj(['VtTextBlock'])
-    r.obj(['VtArray'])                          # the labels it drew
+    o.f['labels'] = r.obj(['VtArray'])          # Labels(1) ... (VtAxisScaleBlock)
     o.f['t'] = r.raw(34)
     o.f['scale'] = r.raw(24) if o.f['h'][6] & 1 else None
     o.f['t2'] = r.raw(20)
@@ -672,7 +672,7 @@ def _r_scaleblock(r, o):
 
 def _r_valueblock(r, o):
     r.obj()
-    r.obj()
+    o.f['format'] = r.obj(['VtTextFormat'])
     r.raw(2)
     r.obj(['VtString'])
     r.raw(3)
@@ -713,6 +713,14 @@ def _r_serieslabel(r, o):
     r.base(o, 'VtTextBlock')
 
 
+def _r_seriespoint(r, o):
+    r.obj(['VtSeriesLabel'])                    # the label it drew
+    r.raw(12)
+    r.obj()
+    r.obj()
+    r.base(o, 'VtObject')
+
+
 def _r_textformat(r, o):
     r.raw(6)
     o.f['s'] = r.obj(['VtString'])
@@ -729,7 +737,8 @@ def _r_window(r, o):
 
 def _r_chart(r, o):
     o.f['grid'] = r.obj(['VtDataGrid'])
-    r.raw(18)                                   # the area of the chart
+    o.f['inrow'] = r.raw(2)                     # Plot.DataSeriesInRow
+    r.raw(16)                                   # the area of the chart
     o.f['backdrop'] = r.obj(['VtBackdrop'])
     o.f['footnote'] = r.obj(['VtChartFootnote'])
     o.f['legend'] = r.obj(['VtChartLegend'])
@@ -747,7 +756,7 @@ _CLASSES = {
     'VtTextBlock': _r_textblock, 'VtFont': _r_font, 'VtChartLegend': _r_legend, 'VtChartPlot': _r_plot,
     'VtLight3': _r_light, 'VtInfLight3': _r_inflight, 'VtAxis': _r_axis, 'VtAxisScaleBlock': _r_scaleblock,
     'VtValueBlock': _r_valueblock, 'VtSurfaceDesc': _r_surface, 'VtCLineItem': _r_lineitem, 'VtSeries': _r_series,
-    'VtSeriesLabel': _r_serieslabel, 'VtTextFormat': _r_textformat, 'VtList': _r_list, 'VtWindow': _r_window,
+    'VtSeriesLabel': _r_serieslabel, 'VtSeriesPoint': _r_seriespoint, 'VtTextFormat': _r_textformat, 'VtList': _r_list, 'VtWindow': _r_window,
     'VtChart': _r_chart,
 }
 
@@ -935,6 +944,7 @@ def decode(data):
     put('plot.sort', _i16(p3, 26))
     loc = pl['loc']
     put('plot.autolayout', _i16(loc, 24) != 8)
+    put('plot.dataseriesinrow', _bool(ch.f['inrow'], 0))
     for i, k in enumerate(('min.x', 'min.y', 'max.x', 'max.y')):
         put('plot.locationrect.' + k, _f32(loc, 8 + 4 * i))
     out.backdrop('plot.backdrop', pl['backdrop'])
@@ -978,6 +988,13 @@ def decode(data):
             else:
                 put(base + '.categoryscale.divisionsperlabel', _i16(sc, 20))
                 put(base + '.categoryscale.divisionspertick', _i16(sc, 22))
+        put(base + '.labels(1).auto', _i16(t, 0) == 0)
+        for k, lb in enumerate(f['labels'].f['items']):
+            if lb is not None and lb.cls == 'VtAxisScaleBlock':
+                lk = base + '.labels(%d)' % (k + 1)
+                fm = lb.f.get('format')
+                put(lk + '.format', fm.f['s'].f['s'] if fm is not None and fm.f['s'] is not None else '')
+                out.textblock(lk, lb)
         put(base + '.axisscale.type', _i16(t2, 0))
         put(base + '.axisscale.percentbasis', _i16(t2, 2))
         put(base + '.tick.style', _i16(t2, 4))
