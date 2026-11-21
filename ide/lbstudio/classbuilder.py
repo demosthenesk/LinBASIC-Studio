@@ -201,10 +201,11 @@ class _Builder(QDialog):
 
     def lock(self):
         """a member that is in the code already: only to look at (VB6 DEV-9/cb3-06)"""
-        for w in self.findChildren((QLineEdit, QComboBox, QCheckBox, QRadioButton, QPlainTextEdit, QPushButton,
-                                    QListWidget, QToolButton)):
-            if w not in (self.b_ok, self.b_cancel):
-                w.setEnabled(False)
+        for kind in (QLineEdit, QComboBox, QCheckBox, QRadioButton, QPlainTextEdit, QPushButton, QListWidget,
+                     QToolButton):
+            for w in self.findChildren(kind):
+                if w not in (self.b_ok, self.b_cancel):
+                    w.setEnabled(False)
 
     def check_name(self, taken=()):
         n = self.name.text().strip()
@@ -1391,91 +1392,32 @@ class ClassBuilder(QDialog):
     # ------------------------------------------------------------ Update Project
     def update_project(self):
         """the new classes, the new members of the old ones and the place of each in the tree into the project
-        (the old code is not changed)"""
-        p = self.project
-        if p is None:
+        (the old code is not changed): cbmodel.update_project"""
+        if self.project is None:
             return False
-        from .vbmodel import Module, parse_source
-        opts = C.Options(self.model.debug_code, self.model.err_raise)
-        exposed = getattr(p, "ptype", "Exe") in ("OleExe", "OleDll")
-        added = []
-        for c in list(self.model.classes):
-            if c.existing:
-                self._update_existing(c, opts)
-                continue
-            text = C.module_text(self.model, c, opts, exposed)
-            sf = parse_source(text.replace("\n", "\r\n"), None, "Class", True, p.encoding)
-            sf.encoding = p.encoding
-            m = Module(p, "Class", c.name, c.name + ".cls", sf)
-            m.dirty = True
-            p.modules.append(m)
-            p._vbp_add(m)
-            added.append(m)
-            c.existing, c.module = True, m
-            c.members = C.parse_members(m.code_text()) if c.collection else c.members
-            for x in c.members:
-                x.existing = True
-            c.old_children = list(c.children)
-            c.old_description, c.old_helpid = c.description, c.helpid
-            c.old_user_collection = c.user_collection
-            c.foreign = False
-        if added:
-            for name, text in (("modErrorHandling", C.ERROR_MODULE if opts.errors else None),
-                               ("modClassIDGenerator", C.DEBUG_MODULE if opts.debug else None)):
-                if text and p.module(name) is None:
-                    sf = parse_source(text.replace("\n", "\r\n"), None, "Module", True, p.encoding)
-                    sf.encoding = p.encoding
-                    m = Module(p, "Module", name, name + ".bas", sf)
-                    m.dirty = True
-                    p.modules.append(m)
-                    p._vbp_add(m)
-        p.dirty = True
-        self.model.dirty = False
-        self.updated = True
-        if hasattr(self.main, "fill_tree"):
-            self.main.fill_tree()
-            self.main.update_title()
-        self.class_changed()
-        return True
-
-    def _update_existing(self, c, opts):
-        m = c.module
-        if m is None:
-            return
         main = self.main
-        if c.old_name is not None and m.name != c.name:
-            err = main.rename_module(m, c.name) if hasattr(main, "rename_module") else None
+
+        def rename(m, new):
+            err = main.rename_module(m, new) if hasattr(main, "rename_module") else None
             if err:
                 self.message(err)
-            c.old_name = None
-        # the new members and the classes put in it
-        text = m.code_text()
-        new = C.add_to_code(self.model, c, text, opts)
-        if new != text:
+
+        def set_code(m, text):
             sw = getattr(main, "code_windows", {}).get(m)
             cw = sw.widget() if sw is not None else None
             if cw is not None and hasattr(main, "_set_code_text"):
-                main._set_code_text(cw, new)
+                main._set_code_text(cw, text)
                 m.set_code(cw.text())
             else:
                 m.editor_text = None
-                m.sf.code = new.split("\n")
-            m.dirty = True
-            for x in c.members:
-                x.existing = True
-            c.old_children = list(c.children)
-        # the place of the class in the tree, its Description and Help Context ID (in its header)
-        managed = ("vb_ext_key", "vb_description", "vb_helpid")
-        keep = [a for a in m.sf.attributes if a[0].strip().lower() not in managed]
-        old = sorted(a[2].strip() for a in m.sf.attributes if a[0].strip().lower() in managed)
-        lines = C.header_attributes(self.model, c)
-        if sorted(lines) != old:
-            for line in lines:
-                n, _, v = line[len("Attribute "):].partition("=")
-                keep.append((n.strip(), v.strip(), line))
-            m.sf.attributes = keep
-            m.dirty = True
-        c.foreign = False
+                m.sf.code = text.split("\n")
+        C.update_project(self.model, self.project, rename, set_code)
+        self.updated = True
+        if hasattr(main, "fill_tree"):
+            main.fill_tree()
+            main.update_title()
+        self.class_changed()
+        return True
 
     # ------------------------------------------------------------ the end
     def ask_update(self):

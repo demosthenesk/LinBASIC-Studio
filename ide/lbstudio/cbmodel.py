@@ -185,6 +185,8 @@ def _attr(attributes, name):
 def logical_lines(text):
     """the lines of the code with the continuations ( _) joined: [(first line number, text)]"""
     out, buf, start = [], "", None
+    if isinstance(text, (list, tuple)):
+        text = "\n".join(text)
     for i, line in enumerate(text.replace("\r\n", "\n").split("\n")):
         if start is None:
             start = i
@@ -455,7 +457,7 @@ class Model:
         """the members of a class in the lists: its own, the properties of the classes in it, and those of a
         new collection (as Update Project will write them)"""
         if c.collection and not c.existing:
-            return parse_members(collection_code(self, c, Options()))
+            return parse_members("\n".join(collection_code(self, c, Options())))
         out = list(c.members)
         have = {m.name.lower() for m in out}
         for n in c.children:
@@ -802,6 +804,87 @@ def add_to_code(model, c, code, opts):
     return "\n".join(body + rest)
 
 
+# ---------------------------------------------------------------- Update Project
+def _new_module(project, kind, name, ext, text):
+    from .vbmodel import Module, parse_source
+    sf = parse_source(text.replace("\n", "\r\n"), None, kind, True, project.encoding)
+    sf.encoding = project.encoding
+    m = Module(project, kind, name, name + ext, sf)
+    m.dirty = True
+    project.modules.append(m)
+    project._vbp_add(m)
+    return m
+
+
+def update_project(model, project, rename=None, set_code=None):
+    """Update Project: the new classes as modules, the new members (and classes put in them) of the classes that
+    exist added to their code, the renamed ones renamed (rename(module, name)), the VB_Ext_KEY attributes of all;
+    the modules of View > Options when new code uses them. set_code(module, text): the new code of a module (an
+    open code window); without it, the module's text"""
+    opts = Options(model.debug_code, model.err_raise)
+    exposed = getattr(project, "ptype", "Exe") in ("OleExe", "OleDll")
+    added = []
+    for c in list(model.classes):
+        if c.existing:
+            _update_existing(model, c, opts, rename, set_code)
+            continue
+        m = _new_module(project, "Class", c.name, ".cls", module_text(model, c, opts, exposed))
+        added.append(m)
+        c.existing, c.module = True, m
+        if c.collection:
+            c.members = parse_members(m.code_text())
+        for x in c.members:
+            x.existing = True
+        c.old_children = list(c.children)
+        c.old_description, c.old_helpid = c.description, c.helpid
+        c.old_user_collection = c.user_collection
+        c.foreign = False
+    if added:
+        for name, text in (("modErrorHandling", ERROR_MODULE if opts.errors else None),
+                           ("modClassIDGenerator", DEBUG_MODULE if opts.debug else None)):
+            if text and project.module(name) is None:
+                _new_module(project, "Module", name, ".bas", text)
+    project.dirty = True
+    model.dirty = False
+    return added
+
+
+def _update_existing(model, c, opts, rename, set_code):
+    m = c.module
+    if m is None:
+        return
+    if c.old_name is not None and m.name != c.name:
+        if rename is not None:
+            rename(m, c.name)
+        else:
+            m.name = c.name
+        c.old_name = None
+    text = m.code_text()
+    new = add_to_code(model, c, text, opts)
+    if new != text:
+        if set_code is not None:
+            set_code(m, new)
+        else:
+            m.editor_text = None
+            m.sf.code = new.split("\n")
+        m.dirty = True
+        for x in c.members:
+            x.existing = True
+        c.old_children = list(c.children)
+    # the place of the class in the tree, its Description and Help Context ID (in its header)
+    managed = ("vb_ext_key", "vb_description", "vb_helpid")
+    keep = [a for a in m.sf.attributes if a[0].strip().lower() not in managed]
+    old = sorted(a[2].strip() for a in m.sf.attributes if a[0].strip().lower() in managed)
+    lines = header_attributes(model, c)
+    if sorted(lines) != old:
+        for line in lines:
+            n, _, v = line[len("Attribute "):].partition("=")
+            keep.append((n.strip(), v.strip(), line))
+        m.sf.attributes = keep
+        m.dirty = True
+    c.foreign = False
+
+
 # ---------------------------------------------------------------- the modules of View > Options
 ERROR_MODULE = """Attribute VB_Name = "modErrorHandling"
 ' The errors the classes of the Class Builder raise (View > Options > Include Err.Raise).
@@ -837,5 +920,5 @@ End Function
 
 
 __all__ = ["Arg", "Member", "CBClass", "Model", "Options", "read_project", "parse_members", "module_text",
-           "add_to_code", "header_attributes", "ext_keys", "valid_name", "BASE_TYPES", "RETURN_TYPES",
+           "add_to_code", "update_project", "header_attributes", "ext_keys", "valid_name", "BASE_TYPES", "RETURN_TYPES",
            "ERROR_MODULE", "DEBUG_MODULE", "USER_COLLECTION", "is_object_type"]
