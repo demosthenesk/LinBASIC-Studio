@@ -4766,6 +4766,8 @@ class ProcGen:
             w = self.tmp(x.t)
             self.emit(self.store_code(E(w, x.t, ptr=f"&{w}"), x, st) if x.t == 'Variant'
                       else f"vb_oset(&{w}, {x.code});")
+            if x.t == 'Variant':                # VB6: after an error in the object, the block sees Nothing (91, not 424)
+                self.emit(f"if (vb_errpend) vb_vset(&{w}, vb_v_obj((vbobj)0));")
             free = udt_free_code(x.t, '&' + w)
             self.cleanup.append(free)
             tgt = E(w, x.t)
