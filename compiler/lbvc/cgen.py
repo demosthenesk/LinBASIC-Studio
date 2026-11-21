@@ -4747,6 +4747,9 @@ class ProcGen:
                 return N(n.kind, n.line, **{k: sub(v) for k, v in d.items()})
             self.block(sub(st.body))
             return
+        # the object of With is a statement of its own for Resume Next: VB6 goes on into the block, where the
+        # members of an object that is not set give 91 (DEV-9 f_chart92: With c.Title.Backdrop)
+        m = self.cond_stmt()
         x = self.expr(st.e)
         self.flush_pre()
         if is_udt(x.t):
@@ -4769,6 +4772,9 @@ class ProcGen:
         else:
             self.err("With needs an object or a user-defined type", st)
         self.check()
+        udt = is_udt(x.t)
+        if not udt:                             # (a user-defined type: on after the block, its pointer is not set)
+            self.emit(f"R{m}:;")
         self.withs.append(tgt)
         self.with_nodes = getattr(self, 'with_nodes', []) + [st.e]   # (what the With names: named arguments)
         self.block(st.body)
@@ -4776,6 +4782,8 @@ class ProcGen:
         self.with_nodes = self.with_nodes[:-1]
         if free:
             self.emit(free)
+        if udt:
+            self.emit(f"R{m}:;")
 
     def s_foreach(self, st):
         var = self.lvalue(st.var)
