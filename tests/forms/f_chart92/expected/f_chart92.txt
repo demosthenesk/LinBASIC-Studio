@@ -14,6 +14,9 @@
 1 y auto True
 1 y max 0
 1 colors  255,0,0 0,255,0
+1 title backdrop err 91
+1 plot backdrop err 91
+1 footnote shadow err 1101
 2 type 1
 2 legend False
 2 stacking err 394
@@ -30,6 +33,9 @@
 2 y auto True
 2 y max 0
 2 colors  255,0,0 0,255,0
+2 title backdrop err 91
+2 plot backdrop err 91
+2 footnote shadow err 1101
 3 type 1
 3 legend False
 3 stacking err 394
@@ -46,6 +52,9 @@
 3 y auto True
 3 y max 0
 3 colors  255,0,0 0,255,0
+3 title backdrop err 91
+3 plot backdrop err 91
+3 footnote shadow err 1101
 4 type 0
 4 legend True
 4 stacking err 394
@@ -62,6 +71,9 @@
 4 y auto True
 4 y max 0
 4 colors  255,0,0 0,255,0
+4 title backdrop err 91
+4 plot backdrop err 91
+4 footnote shadow err 1101
 5 type 1
 5 legend False
 5 stacking err 394
@@ -78,6 +90,9 @@
 5 y auto False
 5 y max 200
 5 colors  255,0,0 0,255,0
+5 title backdrop err 91
+5 plot backdrop err 91
+5 footnote shadow err 1101
 6 type 1
 6 legend False
 6 stacking err 394
@@ -94,6 +109,9 @@
 6 y auto True
 6 y max 0
 6 colors  255,0,0 0,255,0
+6 title backdrop err 91
+6 plot backdrop err 91
+6 footnote shadow err 1101
 7 type 1
 7 legend False
 7 stacking err 394
@@ -110,6 +128,9 @@
 7 y auto True
 7 y max 0
 7 colors  255,0,0 255,0,0
+7 title backdrop err 91
+7 plot backdrop err 91
+7 footnote shadow err 1101
 8 type 1
 8 legend False
 8 stacking err 394
@@ -126,6 +147,9 @@
 8 y auto True
 8 y max 0
 8 colors  255,0,0 0,255,0
+8 title backdrop err 91
+8 plot backdrop err 91
+8 footnote shadow err 1101
 9 type 1
 9 legend False
 9 stacking err 394
@@ -142,4 +166,64 @@
 9 y auto True
 9 y max 0
 9 colors  255,0,0 0,255,0
+9 title backdrop err 91
+9 plot backdrop err 91
+9 footnote shadow err 1101
+10 type 1
+10 legend False
+10 stacking err 394
+10 title [T]
+10 footnote []
+10 size 5x4
+10 label levels 1/1
+10 data R1: 300 500 200 400;R2: 450 250 600 350;R3: 550 400 350 700;R4: 400 650 500 450;R5: 700 350 450 600;
+10 columns C1,C2,C3,C4,
+10 title font MS Sans Serif
+10 title size 825
+10 legend loc 4
+10 view3d 60 30
+10 y auto True
+10 y max 0
+10 colors  255,0,0 0,255,0
+10 title backdrop err 91
+10 plot backdrop err 91
+10 footnote shadow err 1101
+11 type 1
+11 legend False
+11 stacking err 394
+11 title []
+11 footnote []
+11 size 5x4
+11 label levels 1/1
+11 data R1: 300 500 200 400;R2: 450 250 600 350;R3: 550 400 350 700;R4: 400 650 500 450;R5: 700 350 450 600;
+11 columns C1,C2,C3,C4,
+11 title font MS Sans Serif
+11 title size 825
+11 legend loc 4
+11 view3d 60 30
+11 y auto True
+11 y max 0
+11 colors  255,0,0 0,255,0
+11 title backdrop err 91
+11 plot backdrop err 91
+11 footnote shadow err 1101
+12 type 1
+12 legend False
+12 stacking err 394
+12 title []
+12 footnote [F]
+12 size 5x4
+12 label levels 1/1
+12 data R1: 300 500 200 400;R2: 450 250 600 350;R3: 550 400 350 700;R4: 400 650 500 450;R5: 700 350 450 600;
+12 columns C1,C2,C3,C4,
+12 title font MS Sans Serif
+12 title size 825
+12 legend loc 4
+12 view3d 60 30
+12 y auto True
+12 y max 0
+12 colors  255,0,0 0,255,0
+12 title backdrop err 91
+12 plot backdrop err 91
+12 footnote shadow err 1101
 done

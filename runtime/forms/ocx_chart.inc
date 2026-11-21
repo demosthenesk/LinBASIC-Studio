@@ -600,6 +600,9 @@ vbvar OcxChart::part_member(ChartPart *pt, const std::string &n, bool set, vbvar
         bag[base + ".automatic"] = false;
         update(); return vb_v_empty();
     }
+    /* VB6: only the Backdrop of the chart itself is reachable from code; the Backdrop of the title, the footnote,
+     * the legend, the plot, an axis title or a data point label gives 1101 (DEV-9 mc3 - mc5, f_chart92) */
+    if (n == "backdrop") { chart_error(1101, "Bad function argument"); return vb_v_empty(); }
     const ChartMember *m = chart_member(pt->iface, n);
     if (!m) { *found = 0; return vb_v_empty(); }
     QString key = base + "." + QString::fromStdString(n) + path_args(nargs, argv);
@@ -609,7 +612,9 @@ vbvar OcxChart::part_member(ChartPart *pt, const std::string &n, bool set, vbvar
             int i = iarg(0);
             int cnt = ifc == "IVcSeriesCollection" ? cols : rows;
             if (vb_errpend) return vb_v_empty();
-            if (!(ifc == "IVcDataPoints" && i == -1) && (i < 1 || i > cnt)) { chart_error(1117, "Invalid index"); return vb_v_empty(); }
+            /* VB6: DataPoints(n) with n other than -1 gives 1117 even on a drawn chart (DEV-9 mc4, mc5) */
+            if (ifc == "IVcDataPoints" && i != -1) { chart_error(1117, "Index given is out of bounds"); return vb_v_empty(); }
+            if (ifc != "IVcDataPoints" && (i < 1 || i > cnt)) { chart_error(1117, "Invalid index"); return vb_v_empty(); }
             key = base + "(" + QString::number(i) + ")";
         } else if (m->args == 0 && nargs > 0) {
             /* Plot.SeriesCollection(1): the arguments go to the default member of the part (Item) */
