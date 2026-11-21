@@ -1699,8 +1699,8 @@ def t_classbuilder92(d):
     assert dl.apply()
     cb.new_class(dl)
     assert cb.delete(target="class") and cb.model.cls("clsTmp") is None
-    assert _cb_tree(cb) == ["Project1", "  clsPerson", "    clsAddress", "  colPersons", "    clsPerson",
-                            "  colOrders", "    clsOrder", "  clsBase", "  clsDerived", "  clsList"], _cb_tree(cb)
+    assert _cb_tree(cb) == ["Project1", "  clsBase", "  clsDerived", "  clsList", "  clsPerson", "    clsAddress",
+                            "  colOrders", "    clsOrder", "  colPersons", "    clsPerson"], _cb_tree(cb)
     # ---- Update Project
     assert cb.model.dirty
     assert cb.update_project() and not cb.model.dirty
@@ -1728,8 +1728,8 @@ def t_classbuilder92(d):
     w._sync_editors()
     cb = ClassBuilder(w, quiet=True)
     assert cb.foreign_message() is not None
-    assert _cb_tree(cb) == ["Project1", "  clsPerson", "    clsAddress", "  colPersons", "    clsPerson",
-                            "  colOrders", "    clsOrder", "  clsBase", "  clsDerived", "  clsList", "  Class1"], \
+    assert _cb_tree(cb) == ["Project1", "  Class1", "  clsBase", "  clsDerived", "  clsList", "  clsPerson",
+                            "    clsAddress", "  colOrders", "    clsOrder", "  colPersons", "    clsPerson"], \
         _cb_tree(cb)
     _cb_select(cb, "clsPerson")
     assert "FullName | String |  | Get/Let" in _cb_rows(cb, 3) and "clsAddress | clsAddress |  | Get/Set" in _cb_rows(cb, 3)

@@ -436,12 +436,13 @@ class Model:
                     ic = self.cls(c.item)
                     if ic is not None:
                         kids.append(node(ic, p, True))
-                for n in c.children:
+                for n in sorted(c.children, key=str.lower):
                     k = self.cls(n)
                     if k is not None:
                         kids.append(node(k, p))
             return (c, ref, kids)
-        return [node(c, frozenset()) for c in self.roots()]
+        # in the order of the names, as VB6 (DEV-9/cb1-50, cb3-02, cb8)
+        return [node(c, frozenset()) for c in sorted(self.roots(), key=lambda x: x.name.lower())]
 
     def unique(self, base):
         names = {c.name.lower() for c in self.classes}
