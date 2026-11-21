@@ -1828,7 +1828,7 @@ End Sub
     w.run_start()
     wait(w, 120)
     got = open(out, encoding="cp1252").read().splitlines()
-    assert got == ["Ann|30|t|5|Athens", "False|2", "2|Bob|50|Bob,Cy,", "1", "12.5|k1", "7", "3|1"], got
+    assert got == ["Ann|30|t|5|Athens", "False|2", "2|Bob|50|Bob,Cy,", " 1 ", "12.5|k1", " 7 ", "3|1"], got   # a number: Print # puts its spaces
     done(w)
 
 
