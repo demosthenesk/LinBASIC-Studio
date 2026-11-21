@@ -1470,6 +1470,368 @@ End Sub
     done(w)
 
 
+def _cb_select(cb, *path):
+    """the class of the tree of the Class Builder at that path from Project1"""
+    it = cb.tree.topLevelItem(0)
+    for n in path:
+        it = next(it.child(i) for i in range(it.childCount()) if it.child(i).text(0) == n)
+    cb.tree.setCurrentItem(it)
+    return it
+
+
+def _cb_tree(cb):
+    out = []
+
+    def walk(it, depth):
+        out.append("  " * depth + it.text(0))
+        for i in range(it.childCount()):
+            walk(it.child(i), depth + 1)
+    walk(cb.tree.topLevelItem(0), 0)
+    return out
+
+
+def _cb_rows(cb, tab=3):
+    t = cb.lists[tab]
+    return [" | ".join(t.topLevelItem(i).text(k) for k in range(t.columnCount())).rstrip(" |")
+            for i in range(t.topLevelItemCount())]
+
+
+def _cb_member(cb, name, tab=3):
+    cb.tabs.setCurrentIndex(tab)
+    t = cb.lists[tab]
+    it = next(t.topLevelItem(i) for i in range(t.topLevelItemCount()) if t.topLevelItem(i).text(0) == name)
+    t.setCurrentItem(it)
+    return it.member
+
+
+def _cb_prop(cb, c, name, type_, decl="public", default=False, desc=""):
+    pb = cb.new_property()
+    pb.name.setText(name)
+    pb.type.setCurrentText(type_)
+    {"public": pb.rb_public, "friend": pb.rb_friend, "var": pb.rb_var}[decl].setChecked(True)
+    pb.cb_default.setChecked(default)
+    pb.desc.setPlainText(desc)
+    assert pb.apply(), pb.messages
+    return cb.add_member(c, pb.result_member)
+
+
+def t_classbuilder92(d):
+    """the Class Builder Utility (phase 9.2c, VB6 oracle DEV-9/cb1 ... cb6; the code is our own: cbmodel): the
+    Add-In Manager's "VB 6 Class Builder Utility" gives Add-Ins > Class Builder Utility...; Project > Add Class
+    Module offers Class Module, VB Class Builder, Complex Data Consumer, Data Source; the window (menus, toolbar,
+    Classes, the Properties / Methods / Events / All lists); the builders of a class (Based On: the members copied),
+    a collection (of an existing class; of a new class with Key), a property, a method (Add Argument), an event,
+    an enum; "Invalid Name!" for the words of the language (Text, Go), "'X' already exists!"; a class made in
+    another one is a member of it; Update Project: the modules, their VB_Ext_KEY attributes; the Class Builder
+    opened again: the tree from the attributes, the members in the code cannot be deleted / renamed / changed, a
+    class it did not make, new members added to a class without changing its code, a class renamed, View >
+    Options (modErrorHandling, modClassIDGenerator), Exit with changes; a tree that goes round (VB6 DEV-9/cb2-10)
+    ends; lbvc and the program: properties, the default member, the class in the class, the collections (Add,
+    Item, Count, Remove, For Each), Based On, the debug number"""
+    import subprocess
+    from lbstudio import cbmodel as CM
+    from lbstudio.classbuilder import ClassBuilder, AddClassModuleDialog, add_template, EXISTING_MEMBER
+    from lbstudio.resedit import AddInManagerDialog, CBUILDER
+    w = MainWindow()
+    w.show()
+    p = w.project
+    # ---- Add-Ins, Project > Add Class Module
+    assert not w.a_cbuilder.isVisible()
+    am = AddInManagerDialog(w)
+    am.state[CBUILDER] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.cbuilder_loaded and w.a_cbuilder.isVisible() and w.a_cbuilder.text() == "Class Builder Utility..."
+    ac = AddClassModuleDialog(w, d)
+    assert [ac.items.item(i).text() for i in range(ac.items.count())] == \
+        ["Class Module", "VB Class Builder", "Complex Data Consumer", "Data Source"]
+    assert [ac.tabs.tabText(i) for i in range(2)] == ["New", "Existing"]
+    ac.reject()
+    # ---- the window
+    cb = ClassBuilder(w, quiet=True)
+    assert cb.windowTitle() == "Class Builder"
+    assert [a.text() for a in cb.menubar.actions()] == ["&File", "&Edit", "&View", "&Help"]
+    assert [a.toolTip() for a in cb.toolbar.actions() if not a.isSeparator()] == \
+        ["Add New Class", "Add New Collection", "Add New Property to Current Class", "Add New Method to Current Class",
+         "Add New Event to Current Class", "Add New Enum to Current Class", "Show Properties for the current object",
+         "Cut", "Copy", "Paste"]
+    assert [cb.tabs.tabText(i) for i in range(4)] == ["Properties", "Methods", "Events", "All"]
+    assert _cb_tree(cb) == ["Project1"] and not cb.a_new_prop.isEnabled()
+    # ---- clsPerson
+    dl = cb.new_class()
+    assert dl.windowTitle() == "Class Module Builder" and dl.name.text() == "Class1"
+    assert [dl.based.itemText(i) for i in range(dl.based.count())] == ["(New Class)"]
+    dl.name.setText("clsPerson")
+    dl.desc.setPlainText("A person")
+    assert dl.apply()
+    person = cb.new_class(dl)
+    assert _cb_tree(cb) == ["Project1", "  clsPerson"] and cb.current_class() is person and cb.a_new_prop.isEnabled()
+    pb = cb.new_property()
+    assert pb.windowTitle() == "Property Builder"
+    assert [pb.rb_public.text(), pb.rb_friend.text(), pb.rb_var.text(), pb.cb_default.text()] == \
+        ["&Public Property (Let, Get, Set)", "&Friend Property (Let, Get, Set)", "Public &Variable", "De&fault Property?"]
+    pb.name.setText("Text")                     # a word of the language (VB6 DEV-9/cb1-27)
+    assert not pb.apply() and pb.messages == ["Invalid Name!"]
+    _cb_prop(cb, person, "FullName", "String", default=True, desc="The full name")
+    _cb_prop(cb, person, "Age", "Integer", "friend")
+    _cb_prop(cb, person, "Tag", "Variant", "var")
+    _cb_prop(cb, person, "Photo", "Object")
+    _cb_prop(cb, person, "Extra", "Variant")
+    pb = cb.new_property()
+    pb.name.setText("Age")
+    assert not pb.apply() and pb.messages == ["'Age' already exists!"]
+    mb = cb.new_method()
+    assert mb.windowTitle() == "Method Builder" and mb.ret.currentText() == "(None)"
+    mb.name.setText("Speak")
+    ad = mb.add_arg()
+    assert ad.windowTitle() == "Add Argument" and ad.type.currentText() == "Variant"
+    ad.name.setText("Text")
+    ad._ok()
+    assert ad.messages == ["Invalid Name!"] and ad.result_arg is None
+    ad.name.setText("Phrase")
+    ad.byval.setChecked(True)
+    assert not ad.array.isEnabled() and not ad.default.isEnabled()
+    ad.type.setCurrentText("String")
+    ad._ok()
+    mb.add_arg(ad.result_arg)
+    ad = mb.add_arg()
+    ad.name.setText("Repeats")
+    ad.optional.setChecked(True)
+    ad.type.setCurrentText("Integer")
+    ad.default.setText("1")
+    ad._ok()
+    mb.add_arg(ad.result_arg)
+    assert [mb.arg_list.item(i).text() for i in range(mb.arg_list.count())] == \
+        ["ByVal Phrase As String", "Optional Repeats As Integer = 1"]
+    mb.ret.setCurrentText("Boolean")
+    assert mb.apply()
+    cb.add_member(person, mb.result_member)
+    mb = cb.new_method()
+    mb.name.setText("Go")                       # VB6 DEV-9/cb3
+    assert not mb.apply() and mb.messages == ["Invalid Name!"]
+    mb.name.setText("Reset")
+    mb.cb_friend.setChecked(True)
+    assert mb.apply()
+    cb.add_member(person, mb.result_member)
+    eb = cb.new_event()
+    eb.name.setText("Changed")
+    ad = eb.add_arg()
+    ad.name.setText("Reason")
+    ad.byval.setChecked(True)
+    ad.type.setCurrentText("String")
+    ad._ok()
+    eb.add_arg(ad.result_arg)
+    assert eb.apply()
+    cb.add_member(person, eb.result_member)
+    en = cb.new_enum()
+    assert en.windowTitle() == "Enum Builder" and not en.b_ok.isEnabled()
+    en.name.setText("PersonKind")
+    en.add_value("pkChild = 1")
+    en.add_value("pkAdult=2")
+    assert en.b_ok.isEnabled()
+    en._ok()
+    cb.add_member(person, en.result_member)
+    cb.class_changed()
+    assert _cb_rows(cb, 3) == [
+        "Age | Integer |  | Get/Let", "Changed |  | ByVal Reason As String", "Extra | Variant |  | Get/Let/Set",
+        "FullName | String |  | Get/Let", "PersonKind", "Photo | Object |  | Get/Set", "Reset",
+        "Speak | Boolean | ByVal Phrase As String, Optional Repeats As Integer = 1", "Tag | Variant |  | Var"], \
+        _cb_rows(cb, 3)
+    assert _cb_rows(cb, 2) == ["Changed | ByVal Reason As String"]
+    # ---- a class in clsPerson; collections; Based On
+    dl = cb.new_class()
+    dl.name.setText("clsAddress")
+    assert dl.apply()
+    addr = cb.new_class(dl)
+    _cb_prop(cb, addr, "City", "String")
+    _cb_select(cb)
+    cd = cb.new_collection()
+    assert cd.windowTitle() == "Collection Builder" and cd.name.text() == "Collection1"
+    assert [cd.existing.item(i).text() for i in range(cd.existing.count())] == ["clsPerson", "clsAddress"]
+    cd.name.setText("colPersons")
+    cd.rb_existing.setChecked(True)
+    assert not cd.apply() and cd.messages
+    cd.existing.setCurrentRow(0)
+    assert cd.apply()
+    cb.new_collection(cd)
+    _cb_select(cb)
+    cd = cb.new_collection()
+    cd.name.setText("colOrders")
+    cd.rb_new.setChecked(True)
+    cd.new_name.setText("clsOrder")
+    assert cd.apply()
+    cb.new_collection(cd)
+    _cb_select(cb, "colOrders", "clsOrder")
+    order = cb.current_class()
+    assert order.name == "clsOrder" and _cb_rows(cb, 3) == ["Key | String |  | Var"]
+    _cb_prop(cb, order, "Amount", "Currency")
+    _cb_select(cb)
+    dl = cb.new_class()
+    dl.name.setText("clsBase")
+    assert dl.apply()
+    base = cb.new_class(dl)
+    _cb_prop(cb, base, "Value", "Long")
+    mb = cb.new_method()
+    mb.name.setText("Run")
+    assert mb.apply()
+    cb.add_member(base, mb.result_member)
+    _cb_select(cb)
+    dl = cb.new_class()
+    dl.name.setText("clsDerived")
+    dl.based.setCurrentText("clsBase")
+    assert dl.apply()
+    cb.new_class(dl)
+    assert _cb_rows(cb, 3) == ["Run", "Value | Long |  | Get/Let"]    # Based On: the members (VB6 DEV-9/cb2)
+    _cb_member(cb, "Value")
+    assert cb.copy(target="member")
+    cb.paste()
+    assert cb.messages[-1] == "'Value' already exists!"
+    _cb_select(cb)
+    dl = cb.new_class()
+    dl.name.setText("clsList")
+    assert dl.apply()
+    cb.new_class(dl)
+    cb.set_as_collection()
+    assert cb.current_class().user_collection
+    _cb_select(cb)
+    dl = cb.new_class()
+    dl.name.setText("clsTmp")
+    assert dl.apply()
+    cb.new_class(dl)
+    assert cb.delete(target="class") and cb.model.cls("clsTmp") is None
+    assert _cb_tree(cb) == ["Project1", "  clsPerson", "    clsAddress", "  colPersons", "    clsPerson",
+                            "  colOrders", "    clsOrder", "  clsBase", "  clsDerived", "  clsList"], _cb_tree(cb)
+    # ---- Update Project
+    assert cb.model.dirty
+    assert cb.update_project() and not cb.model.dirty
+    for n in ("clsPerson", "clsAddress", "colPersons", "colOrders", "clsOrder", "clsBase", "clsDerived", "clsList"):
+        m = p.module(n)
+        assert m is not None and m.kind == "Class" and m.dirty, n
+    keys = CM.ext_keys(p.module("clsPerson").sf.attributes)
+    assert keys == [("SavedWithClassBuilder6", "Yes"), ("Member0", "clsAddress"), ("Top_Level", "Yes")], keys
+    assert CM.ext_keys(p.module("colPersons").sf.attributes) == [
+        ("SavedWithClassBuilder6", "Yes"), ("Collection", "clsPerson"), ("Member0", "clsPerson"), ("Top_Level", "Yes")]
+    assert ("Top_Level", "No") in CM.ext_keys(p.module("clsAddress").sf.attributes)
+    assert ("Collection", "UserDefinedCollection") in CM.ext_keys(p.module("clsList").sf.attributes)
+    pt = p.module("clsPerson").code_text()
+    for line in ("Private mvarFullName As String", "Public Tag As Variant", "Public Event Changed(ByVal Reason As String)",
+                 "Friend Property Let Age(ByVal vData As Integer)", "Attribute FullName.VB_UserMemId = 0",
+                 "Public Function Speak(ByVal Phrase As String, Optional Repeats As Integer = 1) As Boolean",
+                 "    Set mvarclsAddress = New clsAddress", "    pkAdult = 2", "Friend Sub Reset()"):
+        assert line in pt.split("\n"), line
+    assert "Public Function Add(Key As String, Amount As Currency, Optional sKey As String) As clsOrder" in \
+        p.module("colOrders").code_text()
+    cb.reject()
+    # ---- the Class Builder again: the tree of the attributes, a class it did not make
+    w.add_module("Class")
+    code(w, p.module("Class1"), "Public Nickname As String\nPublic Sub Hello()\nEnd Sub\n")
+    w._sync_editors()
+    cb = ClassBuilder(w, quiet=True)
+    assert cb.foreign_message() is not None
+    assert _cb_tree(cb) == ["Project1", "  clsPerson", "    clsAddress", "  colPersons", "    clsPerson",
+                            "  colOrders", "    clsOrder", "  clsBase", "  clsDerived", "  clsList", "  Class1"], \
+        _cb_tree(cb)
+    _cb_select(cb, "clsPerson")
+    assert "FullName | String |  | Get/Let" in _cb_rows(cb, 3) and "clsAddress | clsAddress |  | Get/Set" in _cb_rows(cb, 3)
+    _cb_member(cb, "FullName")
+    assert not cb.delete(target="member")
+    assert cb.messages[-1] == EXISTING_MEMBER.format(name="FullName", what="delete", cls="clsPerson")
+    assert not cb.rename_member(cb.current_class(), cb.current_member(), "Fullname2")
+    cb.properties(target="member")
+    assert cb.last_dialog.windowTitle() == "Property Builder" and not cb.last_dialog.name.isEnabled()
+    assert not cb.delete(target="class") and "class module of the project already" in cb.messages[-1]
+    _cb_prop(cb, cb.current_class(), "Nickname", "String")
+    _cb_select(cb, "clsList")
+    assert cb.rename_class(cb.current_class(), "clsItems")
+    cb.options(True, True)                      # View > Options: debug code, Err.Raise
+    _cb_select(cb)
+    dl = cb.new_class()
+    dl.name.setText("clsDbg")
+    assert dl.apply()
+    dbg = cb.new_class(dl)
+    _cb_prop(cb, dbg, "Value", "Long")
+    cb.answer = "yes"                           # Exit: "Update Project with changes?" Yes
+    cb.reject()
+    assert cb.messages[-1] == "Update Project with changes?" and not cb.model.dirty
+    w.S["cb_debug_code"] = w.S["cb_err_raise"] = False
+    pt2 = p.module("clsPerson").code_text()
+    assert "Private mvarNickname As String" in pt2 and "Public Property Let Nickname(ByVal vData As String)" in pt2
+    rest = iter(pt2.split("\n"))                # the old code as it was, in its order
+    assert all(any(x == y for y in rest) for x in pt.split("\n") if x.strip()), pt2
+    assert p.module("clsItems") is not None and p.module("clsList") is None
+    assert ("SavedWithClassBuilder6", "Yes") in CM.ext_keys(p.module("Class1").sf.attributes)
+    for n in ("modErrorHandling", "modClassIDGenerator"):
+        assert p.module(n) is not None and p.module(n).kind == "Module", n
+    dt = p.module("clsDbg").code_text()
+    assert "#Const DebugMode = 1" in dt and "    On Error GoTo ValueLetErr" in dt, dt
+    # a tree that goes round (VB6 DEV-9/cb2-10: clsAddress in clsAddress) ends
+    mm = CM.Model()
+    a = CM.CBClass("clsLoop")
+    a.children = ["clsLoop"]
+    mm.add(a)
+    assert [(c.name, len(k)) for c, _, k in mm.tree()] == [("clsLoop", 1)] and mm.tree()[0][2][0][2] == []
+    # ---- the templates of Add Class Module
+    add_template(p, "source")
+    add_template(p, "consumer")
+    assert p.module("clsDataSource").sf.class_props is not None
+    assert "Private Sub Class_GetDataMember(DataMember As String, Data As Object)" in p.module("clsDataSource").code_text()
+    # ---- the program
+    w.add_module("Module")
+    code(w, p.module("Module1"), """
+Sub Main()
+    Dim f As Integer, ps As clsPerson, c As colPersons, o As colOrders, x As clsPerson, s As String
+    Dim g As New clsDerived, dbg As New clsDbg
+    f = FreeFile
+    Open App.Path & "/out.txt" For Output As #f
+    Set ps = New clsPerson
+    ps.FullName = "Ann"
+    ps.Age = 30
+    ps.Tag = "t"
+    ps.Extra = 5
+    ps.clsAddress.City = "Athens"
+    Print #f, ps & "|" & ps.Age & "|" & ps.Tag & "|" & ps.Extra & "|" & ps.clsAddress.City
+    Print #f, ps.Speak("hi") & "|" & pkAdult
+    Set c = New colPersons
+    c.Add "Bob", 40, "", Nothing, 1, Nothing, "b"
+    c.Add "Cy", 50, "", Nothing, 2, Nothing
+    For Each x In c
+        s = s & x.FullName & ","
+    Next
+    Print #f, c.Count & "|" & c("b").FullName & "|" & c(2).Age & "|" & s
+    c.Remove 1
+    Print #f, c.Count
+    Set o = New colOrders
+    o.Add "k1", 12.5, "k1"
+    Print #f, o("k1").Amount & "|" & o(1).Key
+    g.Value = 7
+    Print #f, g.Value
+    dbg.Value = 3
+    Print #f, dbg.Value & "|" & dbg.ClassDebugID
+    Close #f
+    End
+End Sub
+""")
+    p.vbp.set("Startup", "Sub Main", quote=True)
+    files = [os.path.join(d, n) for n in ("Form1.frm", "clsPerson.cls", "clsAddress.cls", "colPersons.cls",
+                                          "clsOrder.cls", "colOrders.cls", "clsBase.cls", "clsDerived.cls",
+                                          "clsItems.cls", "Class1.cls", "clsDbg.cls", "modErrorHandling.bas",
+                                          "modClassIDGenerator.bas", "clsDataSource.cls",
+                                          "clsComplexDataConsumer.cls", "Module1.bas", "Cb.vbp")]
+    saves(*files)
+    assert w.save_project_as()
+    for f in files:
+        assert os.path.isfile(f), f
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Cb.vbp"),
+                         "-o", os.path.join(d, "Cb")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    out = os.path.join(d, "out.txt")
+    w.run_start()
+    wait(w, 120)
+    got = open(out, encoding="cp1252").read().splitlines()
+    assert got == ["Ann|30|t|5|Athens", "False|2", "2|Bob|50|Bob,Cy,", "1", "12.5|k1", "7", "3|1"], got
+    done(w)
+
+
 def t_appwizgen92(d):
     """what the Application Wizard writes (phase 9.2a-2, appwizgen): the profile of the default choices as VB6 wrote
     it (VB6 oracle DEV-9/aw6 test1.rwp); four projects of the VB6 oracle aw1 (SDI with Resources, Internet and the
@@ -4281,7 +4643,7 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

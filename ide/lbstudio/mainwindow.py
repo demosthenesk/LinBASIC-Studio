@@ -160,6 +160,7 @@ class MainWindow(QMainWindow):
         self.pdw_loaded = bool(self.S["addin_pdw_startup"])         # and the Package and Deployment Wizard
         self.appwiz_loaded = bool(self.S["addin_appwiz_startup"])   # and the VB 6 Application Wizard (phase 9.2)
         self.dfwiz_loaded = bool(self.S["addin_dfwiz_startup"])     # and the VB 6 Data Form Wizard (phase 9.2b)
+        self.cbuilder_loaded = bool(self.S["addin_cbuilder_startup"])   # and the VB 6 Class Builder Utility (9.2c)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -447,7 +448,7 @@ class MainWindow(QMainWindow):
         self._act(m, "Add &Form", lambda: self.add_module("Form"))
         self.a_add_mdi = self._act(m, "Add MD&I Form", self.add_mdi_form)
         self._act(m, "Add &Module", lambda: self.add_module("Module"))
-        self._act(m, "Add &Class Module", lambda: self.add_module("Class"))
+        self._act(m, "Add &Class Module", self.add_class_module)
         self.a_add_uctl = self._act(m, "Add &User Control", lambda: self.add_module("UserControl"))
         self._act(m, "Add &Property Page", lambda: self.add_module("PropertyPage"))
         # not made by LinBASIC Studio yet (User Document: Phase 10.2, WebClass: 10.3, DHTML Page: never)
@@ -580,6 +581,10 @@ class MainWindow(QMainWindow):
         self.sep_dfwiz = m.addSeparator()
         from .dfwizard import dfwizard_icon
         self.a_dfwiz = self._act(m, "Data Form Wizard...", self.data_form_wizard, icon=dfwizard_icon(16))
+        # the VB 6 Class Builder Utility: Class Builder Utility... (VB6 DEV-9/cb1-03, phase 9.2c)
+        self.sep_cbuilder = m.addSeparator()
+        from .classbuilder import builder_icon
+        self.a_cbuilder = self._act(m, "Class Builder Utility...", self.class_builder, icon=builder_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2397,6 +2402,8 @@ class MainWindow(QMainWindow):
             a.setVisible(bool(self.appwiz_loaded))
         for a in (self.sep_dfwiz, self.a_dfwiz):                    # the VB 6 Data Form Wizard (phase 9.2b)
             a.setVisible(bool(self.dfwiz_loaded))
+        for a in (self.sep_cbuilder, self.a_cbuilder):              # the VB 6 Class Builder Utility (9.2c)
+            a.setVisible(bool(self.cbuilder_loaded))
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
@@ -2411,6 +2418,40 @@ class MainWindow(QMainWindow):
         """Add-Ins > Data Form Wizard... (phase 9.2b, dfwizard.py)"""
         from .dfwizard import open_wizard
         return open_wizard(self)
+
+    def class_builder(self):
+        """Add-Ins > Class Builder Utility..., Project > Add Class Module > VB Class Builder (phase 9.2c)"""
+        from .classbuilder import open_builder
+        return open_builder(self)
+
+    def add_class_module(self):
+        """Project > Add Class Module: the dialog of VB6 (Class Module, VB Class Builder, Complex Data Consumer,
+        Data Source; Existing) unless "Don't show this dialog in the future" (DEV-9/cb1-01, cb4)"""
+        p = self.project
+        if p is None:
+            return None
+        if self.S["add_class_nodialog"]:
+            return self.add_module("Class")
+        from .classbuilder import AddClassModuleDialog, add_template
+        start = os.path.dirname(p.path) if p.path else (self.S["last_dir"] or os.path.expanduser("~"))
+        dlg = AddClassModuleDialog(self, start)
+        self._last_add_class = dlg
+        if not dlg.exec():
+            return None
+        if dlg.dont_show.isChecked():
+            self.S["add_class_nodialog"] = True
+            self.S.save()
+        if dlg.path:
+            return self.add_file_path(dlg.path)
+        if dlg.kind == "builder":       # the Class Builder, loaded or not as an add-in (DEV-9/cb4-01)
+            return self.class_builder()
+        if dlg.kind in ("source", "consumer"):
+            m = add_template(p, dlg.kind)
+            self.fill_tree()
+            self.open_code(m)
+            self.update_title()
+            return m
+        return self.add_module("Class")
 
     def toolbar_wizard(self):
         """Add-Ins > Toolbar Wizard... (phase 9.2a-4)"""

@@ -28,6 +28,11 @@ DEFAULTS = {
     "addin_appwiz_startup": False,  # Add-In Manager: VB 6 Application Wizard, Load on Startup (phase 9.2)
     "appwiz_no_created": False,  # Application Wizard: "Don't show this dialog in the future." (Application Created)
     "addin_dfwiz_startup": False,  # Add-In Manager: VB 6 Data Form Wizard, Load on Startup (phase 9.2b)
+    "addin_cbuilder_startup": False,  # Add-In Manager: VB 6 Class Builder Utility, Load on Startup (phase 9.2c)
+    "cb_debug_code": False,  # Class Builder > View > Options: Include Debug code in Initialize and Terminate events
+    "cb_err_raise": False,   # and Include Err.Raise in all generated methods
+    "cb_no_foreign_msg": False,  # Class Builder: "Do not show this dialog in the future" (classes it did not make)
+    "add_class_nodialog": False,  # Project > Add Class Module: "Don't show this dialog in the future"
     "dfwiz_no_created": False,  # Data Form Wizard: "Don't show this dialog in the future." (Data Form Created)
     # General / UI
     "localization": "english.xml",
