@@ -2,12 +2,12 @@ VERSION 5.00
 Object = "{65E121D4-0C60-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCHRT20.OCX"
 Begin VB.Form Form1 
    Caption         =   "Charts"
-   ClientHeight    =   5880
+   ClientHeight    =   7800
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   7680
    LinkTopic       =   "Form1"
-   ScaleHeight     =   5880
+   ScaleHeight     =   7800
    ScaleWidth      =   7680
    StartUpPosition =   3  'Windows Default
    Begin MSChart20Lib.MSChart MSChart1 
@@ -82,6 +82,30 @@ Begin VB.Form Form1
       Top             =   3960
       Width           =   2400
    End
+   Begin MSChart20Lib.MSChart MSChart10 
+      Height          =   1800
+      Left            =   120
+      OleObjectBlob   =   "Form1.frx":119C6
+      TabIndex        =   9
+      Top             =   5880
+      Width           =   2400
+   End
+   Begin MSChart20Lib.MSChart MSChart11 
+      Height          =   1800
+      Left            =   2640
+      OleObjectBlob   =   "Form1.frx":13D1C
+      TabIndex        =   10
+      Top             =   5880
+      Width           =   2400
+   End
+   Begin MSChart20Lib.MSChart MSChart12 
+      Height          =   1800
+      Left            =   5160
+      OleObjectBlob   =   "Form1.frx":16070
+      TabIndex        =   11
+      Top             =   5880
+      Width           =   2400
+   End
 End
 Attribute VB_Name = "Form1"
 Attribute VB_GlobalNameSpace = False
@@ -90,7 +114,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 ' f_chart92 (phase 9.2): the settings of an MSChart drawn on a form are in its OleObjectBlob (.frx); the runtime
-' reads them (lbvc/project/chartblob.py): VB6 wrote the charts 1 - 8 (DEV-9 mc1, mc3, mc4), 9 is a new one of ours
+' reads them (lbvc/project/chartblob.py): VB6 wrote the charts 1 - 8, 10 - 12 (DEV-9 mc1, mc3, mc4, mc6), 9 is a new one of ours
 
 Private Sub Form_Load()
     On Error Resume Next
@@ -106,6 +130,9 @@ Private Sub Form_Load()
     Dump MSChart7, "7"
     Dump MSChart8, "8"
     Dump MSChart9, "9"
+    Dump MSChart10, "10"
+    Dump MSChart11, "11"
+    Dump MSChart12, "12"
     WriteLog "done"
     Unload Me
 End Sub
@@ -152,6 +179,13 @@ Private Sub Dump(c As Object, ByVal nm As String)
         End With
     Next
     Rep nm, "colors", s
+    With c.Title.Backdrop
+        v = Empty: v = .Fill.Style & " " & .Fill.Brush.FillColor.Red & "," & .Fill.Brush.FillColor.Green & "," & .Fill.Brush.FillColor.Blue & " frame " & .Frame.Style: Rep nm, "title backdrop", v
+    End With
+    With c.Plot.Backdrop
+        v = Empty: v = .Fill.Style & " " & .Fill.Brush.PatternColor.Red & " frame " & .Frame.Style: Rep nm, "plot backdrop", v
+    End With
+    v = Empty: v = c.Footnote.Backdrop.Shadow.Style: Rep nm, "footnote shadow", v
 End Sub
 
 Private Sub Rep(ByVal nm As String, ByVal what As String, ByVal v As Variant)
