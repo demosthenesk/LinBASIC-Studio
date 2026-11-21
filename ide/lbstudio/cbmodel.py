@@ -18,13 +18,14 @@ modClassIDGenerator.GetNextClassDebugID) are the ones of VB6's, so that projects
 import re
 
 try:
-    from lbvc.lexer import KEYWORDS, SOFT
+    from lbvc.lexer import KEYWORDS
 except ImportError:                             # the IDE without the compiler on the path
-    KEYWORDS, SOFT = set(), set()
+    KEYWORDS = set()
 
 PROJECT_ROOT = "Project1"
-# the names the Class Builder refuses ("Invalid Name!": Text, Go, Width in DEV-9/cb1, cb4, cb6)
-RESERVED = {w.upper() for w in KEYWORDS} | {w.upper() for w in SOFT} | {"GO", "WIDTH", "DOEVENTS", "ME"}
+# the names the Class Builder refuses ("Invalid Name!": Text, Go, Width in DEV-9/cb1, cb3, cb6; Reset is taken):
+# the keywords of the language and those words
+RESERVED = {w.upper() for w in KEYWORDS} | {"TEXT", "GO", "WIDTH", "ME"}
 NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,39}$")
 
 # the Data Type lists (DEV-9/cb1: Property Builder and Add Argument sorted with the classes; Return Data Type in
