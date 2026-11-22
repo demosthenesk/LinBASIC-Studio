@@ -1617,6 +1617,7 @@ def t_axwiz92(d):
               if wz.attr_names.topLevelItem(i).text(0) == "Amount")
     wz.attr_names.setCurrentItem(it)
     assert wz.attr_type.currentText() == "Variant" and wz.attr_default.isEnabled() and not wz.attr_args.isEnabled()
+    assert not next(lab for lab in wz.findChildren(QLabel) if lab.buddy() is wz.attr_args).isEnabled()
     wz.attr_type.setCurrentText("Long")
     wz.attr_default.setText("3")
     wz.attr_desc.setPlainText("The amount")

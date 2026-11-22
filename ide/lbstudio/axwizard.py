@@ -636,11 +636,12 @@ class AxWizard(QDialog):
             return
         m = self.model.member(cur.text(0))
         prop, method = m.kind == "property", m.kind == "method"
-        self.attr_type.setEnabled(prop or method)
-        self.attr_default.setEnabled(prop)
-        self.attr_run.setEnabled(prop)
-        self.attr_design.setEnabled(prop)
-        self.attr_args.setEnabled(not prop)
+        for wdg, on in ((self.attr_type, prop or method), (self.attr_default, prop), (self.attr_run, prop),
+                        (self.attr_design, prop), (self.attr_args, not prop)):
+            wdg.setEnabled(on)
+            for lab in self.findChildren(QLabel):          # its label greyed with it (VB6 DEV-9/ax-linux)
+                if lab.buddy() is wdg:
+                    lab.setEnabled(on)
         t = m.type or ("Variant" if method else "")
         if t and self.attr_type.findText(t) < 0:
             self.attr_type.addItem(t)
