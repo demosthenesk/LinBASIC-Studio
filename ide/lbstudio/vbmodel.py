@@ -271,7 +271,9 @@ class Module:
         self.sync_ole_blobs()
         owners = {}
         props = self.frx_props(owners)
-        frx_name = os.path.splitext(os.path.basename(target))[0] + ".frx"
+        # VB6: Form1.frx, UserControl1.ctx, PropertyPage1.pgx (DEV-9/pp1: PropertyPages = "UserControl1.ctx":0000)
+        ext = {"UserControl": ".ctx", "PropertyPage": ".pgx", "UserDocument": ".dox"}.get(self.kind, ".frx")
+        frx_name = os.path.splitext(os.path.basename(target))[0] + ext
         need = any(isinstance(p.value, FrxData) or p.value.file.lower() != frx_name.lower() for p in props)
         if not need:
             self.sf.save(target)
@@ -417,7 +419,7 @@ class VBProject:
         from lbvc.project.fsutil import ci_path
         rel_dir = os.path.dirname(m.rel.replace("\\", "/"))
         base = os.path.splitext(m.rel.replace("\\", "/"))[0]
-        names = {base + ext for ext in (".frx", ".ctx", ".dsx")}
+        names = {base + ext for ext in (".frx", ".ctx", ".pgx", ".dsx")}
         for p in m.frx_props():
             if isinstance(p.value, FrxRef):
                 names.add(os.path.join(rel_dir, p.value.file))
