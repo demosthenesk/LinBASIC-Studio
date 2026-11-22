@@ -1552,7 +1552,8 @@ def t_axwiz92(d):
     u.set_client_size(3000, 1200)
     u.place_new("TextBox", QRect(8, 8, 120, 24), None)
     u.place_new("CommandButton", QRect(8, 40, 100, 30), None)
-    assert [(n, t) for n, t, _ in uc.controls()] == [("Text1", "TextBox"), ("Command1", "CommandButton")]
+    ctls = [(n, t) for n, t, _ in uc.controls()]       # VB6 writes the newest control first
+    assert ctls == [("Command1", "CommandButton"), ("Text1", "TextBox")], ctls
     # ---- the pages
     wz = AxWizard(w, quiet=True)
     assert wz.windowTitle() == "ActiveX Control Interface Wizard - Introduction"
