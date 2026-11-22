@@ -976,12 +976,15 @@ class MainWindow(QMainWindow):
                     ("view_code", "View C&ode", self.view_code, True, None),
                     ("align_grid", "Align to &Grid", after(lambda: d.align("grid")), True, None), None,
                     ("properties", "Prope&rties", self.show_properties, True, None)]
+        from .ppdesign import uc_pages_of
+        pages = [None, (None, "P&roperties", self.property_pages, True, None)] \
+            if uc_pages_of(self, d, item.ctl) is not None else []     # a user control with property pages (pp1-16)
         return [(None, "Cu&t", cut, True, None), (None, "&Copy", d.copy_selection, True, None),
                 (None, "&Paste", after(d.paste), paste, None), (None, "&Delete", after(d.delete_selection), True, None),
                 None, (None, "&Bring To Front", after(lambda: d.z_order(True)), front, None),
                 (None, "Se&nd To Back", after(lambda: d.z_order(False)), back, None), None,
                 (None, "&View Code", self.view_code, True, None),
-                (None, "Align to &Grid", after(lambda: d.align("grid")), True, None)]
+                (None, "Align to &Grid", after(lambda: d.align("grid")), True, None)] + pages
 
     def designer_menu(self, d, gpos, item):
         from PyQt6.QtWidgets import QMenu
@@ -1110,8 +1113,21 @@ class MainWindow(QMainWindow):
         else:
             self._show_dock(self.dock_layout, self.formlayout)
 
-    def property_pages(self):
-        """View > Property Pages: none of the controls has pages of its own, VB6's "None" (DEV-8/me2 picture 11)"""
+    def property_pages(self, quiet=False):
+        """View > Property Pages (Shift+F4): the pages of a user control on a form (its PropertyPages, 9.2e:
+        ppdesign.py); the other controls have none, VB6's "None" (DEV-8/me2 picture 11)"""
+        from .ppdesign import DesignPagesDialog, uc_pages_of
+        d = self.current_designer()
+        item = getattr(d, "primary", None) if d is not None else None
+        ctl = getattr(item, "ctl", None)
+        uc = uc_pages_of(self, d, ctl) if ctl is not None else None
+        if uc is not None:
+            dlg = DesignPagesDialog(self, d, ctl, uc)
+            dlg.quiet = quiet
+            self._last_ppages = dlg
+            if not quiet:
+                dlg.exec()
+            return dlg
         from .dialogs import PropertyPagesDialog
         dlg = PropertyPagesDialog(self)
         self._last_ppages = dlg

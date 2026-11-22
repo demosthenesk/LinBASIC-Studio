@@ -1694,7 +1694,31 @@ End Sub
     assert 'Attribute Title.VB_ProcData.VB_Invoke_Property = "Options"' in uc.code_text()
     # ---- the program
     f = w.open_designer(p.module("Form1"))
-    assert f.place_new("Project1.UserControl1", QRect(16, 16, 0, 0), None) is not None
+    c = f.place_new("Project1.UserControl1", QRect(16, 16, 0, 0), None)
+    assert c is not None
+    # ---- the Property Pages of the control at design time (Shift+F4; Properties in its menu)
+    from lbstudio.ppdesign import bindings
+    item = f.items[c]
+    assert any(e and e[1] == "P&roperties" for e in w.designer_menu_items(f, item))
+    dlg = w.property_pages(quiet=True)
+    assert dlg.windowTitle() == "Property Pages" and [dlg.tabs.tabText(i) for i in range(dlg.tabs.count())] == \
+        ["Font", "Options"]
+    pw = dlg.page_widgets["Options"]
+    assert pw["txttitle"].text() == "T" and not pw["chkactive"].isChecked() and "txtamount" not in pw
+    assert pw["lbltitle"].text() == "Title:" and [dlg.font_props.item(i).text() for i in range(dlg.font_props.count())] == ["Font"]
+    assert not dlg.b_apply.isEnabled()
+    pw["txttitle"].setText("Hello")
+    pw["txttitle"].textEdited.emit("Hello")
+    pw["chkactive"].setChecked(True)
+    assert dlg.b_apply.isEnabled()
+    dlg.ok()
+    assert V.value_of(c, V.prop_def("UserControl1", "Title")) == "Hello"
+    assert V.value_of(c, V.prop_def("UserControl1", "Active")) is True
+    b, other = bindings(pg)
+    assert b == {"txttitle": ("Title", "text"), "chkactive": ("Active", "check")} and not other, (b, other)
+    code(w, pg, pg.code_text() + "\nPrivate Sub PropertyPage_Initialize()\n    Caption = \"x\"\nEnd Sub\n")
+    w._sync_editors()
+    assert bindings(pg)[1]                      # code of its own: the page says it cannot work here
     code(w, p.module("Form1"), """Private Sub Form_Load()
     Dim f As Integer
     f = FreeFile
@@ -1711,7 +1735,9 @@ End Sub
     assert 'PropertyPages   =   "UserControl1.ctx":' in ctl and 'Attribute VB_Ext_KEY = "PropPageWizardRun" ,"Yes"' in ctl, ctl
     assert G.pages_blob(["StandardFont", "Options"]) in open(os.path.join(d, "UserControl1.ctx"), "rb").read()
     pag = open(os.path.join(d, "Options.pag"), encoding="cp1252", newline="").read()
-    assert pag.replace("\r\n", "\n") == G.page_text("Options", ["Title", "Active"], types), pag
+    assert pag.replace("\r\n", "\n").startswith(G.page_text("Options", ["Title", "Active"], types).rstrip("\n")), pag
+    frm = open(os.path.join(d, "Form1.frm"), encoding="cp1252").read()
+    assert 'Title           =   "Hello"' in frm, frm
     cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Pp.vbp"),
                          "-o", os.path.join(d, "Pp")], capture_output=True, text=True, timeout=900)
     assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
@@ -1723,7 +1749,7 @@ End Sub
     except subprocess.TimeoutExpired as ex:
         why = ("timeout", str(ex.stdout)[-2000:], str(ex.stderr)[-2000:])
     got = open(out, encoding="cp1252").read().splitlines() if os.path.isfile(out) else None
-    assert got == ["T|4|False"], (got, why)
+    assert got == ["Hello|4|False"], (got, why)
     done(w)
 
 
