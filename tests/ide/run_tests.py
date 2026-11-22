@@ -1694,10 +1694,28 @@ End Sub
     cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Ax.vbp"),
                          "-o", os.path.join(d, "Ax")], capture_output=True, text=True, timeout=900)
     assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    out = os.path.join(d, "out.txt")
+    want = ["Text1|3", "382|abc|3|String", " 393 "]          # a number: Print # puts its spaces
+    try:                                        # the program lbvc made, on its own: what it says when it fails
+        rp = subprocess.run([os.path.join(d, "Ax.exe" if os.name == "nt" else "Ax")], cwd=d, capture_output=True,
+                            text=True, timeout=60)
+        why = (rp.returncode, rp.stdout[-2000:], rp.stderr[-2000:])
+    except subprocess.TimeoutExpired as ex:
+        why = ("timeout", str(ex.stdout)[-2000:], str(ex.stderr)[-2000:])
+    got = open(out, encoding="cp1252").read().splitlines() if os.path.isfile(out) else None
+    assert got == want, (got, why)
+    os.remove(out)
+    # F5: the Err.Raise of the user control's Property Let breaks there with Break in Class Module (VB6's default,
+    # as the IDE does); Break on Unhandled Errors gives the error to the On Error Resume Next of Form_Load
+    w.trap_session = 2                          # Toggle > Break on Unhandled Errors (this session)
     w.run_start()
-    wait(w, 120)
-    got = open(os.path.join(d, "out.txt"), encoding="cp1252").read().splitlines()
-    assert got == ["Text1|3", "382|abc|3|String", "393"], got
+    try:
+        wait(w, 120)
+    except AssertionError:
+        raise AssertionError(("F5", w.runner.state, w.runner.stderr[-2000:]))
+    w.trap_session = None
+    got = open(out, encoding="cp1252").read().splitlines()
+    assert got == want, got
     done(w)
 
 
