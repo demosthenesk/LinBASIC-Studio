@@ -1707,6 +1707,9 @@ End Sub
     assert pw["txttitle"].text() == "T" and not pw["chkactive"].isChecked() and "txtamount" not in pw
     assert pw["lbltitle"].text() == "Title:" and [dlg.font_props.item(i).text() for i in range(dlg.font_props.count())] == ["Font"]
     assert not dlg.b_apply.isEnabled()
+    from PyQt6.QtWidgets import QLabel as _QLabel
+    assert all(lab.buddy() is not None for lab in dlg.findChildren(_QLabel) if "&" in lab.text())
+    assert dlg.font_name.currentText() == "MS Sans Serif"   # a font of Windows keeps its name (VB6 DEV-9/pp-linux)
     pw["txttitle"].setText("Hello")
     pw["txttitle"].textEdited.emit("Hello")
     pw["chkactive"].setChecked(True)

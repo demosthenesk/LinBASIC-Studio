@@ -192,6 +192,12 @@ class DesignPagesDialog(QDialog):
             return None
         return self._custom_page(m)
 
+    @staticmethod
+    def _label(text, buddy):
+        lab = QLabel(text)
+        lab.setBuddy(buddy)                     # the & key, not a & on the screen
+        return lab
+
     def _props_list(self, names):
         lst = QListWidget()
         lst.addItems(names)
@@ -203,15 +209,16 @@ class DesignPagesDialog(QDialog):
         w = QWidget()
         g = QGridLayout(w)
         self.font_props = self._props_list(self._typed({"font"}))
-        g.addWidget(QLabel("&Properties:"), 0, 0)
+        g.addWidget(self._label("&Properties:", self.font_props), 0, 0)
         g.addWidget(self.font_props, 1, 0, 4, 1)
         self.font_name = QFontComboBox()
+        self.font_name.setEditable(True)        # a font of Windows (MS Sans Serif) keeps its name
         self.font_size = QComboBox()
         self.font_size.setEditable(True)
         self.font_size.addItems([str(s) for s in (8, 8.25, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36, 48, 72)])
-        g.addWidget(QLabel("Font:"), 0, 1)
+        g.addWidget(self._label("&Font:", self.font_name), 0, 1)
         g.addWidget(self.font_name, 1, 1)
-        g.addWidget(QLabel("Size:"), 0, 2)
+        g.addWidget(self._label("&Size:", self.font_size), 0, 2)
         g.addWidget(self.font_size, 1, 2)
         eff = QGroupBox("Effects")
         el = QGridLayout(eff)
@@ -231,7 +238,7 @@ class DesignPagesDialog(QDialog):
         self.font_props.currentRowChanged.connect(lambda *_: self._font_show())
         for c in (self.font_bold, self.font_italic, self.font_under, self.font_strike):
             c.toggled.connect(lambda *_: self._font_edit())
-        self.font_name.currentFontChanged.connect(lambda *_: self._font_edit())
+        self.font_name.currentTextChanged.connect(lambda *_: self._font_edit())
         self.font_size.currentTextChanged.connect(lambda *_: self._font_edit())
         self._font_show()
         return w
@@ -242,6 +249,7 @@ class DesignPagesDialog(QDialog):
         f = (self.pending.get(it.text()) or self.value(it.text())) if it is not None else None
         if f:
             self.font_name.setCurrentFont(QFont(str(f.get("Name", "MS Sans Serif"))))
+            self.font_name.setEditText(str(f.get("Name", "MS Sans Serif")))
             self.font_size.setCurrentText(str(f.get("Size", 8.25)))
             self.font_bold.setChecked(_int(f.get("Weight", 400)) >= 700)
             self.font_italic.setChecked(bool(f.get("Italic")))
@@ -251,7 +259,7 @@ class DesignPagesDialog(QDialog):
         self._font_sample()
 
     def _font_sample(self):
-        qf = QFont(self.font_name.currentFont().family())
+        qf = QFont(self.font_name.currentText())
         try:
             qf.setPointSizeF(float(self.font_size.currentText().replace(",", ".")))
         except ValueError:
@@ -261,7 +269,7 @@ class DesignPagesDialog(QDialog):
         qf.setUnderline(self.font_under.isChecked())
         qf.setStrikeOut(self.font_strike.isChecked())
         self.font_sample.setFont(qf)
-        self.font_sample.setText(self.font_name.currentFont().family())
+        self.font_sample.setText(self.font_name.currentText())
 
     def _font_edit(self):
         if getattr(self, "_font_busy", False):
@@ -270,7 +278,7 @@ class DesignPagesDialog(QDialog):
         if it is None:
             return
         f = dict(self.pending.get(it.text()) or self.value(it.text()) or {})
-        f["Name"] = self.font_name.currentFont().family()
+        f["Name"] = self.font_name.currentText()
         try:
             f["Size"] = float(self.font_size.currentText().replace(",", "."))
         except ValueError:
@@ -285,27 +293,31 @@ class DesignPagesDialog(QDialog):
         w = QWidget()
         g = QGridLayout(w)
         self.color_props = self._props_list(self._typed({"color"}))
-        g.addWidget(QLabel("&Properties:"), 0, 0)
-        g.addWidget(self.color_props, 1, 0, 3, 1)
-        g.addWidget(QLabel("Color &Set:"), 0, 1)
+        self._color_icons()
+        g.addWidget(self._label("&Properties:", self.color_props), 0, 0)
+        g.addWidget(self.color_props, 1, 0, 5, 1)
         self.color_set = QComboBox()
         self.color_set.addItems(["Standard Colors", "Windows System Colors"])
+        g.addWidget(self._label("Color &Set:", self.color_set), 0, 1)
         g.addWidget(self.color_set, 1, 1)
         self.color_list = QListWidget()
-        g.addWidget(self.color_list, 2, 1)
+        g.addWidget(self._label("Color P&alette:", self.color_list), 2, 1)
+        g.addWidget(self.color_list, 3, 1)
         b = QPushButton("&Edit Custom Color...")
         b.clicked.connect(self._color_custom)
-        g.addWidget(b, 3, 1)
+        g.addWidget(b, 4, 1)
         self.color_set.currentIndexChanged.connect(lambda *_: self._color_fill())
-        self.color_list.itemClicked.connect(lambda it: self.set_color(it.data(Qt.ItemDataRole.UserRole)))
+        self.color_list.itemClicked.connect(lambda it: self._color_custom() if it.data(Qt.ItemDataRole.UserRole) is None
+                                            else self.set_color(it.data(Qt.ItemDataRole.UserRole)))
         self._color_fill()
         return w
 
     def _color_fill(self):
         from .propwin import swatch
+        from PyQt6.QtWidgets import QListWidgetItem
         self.color_list.clear()
+        self.color_list.addItem(QListWidgetItem("<Custom...>"))         # (VB6 DEV-9/pp-linux)
         for name, v in (COLORS if self.color_set.currentIndex() == 0 else SYSTEM_COLORS):
-            from PyQt6.QtWidgets import QListWidgetItem
             it = QListWidgetItem(swatch(v), name)
             it.setData(Qt.ItemDataRole.UserRole, v)
             self.color_list.addItem(it)
@@ -319,24 +331,44 @@ class DesignPagesDialog(QDialog):
         it = self.color_props.currentItem()
         if it is not None:
             self.changed(it.text(), int(v))
+            self._color_icons()
+
+    def _color_icons(self):
+        """the color of each property beside its name"""
+        from .propwin import swatch
+        for i in range(self.color_props.count()):
+            it = self.color_props.item(i)
+            v = self.pending.get(it.text(), self.value(it.text()))
+            if v is not None:
+                it.setIcon(swatch(int(v)))
 
     def _picture_page(self):
         w = QWidget()
         g = QGridLayout(w)
         self.pic_props = self._props_list(self._typed({"picture"}))
-        g.addWidget(QLabel("&Properties:"), 0, 0)
+        g.addWidget(self._label("&Properties:", self.pic_props), 0, 0)
         g.addWidget(self.pic_props, 1, 0, 3, 1)
         self.pic_view = QLabel("(None)")
         self.pic_view.setFrameShape(QFrame.Shape.StyledPanel)
         self.pic_view.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.pic_view.setMinimumSize(120, 90)
+        g.addWidget(QLabel("Preview:"), 0, 1)
         g.addWidget(self.pic_view, 1, 1, 1, 2)
-        b1, b2 = QPushButton("&Browse..."), QPushButton("&Clear")
+        b1, self.pic_clear = QPushButton("&Browse..."), QPushButton("&Clear")
         b1.clicked.connect(self._pic_browse)
-        b2.clicked.connect(lambda: self.set_picture(None))
+        self.pic_clear.clicked.connect(lambda: self.set_picture(None))
         g.addWidget(b1, 2, 1)
-        g.addWidget(b2, 2, 2)
+        g.addWidget(self.pic_clear, 2, 2)
+        self.pic_props.currentRowChanged.connect(lambda *_: self._pic_show())
+        self._pic_show()
         return w
+
+    def _pic_show(self):
+        """the picture of the property chosen; Clear only when it has one (VB6 DEV-9/pp-linux)"""
+        it = self.pic_props.currentItem()
+        v = self.pending.get(it.text(), self.value(it.text())) if it is not None else None
+        self.pic_view.setText("(Bitmap)" if v else "(None)")
+        self.pic_clear.setEnabled(bool(v))
 
     def _pic_browse(self):
         path, _ = QFileDialog.getOpenFileName(self, "Select Picture", "",
@@ -350,7 +382,7 @@ class DesignPagesDialog(QDialog):
         it = self.pic_props.currentItem()
         if it is not None:
             self.changed(it.text(), data)
-            self.pic_view.setText("(Bitmap)" if data else "(None)")
+            self._pic_show()
 
     def _custom_page(self, m):
         """the controls of a page of the project, bound to the properties when its code is the wizard's"""
