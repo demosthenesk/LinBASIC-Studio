@@ -32,6 +32,8 @@ DEFAULTS = {
     "cb_debug_code": False,  # Class Builder > View > Options: Include Debug code in Initialize and Terminate events
     "cb_err_raise": False,   # and Include Err.Raise in all generated methods
     "cb_no_foreign_msg": False,  # Class Builder: "Do not show this dialog in the future" (classes it did not make)
+    "addin_axwiz_startup": False,  # Add-In Manager: VB 6 ActiveX Ctrl Interface Wizard, Load on Startup (9.2d)
+    "axwiz_skip_intro": False,  # ActiveX Control Interface Wizard: "Skip this screen in the future."
     "add_class_nodialog": False,  # Project > Add Class Module: "Don't show this dialog in the future"
     "dfwiz_no_created": False,  # Data Form Wizard: "Don't show this dialog in the future." (Data Form Created)
     # General / UI

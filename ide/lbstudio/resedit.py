@@ -38,8 +38,10 @@ PDW = "Package and Deployment Wizard"       # phase 9.5 (DEV-9/pd1-03: its Descr
 APPWIZ = "VB 6 Application Wizard"         # phase 9.2 (DEV-9/aw18: Add-Ins > Application Wizard..., Toolbar Wizard...)
 DFWIZ = "VB 6 Data Form Wizard"            # phase 9.2b (DEV-9/df1-01: Add-Ins > Data Form Wizard...)
 CBUILDER = "VB 6 Class Builder Utility"   # phase 9.2c (DEV-9/cb1-02: Add-Ins > Class Builder Utility...)
+AXWIZ = "VB 6 ActiveX Ctrl Interface Wizard"   # phase 9.2d (DEV-9/ax1: Add-Ins > ActiveX Control Interface Wizard...)
 ADDINS = [("DTC Framework Registrar", ""), (PDW, PDW), ("Source Code Control", ""),
-          ("VB 6 ActiveX Ctrl Interface Wizard", ""), ("VB 6 ActiveX Doc Migration Wizard", ""),
+          (AXWIZ, "Makes the properties, methods and events of a user control and the code under them "
+                  "(ActiveX Control Interface Wizard)"), ("VB 6 ActiveX Doc Migration Wizard", ""),
           ("VB 6 Add-In Toolbar", ""), ("VB 6 API Viewer", ""),
           (APPWIZ, "Makes the start of a new application: its main form, menus, toolbar and standard forms "
                    "(Application Wizard), and toolbars of forms (Toolbar Wizard)"),
@@ -256,7 +258,8 @@ class AddInManagerDialog(QDialog):
                       PDW: [bool(main.pdw_loaded), bool(S["addin_pdw_startup"]), False],
                       APPWIZ: [bool(main.appwiz_loaded), bool(S["addin_appwiz_startup"]), False],
                       DFWIZ: [bool(main.dfwiz_loaded), bool(S["addin_dfwiz_startup"]), False],
-                      CBUILDER: [bool(main.cbuilder_loaded), bool(S["addin_cbuilder_startup"]), False]}
+                      CBUILDER: [bool(main.cbuilder_loaded), bool(S["addin_cbuilder_startup"]), False],
+                      AXWIZ: [bool(main.axwiz_loaded), bool(S["addin_axwiz_startup"]), False]}
         lay = QGridLayout(self)
         self.list = QTableWidget(len(ADDINS), 2)
         self.list.setHorizontalHeaderLabels(["Available Add-Ins", "Load Behavior"])
@@ -351,6 +354,9 @@ class AddInManagerDialog(QDialog):
         loaded, startup, _ = self.state[CBUILDER]
         self.main.cbuilder_loaded = loaded
         self.main.S["addin_cbuilder_startup"] = startup
+        loaded, startup, _ = self.state[AXWIZ]
+        self.main.axwiz_loaded = loaded
+        self.main.S["addin_axwiz_startup"] = startup
         self.main.S.save()
         self.accept()
 

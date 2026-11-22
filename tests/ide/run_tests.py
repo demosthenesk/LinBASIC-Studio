@@ -1515,6 +1515,191 @@ def _cb_prop(cb, c, name, type_, decl="public", default=False, desc=""):
     return cb.add_member(c, pb.result_member)
 
 
+def t_axwiz92(d):
+    """the ActiveX Control Interface Wizard (phase 9.2d, VB6 oracle DEV-9/ax1, ax2; the code is our own: axwizgen):
+    the Add-In Manager's "VB 6 ActiveX Ctrl Interface Wizard" gives Add-Ins > ActiveX Control Interface Wizard...;
+    a project without a user control; the pages (Introduction, Select Interface Members with the standard members
+    chosen, Create Custom Interface Members: Add Custom Member, "Invalid Name!", a name already there, Delete; Set
+    Mapping: a member of a control on the user control; Set Attributes: the unmapped members); Finish: the code
+    ('MemberInfo / 'MappingInfo, Const m_def_, Dim m_, the events, Init/Read/WriteProperties); the summary report;
+    the wizard again: it reads what it wrote, the changed members commented out and written again (Read Only, Not
+    Available at run time, a method with arguments); lbvc and the program: the control on Form1"""
+    import subprocess
+    from lbstudio import axwizgen as G
+    from lbstudio.axwizard import AxWizard, CustomMemberDialog, SummaryDialog
+    from lbstudio.resedit import AddInManagerDialog, AXWIZ, ADDINS
+    w = MainWindow()
+    w.show()
+    p = w.project
+    # ---- Add-Ins
+    assert not w.a_axwiz.isVisible()
+    assert any(n == AXWIZ and desc for n, desc in ADDINS)
+    am = AddInManagerDialog(w)
+    am.state[AXWIZ] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.axwiz_loaded and w.a_axwiz.isVisible() and w.a_axwiz.text() == "ActiveX Control Interface Wizard..."
+    # ---- a project without a user control
+    wz = AxWizard(w, quiet=True)
+    assert wz.uc is None
+    wz.step(1)
+    assert wz.key == "intro" and wz.messages and "user control" in wz.messages[0]
+    wz.reject()
+    # ---- the user control: Text1, Command1
+    w.add_module("UserControl")
+    uc = p.module("UserControl1")
+    u = w.current_designer()
+    u.set_client_size(3000, 1200)
+    u.place_new("TextBox", QRect(8, 8, 120, 24), None)
+    u.place_new("CommandButton", QRect(8, 40, 100, 30), None)
+    assert [(n, t) for n, t, _ in uc.controls()] == [("Text1", "TextBox"), ("Command1", "CommandButton")]
+    # ---- the pages
+    wz = AxWizard(w, quiet=True)
+    assert wz.windowTitle() == "ActiveX Control Interface Wizard - Introduction"
+    assert wz.page_keys() == ["intro", "members", "custom", "mapping", "attributes", "finished"]
+    assert not wz.b_back.isEnabled() and wz.b_next.isEnabled() and not wz.b_finish.isEnabled()
+    assert wz.cb_skip.text() == "&Skip this screen in the future." and not wz.cb_skip.isChecked()
+    wz.step(1)
+    assert wz.key == "members" and wz.windowTitle().endswith("Select Interface Members") and wz.b_finish.isEnabled()
+
+    def names(t):
+        return [t.topLevelItem(i).text(0) for i in range(t.topLevelItemCount())]
+    assert names(wz.chosen) == sorted(G.DEFAULT_SELECTED, key=str.lower), names(wz.chosen)
+    assert "Text" in names(wz.avail) and "Text" not in names(wz.chosen)
+    kinds = {wz.chosen.topLevelItem(i).text(0): wz.chosen.topLevelItem(i).text(1)
+             for i in range(wz.chosen.topLevelItemCount())}
+    assert kinds["Click"] == "Event" and kinds["BackColor"] == "Property" and kinds["Refresh"] == "Method", kinds
+    wz.move_members(1, False, ["Text"])
+    wz.move_members(-1, False, ["DblClick"])
+    assert "Text" in names(wz.chosen) and "DblClick" in names(wz.avail) and "Text" not in names(wz.avail)
+    wz.move_members(1, False, ["DblClick"])
+    wz.step(1)
+    assert wz.key == "custom" and wz.windowTitle().endswith("Create Custom Interface Members")
+    dl = wz.new_custom()
+    assert isinstance(dl, CustomMemberDialog) and dl.windowTitle() == "Add Custom Member"
+    assert [rb.text() for rb in dl.kinds.values()] == ["&Property", "&Method", "&Event"] and dl.kind() == "property"
+    dl.reject()
+    wz.new_custom("Amount", "property")
+    wz.new_custom("Restart", "method")
+    wz.new_custom("Changed", "event")
+    assert wz.new_custom("Go") is None and wz.messages[-1] == "Invalid Name!"
+    assert wz.new_custom("Text") is None and wz.messages[-1] == "'Text' is already a member of the control."
+    wz.new_custom("Temp", "property")
+    assert names(wz.custom_list) == ["Amount", "Changed", "Restart", "Temp"]
+    wz.custom_list.setCurrentItem(wz.custom_list.topLevelItem(3))
+    assert wz.b_delete.isEnabled()
+    wz.delete_custom()
+    assert names(wz.custom_list) == ["Amount", "Changed", "Restart"]
+    assert [wz.custom_list.topLevelItem(i).text(1) for i in range(3)] == ["Property", "Event", "Method"]
+    wz.step(1)
+    assert wz.key == "mapping" and wz.windowTitle().endswith("Set Mapping")
+    assert [wz.map_ctl.itemText(i) for i in range(wz.map_ctl.count())] == ["(None)", "Command1", "Text1", "UserControl"]
+    assert names(wz.map_names) == wz.model.all_names() and "Amount" in names(wz.map_names)
+    it = next(wz.map_names.topLevelItem(i) for i in range(wz.map_names.topLevelItemCount())
+              if wz.map_names.topLevelItem(i).text(0) == "Text")
+    wz.map_names.clearSelection()
+    it.setSelected(True)
+    wz.map_ctl.setCurrentText("Text1")
+    wz.mapping_control_changed()
+    t = wz.model.member("Text")
+    assert (t.map_ctl, t.map_member, t.type) == ("Text1", "Text", "String"), (t.map_ctl, t.map_member, t.type)
+    wz.set_mapping("Click", "Command1", "Click")
+    wz.step(1)
+    assert wz.key == "attributes" and wz.windowTitle().endswith("Set Attributes")
+    un = names(wz.attr_names)
+    assert "Text" not in un and "Click" not in un and "Amount" in un and un == wz.model.unmapped(), un
+    it = next(wz.attr_names.topLevelItem(i) for i in range(wz.attr_names.topLevelItemCount())
+              if wz.attr_names.topLevelItem(i).text(0) == "Amount")
+    wz.attr_names.setCurrentItem(it)
+    assert wz.attr_type.currentText() == "Variant" and wz.attr_default.isEnabled() and not wz.attr_args.isEnabled()
+    wz.attr_type.setCurrentText("Long")
+    wz.attr_default.setText("3")
+    wz.attr_desc.setPlainText("The amount")
+    wz.step(1)
+    a = wz.model.member("Amount")
+    assert (a.type, a.default, a.description) == ("Long", "3", "The amount"), (a.type, a.default, a.description)
+    assert wz.key == "finished" and wz.windowTitle().endswith("Finished!") and wz.cb_summary.isChecked()
+    new = wz.finish()
+    ct = uc.code_text()
+    assert ct == new.rstrip("\n") and uc.dirty
+    for s in ("'MemberInfo=8,0,0,3\nPublic Property Get Amount() As Long", "Const m_def_Amount = 3",
+              "Dim m_Amount As Long", "Event Changed()", "Event Click() 'MappingInfo=Command1,Command1,-1,Click",
+              "Private Sub Command1_Click()\n    RaiseEvent Click\nEnd Sub",
+              "'MappingInfo=Text1,Text1,-1,Text\nPublic Property Get Text() As String",
+              "    Text = Text1.Text", "'MemberInfo=14\nPublic Function Restart() As Variant",
+              "Private Sub UserControl_InitProperties()", "    m_Amount = PropBag.ReadProperty(\"Amount\", m_def_Amount)",
+              "    Text1.Text = PropBag.ReadProperty(\"Text\", \"Text1\")",
+              "    Call PropBag.WriteProperty(\"Amount\", m_Amount, m_def_Amount)",
+              'Attribute Amount.VB_Description = "The amount"'):
+        assert s in ct, (s, ct)
+    sd = wz.summary_dialog
+    assert isinstance(sd, SummaryDialog) and sd.windowTitle() == "ActiveX Control Interface Wizard Summary"
+    rep = os.path.join(d, "ctlwiz.txt")
+    sd.save(rep)
+    assert open(rep, encoding="utf-8").read() == G.summary(wz.model) and "Amount" in G.summary(wz.model)
+    # ---- the wizard again: it reads what it wrote (the code window open)
+    w.open_code(uc)
+    wz = AxWizard(w, quiet=True)
+    wz.step(1)
+    m = wz.model
+    assert "Text" in m.selected and sorted(m.custom) == ["Amount", "Changed", "Restart"], (m.selected, m.custom)
+    assert (m.member("Text").map_ctl, m.member("Click").map_member) == ("Text1", "Click")
+    assert (m.member("Amount").type, m.member("Amount").default) == ("Long", "3")
+    wz.go_to("custom")
+    wz.new_custom("Secret", "property")
+    wz.go_to("attributes")
+    wz.set_attributes("Amount", runtime=1)
+    wz.set_attributes("Restart", type="String", args="ByVal Times As Integer")
+    wz.set_attributes("Secret", type="String", runtime=3)
+    wz.go_to("finished")
+    wz.cb_summary.setChecked(False)
+    wz.finish()
+    ct = uc.code_text().replace("\r\n", "\n")
+    assert ct.rstrip("\n") == w.code_windows[uc].widget().text().replace("\r\n", "\n").rstrip("\n"), ct
+    for s in ("''MemberInfo=14\n'Public Function Restart() As Variant",
+              "'MemberInfo=13\nPublic Function Restart(ByVal Times As Integer) As String",
+              "'MemberInfo=8,1,0,3\nPublic Property Get Amount() As Long",
+              "    If Ambient.UserMode Then Err.Raise 382\n    m_Amount = New_Amount",
+              "'MemberInfo=13,3,0,0\nPublic Property Get Secret() As String",
+              "    If Ambient.UserMode Then Err.Raise 393", "Dim m_Secret As String"):
+        assert s in ct, (s, ct)
+    assert ct.count("Public Property Get Text() As String") == 1 and ct.count("Private Sub UserControl_ReadProperties") == 1
+    # ---- the program: the control on Form1
+    w.fill_tree()
+    assert "Project1.UserControl1" in w.toolbox.buttons
+    f = w.open_designer(p.module("Form1"))
+    assert f.place_new("Project1.UserControl1", QRect(16, 16, 0, 0), None) is not None
+    code(w, p.module("Form1"), """Private Sub Form_Load()
+    Dim f As Integer, s As String
+    f = FreeFile
+    Open App.Path & "/out.txt" For Output As #f
+    Print #f, UserControl11.Text & "|" & UserControl11.Amount
+    UserControl11.Text = "abc"
+    On Error Resume Next
+    UserControl11.Amount = 9
+    Print #f, Err.Number & "|" & UserControl11.Text & "|" & UserControl11.Amount & "|" & TypeName(UserControl11.Restart(2))
+    Err.Clear
+    s = UserControl11.Secret
+    Print #f, Err.Number
+    On Error GoTo 0
+    Close #f
+    Unload Me
+End Sub
+""")
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "UserControl1.ctl"), os.path.join(d, "Ax.vbp"))
+    assert w.save_project_as()
+    ctl = open(os.path.join(d, "UserControl1.ctl"), encoding="cp1252").read()
+    assert "Begin VB.TextBox Text1" in ctl and "'MappingInfo=Text1,Text1,-1,Text" in ctl, ctl
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Ax.vbp"),
+                         "-o", os.path.join(d, "Ax")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    w.run_start()
+    wait(w, 120)
+    got = open(os.path.join(d, "out.txt"), encoding="cp1252").read().splitlines()
+    assert got == ["Text1|3", "382|abc|3|String", "393"], got
+    done(w)
+
+
 def t_classbuilder92(d):
     """the Class Builder Utility (phase 9.2c, VB6 oracle DEV-9/cb1 ... cb6; the code is our own: cbmodel): the
     Add-In Manager's "VB 6 Class Builder Utility" gives Add-Ins > Class Builder Utility...; Project > Add Class
@@ -4643,7 +4828,7 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

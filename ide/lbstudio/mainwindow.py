@@ -161,6 +161,7 @@ class MainWindow(QMainWindow):
         self.appwiz_loaded = bool(self.S["addin_appwiz_startup"])   # and the VB 6 Application Wizard (phase 9.2)
         self.dfwiz_loaded = bool(self.S["addin_dfwiz_startup"])     # and the VB 6 Data Form Wizard (phase 9.2b)
         self.cbuilder_loaded = bool(self.S["addin_cbuilder_startup"])   # and the VB 6 Class Builder Utility (9.2c)
+        self.axwiz_loaded = bool(self.S["addin_axwiz_startup"])   # and the VB 6 ActiveX Ctrl Interface Wizard (9.2d)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -585,6 +586,11 @@ class MainWindow(QMainWindow):
         self.sep_cbuilder = m.addSeparator()
         from .classbuilder import builder_icon
         self.a_cbuilder = self._act(m, "Class Builder Utility...", self.class_builder, icon=builder_icon(16))
+        # the VB 6 ActiveX Ctrl Interface Wizard: ActiveX Control Interface Wizard... (VB6 DEV-9/ax1, phase 9.2d)
+        self.sep_axwiz = m.addSeparator()
+        from .axwizard import axwizard_icon
+        self.a_axwiz = self._act(m, "ActiveX Control Interface Wizard...", self.activex_wizard,
+                                 icon=axwizard_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2404,6 +2410,8 @@ class MainWindow(QMainWindow):
             a.setVisible(bool(self.dfwiz_loaded))
         for a in (self.sep_cbuilder, self.a_cbuilder):              # the VB 6 Class Builder Utility (9.2c)
             a.setVisible(bool(self.cbuilder_loaded))
+        for a in (self.sep_axwiz, self.a_axwiz):                    # the VB 6 ActiveX Ctrl Interface Wizard (9.2d)
+            a.setVisible(bool(self.axwiz_loaded))
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
@@ -2423,6 +2431,11 @@ class MainWindow(QMainWindow):
         """Add-Ins > Class Builder Utility..., Project > Add Class Module > VB Class Builder (phase 9.2c)"""
         from .classbuilder import open_builder
         return open_builder(self)
+
+    def activex_wizard(self):
+        """Add-Ins > ActiveX Control Interface Wizard... (phase 9.2d, axwizard.py)"""
+        from .axwizard import open_wizard
+        return open_wizard(self)
 
     def add_class_module(self):
         """Project > Add Class Module: the dialog of VB6 (Class Module, VB Class Builder, Complex Data Consumer,
