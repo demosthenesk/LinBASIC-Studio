@@ -1586,12 +1586,16 @@ def t_axwiz92(d):
     assert wz.new_custom("Go") is None and wz.messages[-1] == "Invalid Name!"
     assert wz.new_custom("Text") is None and wz.messages[-1] == "'Text' is already a member of the control."
     wz.new_custom("Temp", "property")
-    assert names(wz.custom_list) == ["Amount", "Changed", "Restart", "Temp"]
-    wz.custom_list.setCurrentItem(wz.custom_list.topLevelItem(3))
+    assert names(wz.custom_list) == ["Amount", "Temp", "Restart", "Changed"]   # properties, methods, events (VB6)
+    wz.custom_list.setCurrentItem(wz.custom_list.topLevelItem(1))
     assert wz.b_delete.isEnabled()
     wz.delete_custom()
-    assert names(wz.custom_list) == ["Amount", "Changed", "Restart"]
-    assert [wz.custom_list.topLevelItem(i).text(1) for i in range(3)] == ["Property", "Event", "Method"]
+    assert names(wz.custom_list) == ["Amount", "Restart", "Changed"]
+    assert [wz.custom_list.topLevelItem(i).text(1) for i in range(3)] == ["Property", "Method", "Event"]
+    from PyQt6.QtWidgets import QLabel
+    labs = [lab for lab in wz.findChildren(QLabel) if "&" in lab.text()]
+    assert len(labs) >= 10 and all(lab.buddy() is not None for lab in labs), \
+        [lab.text() for lab in labs if lab.buddy() is None]                 # the & keys, not a & on the screen
     wz.step(1)
     assert wz.key == "mapping" and wz.windowTitle().endswith("Set Mapping")
     assert [wz.map_ctl.itemText(i) for i in range(wz.map_ctl.count())] == ["(None)", "Command1", "Text1", "UserControl"]
@@ -1668,6 +1672,9 @@ def t_axwiz92(d):
     # ---- the program: the control on Form1
     w.fill_tree()
     assert "Project1.UserControl1" in w.toolbox.buttons
+    # the Properties window: the defaults of ReadProperty (Const m_def_Amount = 3; "Text1")
+    assert V.prop_def("UserControl1", "Amount").default == 3 and V.prop_def("UserControl1", "Text").default == "Text1"
+    assert V.prop_def("UserControl1", "Enabled").default is False
     f = w.open_designer(p.module("Form1"))
     assert f.place_new("Project1.UserControl1", QRect(16, 16, 0, 0), None) is not None
     code(w, p.module("Form1"), """Private Sub Form_Load()

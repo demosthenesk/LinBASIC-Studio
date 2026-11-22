@@ -646,7 +646,17 @@ def uctl_props(code):
     ext = [NAME, INDEX, CAUSESVAL, _pic("DragIcon", "Behavior"), _e("DragMode", "dragmode", 0, "Behavior"), HELPID,
            TABINDEX, TABSTOP, TAG, TOOLTIP, VISIBLE, WHATSID] + POSSIZE
     gets, lets = {}, set()
+    consts, reads = {}, {}
     for line in code.splitlines():
+        if line.lstrip().startswith("'"):
+            continue
+        c = re.match(r"^\s*(?:Private\s+|Public\s+)?Const\s+([A-Za-z_]\w*)(?:\s+As\s+\w+)?\s*=\s*(.*?)\s*$", line,
+                     re.IGNORECASE)
+        if c:
+            consts[c.group(1).lower()] = c.group(2)
+        r = re.search(r'PropBag\.ReadProperty\(\s*"([^"]+)"\s*,\s*(.+)\)\s*$', line, re.IGNORECASE)
+        if r:                                   # the default of ReadProperty: what the Properties window shows
+            reads.setdefault(r.group(1).lower(), r.group(2).strip())
         m = re.match(r"^\s*Public\s+Property\s+(Get|Let|Set)\s+([A-Za-z_]\w*)\s*\((.*?)\)\s*(?:As\s+([\w.]+))?",
                      line, re.IGNORECASE)
         if not m:
@@ -664,8 +674,42 @@ def uctl_props(code):
             elif t in ("picture", "stdpicture", "stdole.picture"):
                 ext.append(_pic(name, "Misc"))
             else:
-                ext.append(P(name, _UC_KIND.get(t, "string"), None, category="Misc"))
+                kind = _UC_KIND.get(t, "string")
+                ext.append(P(name, kind, _uc_default(reads.get(low), consts, kind), category="Misc"))
     return ext
+
+
+def _uc_default(expr, consts, kind):
+    """the default value of ReadProperty in the code of a user control (a literal, or a Const of the module:
+    the code of the ActiveX Control Interface Wizard), as the Properties window keeps it; None when it is not known"""
+    import re
+    for _ in range(3):                          # Const m_def_X = ..., ReadProperty("X", m_def_X)
+        if expr is None or expr.lower() not in consts:
+            break
+        expr = consts[expr.lower()]
+    if expr is None:
+        return None
+    expr = re.sub(r"\s+'.*$", "", expr).strip()
+    v = None
+    if len(expr) >= 2 and expr[0] == '"' and expr[-1] == '"':
+        v = expr[1:-1].replace('""', '"')
+    elif expr.lower() in ("true", "false"):
+        v = expr.lower() == "true"
+    else:
+        h = re.match(r"^&H([0-9A-Fa-f]+)&?$", expr)
+        try:
+            v = int(h.group(1), 16) if h else (float(expr) if "." in expr else int(expr.rstrip("&%")))
+        except ValueError:
+            return None
+    if kind == "string":
+        return v if isinstance(v, str) else None
+    if isinstance(v, str):
+        return None
+    if kind == "bool":
+        return bool(v)
+    if kind == "color":
+        return int(v) & 0xFFFFFFFF
+    return v
 
 
 def props_of(type_name):
