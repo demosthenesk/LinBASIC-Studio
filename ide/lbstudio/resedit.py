@@ -39,6 +39,7 @@ APPWIZ = "VB 6 Application Wizard"         # phase 9.2 (DEV-9/aw18: Add-Ins > Ap
 DFWIZ = "VB 6 Data Form Wizard"            # phase 9.2b (DEV-9/df1-01: Add-Ins > Data Form Wizard...)
 CBUILDER = "VB 6 Class Builder Utility"   # phase 9.2c (DEV-9/cb1-02: Add-Ins > Class Builder Utility...)
 AXWIZ = "VB 6 ActiveX Ctrl Interface Wizard"   # phase 9.2d (DEV-9/ax1: Add-Ins > ActiveX Control Interface Wizard...)
+PPWIZ = "VB 6 Property Page Wizard"    # phase 9.2e (DEV-9/pp1: Add-Ins > Property Page Wizard...)
 ADDINS = [("DTC Framework Registrar", ""), (PDW, PDW), ("Source Code Control", ""),
           (AXWIZ, "Makes the properties, methods and events of a user control and the code under them "
                   "(ActiveX Control Interface Wizard)"), ("VB 6 ActiveX Doc Migration Wizard", ""),
@@ -48,7 +49,7 @@ ADDINS = [("DTC Framework Registrar", ""), (PDW, PDW), ("Source Code Control", "
           (CBUILDER, "Makes the classes and collections of a project and their properties, methods, events and enums "
                      "(Class Builder Utility)"), (DFWIZ, "Makes forms whose controls show and change the records of a database (Data Form "
                                                             "Wizard)"), ("VB 6 Data Object Wizard", ""),
-          ("VB 6 Property Page Wizard", ""), (ADDIN, "Visual Basic 6 Resource Editor"),
+          (PPWIZ, "Makes the property pages of a user control (Property Page Wizard)"), (ADDIN, "Visual Basic 6 Resource Editor"),
           ("VB 6 Template Manager", ""), ("VB 6 Wizard Manager", "")]
 
 
@@ -259,7 +260,8 @@ class AddInManagerDialog(QDialog):
                       APPWIZ: [bool(main.appwiz_loaded), bool(S["addin_appwiz_startup"]), False],
                       DFWIZ: [bool(main.dfwiz_loaded), bool(S["addin_dfwiz_startup"]), False],
                       CBUILDER: [bool(main.cbuilder_loaded), bool(S["addin_cbuilder_startup"]), False],
-                      AXWIZ: [bool(main.axwiz_loaded), bool(S["addin_axwiz_startup"]), False]}
+                      AXWIZ: [bool(main.axwiz_loaded), bool(S["addin_axwiz_startup"]), False],
+                      PPWIZ: [bool(main.ppwiz_loaded), bool(S["addin_ppwiz_startup"]), False]}
         lay = QGridLayout(self)
         self.list = QTableWidget(len(ADDINS), 2)
         self.list.setHorizontalHeaderLabels(["Available Add-Ins", "Load Behavior"])
@@ -357,6 +359,9 @@ class AddInManagerDialog(QDialog):
         loaded, startup, _ = self.state[AXWIZ]
         self.main.axwiz_loaded = loaded
         self.main.S["addin_axwiz_startup"] = startup
+        loaded, startup, _ = self.state[PPWIZ]
+        self.main.ppwiz_loaded = loaded
+        self.main.S["addin_ppwiz_startup"] = startup
         self.main.S.save()
         self.accept()
 

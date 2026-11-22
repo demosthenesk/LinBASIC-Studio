@@ -1515,6 +1515,218 @@ def _cb_prop(cb, c, name, type_, decl="public", default=False, desc=""):
     return cb.add_member(c, pb.result_member)
 
 
+def t_ppwiz92(d):
+    """the Property Page Wizard (phase 9.2e, VB6 oracle DEV-9/pp1, pp2; the code is our own: ppwizgen): the Add-In
+    Manager's "VB 6 Property Page Wizard" gives Add-Ins > Property Page Wizard...; a project without a user control;
+    Select the Property Pages (StandardFont / StandardColor from the types of the properties, Add / Rename:
+    "Property Page Name", a bad or a taken name, the order), Add Properties (the properties not on a page and not of
+    the pages of the system, in the order of their names; the pages of the system cannot be changed), Finish: the
+    page (the same .pag as VB6's for the same page: a CheckBox for a Boolean), PropertyPages in the .ctx, the
+    VB_Invoke_Property attributes, VB_Ext_KEY; Property Page Created, the Summary Report; the PropertyPages property
+    in the Properties window ("(2 Pages)", Connect Property Pages); the wizard again: it reads the pages, a page
+    whose properties change is written again; lbvc and the program"""
+    import subprocess
+    from lbstudio import ppwizgen as G
+    from lbstudio.ppwizard import PPWizard, PageNameDialog, CreatedDialog
+    from lbstudio.resedit import AddInManagerDialog, PPWIZ, ADDINS
+    w = MainWindow()
+    w.show()
+    p = w.project
+    assert not w.a_ppwiz.isVisible() and any(n == PPWIZ and desc for n, desc in ADDINS)
+    am = AddInManagerDialog(w)
+    am.state[PPWIZ] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.ppwiz_loaded and w.a_ppwiz.isVisible() and w.a_ppwiz.text() == "Property Page Wizard..."
+    wz = PPWizard(w, quiet=True)
+    wz.step(1)
+    assert wz.key == "intro" and wz.messages and "user control" in wz.messages[0]
+    wz.reject()
+    # ---- a user control with properties of several types
+    w.add_module("UserControl")
+    uc = p.module("UserControl1")
+    u = w.current_designer()
+    u.set_client_size(3000, 1200)
+    u.place_new("TextBox", QRect(8, 8, 120, 24), None)
+    code(w, uc, """Private mAmount As Long, mActive As Boolean, mTitle As String, mShade As OLE_COLOR, mFont As Font
+
+Public Property Get Amount() As Long
+    Amount = mAmount
+End Property
+
+Public Property Let Amount(ByVal v As Long)
+    mAmount = v
+    PropertyChanged "Amount"
+End Property
+
+Public Property Get Active() As Boolean
+    Active = mActive
+End Property
+
+Public Property Let Active(ByVal v As Boolean)
+    mActive = v
+End Property
+
+Public Property Get Title() As String
+Attribute Title.VB_Description = "The title"
+    Title = mTitle
+End Property
+
+Public Property Let Title(ByVal v As String)
+    mTitle = v
+End Property
+
+Public Property Get Shade() As OLE_COLOR
+    Shade = mShade
+End Property
+
+Public Property Let Shade(ByVal v As OLE_COLOR)
+    mShade = v
+End Property
+
+Public Property Get Font() As Font
+    Set Font = mFont
+End Property
+
+Public Property Set Font(ByVal v As Font)
+    Set mFont = v
+End Property
+
+Public Property Get Version() As String
+    Version = "1"
+End Property
+
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+    mTitle = PropBag.ReadProperty("Title", "T")
+    mAmount = PropBag.ReadProperty("Amount", 4)
+End Sub
+""")
+    w._sync_editors()
+    assert [n for n, _ in G.uc_properties(uc.code_text())] == ["Amount", "Active", "Title", "Shade", "Font"]
+    # ---- the pages
+    wz = PPWizard(w, quiet=True)
+    assert wz.windowTitle() == "Property Page Wizard - Introduction" and not wz.b_finish.isEnabled()
+    assert wz.page_keys() == ["intro", "pages", "props", "finished"]
+    wz.step(1)
+    assert wz.key == "pages" and wz.windowTitle().endswith("Select the Property Pages")
+
+    def items(lst):
+        return [lst.item(i).text() for i in range(lst.count())]
+
+    def checked(lst):
+        return [lst.item(i).checkState() == Qt.CheckState.Checked for i in range(lst.count())]
+    assert items(wz.page_list) == ["StandardFont", "StandardColor"] and checked(wz.page_list) == [True, True]
+    wz.check("StandardColor", False)
+    assert not wz.model.page("StandardColor").checked
+    dl = wz.add_page()
+    assert isinstance(dl, PageNameDialog) and dl.windowTitle() == "Property Page Name" and \
+        dl.name.text() == "PropertyPage1"
+    dl.reject()
+    wz.add_page("PropertyPage1")
+    assert items(wz.page_list) == ["StandardFont", "StandardColor", "PropertyPage1"] and wz.b_rename.isEnabled()
+    wz.rename_page("Options")
+    assert wz.add_page("Bad Name") is None and wz.messages[-1] == "Invalid page name."
+    assert wz.add_page("options") is None and wz.messages[-1] == "A page named 'options' already exists."
+    wz.select_page("StandardFont")
+    assert not wz.b_rename.isEnabled() and not wz.b_up.isEnabled()
+    wz.select_page("Options")
+    wz.move_page(-1)
+    assert items(wz.page_list) == ["StandardFont", "Options", "StandardColor"], items(wz.page_list)
+    wz.step(1)
+    assert wz.key == "props" and wz.windowTitle().endswith("Add Properties") and wz.b_finish.isEnabled()
+    assert items(wz.avail) == ["Active", "Amount", "Title"], items(wz.avail)
+    assert [wz.tabs.tabText(i) for i in range(wz.tabs.count())] == ["StandardFont", "Options"]
+    wz.select_tab("StandardFont")
+    assert items(wz.tab_lists["StandardFont"]) == ["Font"] and not any(b.isEnabled() for b in wz.move_buttons)
+    wz.select_tab("Options")
+    assert all(b.isEnabled() for b in wz.move_buttons)
+    wz.move_props(1, False, ["Title", "Active", "Amount"])
+    assert items(wz.tab_lists["Options"]) == ["Title", "Active", "Amount"] and items(wz.avail) == []
+    wz.move_props(-1, False, ["Amount"])
+    assert items(wz.avail) == ["Amount"]
+    wz.move_props(1, True)
+    assert items(wz.tab_lists["Options"]) == ["Title", "Active", "Amount"]
+    wz.step(1)
+    assert wz.key == "finished" and wz.rb_yes.isChecked()
+    made = wz.finish()
+    pg = p.module("Options")
+    assert [m.name for m in made] == ["Options"] and pg.kind == "PropertyPage"
+    types = dict(G.uc_properties(uc.code_text()))
+    want = G.page_text("Options", ["Title", "Active", "Amount"], types)
+    assert pg.code_text().replace("\r\n", "\n").rstrip("\n") == \
+        want.split("Attribute VB_Exposed = False\n", 1)[1].rstrip("\n")
+    assert [c.name for c in pg.sf.root.walk()][1:] == ["txtAmount", "chkActive", "txtTitle", "lblAmount", "lblTitle"]
+    assert "    chkActive.Value = (SelectedControls(0).Active And vbChecked)" in pg.code_text()
+    assert isinstance(wz.created_dialog, CreatedDialog) and wz.created_dialog.windowTitle() == "Property Page Created"
+    assert wz.summary_dialog.windowTitle() == "Property Page Wizard Summary Report"
+    assert G.read_pages(uc.frx_value(uc.sf.root, "PropertyPages")) == ["StandardFont", "Options"]
+    ct = uc.code_text()
+    for n in ("Title", "Active", "Amount"):
+        assert f'Attribute {n}.VB_ProcData.VB_Invoke_Property = "Options"' in ct, ct
+    assert 'Attribute Title.VB_Description = "The title"\nAttribute Title.VB_ProcData.VB_Invoke_Property = "Options"' \
+        in ct.replace("\r\n", "\n")
+    assert ("VB_Ext_KEY", '"PropPageWizardRun" ,"Yes"') in [(a[0], a[1]) for a in uc.sf.attributes]
+    # ---- the Properties window: PropertyPages, Connect Property Pages
+    ud = w.open_designer(uc)
+    w.props.show_object(uc, ud, ud.root)
+    pp = V.prop_def("UserControl", "PropertyPages")
+    assert V.display(pp, w.props.value(pp)) == "(2 Pages)"
+    dlg = w.props._ppages_dialog(pp, answer=lambda dl: ["Options", "StandardFont", "StandardColor"])
+    assert items(dlg.list) == ["StandardFont", "Options", "StandardColor", "StandardPicture", "StandardDataFormat"]
+    assert checked(dlg.list) == [True, True, False, False, False]
+    assert G.read_pages(uc.frx_value(uc.sf.root, "PropertyPages")) == ["Options", "StandardFont", "StandardColor"]
+    w.props._ppages_dialog(pp, answer=lambda dl: ["StandardFont", "Options"])
+    # ---- the wizard again: it reads the pages; a page whose properties change is written again
+    wz = PPWizard(w, quiet=True)
+    wz.step(1)
+    assert items(wz.page_list) == ["StandardFont", "Options", "StandardColor"]
+    assert checked(wz.page_list) == [True, True, False] and not wz.b_rename.isEnabled()
+    assert wz.model.page("Options").props == ["Title", "Active", "Amount"]
+    wz.step(1)
+    assert items(wz.tab_lists["Options"]) == ["Title", "Active", "Amount"] and items(wz.avail) == []
+    wz.select_tab("Options")
+    wz.move_props(-1, False, ["Amount"])
+    wz.go_to("finished")
+    wz.rb_no.setChecked(True)
+    made = wz.finish()
+    assert [m.name for m in made] == ["Options"] and wz.summary_dialog is None
+    assert "txtAmount" not in pg.code_text() and "Amount.VB_ProcData" not in uc.code_text()
+    assert 'Attribute Title.VB_ProcData.VB_Invoke_Property = "Options"' in uc.code_text()
+    # ---- the program
+    f = w.open_designer(p.module("Form1"))
+    assert f.place_new("Project1.UserControl1", QRect(16, 16, 0, 0), None) is not None
+    code(w, p.module("Form1"), """Private Sub Form_Load()
+    Dim f As Integer
+    f = FreeFile
+    Open App.Path & "/out.txt" For Output As #f
+    Print #f, UserControl11.Title & "|" & UserControl11.Amount & "|" & UserControl11.Active
+    Close #f
+    Unload Me
+End Sub
+""")
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "UserControl1.ctl"), os.path.join(d, "Options.pag"),
+          os.path.join(d, "Pp.vbp"))
+    assert w.save_project_as()
+    ctl = open(os.path.join(d, "UserControl1.ctl"), encoding="cp1252").read()
+    assert 'PropertyPages   =   "UserControl1.ctx":' in ctl and 'Attribute VB_Ext_KEY = "PropPageWizardRun" ,"Yes"' in ctl, ctl
+    assert G.pages_blob(["StandardFont", "Options"]) in open(os.path.join(d, "UserControl1.ctx"), "rb").read()
+    pag = open(os.path.join(d, "Options.pag"), encoding="cp1252", newline="").read()
+    assert pag.replace("\r\n", "\n") == G.page_text("Options", ["Title", "Active"], types), pag
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Pp.vbp"),
+                         "-o", os.path.join(d, "Pp")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    out = os.path.join(d, "out.txt")
+    try:
+        rp = subprocess.run([os.path.join(d, "Pp.exe" if os.name == "nt" else "Pp")], cwd=d, capture_output=True,
+                            text=True, timeout=60)
+        why = (rp.returncode, rp.stdout[-2000:], rp.stderr[-2000:])
+    except subprocess.TimeoutExpired as ex:
+        why = ("timeout", str(ex.stdout)[-2000:], str(ex.stderr)[-2000:])
+    got = open(out, encoding="cp1252").read().splitlines() if os.path.isfile(out) else None
+    assert got == ["T|4|False"], (got, why)
+    done(w)
+
+
 def t_axwiz92(d):
     """the ActiveX Control Interface Wizard (phase 9.2d, VB6 oracle DEV-9/ax1, ax2; the code is our own: axwizgen):
     the Add-In Manager's "VB 6 ActiveX Ctrl Interface Wizard" gives Add-Ins > ActiveX Control Interface Wizard...;
@@ -4855,7 +5067,7 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

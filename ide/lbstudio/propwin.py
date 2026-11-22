@@ -447,6 +447,20 @@ class PropertiesWindow(QWidget):
             cb.lineEdit().returnPressed.connect(lambda p=p, cb=cb: self._text_done(p, cb.lineEdit()))
             cb.lineEdit().editingFinished.connect(lambda p=p, cb=cb: self._text_done(p, cb.lineEdit()))
             return cb
+        if p.kind == "ppages" and self.ctl is not None:       # the PropertyPages of a user control (ppwizard.py)
+            w = QWidget()
+            h = QHBoxLayout(w)
+            h.setContentsMargins(0, 0, 0, 0)
+            h.setSpacing(0)
+            lab = QLineEdit(V.display(p, v))
+            lab.setReadOnly(True)
+            lab.setFrame(False)
+            h.addWidget(lab, 1)
+            b = QToolButton()
+            b.setText("...")
+            b.clicked.connect(lambda _=False, p=p: self._ppages_dialog(p))
+            h.addWidget(b)
+            return w
         if p.kind == "dgcolumns" and self.ctl is not None:    # the columns of a DataGrid (dgcolumns.py)
             w = QWidget()
             h = QHBoxLayout(w)
@@ -724,6 +738,20 @@ class PropertiesWindow(QWidget):
         dlg = CoolBandsDialog(self, self.ctl.name, self.value(p), names)
         if dlg.exec():
             self.commit(p, dlg.chosen())
+
+    def _ppages_dialog(self, p, answer=None):
+        """Connect Property Pages: the pages of the system and the PropertyPage modules of the project"""
+        from .ppwizard import ConnectPagesDialog
+        pages = [m.name for m in self.module.project.modules if m.kind == "PropertyPage"] \
+            if self.module is not None else []
+        dlg = ConnectPagesDialog(self, list(self.value(p) or []), pages)
+        self._last_ppages_dialog = dlg
+        if answer is not None:                  # the tests
+            self.commit(p, answer(dlg))
+            return dlg
+        if dlg.exec():
+            self.commit(p, dlg.chosen())
+        return dlg
 
     def _dataformat_dialog(self, p):
         """the DataFormat of a bound control (BeginProperty DataFormat)"""

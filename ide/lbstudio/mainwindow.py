@@ -162,6 +162,7 @@ class MainWindow(QMainWindow):
         self.dfwiz_loaded = bool(self.S["addin_dfwiz_startup"])     # and the VB 6 Data Form Wizard (phase 9.2b)
         self.cbuilder_loaded = bool(self.S["addin_cbuilder_startup"])   # and the VB 6 Class Builder Utility (9.2c)
         self.axwiz_loaded = bool(self.S["addin_axwiz_startup"])   # and the VB 6 ActiveX Ctrl Interface Wizard (9.2d)
+        self.ppwiz_loaded = bool(self.S["addin_ppwiz_startup"])   # and the VB 6 Property Page Wizard (9.2e)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -591,6 +592,10 @@ class MainWindow(QMainWindow):
         from .axwizard import axwizard_icon
         self.a_axwiz = self._act(m, "ActiveX Control Interface Wizard...", self.activex_wizard,
                                  icon=axwizard_icon(16))
+        # the VB 6 Property Page Wizard: Property Page Wizard... (VB6 DEV-9/pp1, phase 9.2e)
+        self.sep_ppwiz = m.addSeparator()
+        from .ppwizard import ppwizard_icon
+        self.a_ppwiz = self._act(m, "Property Page Wizard...", self.property_page_wizard, icon=ppwizard_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2412,6 +2417,8 @@ class MainWindow(QMainWindow):
             a.setVisible(bool(self.cbuilder_loaded))
         for a in (self.sep_axwiz, self.a_axwiz):                    # the VB 6 ActiveX Ctrl Interface Wizard (9.2d)
             a.setVisible(bool(self.axwiz_loaded))
+        for a in (self.sep_ppwiz, self.a_ppwiz):                    # the VB 6 Property Page Wizard (9.2e)
+            a.setVisible(bool(self.ppwiz_loaded))
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
@@ -2435,6 +2442,11 @@ class MainWindow(QMainWindow):
     def activex_wizard(self):
         """Add-Ins > ActiveX Control Interface Wizard... (phase 9.2d, axwizard.py)"""
         from .axwizard import open_wizard
+        return open_wizard(self)
+
+    def property_page_wizard(self):
+        """Add-Ins > Property Page Wizard... (phase 9.2e, ppwizard.py)"""
+        from .ppwizard import open_wizard
         return open_wizard(self)
 
     def add_class_module(self):

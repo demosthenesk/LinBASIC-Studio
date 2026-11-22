@@ -1434,6 +1434,13 @@ class FormDesigner(QScrollArea):
         if self.module.sf is None or self.root is None:
             return
         for c in self.root.walk():
+            if c is self.root and c.type_name == "UserControl":     # its PropertyPages (ppwizgen)
+                p = c.prop("PropertyPages")
+                if p is not None and not isinstance(p.value, FrxData):
+                    d = self.module.frx_data(p)
+                    if d is not None and isinstance(d.data, (bytes, bytearray)):
+                        p.value = FrxData("raw", bytes(d.data))
+                continue
             if c.type_name not in ("DBGrid", "DBList", "DBCombo", "DataGrid"):
                 continue
             for name in ("OleObjectBlob", "Bindings"):

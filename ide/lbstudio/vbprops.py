@@ -258,7 +258,8 @@ CLASSES["UserControl"] = [NAME, _s("AccessKeys", "", "Misc"), _b("Alignable", Fa
                           _b("DefaultCancel", False, "Misc"), _b("EditAtDesignTime", False, "Misc"), _b("Enabled", True),
                           FONT, _c("ForeColor", BTNTEXT), _b("ForwardFocus", False, "Behavior"),
                           _b("InvisibleAtRuntime", False, "Behavior"), MOUSEICON, MOUSEPOINTER, OLEDROP,
-                          _pic("Picture", "Appearance"), P("Public", "enum", 0, "public", "Misc"), RTL,
+                          _pic("Picture", "Appearance"), P("PropertyPages", "ppages", None, category="Misc"),
+                          P("Public", "enum", 0, "public", "Misc"), RTL,
                           _b("Windowless", False, "Misc")] + [p for p in DRAWING]
 ENUMS["ucbackstyle"] = [(0, "Transparent"), (1, "Opaque")]
 # a property page (.pag): the dialog of a user control's properties (design time)
@@ -1198,6 +1199,9 @@ def _special_get(ctl, p):
     """(True, value) for a property of the blob or of the Bindings, (False, None) otherwise"""
     from lbvc.project.oleblob import get_prop, bindings
     t = getattr(ctl, "type_name", "")
+    if p.kind == "ppages":                       # the pages of a user control: a record of its .ctx (ppwizgen)
+        from .ppwizgen import read_pages
+        return True, read_pages(_frx_bytes(ctl, "PropertyPages"))
     if p.kind == "drepname":
         return True, drep_name(ctl)
     if p.kind == "drepbinds":
@@ -1234,6 +1238,13 @@ def _special_get(ctl, p):
 def _special_set(ctl, p, value):
     from lbvc.project.oleblob import set_prop, bindings_set
     t = getattr(ctl, "type_name", "")
+    if p.kind == "ppages":
+        from .ppwizgen import pages_blob
+        if value:
+            put(ctl, "PropertyPages", FrxData("raw", pages_blob(list(value))))
+        else:
+            remove(ctl, "PropertyPages")
+        return True
     if p.kind == "drepname":
         set_drep(ctl, name=str(value or "").strip())
         return True
@@ -1376,6 +1387,9 @@ def display(p, v):
         return "(List)"
     if p.kind == "dgcolumns":                    # the columns of the design of a DataGrid
         return f"({len(v)} columns)" if v else "(None)"
+    if p.kind == "ppages":                       # the PropertyPages of a user control (VB6: "(2 Pages)")
+        n = len(v or [])
+        return "(None)" if not n else f"({n} Page{'s' if n > 1 else ''})"
     if p.kind == "cbbands":                      # the bands of a CoolBar
         return f"({len(v)} band{'s' if len(v) != 1 else ''})" if v else "(None)"
     if p.kind == "drepbinds":                    # the RepeaterBindings of a DataRepeater
