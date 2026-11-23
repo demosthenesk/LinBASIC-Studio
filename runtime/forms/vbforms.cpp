@@ -53,6 +53,7 @@ extern "C" {
 #include <QClipboard>
 #include <QMimeData>
 #include <QScreen>
+#include <QWindow>
 #include <QFontDatabase>
 #include <QDateTime>
 #include <QPdfWriter>
@@ -3774,7 +3775,13 @@ static void set_client(vbobj o, double cw, double ch, bool event)
     if (ch < 0) ch = 0;
     bool changed = cw != st->clientw || ch != st->clienth;
     st->clientw = cw; st->clienth = ch;
-    int mbh = st->menubar && !st->mdichild ? st->menubar->sizeHint().height() : 0;
+    int mbh = 0;                                /* the height the layout gives the menu bar (polished: the style of
+                                                 * Windows makes it 2 pixels taller than before - f_win in Windows 7) */
+    if (st->menubar && !st->mdichild) {
+        st->menubar->ensurePolished();
+        int wpx = (int)(cw / TPP);
+        mbh = st->menubar->hasHeightForWidth() ? st->menubar->heightForWidth(wpx) : st->menubar->sizeHint().height();
+    }
     if (st->w) {
         QSignalBlocker b(st->w);
         st->w->resize((int)(cw / TPP), (int)(ch / TPP) + mbh);
@@ -4054,6 +4061,7 @@ static void load_form(vbobj o)
     lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
     Canvas *cv = new Canvas(&st->g, fw);
+    cv->setAttribute(Qt::WA_StaticContents);    /* a smaller window has nothing new to paint: no Paint (VB6, t21 geo) */
     cv->setFont(qfont(st->font));
     cv->setFocusPolicy(Qt::StrongFocus);
     lay->addWidget(cv);
@@ -4093,6 +4101,8 @@ static void load_form(vbobj o)
         st->sub->hide();
     }
     set_client(o, st->clientw, st->clienth, false);
+    snap_client(o);                             /* the window has its size in pixels at Load already (VB6: ScaleHeight
+                                                 * 1995 of ClientHeight 2000 in Form_Load, t21 geo in Windows 7) */
     st->norm_cw = st->clientw; st->norm_ch = st->clienth;
     if (st->mdichild) mdi_child_default(o);
     if (st->g.scalemode == 1) {                 /* until it is shown, the scale of the .frm (f_win: frmNone 0 0) */
@@ -4440,8 +4450,10 @@ static int hwnd_of(QWidget *w)
     static vb_i32 next = 0x00010010;
     vb_i32 h;
 #ifdef _WIN32
-    if (w->isWindow()) h = (vb_i32)(intptr_t)w->winId();    /* a form: its real HWND, for the Declares of user32 */
-    else
+    if (w->isWindow()) {                        /* a form: its real HWND, for the Declares of user32 */
+        h = (vb_i32)(intptr_t)w->winId();
+        if (!w->isVisible() && w->windowHandle()) w->windowHandle()->resize(w->size());   /* GetClientRect in Form_Load */
+    } else
 #endif
     { h = next; next += 4; }
     w->setProperty("vbhwnd", h);
