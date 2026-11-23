@@ -263,11 +263,16 @@ static void ev_movecomplete(ars *r, int reason)
     vbvar a[4] = { vb_v_l(reason), vb_v_obj(0), vb_v_l(adStatusOK), vb_v_obj((vbobj)r) };
     fire((vbobj)r, "movecomplete", 4, a);
 }
-static void ev_willchangerecord(ars *r, int reason)
+/* adStatusCancel from the handler: the change does not happen, the operation fails with "Operation was canceled."
+ * (the Data Object Wizard's class cancels a row its command could not save: VB6 oracle do2) */
+static int ev_willchangerecord(ars *r, int reason)
 {
-    if (!listening(r)) return;
+    if (!listening(r)) return 0;
     vbvar a[4] = { vb_v_l(reason), vb_v_l(1), vb_v_l(adStatusOK), vb_v_obj((vbobj)r) };
     fire((vbobj)r, "willchangerecord", 4, a);
+    if (vb_errpend || vb_v2l(a[2]) != adStatusCancel) return 0;
+    raise(-2147217842, SRC_RS, "Operation was canceled.");
+    return -1;
 }
 static void ev_recordchangecomplete(ars *r, int reason)
 {
@@ -1068,7 +1073,7 @@ static int flush_edit(ars *r)
     drs *v = VW(r);
     if (!v || !v->editmode) return 0;
     int add = v->editmode == 2;
-    ev_willchangerecord(r, adRsnUpdate);
+    if (ev_willchangerecord(r, adRsnUpdate)) return -1;
     dao_call(r, r->view, "update", VBM_METHOD, 0, 0, 1);
     if (vb_errpend) return -1;
     if (add && v->lastmod >= 0) v->cur = v->lastmod;
@@ -1537,7 +1542,7 @@ static int set_field(ars *r, int col, vbvar val)
     if (!v->editmode && (is_bof(v) || is_eof(v) || !alive(v, v->cur))) { raise(3021, SRC_FLD, MSG_BOFEOF); return -1; }
     int first = !v->editmode;
     if (first) {
-        ev_willchangerecord(r, adRsnFirstChange);
+        if (ev_willchangerecord(r, adRsnFirstChange)) return -1;
         dao_call(r, r->view, "edit", VBM_METHOD, 0, 0, 1);
         if (vb_errpend) return -1;
     }
@@ -1595,7 +1600,7 @@ static int addnew_m(ars *r, vb_i32 argc, vbvar *argv)
     note_save(r);
     if (vb_errpend || flush_edit(r)) return -1;
     ev_willmove(r, adRsnMove, adStatusOK);
-    ev_willchangerecord(r, adRsnAddNew);
+    if (ev_willchangerecord(r, adRsnAddNew)) return -1;
     dao_call(r, r->view, "addnew", VBM_METHOD, 0, 0, 1);
     if (vb_errpend) return -1;
     ev_recordchangecomplete(r, adRsnAddNew);
@@ -1923,7 +1928,7 @@ static vbvar rs_member2(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
         if (v->editmode) { int f; rs_member(r->view, "cancelupdate", VBM_METHOD, 0, 0, &f); if (vb_errpend) vb_err_clear_pending(); }
         if (!alive(v, v->cur)) { raise(3021, SRC_RS, MSG_BOFEOF); return vb_v_empty(); }
         int cur = v->cur;
-        if (r->cursorloc == adUseClient) ev_willchangerecord(r, adRsnDelete);
+        if (r->cursorloc == adUseClient && ev_willchangerecord(r, adRsnDelete)) return vb_v_empty();
         dao_call(r, r->view, "delete", VBM_METHOD, 0, 0, 1);
         if (vb_errpend) return vb_v_empty();
         v->cur = cur;
