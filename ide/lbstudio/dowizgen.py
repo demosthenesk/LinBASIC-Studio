@@ -903,6 +903,24 @@ def generate_uc(spec, has_enum):
     return out
 
 
+ADO_GUIDS = {"{00000200-0000-0010-8000-00aa006d2ea4}", "{00000201-0000-0010-8000-00aa006d2ea4}",
+             "{00000205-0000-0010-8000-00aa006d2ea4}", "{00000206-0000-0010-8000-00aa006d2ea4}",
+             "{ef53050b-882e-4776-b643-eda472e8e3f2}", "{2a75196c-d9eb-4129-b803-931327f72d5c}",
+             "{b691e011-1797-432e-907a-4d8c69339129}"}
+
+
+def _guid(line):
+    return (line or "").split("#")[0].lstrip("*\\G").strip().lower()
+
+
+def needed_references(project, refs):
+    """the references to add: not ADO when the project has one of its versions already (the Data Environment's:
+    two ADODB libraries in one project are a name conflict for VB6)"""
+    have = {_guid(v) for k, v in (project.vbp.entries if project is not None and project.vbp else [])
+            if v is not None and k.strip() == "Reference"}
+    return [r for r in refs if not (_guid(r) in ADO_GUIDS and have & ADO_GUIDS)]
+
+
 def has_enum(project):
     """the project has the Enum EnumSaveMode (clsDow, VB6's or ours)"""
     for m in (project.modules if project else []):

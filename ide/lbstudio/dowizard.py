@@ -694,7 +694,7 @@ def add_to_project(main, p, out):
     for kind, name, text in out.modules:
         ext = ".ctl" if kind == "UserControl" else ".cls"
         made.append(_new_module(p, kind, name, ext, text))
-    p.add_references(out.references)
+    p.add_references(G.needed_references(p, out.references))
     if out.libraries:
         have = p.components()
         p.set_components(have + [k for k in out.libraries if k not in have])

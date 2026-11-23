@@ -1677,7 +1677,8 @@ def t_dowiz92(d):
               'Set oCommand = de1.Commands("AuUpdate")', "rs(\"YearBorn\") = CInt(vValue)"):
         assert s in ct, (s, ct)
     assert "Enum EnumSaveMode" in p.module("clsDow").code_text()
-    assert any("msdatsrc" in (v or "").lower() for k, v in p.vbp.entries if k == "Reference")
+    refs = [(v or "").lower() for k, v in p.vbp.entries if k == "Reference"]
+    assert any("msdatsrc" in v for v in refs) and not any("msado25" in v for v in refs), refs    # one ADO (the DE's)
     # ---- a class with a lookup: Titles, PubID -> the Name of PubList
     wz = DOWizard(w, quiet=True)
     wz.step(1)

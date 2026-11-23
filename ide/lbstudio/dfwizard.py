@@ -1191,7 +1191,8 @@ def add_to_project(main, df, project=None, open_it=True):
         p._vbp_add(m)
         if kind == "Form":
             created = m
-    p.add_references(out.references)
+    from .dowizgen import needed_references    # (not a second ADO library beside the Data Environment's)
+    p.add_references(needed_references(p, out.references))
     have = p.components()
     p.set_components(have + [k for k in out.libraries if k not in have])
     p.dirty = True
