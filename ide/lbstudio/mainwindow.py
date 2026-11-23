@@ -163,6 +163,7 @@ class MainWindow(QMainWindow):
         self.cbuilder_loaded = bool(self.S["addin_cbuilder_startup"])   # and the VB 6 Class Builder Utility (9.2c)
         self.axwiz_loaded = bool(self.S["addin_axwiz_startup"])   # and the VB 6 ActiveX Ctrl Interface Wizard (9.2d)
         self.ppwiz_loaded = bool(self.S["addin_ppwiz_startup"])   # and the VB 6 Property Page Wizard (9.2e)
+        self.dowiz_loaded = bool(self.S["addin_dowiz_startup"])   # and the VB 6 Data Object Wizard (9.2f)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -596,6 +597,10 @@ class MainWindow(QMainWindow):
         self.sep_ppwiz = m.addSeparator()
         from .ppwizard import ppwizard_icon
         self.a_ppwiz = self._act(m, "Property Page Wizard...", self.property_page_wizard, icon=ppwizard_icon(16))
+        # the VB 6 Data Object Wizard: its name, without "..." (VB6 DEV-9/do1, phase 9.2f)
+        self.sep_dowiz = m.addSeparator()
+        from .dowizard import dowizard_icon
+        self.a_dowiz = self._act(m, "VB 6 Data Object Wizard", self.data_object_wizard, icon=dowizard_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2435,6 +2440,8 @@ class MainWindow(QMainWindow):
             a.setVisible(bool(self.axwiz_loaded))
         for a in (self.sep_ppwiz, self.a_ppwiz):                    # the VB 6 Property Page Wizard (9.2e)
             a.setVisible(bool(self.ppwiz_loaded))
+        for a in (self.sep_dowiz, self.a_dowiz):                    # the VB 6 Data Object Wizard (9.2f)
+            a.setVisible(bool(self.dowiz_loaded))
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
@@ -2463,6 +2470,11 @@ class MainWindow(QMainWindow):
     def property_page_wizard(self):
         """Add-Ins > Property Page Wizard... (phase 9.2e, ppwizard.py)"""
         from .ppwizard import open_wizard
+        return open_wizard(self)
+
+    def data_object_wizard(self):
+        """Add-Ins > VB 6 Data Object Wizard (phase 9.2f, dowizard.py)"""
+        from .dowizard import open_wizard
         return open_wizard(self)
 
     def add_class_module(self):

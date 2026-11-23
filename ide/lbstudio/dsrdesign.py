@@ -60,6 +60,17 @@ def design_cs(cs, base_dir):
     return cs
 
 
+def is_action(sql):
+    """a statement that changes the database (INSERT, UPDATE, DELETE, a table made or dropped, SELECT ... INTO)"""
+    import re
+    t = re.sub(r"'[^']*'|\"[^\"]*\"|\[[^\]]*\]", " ", sql or "").strip().lower()
+    first = (t.split() or [""])[0]
+    if first in ("insert", "update", "delete", "create", "drop", "alter", "grant", "revoke", "truncate", "exec",
+                 "execute", "call", "merge", "replace"):
+        return True
+    return first == "select" and re.search(r"\binto\b", t.split(" from ")[0]) is not None
+
+
 def without_params(sql):
     """the ? of a statement as NULL: its fields at design time, without values for its parameters"""
     out, q = [], None
@@ -762,6 +773,10 @@ class DataEnvDesigner(_Base):
         """the fields of a command, as ADO gives them (the designer lists them, the reports bind them)"""
         conn = next((x for x in self.model.conns if x.name.lower() == c.conn.lower()), None)
         if conn is None or not conn.source or not c.text:
+            return
+        if c.ctype == 1 and is_action(c.text):  # it would be run to get them: an action query has none (VB6's
+            c.fields = []                       # designer: NumFields 0, DEV-9/do1), and the database stays as it is
+            self.say()
             return
         try:
             c.fields = dbinfo.ado_fields(design_cs(conn.source, self.project_dir()), c.ctype,

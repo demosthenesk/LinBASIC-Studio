@@ -37,6 +37,10 @@ DEFAULTS = {
     "addin_ppwiz_startup": False,  # Add-In Manager: VB 6 Property Page Wizard, Load on Startup (9.2e)
     "ppwiz_skip_intro": False,  # Property Page Wizard: "Skip this screen in the future."
     "ppwiz_no_created": False,  # Property Page Wizard: "Don't show this dialog in the future." (Property Page Created)
+    "addin_dowiz_startup": False,  # Add-In Manager: VB 6 Data Object Wizard, Load on Startup (9.2f)
+    "dowiz_skip_intro": False,  # Data Object Wizard: "Skip this screen in the future."
+    "dowiz_default_uc": False,  # Data Object Wizard: "Save current settings as default": a user control first
+    "dowiz_default_uctype": "Single Record",  # and its kind
     "add_class_nodialog": False,  # Project > Add Class Module: "Don't show this dialog in the future"
     "dfwiz_no_created": False,  # Data Form Wizard: "Don't show this dialog in the future." (Data Form Created)
     # General / UI

@@ -1515,6 +1515,332 @@ def _cb_prop(cb, c, name, type_, decl="public", default=False, desc=""):
     return cb.add_member(c, pb.result_member)
 
 
+DOW_DB = """Sub MakeDb()
+    Dim e As Object, db As Object, p As String
+    p = App.Path & "\\dow.mdb"
+    If Dir(p) <> "" Then Exit Sub
+    Set e = CreateObject("DAO.DBEngine.36")
+    Set db = e.CreateDatabase(p, ";LANGID=0x0409;CP=1252;COUNTRY=0", 64)
+    db.Execute "CREATE TABLE Authors (Au_ID LONG CONSTRAINT PrimaryKey PRIMARY KEY, Author TEXT(50), YearBorn SHORT)"
+    db.Execute "INSERT INTO Authors VALUES (1, 'Jacobs', 1950)"
+    db.Execute "INSERT INTO Authors (Au_ID, Author) VALUES (2, 'Metzger')"
+    db.Execute "INSERT INTO Authors VALUES (3, 'Boddie', 1960)"
+    db.Execute "INSERT INTO Authors (Au_ID, Author) VALUES (4, 'Last')"
+    db.Execute "CREATE TABLE Publishers (PubID LONG CONSTRAINT PrimaryKey PRIMARY KEY, Name TEXT(50))"
+    db.Execute "INSERT INTO Publishers VALUES (1, 'Pub One')"
+    db.Execute "INSERT INTO Publishers VALUES (2, 'Pub Two')"
+    db.Execute "CREATE TABLE Titles (ISBN TEXT(20) CONSTRAINT PrimaryKey PRIMARY KEY, Title TEXT(50), PubID LONG)"
+    db.Execute "INSERT INTO Titles VALUES ('A1', 'First', 1)"
+    db.Execute "INSERT INTO Titles (ISBN, Title) VALUES ('B2', 'Second')"
+    db.Execute "INSERT INTO Titles VALUES ('C3', 'Third', 2)"
+    db.Close
+End Sub
+"""
+
+
+def t_dowiz92(d):
+    """the Data Object Wizard (phase 9.2f, VB6 oracle DEV-9/do1; the code is our own: dowizgen): the Add-In
+    Manager's "VB 6 Data Object Wizard" gives Add-Ins > VB 6 Data Object Wizard; a project without a Data
+    Environment; the DataEnvironment designer does not run an action query to get its fields (an INSERT added a
+    row); a class: Select Data Environment Command (a command not chosen, a field with a space, a command without
+    fields), Define Class Field Information, Define Lookup Table Information (Add, the same field again), Define and
+    Map Insert / Update / Delete (the parameters by name, one without a field), Finished! (no name), the modules
+    (clsDow once, rsclsX, VB_Ext_KEY as VB6's, the references); a user control: Select the Data Class to Use (the
+    data classes under their commands, read from their VB_Ext_KEY), Select User Control Type, Map Class Properties
+    (the defaults: the key (None), a lookup ComboBox), Enter User Control Name (a name taken), Single Record,
+    ListBox, Data Grid (MSDataGridLib); lbvc and the program: the controls on Form1 move through the rows (as VB6's
+    do1: MoveNext, MoveLast, MoveToPK, MoveFirst; a Print # in the expression of a Print #), a lookup's descriptor,
+    a row changed, added and deleted through the commands of the Data Environment"""
+    import subprocess
+    from lbstudio import dowizgen as G
+    from lbstudio import dsrmodel as M
+    from lbstudio.dowizard import DOWizard, UC_PAGES
+    from lbstudio.resedit import AddInManagerDialog, DOWIZ, ADDINS
+    w = MainWindow()
+    w.show()
+    p = w.project
+    assert not w.a_dowiz.isVisible() and any(n == DOWIZ and desc for n, desc in ADDINS)
+    am = AddInManagerDialog(w)
+    am.state[DOWIZ] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.dowiz_loaded and w.a_dowiz.isVisible() and w.a_dowiz.text() == "VB 6 Data Object Wizard"
+    wz = DOWizard(w, quiet=True)
+    assert wz.windowTitle() == "Data Object Wizard - Introduction" and not wz.b_finish.isEnabled()
+    wz.step(1)
+    assert wz.key == "create" and wz.rb_class.isChecked()
+    wz.step(1)
+    assert wz.key == "create" and wz.messages[-1] == G.NO_DE, wz.messages
+    wz.reject()
+    # ---- the database, the Data Environment
+    w.add_module("Module")
+    code(w, p.module("Module1"), DOW_DB + "\nSub Main()\n    MakeDb\nEnd Sub\n")
+    p.vbp.set("Startup", "Sub Main", quote=True)
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Dow.vbp"))
+    assert w.save_project_as()
+    w.run_start()
+    wait(w)
+    db = os.path.join(d, "dow.mdb")
+    assert os.path.isfile(db)
+    w.add_module("DataEnvironment")
+    dem = p.module("DataEnvironment1")
+    de = w.design_windows[dem].widget()
+    conn = de.model.conns[0]
+    de.cpage.show_conn(conn)
+    de.cpage.cs.setText(f"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={db}")
+    de.cpage.apply()
+
+    def command(name, sql, params=()):
+        de.add_command(False)
+        c = de.model.cmds[-1]
+        pg = de.mpage
+        pg.show_cmd(c)
+        pg.name.setText(name)
+        pg.rb_sql.setChecked(True)
+        pg.sql.setPlainText(sql)
+        for n, t, s in params:
+            pg._param_row(M.Param(n, t, s))
+        pg.apply()
+        return c
+    command("Command1", "SELECT Au_ID, Author, YearBorn FROM Authors ORDER BY Au_ID")
+    ins = command("AuInsert", "INSERT INTO Authors (Au_ID, Author, YearBorn) VALUES (?, ?, ?)",
+                  [("Au_ID", 3, 4), ("Author", 202, 50), ("YearBorn", 2, 2)])
+    assert ins.fields == [] and [x.name for x in ins.params] == ["Au_ID", "Author", "YearBorn"]
+    command("AuUpdate", "UPDATE Authors SET Author = ?, YearBorn = ? WHERE Au_ID = ?",
+            [("Author", 202, 50), ("YearBorn", 2, 2), ("Au_ID", 3, 4)])
+    command("AuDelete", "DELETE FROM Authors WHERE Au_ID = ?", [("Au_ID", 3, 4)])
+    command("BadDelete", "DELETE FROM Authors WHERE Au_ID = ?", [("Param1", 3, 4)])
+    command("TitleList", "SELECT ISBN, Title, PubID FROM Titles ORDER BY ISBN")
+    command("PubList", "SELECT PubID, Name FROM Publishers ORDER BY PubID")
+    sp = command("Spaced", "SELECT Author AS [Author Name] FROM Authors")
+    c1 = de.model.command("Command1")
+    assert [(n, t) for n, t, _s, _p in c1.fields] == [("Au_ID", 3), ("Author", 202), ("YearBorn", 2)], c1.fields
+    assert [f[0] for f in sp.fields] == ["Author Name"]
+    assert [m.name for m, _de in G.data_environments(p)] == ["DataEnvironment1"]
+
+    def texts(tree):
+        return [it.text(0) for it in DOWizard._items(tree)]
+    # ---- a class: Authors with its Insert / Update / Delete commands
+    wz = DOWizard(w, quiet=True)
+    wz.step(1)
+    wz.step(1)
+    assert wz.key == "command" and wz.windowTitle() == "Data Object Wizard - Select Data Environment Command"
+    assert texts(wz.cmd_tree) == ["Project1", "DataEnvironment1", "Connection1", "Command1", "AuInsert", "AuUpdate",
+                                  "AuDelete", "BadDelete", "TitleList", "PubList", "Spaced"], texts(wz.cmd_tree)
+    wz.step(1)
+    assert wz.key == "command" and wz.messages[-1] == G.NO_COMMAND
+    wz.select_item(wz.cmd_tree, "Spaced")
+    wz.step(1)
+    assert wz.key == "command" and wz.messages[-1].startswith("The field 'Author Name' has a space"), wz.messages
+    wz.select_item(wz.cmd_tree, "AuInsert")
+    wz.step(1)
+    assert wz.messages[-1] == G.NO_FIELDS % "AuInsert"
+    wz.select_item(wz.cmd_tree, "Command1")
+    wz.step(1)
+    assert wz.key == "fields" and wz.windowTitle().endswith("Define Class Field Information")
+    t = wz.field_table
+    assert [t.item(r, 0).text() for r in range(t.rowCount())] == ["Au_ID", "Author", "YearBorn"]
+    assert [(t.cellWidget(r, 1).currentText(), t.cellWidget(r, 2).currentText()) for r in range(3)] == \
+        [("Yes", "No")] * 3
+    wz.set_field("Au_ID", nullable=False, pk=True)
+    wz.step(1)
+    assert wz.key == "lookup" and [f.pk for f in wz.dc.fields] == [True, False, False]
+    wz.step(1)
+    assert wz.key == "insert" and [wz.chg_combo["insert"].itemText(i) for i in range(wz.chg_combo["insert"].count())] \
+        == ["(None)", "AuInsert", "AuUpdate", "AuDelete", "BadDelete"]
+    wz.choose_change("insert", "AuInsert")
+    tb = wz.chg_table["insert"]
+    assert [[tb.item(r, c).text() for c in range(3)] for r in range(tb.rowCount())] == \
+        [["Au_ID", "->", "Au_ID"], ["Author", "->", "Author"], ["YearBorn", "->", "YearBorn"]]
+    wz.step(1)
+    assert wz.key == "update" and wz.cb_insert_as_update.isEnabled()
+    wz.choose_change("update", "AuUpdate")
+    wz.step(1)
+    wz.choose_change("delete", "BadDelete")
+    assert wz.messages[-1] == G.UNMAPPED % "Param1" and wz.dc.delete.pairs == []
+    wz.choose_change("delete", "AuDelete")
+    assert wz.dc.delete.pairs == [("Au_ID", "Au_ID")]
+    wz.step(1)
+    assert wz.key == "finished" and wz.b_finish.isEnabled() and not wz.b_next.isEnabled()
+    assert wz.finish() is None and wz.messages[-1] == G.NO_CLASS_NAME
+    wz.class_name.setText("clsAuthors")
+    made = wz.finish()
+    assert [m.name for m in made] == ["clsDow", "rsclsclsAuthors"], [m.name for m in made]
+    cls = p.module("rsclsclsAuthors")
+    attrs = [(a[0], a[1]) for a in cls.sf.attributes]
+    for k, v in (("ClassType", "Data Class"), ("ClassRootName", "clsAuthors"), ("FieldPKAu_ID", "Yes"),
+                 ("FieldNullableAu_ID", "No"), ("InsertCommandName", "AuInsert"), ("DeleteCommand_PARAMETERNAME1", "Au_ID"),
+                 ("NumFKCommands", "0")):
+        assert ("VB_Ext_KEY", '"%s" ,"%s"' % (k, v)) in attrs, (k, attrs)
+    ct = cls.code_text()
+    for s in ("Public Function MoveToPk(Au_ID As Variant) As Boolean", "Private Sub Class_GetDataMember(",
+              'Set oCommand = de1.Commands("AuUpdate")', "rs(\"YearBorn\") = CInt(vValue)"):
+        assert s in ct, (s, ct)
+    assert "Enum EnumSaveMode" in p.module("clsDow").code_text()
+    assert any("msdatsrc" in (v or "").lower() for k, v in p.vbp.entries if k == "Reference")
+    # ---- a class with a lookup: Titles, PubID -> the Name of PubList
+    wz = DOWizard(w, quiet=True)
+    wz.step(1)
+    wz.step(1)
+    wz.select_item(wz.cmd_tree, "TitleList")
+    wz.step(1)
+    wz.set_field("ISBN", nullable=False, pk=True)
+    wz.step(1)
+    lk = wz.add_lookup("PubID", "PubList", "Name", "PubID")
+    assert lk is not None and lk.descriptor == "PubListName" and lk.pairs == [("PubID", "PubID")]
+    assert [wz.lk_table.item(0, c).text() for c in range(3)] == ["PubID", "PubList", "Name"]
+    assert wz.add_lookup("PubID", "PubList", "Name", "PubID") is None and "has a lookup already" in wz.messages[-1]
+    for _ in range(4):
+        wz.step(1)
+    assert wz.key == "finished"
+    wz.class_name.setText("clsTitles")
+    assert [m.name for m in wz.finish()] == ["rsclsclsTitles"]
+    tt = p.module("rsclsclsTitles").code_text()
+    assert "Public rsPubList As ADODB.Recordset" in tt and "Public Property Get PubListName() As Variant" in tt
+    dcs = dict((m.name, dc) for m, dc in G.data_classes(p))
+    assert sorted(dcs) == ["rsclsclsAuthors", "rsclsclsTitles"] and \
+        [(lk.command, lk.display, lk.pairs) for lk in dcs["rsclsclsTitles"].lookups] == [("PubList", "Name", [("PubID", "PubID")])]
+    # ---- the user controls
+    def user_control(cls_name, kind, name=None, controls=None):
+        wz = DOWizard(w, quiet=True)
+        wz.step(1)
+        wz.rb_uc.setChecked(True)
+        assert wz.page_keys() == UC_PAGES
+        wz.step(1)
+        assert wz.key == "dataclass" and wz.windowTitle().endswith("Select the Data Class to Use")
+        wz.select_item(wz.class_tree, cls_name)
+        wz.step(1)
+        assert wz.key == "uctype"
+        wz.uc_radios[kind].setChecked(True)
+        wz.step(1)
+        assert wz.key == "map"
+        for f, k in (controls or {}).items():
+            wz.set_control(f, k)
+        wz.step(1)
+        assert wz.key == "ucname" and wz.b_finish.isEnabled()
+        if name:
+            wz.uc_name.setText(name)
+        return wz
+    wz = DOWizard(w, quiet=True)
+    wz.step(1)
+    wz.rb_uc.setChecked(True)
+    wz.step(1)
+    assert texts(wz.class_tree) == ["Project1", "DataEnvironment1", "Connection1", "Command1", "AuInsert", "AuUpdate",
+                                    "AuDelete", "BadDelete", "TitleList", "PubList", "Spaced", "rsclsclsAuthors",
+                                    "rsclsclsTitles"], texts(wz.class_tree)
+    wz.step(1)
+    assert wz.key == "dataclass" and wz.messages[-1] == G.NO_DATA_CLASS
+    wz.reject()
+    wz = user_control("rsclsclsAuthors", "Single Record")
+    t = wz.map_table
+    assert [(t.item(r, 0).text(), t.cellWidget(r, 1).currentText()) for r in range(t.rowCount())] == \
+        [("Au_ID", "(None)"), ("Author", "TextBox"), ("YearBorn", "TextBox")]
+    assert wz.uc_name.text() == "clsAuthors"
+    assert [m.name for m in wz.finish()] == ["uctclsAuthorsSingleRecord"]
+    u1 = p.module("uctclsAuthorsSingleRecord")
+    assert u1.kind == "UserControl" and [c.name for c in u1.sf.root.walk()][1:] == \
+        ["txtYearBorn", "txtAuthor", "lblYearBorn", "lblAuthor"]
+    assert ("VB_Ext_KEY", '"UserControlType" ,"Single Record"') in [(a[0], a[1]) for a in u1.sf.attributes]
+    assert "Public Function InitclsAuthors(Optional oDataSource0 As Variant) As Object" in u1.code_text()
+    wz = user_control("rsclsclsAuthors", "Single Record")
+    assert wz.finish() is None and wz.messages[-1] == G.NAME_USED % "uctclsAuthorsSingleRecord"
+    wz.reject()
+    assert [m.name for m in user_control("rsclsclsAuthors", "ListBox").finish()] == ["uctclsAuthorsListBox"]
+    wz = user_control("rsclsclsTitles", "Single Record")
+    t = wz.map_table
+    assert [(t.item(r, 0).text(), t.cellWidget(r, 1).currentText()) for r in range(3)] == \
+        [("ISBN", "(None)"), ("Title", "TextBox"), ("PubID", "ComboBox")]
+    wz.set_control("ISBN", "TextBox")
+    assert [m.name for m in wz.finish()] == ["uctclsTitlesSingleRecord"]
+    assert [c.name for c in p.module("uctclsTitlesSingleRecord").sf.root.walk()][1:] == \
+        ["cboPubID", "txtTitle", "txtISBN", "lblPubID", "lblTitle", "lblISBN"]
+    assert [m.name for m in user_control("rsclsclsTitles", "Data Grid").finish()] == ["uctclsTitlesDataGrid"]
+    assert "MSDataGridLib" in p.components()
+    # ---- the program
+    w.fill_tree()
+    names = ["uctclsAuthorsSingleRecord", "uctclsAuthorsListBox", "uctclsTitlesSingleRecord", "uctclsTitlesDataGrid"]
+    for n in names:
+        assert f"{p.name}.{n}" in w.toolbox.buttons, n
+    f = w.open_designer(p.module("Form1"))
+    for i, n in enumerate(names):
+        assert f.place_new(f"{p.name}.{n}", QRect(8, 8 + i * 110, 0, 0), None) is not None, n
+    code(w, p.module("Form1"), """Private f As Integer, quiet As Boolean, cur As Object
+
+Private Sub Form_Load()
+    f = FreeFile
+    Open App.Path & "/out.txt" For Output As #f
+    Print #f, "load"
+    uctclsAuthorsSingleRecord1.MoveNext
+    uctclsAuthorsSingleRecord1.MoveLast
+    Print #f, "pk " & uctclsAuthorsSingleRecord1.MoveToPK(3)
+    uctclsAuthorsSingleRecord1.MoveFirst
+    uctclsTitlesSingleRecord1.MoveNext
+    uctclsTitlesSingleRecord1.MoveNext
+    cur.Author = "Jacobs J"
+    uctclsAuthorsSingleRecord1.MoveNext
+    quiet = True
+    uctclsAuthorsSingleRecord1.AddRecord
+    cur.Au_ID = 5
+    cur.Author = "New"
+    cur.YearBorn = 1970
+    uctclsAuthorsSingleRecord1.MoveFirst
+    Print #f, "pk " & uctclsAuthorsSingleRecord1.MoveToPK(4)
+    uctclsAuthorsSingleRecord1.Delete
+    quiet = False
+    ShowDb
+    Close #f
+    f = 0
+    Unload Me
+End Sub
+
+Private Sub ShowDb()
+    Dim cn As New ADODB.Connection, r As ADODB.Recordset
+    cn.Open "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & App.Path & "\\dow.mdb"
+    Set r = cn.Execute("SELECT Au_ID, Author, YearBorn FROM Authors ORDER BY Au_ID")
+    Do While Not r.EOF
+        Print #f, "db " & r!Au_ID & "|" & r!Author & "|" & r!YearBorn
+        r.MoveNext
+    Loop
+    cn.Close
+End Sub
+
+Private Sub uctclsAuthorsSingleRecord1_MoveComplete(oDataSource As Object)
+    Set cur = oDataSource
+    If f = 0 Or quiet Then Exit Sub
+    Print #f, "move " & oDataSource.Au_ID & "|" & oDataSource.Author & "|" & oDataSource.YearBorn & "|" & _
+        oDataSource.AbsolutePosition
+End Sub
+
+Private Sub uctclsTitlesSingleRecord1_MoveComplete(oDataSource As Object)
+    If f = 0 Then Exit Sub
+    Print #f, "title " & oDataSource.ISBN & "|" & oDataSource.PubID & "|" & oDataSource.PubListName
+End Sub
+
+Private Sub uctclsAuthorsListBox1_ListBoxClick(Au_ID As Variant)
+    If f = 0 Then Exit Sub
+    Print #f, "click " & Au_ID
+End Sub
+""")
+    p.vbp.set("Startup", "Form1", quote=True)
+    assert w.save_project()
+    cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Dow.vbp"),
+                         "-o", os.path.join(d, "Dow")], capture_output=True, text=True, timeout=900)
+    assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+    out = os.path.join(d, "out.txt")
+    want = ["load", "move 2|Metzger||2", "move 4|Last||4", "move 1|Jacobs|1950|1", "move 2|Metzger||2",
+            "move 3|Boddie|1960|3", "pk True", "move 1|Jacobs|1950|1", "title B2||(None)", "title C3|2|Pub Two",
+            "move 2|Metzger||2", "pk True", "db 1|Jacobs J|1950", "db 2|Metzger|", "db 3|Boddie|1960", "db 5|New|1970"]
+    try:                                        # the program lbvc made, on its own: what it says when it fails
+        rp = subprocess.run([os.path.join(d, "Dow.exe" if os.name == "nt" else "Dow")], cwd=d, capture_output=True,
+                            text=True, timeout=60, env=dict(os.environ, VBRT_NO_ERRBOX="1"))
+        why = (rp.returncode, rp.stdout[-2000:], rp.stderr[-2000:])
+    except subprocess.TimeoutExpired as ex:
+        why = ("timeout", str(ex.stdout)[-2000:], str(ex.stderr)[-2000:])
+    got = open(out, encoding="cp1252").read().splitlines() if os.path.isfile(out) else None
+    assert got == want, (got, why)
+    done(w)
+
+
 def t_ppwiz92(d):
     """the Property Page Wizard (phase 9.2e, VB6 oracle DEV-9/pp1, pp2; the code is our own: ppwizgen): the Add-In
     Manager's "VB 6 Property Page Wizard" gives Add-Ins > Property Page Wizard...; a project without a user control;
@@ -5096,7 +5422,7 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 
