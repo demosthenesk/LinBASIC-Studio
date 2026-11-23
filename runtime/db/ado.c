@@ -133,6 +133,10 @@ typedef struct ars {
     char *datamember;                   /* DataMember, DataSource: kept in any state (the Data Object Wizard's
                                          * classes set DataMember of a closed recordset: VB6 oracle do1) */
     vbobj datasource;                   /* (counted) */
+    /* a client recordset: the rows after baseline (their rowid) were added since it was read or UpdateBatch:
+     * their OriginalValue is Empty (ADO; the Data Object Wizard's classes tell a new row by it: VB6 oracle do1) */
+    int has_baseline;
+    sqlite3_int64 baseline;
 } ars;
 
 typedef struct aflds { vbobjh h; vbobj rs; } aflds;
@@ -374,6 +378,16 @@ static int need_open(ars *r, const char *src)
     return -1;
 }
 static acn *cn_of(ars *r) { return r->cn ? ACN(r->cn) : 0; }
+/* the rows read so far are the original ones (see baseline) */
+static void set_baseline(ars *r)
+{
+    drs *b = r->base ? (drs *)vb_oid(r->base) : 0;
+    sqlite3_int64 m = 0;
+    if (b && b->d)
+        for (int i = 0; i < b->d->n; i++) if (b->d->r[i].rid > m) m = b->d->r[i].rid;
+    r->baseline = m;
+    r->has_baseline = 1;
+}
 
 /* the ADO type of a column */
 static int ado_type(ars *r, int col)
@@ -1167,6 +1181,7 @@ static int make_memory(ars *r, adef *defs, int n)
     if (!o) { vb_err_clear_pending(); vb_orelease(mdb); raise(-2147467259, "Microsoft Cursor Engine", "Unspecified error"); return -1; }
     rs_drop_rows(r);
     r->db = mdb; r->memdb = 1;
+    r->has_baseline = 1; r->baseline = 0;          /* a new recordset in memory: no row is an original one yet */
     r->base = o; vb_oaddref(o);
     r->view = o; vb_oaddref(o);
     if (defs != r->defs) {
@@ -1225,6 +1240,7 @@ static int disconnect(ars *r)
         rs_member(r->base, "requery", VBM_METHOD, 0, 0, &f2);
         if (vb_errpend) vb_err_clear_pending();
         rebuild_view(r);
+        set_baseline(r);                        /* the rows it had are the original ones */
     }
     for (int i = 0; i < k; i++) { for (int c = 0; c < n; c++) vb_vfree(&rows[i][c]); free(rows[i]); }
     free(rows);
@@ -1843,6 +1859,7 @@ static vbvar rs_member2(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
         free(c->source); c->source = strdup(r->source);
         rs_from_drs(c, co, 0);
         if (r->memdb) { c->memdb = 0; }
+        c->has_baseline = r->has_baseline; c->baseline = r->baseline;
         if (r->defs) {
             c->defs = malloc(sizeof(adef) * (size_t)r->ndefs); c->ndefs = r->ndefs;
             for (int i = 0; i < r->ndefs; i++) { c->defs[i] = r->defs[i]; c->defs[i].name = strdup(r->defs[i].name); }
@@ -1906,7 +1923,7 @@ static vbvar rs_member2(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
     }
     if (!strcmp(name, "addnew")) { if (!odbc_pending(r)) addnew_m(r, argc, argv); return vb_v_empty(); }
     if (!strcmp(name, "update")) { if (!odbc_pending(r)) update_m(r, argc, argv); return vb_v_empty(); }
-    if (!strcmp(name, "updatebatch")) { flush_edit(r); return vb_v_empty(); }
+    if (!strcmp(name, "updatebatch")) { if (!flush_edit(r) && !vb_errpend) set_baseline(r); return vb_v_empty(); }
     if (!strcmp(name, "cancelupdate") || !strcmp(name, "cancelbatch")) {
         if (v->editmode) { int f; rs_member(r->view, "cancelupdate", VBM_METHOD, 0, 0, &f); if (vb_errpend) vb_err_clear_pending(); }
         note_fill(r);
@@ -2074,6 +2091,7 @@ static vbvar fld_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
     if (!strcmp(name, "originalvalue")) {
         if (v->editmode == 2) return vb_v_null();
         if (!alive(v, v->cur)) { raise(3021, SRC_FLD, MSG_BOFEOF); return vb_v_empty(); }
+        if (r->has_baseline && v->d->r[v->cur].rid > r->baseline) return vb_v_empty();   /* a row added since */
         return vb_vtmp(ado_value(v->d->r[v->cur].v[c]));
     }
     if (!strcmp(name, "underlyingvalue")) {

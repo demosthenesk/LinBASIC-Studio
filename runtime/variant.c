@@ -258,6 +258,9 @@ vbvar vb_v_neg(vbvar a)
 
 vbvar vb_v_cat(vbvar a, vbvar b)
 {
+    /* an object: its default value first, so that a Null of it is Null here ("db " & rs!Field: VB6) */
+    if (a.vt == VT_DISPATCH) { a = vb_late(a, "", VBM_GET, 0, 0); if (vb_errpend) return vb_v_empty(); }
+    if (b.vt == VT_DISPATCH) { b = vb_late(b, "", VBM_GET, 0, 0); if (vb_errpend) return vb_v_empty(); }
     if (a.vt == VT_NULL && b.vt == VT_NULL) return vb_v_null();
     vbs x = a.vt == VT_NULL ? vb_stmp(0) : vb_v2s(a);
     vbs y = b.vt == VT_NULL ? vb_stmp(0) : vb_v2s(b);
