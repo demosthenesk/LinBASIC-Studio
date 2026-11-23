@@ -1714,6 +1714,8 @@ def t_dowiz92(d):
         wz.uc_radios[kind].setChecked(True)
         wz.step(1)
         assert wz.key == "map"
+        t = wz.map_table
+        wz.map_seen = [(t.item(r, 0).text(), t.cellWidget(r, 1).currentText()) for r in range(t.rowCount())]
         for f, k in (controls or {}).items():
             wz.set_control(f, k)
         wz.step(1)
@@ -1732,9 +1734,7 @@ def t_dowiz92(d):
     assert wz.key == "dataclass" and wz.messages[-1] == G.NO_DATA_CLASS
     wz.reject()
     wz = user_control("rsclsclsAuthors", "Single Record")
-    t = wz.map_table
-    assert [(t.item(r, 0).text(), t.cellWidget(r, 1).currentText()) for r in range(t.rowCount())] == \
-        [("Au_ID", "(None)"), ("Author", "TextBox"), ("YearBorn", "TextBox")]
+    assert wz.map_seen == [("Au_ID", "(None)"), ("Author", "TextBox"), ("YearBorn", "TextBox")], wz.map_seen
     assert wz.uc_name.text() == "clsAuthors"
     assert [m.name for m in wz.finish()] == ["uctclsAuthorsSingleRecord"]
     u1 = p.module("uctclsAuthorsSingleRecord")
@@ -1746,16 +1746,13 @@ def t_dowiz92(d):
     assert wz.finish() is None and wz.messages[-1] == G.NAME_USED % "uctclsAuthorsSingleRecord"
     wz.reject()
     assert [m.name for m in user_control("rsclsclsAuthors", "ListBox").finish()] == ["uctclsAuthorsListBox"]
-    wz = user_control("rsclsclsTitles", "Single Record")
-    t = wz.map_table
-    assert [(t.item(r, 0).text(), t.cellWidget(r, 1).currentText()) for r in range(3)] == \
-        [("ISBN", "(None)"), ("Title", "TextBox"), ("PubID", "ComboBox")]
-    wz.set_control("ISBN", "TextBox")
+    wz = user_control("rsclsclsTitles", "Single Record", controls={"ISBN": "TextBox"})
+    assert wz.map_seen == [("ISBN", "(None)"), ("Title", "TextBox"), ("PubID", "ComboBox")], wz.map_seen
     assert [m.name for m in wz.finish()] == ["uctclsTitlesSingleRecord"]
-    assert [c.name for c in p.module("uctclsTitlesSingleRecord").sf.root.walk()][1:] == \
-        ["cboPubID", "txtTitle", "txtISBN", "lblPubID", "lblTitle", "lblISBN"]
+    names = [c.name for c in p.module("uctclsTitlesSingleRecord").sf.root.walk()][1:]
+    assert names == ["cboPubID", "txtTitle", "txtISBN", "lblPubID", "lblTitle", "lblISBN"], names
     assert [m.name for m in user_control("rsclsclsTitles", "Data Grid").finish()] == ["uctclsTitlesDataGrid"]
-    assert "MSDataGridLib" in p.components()
+    assert "MSDataGridLib" in p.components(), p.components()
     # ---- the program
     w.fill_tree()
     names = ["uctclsAuthorsSingleRecord", "uctclsAuthorsListBox", "uctclsTitlesSingleRecord", "uctclsTitlesDataGrid"]
