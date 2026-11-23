@@ -181,6 +181,11 @@ def dataenv_source(sf):
                     L.append(f'    lb_cmd_{c.name}.Parameters({_s(nm)}).Precision = {prec}')
                     L.append(f'    lb_cmd_{c.name}.Parameters({_s(nm)}).NumericScale = {scale}')
         L.append(f'    Set rs{member} = New ADODB.Recordset')
+        # the recordset keeps the designer's cursor until the program changes it: the command opens it as
+        # it is (the Data Object Wizard's classes set LockType before de.Command: VB6 oracle do1)
+        L.append(f'    rs{member}.CursorLocation = {c.cursorloc if c.cursorloc is not None else 3}')
+        L.append(f'    rs{member}.CursorType = {c.cursortype if c.cursortype is not None else 3}')
+        L.append(f'    rs{member}.LockType = {c.locktype if c.locktype is not None else 1}')
         L.append(f'    lb_commands.lb_add lb_cmd_{c.name}, {_s(member)}')
         L.append(f'    lb_recordsets.lb_add rs{member}, {_s(member)}')
     if has('DataEnvironment_Initialize'):
@@ -244,9 +249,6 @@ def dataenv_source(sf):
               f'        {cn}.lb_willexecute lb_cmd_{c.name}.CommandText',
               '        Err.Raise 3705, "ADODB.Connection", "Operation is not allowed when the object is open."',
               '    End If',
-              f'    rs{member}.CursorLocation = {c.cursorloc if c.cursorloc is not None else 3}',
-              f'    rs{member}.CursorType = {c.cursortype if c.cursortype is not None else 3}',
-              f'    rs{member}.LockType = {c.locktype if c.locktype is not None else 1}',
               ]
         for k, (n, (i, prm)) in enumerate(zip(names, ins)):
             L += [f'    If lb_has({k}) Then',

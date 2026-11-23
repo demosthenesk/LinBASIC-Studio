@@ -130,6 +130,9 @@ typedef struct ars {
                                          * comes with the first look at a row or a consumer that binds to it */
     void **kids; int nkids, capkids;    /* MSDataShape: its chapters given out (not counted): they follow its row */
     int locset;                         /* CursorLocation set by the program (else Open takes the connection's) */
+    char *datamember;                   /* DataMember, DataSource: kept in any state (the Data Object Wizard's
+                                         * classes set DataMember of a closed recordset: VB6 oracle do1) */
+    vbobj datasource;                   /* (counted) */
 } ars;
 
 typedef struct aflds { vbobjh h; vbobj rs; } aflds;
@@ -1008,13 +1011,15 @@ static void rs_init(vbobj o)
     r->source = strdup("");
     r->sort = strdup("");
     r->filter = vb_v_l(0);
+    r->datamember = strdup("");
 }
 static void rs_clear2(vbobj o)
 {
     ars *r = (ars *)o;
     rs_drop_rows(r);
     if (r->cn) vb_orelease(r->cn);
-    free(r->source); free(r->sort);
+    free(r->source); free(r->sort); free(r->datamember);
+    if (r->datasource) vb_orelease(r->datasource);
     vb_vfree(&r->filter);
     for (int i = 0; i < r->ndefs; i++) free(r->defs[i].name);
     free(r->defs);
@@ -1724,6 +1729,22 @@ static vbvar rs_member2(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
             return vb_v_empty();
         }
         return vstr(r->source);
+    }
+    if (!strcmp(name, "datamember")) {
+        if (set) { free(r->datamember); r->datamember = strdup(vb_stoutf8(vb_v2s(argv[argc - 1]))); return vb_v_empty(); }
+        return vstr(r->datamember);
+    }
+    if (!strcmp(name, "datasource")) {
+        if (set) {
+            vbobj n = vb_v2obj(argv[argc - 1]);
+            if (vb_errpend) return vb_v_empty();
+            n = n ? vb_oid(n) : 0;
+            if (n) vb_oaddref(n);
+            if (r->datasource) vb_orelease(r->datasource);
+            r->datasource = n;
+            return vb_v_empty();
+        }
+        return retobj(r->datasource);
     }
     if (!strcmp(name, "activeconnection")) {
         if (set) {
