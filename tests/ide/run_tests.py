@@ -1806,7 +1806,6 @@ Private Sub Form_Load()
     quiet = False
     Close #f
     f = 0
-    Unload Me
 End Sub
 
 Private Sub uctclsAuthorsSingleRecord1_MoveComplete(oDataSource As Object)

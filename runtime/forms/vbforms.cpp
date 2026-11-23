@@ -4156,6 +4156,21 @@ static void lost_active(vbobj o, bool owned_unload = false)
     }
 }
 
+/* Load, Show or a member of a form that is not loaded: a form unloaded by its own Form_Load is
+ * "Object was unloaded" to the code that loaded it (VB6 oracle do2: Load Form1 whose Load ends with
+ * Unload Me); the startup form is shown by vbf_start, without it */
+static bool load_checked(vbobj o)
+{
+    o = vb_oid(o);
+    FormState *st = fstate(o);
+    if (st->loaded) return true;
+    if (st->def && st->def->mdi == 2) { load_form(o); return !vb_errpend; }
+    load_form(o);
+    if (vb_errpend) return false;
+    if (!st->loaded) { vb_raise(364); return false; }
+    return true;
+}
+
 static void form_show(vbobj o, int modal)
 {
     o = vb_oid(o);
@@ -4442,10 +4457,9 @@ extern "C" vbvar vbf_form_member(vbobj o, const char *name, vb_i32 kind, vb_i32 
         if (*found || vb_errpend) return r;
         *found = 1;
     }
-    if (n == "show") { form_show(o, (int)arg_l(argc, argv, 0, 0)); return vb_v_empty(); }
+    if (n == "show") { if (load_checked(o)) form_show(o, (int)arg_l(argc, argv, 0, 0)); return vb_v_empty(); }
     if (n == "hide") { form_hide(o); return vb_v_empty(); }
-    load_form(o);                               /* any other member loads the form */
-    if (vb_errpend) return vb_v_empty();
+    if (!load_checked(o)) return vb_v_empty(); /* any other member loads the form */
     if (n == "name") return vstr(QString::fromUtf8(st->def->name));
     if (n == "caption") {
         if (set) { st->caption = qs(vb_v2s(val)); if (st->w) st->w->setWindowTitle(st->caption); if (st->sub) st->sub->setWindowTitle(st->caption); return vb_v_empty(); }
@@ -4649,7 +4663,7 @@ extern "C" void vbf_load(vbobj o)
 {
     o = vb_oid(o);
     if (!o) { vb_raise(91); return; }
-    if (o->cls->form) load_form(o);
+    if (o->cls->form) load_checked(o);
 }
 
 extern "C" void vbf_load_elem(vbobj arr, vb_i32 index)
