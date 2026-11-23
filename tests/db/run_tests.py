@@ -13,6 +13,14 @@ sys.path.insert(0, os.path.join(HERE, '..', '..', 'compiler'))
 from lbvc.driver import compile_project, build_exe, find_runtime   # noqa: E402
 
 
+# in Wine (LBVC_TARGET win32/win64) these differ from VB6 because of Wine, not of LinBASIC: reported as KNOWN
+WINE_KNOWN = {
+    'd_odbc1': "Wine's odbc32 gives the SQLite ODBC driver of Linux, whose text columns are narrow (adVarChar 200 / "
+               "adLongVarChar 201, SQL_VARCHAR 129); the driver of Windows gives them wide (202 / 203 / 130) as VB6 "
+               "shows (on Linux LinBASIC makes them wide: odbc_wide)",
+}
+
+
 def oracle_env():
     rt = os.path.join(HERE, 'work', '.xdg')
     os.makedirs(rt, mode=0o700, exist_ok=True)
@@ -65,7 +73,7 @@ def main():
     names = sys.argv[1:] or sorted(os.path.basename(d) for d in glob.glob(os.path.join(HERE, '*')) if os.path.isdir(d)
                                    and glob.glob(os.path.join(d, '*.vbp')))
     rt = find_runtime()
-    passed = failed = pending = 0
+    passed = failed = pending = known = 0
     for n in names:
         src = os.path.join(HERE, n)
         vbp = glob.glob(os.path.join(src, '*.vbp'))[0]
@@ -133,6 +141,10 @@ def main():
             print(f"ok   {n}")
             passed += 1
             continue
+        if target != 'linux' and n in WINE_KNOWN:
+            known += 1
+            print(f"KNOWN {n} ({target}): {WINE_KNOWN[n]}")
+            continue
         failed += 1
         print(f"FAIL {n}")
         el, gl = exp.decode('cp1253', 'replace').split('\r\n'), got.decode('cp1253', 'replace').split('\r\n')
@@ -141,7 +153,7 @@ def main():
             b = gl[i] if i < len(gl) else '<none>'
             if a != b:
                 print(f"   line {i + 1}\n     VB6:  {a!r}\n     lbvc: {b!r}")
-    print(f"passed {passed}, failed {failed}, without VB6 output {pending}")
+    print(f"passed {passed}, failed {failed}, without VB6 output {pending}" + (f", known (Wine) {known}" if known else ""))
 
 
 if __name__ == '__main__':
