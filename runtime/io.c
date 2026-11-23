@@ -135,10 +135,40 @@ static void put_vbs(vbs s)
     else { int n; char *a = vb_stoansi(s, &n); ch_write(a, n); }
 }
 
+/* a Print inside the expression of a Print (Print #f, "pk " & uc.MoveToPK(3), whose events Print #f too:
+ * VB6 oracle do1): each Print keeps the state of the one around it and gives it back at its end */
+static int wr_count;
+typedef struct prstate { int ch; vbfile *f; int wr; char *buf; int len, cap, col, nl; } prstate;
+#define PR_DEPTH 64
+static prstate pr_stack[PR_DEPTH]; static int pr_depth;
+static char *pb_done; static int pb_done_nl;   /* the text of the Print method that ended (vb_pr_take) */
+static void pr_push(void)
+{
+    if (pr_depth == PR_DEPTH) {                  /* Prints left by errors: the oldest go */
+        if (pr_stack[0].buf) free(pr_stack[0].buf);
+        memmove(pr_stack, pr_stack + 1, sizeof(prstate) * (PR_DEPTH - 1));
+        pr_depth--;
+    }
+    prstate *x = &pr_stack[pr_depth++];
+    x->ch = pr_ch; x->f = pr_f; x->wr = wr_count;
+    x->buf = pb_buf; x->len = pb_len; x->cap = pb_cap; x->col = pb_col; x->nl = pb_nl;
+    pb_buf = 0; pb_len = pb_cap = pb_col = pb_nl = 0;
+}
+static void pr_pop(void)
+{
+    free(pb_buf);
+    if (!pr_depth) { pr_ch = 0; pr_f = 0; wr_count = 0; pb_buf = 0; pb_len = pb_cap = pb_col = pb_nl = 0; return; }
+    prstate *x = &pr_stack[--pr_depth];
+    pr_ch = x->ch; pr_f = x->f; wr_count = x->wr;
+    pb_buf = x->buf; pb_len = x->len; pb_cap = x->cap; pb_col = x->col; pb_nl = x->nl;
+    if (pr_f && !pr_f->open) { pr_f = 0; pr_ch = -1; }   /* its file was closed meanwhile */
+}
+
 void vb_pr_begin(vb_i32 fileno)
 {
+    pr_push();
     pr_ch = fileno; pr_f = 0;
-    if (fileno == -2) { pb_len = 0; pb_col = 0; pb_nl = 0; pb_add("", 0); return; }
+    if (fileno == -2) { pb_add("", 0); return; }
     if (fileno) { pr_f = getf(fileno, VBF_OUTPUT | VBF_APPEND); if (!pr_f) pr_ch = -1; }
 }
 static int live(void) { return !vb_errpend && (pr_ch >= 0 || pr_ch == -2); }
@@ -189,14 +219,24 @@ void vb_pr_tab(vb_i32 col)
 void vb_pr_spc(vb_i32 n) { if (!live()) return; for (int i = 0; i < n; i++) ch_write(" ", 1); }
 vbs vb_pr_take(vb_i32 *newline)
 {
-    *newline = pb_nl;
-    return vb_sfromutf8(pb_buf ? pb_buf : "");
+    *newline = pb_done_nl;
+    return vb_sfromutf8(pb_done ? pb_done : "");
 }
-void vb_pr_end(vb_i32 newline) { if (pr_ch == -2) { pb_nl = newline; pr_ch = 0; return; } if (live() && newline) ch_nl(); if (pr_ch == 0) fflush(stdout); pr_ch = 0; pr_f = 0; }
+void vb_pr_end(vb_i32 newline)
+{
+    if (pr_ch == -2) {
+        free(pb_done); pb_done = pb_buf; pb_done_nl = newline;
+        pb_buf = 0; pb_len = pb_cap = 0;
+        pr_pop();
+        return;
+    }
+    if (live() && newline) ch_nl();
+    if (pr_ch == 0) fflush(stdout);
+    pr_pop();
+}
 
 /* Write #: strings in quotes, numbers without spaces, #TRUE#, #NULL#, dates as #yyyy-mm-dd# */
-static int wr_count;
-void vb_wr_begin(vb_i32 fileno) { wr_count = 0; vb_pr_begin(fileno); }
+void vb_wr_begin(vb_i32 fileno) { vb_pr_begin(fileno); wr_count = 0; }
 void vb_wr_v(vbvar v)
 {
     if (!live()) return;
@@ -216,7 +256,7 @@ void vb_wr_v(vbvar v)
     default: { vb_i32 m = vb_mark(); put_vbs(vb_v2s(v)); vb_release(m); }
     }
 }
-void vb_wr_end(void) { if (live()) ch_nl(); pr_ch = 0; pr_f = 0; }
+void vb_wr_end(void) { if (live()) ch_nl(); pr_pop(); }
 
 /* ---------------------------------------------------------------- reading */
 static int rdc(vbfile *f) { return fgetc(f->f); }
