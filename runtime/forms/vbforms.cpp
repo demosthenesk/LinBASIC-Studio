@@ -53,7 +53,6 @@ extern "C" {
 #include <QClipboard>
 #include <QMimeData>
 #include <QScreen>
-#include <QWindow>
 #include <QFontDatabase>
 #include <QDateTime>
 #include <QPdfWriter>
@@ -742,6 +741,7 @@ struct FormState {
     QMenuBar *menubar = nullptr;
     bool loaded = false, visible = false, unloading = false, shown_once = false;
     bool activate_pending = false;       /* Show: its Activate is posted (activate_now) */
+    bool sizing = false;                        /* the runtime sizes the window: its canvas has the size it set */
     bool in_unload = false;                     /* QueryUnload / Unload are running: Unload Me there does nothing */
     std::vector<vbobj> ctls;                    /* every control object (load order) */
     std::map<std::string, vbobj> byname;        /* lower name -> control, or control array object */
@@ -892,6 +892,17 @@ static bool fire_form(vbobj form, const char *event, int argc = 0, vbvar *argv =
 }
 
 /* ---------------------------------------------------------------- the form window */
+/* the menu bar of a form: 20 pixels high, as in Windows 7, whatever the style (the frame of VB6 counts it so:
+ * Height - ScaleHeight 870 of a sizable form, f_win); the height of the style differs from one style to another
+ * (the vista style of Windows: a pixel or two more, t21 geo), and the client area would not have the size set */
+static const int MENU_PX = 20;
+class FormMenuBar : public QMenuBar {
+public:
+    explicit FormMenuBar(QWidget *p) : QMenuBar(p) { setNativeMenuBar(false); }
+    QSize sizeHint() const override { return QSize(QMenuBar::sizeHint().width(), MENU_PX); }
+    QSize minimumSizeHint() const override { return QSize(QMenuBar::minimumSizeHint().width(), MENU_PX); }
+    int heightForWidth(int) const override { return MENU_PX; }
+};
 class FormWidget : public QWidget {
 public:
     vbobj form;
@@ -2453,7 +2464,7 @@ static void build_menus(FormState *st)
     bool any = false;
     for (int i = 0; i < d->nctls; i++) if (bydef[i] && bydef[i]->kind == K_MENU) any = true;
     if (!any) return;
-    st->menubar = new QMenuBar(st->w);
+    st->menubar = new FormMenuBar(st->w);
     st->w->layout()->setMenuBar(st->menubar);
     for (int i = 0; i < d->nctls; i++) {
         Ctl *c = bydef[i];
@@ -3775,16 +3786,13 @@ static void set_client(vbobj o, double cw, double ch, bool event)
     if (ch < 0) ch = 0;
     bool changed = cw != st->clientw || ch != st->clienth;
     st->clientw = cw; st->clienth = ch;
-    int mbh = 0;                                /* the height the layout gives the menu bar (polished: the style of
-                                                 * Windows makes it 2 pixels taller than before - f_win in Windows 7) */
-    if (st->menubar && !st->mdichild) {
-        st->menubar->ensurePolished();
-        int wpx = (int)(cw / TPP);
-        mbh = st->menubar->hasHeightForWidth() ? st->menubar->heightForWidth(wpx) : st->menubar->sizeHint().height();
-    }
+    int mbh = st->menubar && !st->mdichild ? MENU_PX : 0;
     if (st->w) {
         QSignalBlocker b(st->w);
+        bool was = st->sizing;
+        st->sizing = true;                      /* Windows resizes the canvas at once: no Resize of its own */
         st->w->resize((int)(cw / TPP), (int)(ch / TPP) + mbh);
+        st->sizing = was;
         if (st->sub) {                          /* the frame of the subwindow around the client area */
             QStyle *sy = st->sub->style();
             int fwid = sy->pixelMetric(QStyle::PM_MdiSubWindowFrameWidth, nullptr, st->sub);
@@ -4080,6 +4088,7 @@ static void load_form(vbobj o)
     cv->on_paint = [o]() { if (fstate(o)->activate_pending) activate_now(o); fire_form(o, "paint"); };
     cv->on_resize = [o](int w, int h) {
         FormState *s = fstate(o);
+        if (s->sizing) { align_layout(s); return; }   /* set_client / WindowState give the size and the Resize */
         double cw = w * TPP, ch = h * TPP;
         bool changed = cw != s->clientw || ch != s->clienth;
         s->clientw = cw; s->clienth = ch;
@@ -4101,13 +4110,11 @@ static void load_form(vbobj o)
         st->sub->hide();
     }
     set_client(o, st->clientw, st->clienth, false);
-    snap_client(o);                             /* the window has its size in pixels at Load already (VB6: ScaleHeight
-                                                 * 1995 of ClientHeight 2000 in Form_Load, t21 geo in Windows 7) */
+    snap_client(o);                             /* the window has its size in pixels at Load already, and the scale
+                                                 * too (VB6: ScaleHeight 1995 of ClientHeight 2000 in Form_Load, t21 geo;
+                                                 * Height - ScaleHeight 420 of a fixed form, f_win) */
     st->norm_cw = st->clientw; st->norm_ch = st->clienth;
     if (st->mdichild) mdi_child_default(o);
-    if (st->g.scalemode == 1) {                 /* until it is shown, the scale of the .frm (f_win: frmNone 0 0) */
-        st->g.sw = propn(d->props, "ScaleWidth", st->g.sw); st->g.sh = propn(d->props, "ScaleHeight", st->g.sh);
-    }
     place_window(st);
     align_layout(st);
     set_tab_order(st);
@@ -4450,10 +4457,8 @@ static int hwnd_of(QWidget *w)
     static vb_i32 next = 0x00010010;
     vb_i32 h;
 #ifdef _WIN32
-    if (w->isWindow()) {                        /* a form: its real HWND, for the Declares of user32 */
-        h = (vb_i32)(intptr_t)w->winId();
-        if (!w->isVisible() && w->windowHandle()) w->windowHandle()->resize(w->size());   /* GetClientRect in Form_Load */
-    } else
+    if (w->isWindow()) h = (vb_i32)(intptr_t)w->winId();    /* a form: its real HWND, for the Declares of user32 */
+    else
 #endif
     { h = next; next += 4; }
     w->setProperty("vbhwnd", h);
@@ -4490,7 +4495,12 @@ extern "C" vbvar vbf_form_member(vbobj o, const char *name, vb_i32 kind, vb_i32 
     }
     if (n == "width" || n == "height") {
         bool wd = n == "width";
-        if (!set) return vb_v_f((float)(wd ? st->winw : st->winh));
+        if (!set) {                             /* before it is shown, Height has no menu bar yet (VB6: 2565, then
+                                                 * 2865 at the Resize of Show, t21 geo in Windows 7) */
+            double v = wd ? st->winw : st->winh;
+            if (!wd && !st->shown_once && st->menubar && !st->mdichild && st->bstyle != 0) v -= MENU_PX * TPP;
+            return vb_v_f((float)v);
+        }
         double v = vb_v2d(val);
         if (st->wstate != 0) { vb_raise(384); return vb_v_empty(); }   /* can't be changed while minimized or maximized */
         if (wd) set_window(o, v, st->winh, true); else set_window(o, st->winw, v, true);
@@ -4527,11 +4537,19 @@ extern "C" vbvar vbf_form_member(vbobj o, const char *name, vb_i32 kind, vb_i32 
             if (st->visible) fire_form(o, "resize");
         } else if (v == 2) {
             QRect scr = QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->availableGeometry() : QRect(0, 0, 1024, 768);
-            if (st->w && st->visible) { if (st->sub) st->sub->showMaximized(); else st->w->showMaximized(); }
+            if (st->w && st->visible) {         /* Windows resizes it at once: one Resize, with the new sizes */
+                st->sizing = true;
+                if (st->sub) st->sub->showMaximized(); else st->w->showMaximized();
+                st->sizing = false;
+            }
             Frame f = frame_of(st);
             set_client(o, scr.width() * TPP, (scr.height() - (f.t - f.b)) * TPP, st->visible);   /* the frame goes outside the screen */
         } else {
-            if (st->w && st->visible) { if (st->sub) st->sub->showNormal(); else st->w->showNormal(); }
+            if (st->w && st->visible) {
+                st->sizing = true;
+                if (st->sub) st->sub->showNormal(); else st->w->showNormal();
+                st->sizing = false;
+            }
             set_client(o, st->norm_cw, st->norm_ch, st->visible);   /* Width/Height: the real size again (4995) */
         }
         return vb_v_empty();
@@ -5137,8 +5155,16 @@ static vb_i64 u_GetClientRect(vb_i32 argc, vb_dllarg *a)
     QWidget *w = argc >= 2 ? widget_of_hwnd((vb_i32)A(&a[0])) : nullptr;
     vb_i32 *r = argc >= 2 ? (vb_i32 *)vb_dllarg_ptr(&a[1], 16) : nullptr;
     if (!w || !r) return 0;
+    r[0] = 0; r[1] = 0;
+    if (auto *fw = dynamic_cast<FormWidget *>(w)) {
+        FormState *st = fstate(fw->form);
+        if (!st->mdi) {                         /* the client area of the form, also in Form_Load (t21 geo: 200x133) */
+            r[2] = (int)std::floor(st->clientw / TPP + 1e-6); r[3] = (int)std::floor(st->clienth / TPP + 1e-6);
+            return 1;
+        }
+    }
     QWidget *c = client_of(w);
-    r[0] = 0; r[1] = 0; r[2] = c->width(); r[3] = c->height();
+    r[2] = c->width(); r[3] = c->height();
     return 1;
 }
 static vb_i64 u_mouse_event(vb_i32 argc, vb_dllarg *a)
