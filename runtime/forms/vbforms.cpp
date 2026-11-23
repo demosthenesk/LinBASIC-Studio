@@ -740,6 +740,7 @@ struct FormState {
     QPointer<Canvas> canvas;
     QMenuBar *menubar = nullptr;
     bool loaded = false, visible = false, unloading = false, shown_once = false;
+    bool activate_pending = false;       /* Show: its Activate is posted (activate_now) */
     bool in_unload = false;                     /* QueryUnload / Unload are running: Unload Me there does nothing */
     std::vector<vbobj> ctls;                    /* every control object (load order) */
     std::map<std::string, vbobj> byname;        /* lower name -> control, or control array object */
@@ -775,6 +776,7 @@ static bool running;
 
 static void unload_form(vbobj o, int mode);
 static void form_show(vbobj o, int modal);
+static void activate_now(vbobj o);
 static void monkey_start();
 /* user controls (uctl.inc) */
 static const vb_class *uctl_class(const char *cls);
@@ -4067,7 +4069,7 @@ static void load_form(vbobj o)
             if (auto *cfw = dynamic_cast<FormWidget *>(sw->widget())) child_activate(o, cfw->form);
         });
     }
-    cv->on_paint = [o]() { fire_form(o, "paint"); };
+    cv->on_paint = [o]() { if (fstate(o)->activate_pending) activate_now(o); fire_form(o, "paint"); };
     cv->on_resize = [o](int w, int h) {
         FormState *s = fstate(o);
         double cw = w * TPP, ch = h * TPP;
@@ -4110,25 +4112,34 @@ static void load_form(vbobj o)
 /* Windows activates another window of the program when the active one is hidden or
  * unloaded: the form that was active before it (f_basic: Form1 Activate after Form2.Hide) */
 static std::vector<vbobj> activation_order;     /* most recent last (weak) */
+/* the Activate of a form that is shown: after the code that showed it (posted); a paint that comes
+ * first (Windows sends WM_PAINT of a new window before the posted message: f_win in Windows 7) has it
+ * done first, as Windows activates a window before it paints it */
+static void activate_now(vbobj o)
+{
+    FormState *s = fstate(o);
+    s->activate_pending = false;
+    if (s->loaded && s->visible && active_form != o) {
+        vbobj prev = active_form;
+        active_form = o;
+        activation_order.erase(std::remove(activation_order.begin(), activation_order.end(), o), activation_order.end());
+        activation_order.push_back(o);
+        if (s->w) s->w->activateWindow();
+        /* the first control in the tab order has the focus already in Form_Activate,
+         * its GotFocus comes after it (f_ui) */
+        Ctl *first = s->focus ? nullptr : first_focusable(s);
+        if (first) focus_to(s, first, false);
+        if (prev && fstate(prev)->loaded) fire_form(prev, "deactivate");
+        fire_form(o, "activate");
+        if (first && first->form && s->focus == first->self) fire_ctl(first, "gotfocus");
+    }
+}
 static void schedule_activate(vbobj o)
 {
+    fstate(o)->activate_pending = true;
     vb_oaddref(o);
     post([o]() {
-        FormState *s = fstate(o);
-        if (s->loaded && s->visible && active_form != o) {
-            vbobj prev = active_form;
-            active_form = o;
-            activation_order.erase(std::remove(activation_order.begin(), activation_order.end(), o), activation_order.end());
-            activation_order.push_back(o);
-            if (s->w) s->w->activateWindow();
-            /* the first control in the tab order has the focus already in Form_Activate,
-             * its GotFocus comes after it (f_ui) */
-            Ctl *first = s->focus ? nullptr : first_focusable(s);
-            if (first) focus_to(s, first, false);
-            if (prev && fstate(prev)->loaded) fire_form(prev, "deactivate");
-            fire_form(o, "activate");
-            if (first && first->form && s->focus == first->self) fire_ctl(first, "gotfocus");
-        }
+        if (fstate(o)->activate_pending) activate_now(o);
         vb_orelease(o);
     });
 }
