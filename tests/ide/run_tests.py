@@ -1535,6 +1535,23 @@ DOW_DB = """Sub MakeDb()
     db.Execute "INSERT INTO Titles VALUES ('C3', 'Third', 2)"
     db.Close
 End Sub
+
+' the rows of Authors after the form is gone: its user controls, their classes and their connections are closed (Jet
+' shows another connection what one wrote when it is closed: VB6 oracle do2)
+Sub ShowDb()
+    Dim cn As Object, r As Object, f As Integer
+    f = FreeFile
+    Open App.Path & "/out.txt" For Append As #f
+    Set cn = CreateObject("ADODB.Connection")
+    cn.Open "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & App.Path & "\\dow.mdb"
+    Set r = cn.Execute("SELECT Au_ID, Author, YearBorn FROM Authors ORDER BY Au_ID")
+    Do While Not r.EOF
+        Print #f, "db " & r("Au_ID") & "|" & r("Author") & "|" & r("YearBorn")
+        r.MoveNext
+    Loop
+    cn.Close
+    Close #f
+End Sub
 """
 
 
@@ -1574,7 +1591,8 @@ def t_dowiz92(d):
     wz.reject()
     # ---- the database, the Data Environment
     w.add_module("Module")
-    code(w, p.module("Module1"), DOW_DB + "\nSub Main()\n    MakeDb\nEnd Sub\n")
+    code(w, p.module("Module1"), DOW_DB + "\nSub Main()\n    MakeDb\n    Load Form1\n    Set Form1 = Nothing\n"
+                                          "    ShowDb\nEnd Sub\n")
     p.vbp.set("Startup", "Sub Main", quote=True)
     saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Dow.vbp"))
     assert w.save_project_as()
@@ -1785,21 +1803,9 @@ Private Sub Form_Load()
     Print #f, "pk " & uctclsAuthorsSingleRecord1.MoveToPK(4)
     uctclsAuthorsSingleRecord1.Delete
     quiet = False
-    ShowDb
     Close #f
     f = 0
     Unload Me
-End Sub
-
-Private Sub ShowDb()
-    Dim cn As New ADODB.Connection, r As ADODB.Recordset
-    cn.Open "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & App.Path & "\\dow.mdb"
-    Set r = cn.Execute("SELECT Au_ID, Author, YearBorn FROM Authors ORDER BY Au_ID")
-    Do While Not r.EOF
-        Print #f, "db " & r!Au_ID & "|" & r!Author & "|" & r!YearBorn
-        r.MoveNext
-    Loop
-    cn.Close
 End Sub
 
 Private Sub uctclsAuthorsSingleRecord1_MoveComplete(oDataSource As Object)
@@ -1819,8 +1825,7 @@ Private Sub uctclsAuthorsListBox1_ListBoxClick(Au_ID As Variant)
     Print #f, "click " & Au_ID
 End Sub
 """)
-    p.vbp.set("Startup", "Form1", quote=True)
-    assert w.save_project()
+    assert w.save_project()                     # (Sub Main: MakeDb, Form1, ShowDb)
     cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(d, "Dow.vbp"),
                          "-o", os.path.join(d, "Dow")], capture_output=True, text=True, timeout=900)
     assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
