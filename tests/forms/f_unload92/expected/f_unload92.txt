@@ -1,0 +1,13 @@
+Form1 Load
+Form1 Unload
+Load: 364 Object was unloaded
+Form1 Load
+Form1 Unload
+Show: 364
+Form1 Load
+Form1 Unload
+Caption: 364
+Form2 Load
+Form2: 0 1
+Form2 Unload
+count 0

@@ -1591,9 +1591,13 @@ def t_dowiz92(d):
     wz.reject()
     # ---- the database, the Data Environment
     w.add_module("Module")
-    code(w, p.module("Module1"), DOW_DB + "\nSub Main()\n    Dim fm As Form\n    MakeDb\n    Load Form1\n"
+    # (Jet commits a connection's changes for the other connections within half a second, and the OLE DB pool keeps
+    # the connection of the classes open: ShowDb waits - VB6 oracle do2)
+    code(w, p.module("Module1"), DOW_DB + "\nSub Main()\n    Dim fm As Form, t As Single\n    MakeDb\n    Load Form1\n"
                                           "    For Each fm In Forms\n        Unload fm\n    Next\n"
-                                          "    Set Form1 = Nothing\n    ShowDb\nEnd Sub\n")
+                                          "    Set Form1 = Nothing\n    t = Timer\n"
+                                          "    Do While Timer - t < 2 And Timer >= t\n        DoEvents\n    Loop\n"
+                                          "    ShowDb\nEnd Sub\n")
     p.vbp.set("Startup", "Sub Main", quote=True)
     saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Dow.vbp"))
     assert w.save_project_as()
