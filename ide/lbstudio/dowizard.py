@@ -466,6 +466,8 @@ class DOWizard(QDialog):
         self.lk_command.blockSignals(True)
         self.lk_command.clear()
         self.lk_command.addItems([c.name for c in de.top() if c.fields and c.name.lower() != self.dc.command.lower()])
+        self.lk_source.setCurrentIndex(-1)       # nothing chosen yet (VB6 DEV-9/do1)
+        self.lk_command.setCurrentIndex(-1)
         self.lk_command.blockSignals(False)
         self._lookup_fields()
         self._fill_lookup_table()
@@ -476,6 +478,7 @@ class DOWizard(QDialog):
         names = [f[0] for f in cmd.fields] if cmd is not None else []
         self.lk_display.clear()
         self.lk_display.addItems(names)
+        self.lk_display.setCurrentIndex(-1)
         self.lk_on.clear()
         self.lk_on.addItems(names)
         src = self.lk_source.currentText().lower()
