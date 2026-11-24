@@ -11,7 +11,7 @@ are our own.
 import os
 import sys
 
-from PyQt6.QtCore import Qt, QRectF, QPointF
+from PyQt6.QtCore import Qt, QRectF, QPointF, QEvent
 from PyQt6.QtGui import QPixmap, QPainter, QColor, QPen, QIcon, QAction, QActionGroup, QKeySequence
 from PyQt6.QtWidgets import (QMainWindow, QWidget, QGridLayout, QVBoxLayout, QLabel, QComboBox, QLineEdit,
                              QListWidget, QPushButton, QGroupBox, QRadioButton, QPlainTextEdit, QFileDialog,
@@ -156,6 +156,9 @@ class ApiViewer(QMainWindow):
         self.b_insert.clicked.connect(self.insert)
         self.b_copy.clicked.connect(self.copy)
         self.selected.cursorPositionChanged.connect(self.update_buttons)
+        self.picked = False                     # an item of Selected Items chosen by a click (or the keys): Remove
+        self.selected.viewport().installEventFilter(self)
+        self.selected.installEventFilter(self)
         self.update_buttons()
         if self.S is not None and self.S.get("apiviewer_load_last", False):
             last = self.S.get("apiviewer_last", "")
@@ -294,14 +297,13 @@ class ApiViewer(QMainWindow):
         if not self._names:
             return
         t = text.strip().lower()
-        row = 0
-        if t:
-            for i, n in enumerate(self._names):
-                if n.lower().startswith(t):
-                    row = i
-                    break
-            else:
-                row = -1
+        if not t:
+            return                              # (nothing chosen yet: Add stays off, as VB6's)
+        row = -1
+        for i, n in enumerate(self._names):
+            if n.lower().startswith(t):
+                row = i
+                break
         if row >= 0:
             self.avail.setCurrentRow(row)
             self.avail.scrollToItem(self.avail.item(row), QAbstractItemView.ScrollHint.PositionAtTop)
@@ -335,6 +337,7 @@ class ApiViewer(QMainWindow):
         return True
 
     def render(self):
+        self.picked = False
         full = self.a_full.isChecked()
         self.selected.setPlainText(self.sel.render(self.scope(), full))
         self.update_buttons()
@@ -407,12 +410,18 @@ class ApiViewer(QMainWindow):
         has_sel = bool(self.sel.items)
         self.b_add.setEnabled(on and self.avail.currentRow() >= 0)
         self.scope_box.setEnabled(on)
-        self.b_remove.setEnabled(has_sel and self.sel.item_at_line(self.cursor_line()) >= 0
-                                 and self.selected.hasFocus())
+        self.b_remove.setEnabled(has_sel and self.picked and self.sel.item_at_line(self.cursor_line()) >= 0)
         self.b_clear.setEnabled(has_sel)
         self.b_insert.setEnabled(has_sel)
         self.b_copy.setEnabled(has_sel)
         self.a_convert.setEnabled(on and self.data.is_text)
+
+    def eventFilter(self, obj, e):
+        if e.type() in (QEvent.Type.MouseButtonRelease, QEvent.Type.KeyRelease) and \
+                obj in (self.selected, self.selected.viewport()):
+            self.picked = True
+            self.update_buttons()
+        return super().eventFilter(obj, e)
 
     def focusInEvent(self, e):
         super().focusInEvent(e)

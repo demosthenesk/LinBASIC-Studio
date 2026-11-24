@@ -1587,6 +1587,7 @@ def t_api94(d):
     assert v.load(A.default_file())
     assert v.windowTitle() == "%s - %s" % (TITLE, A.default_file()) and v.a_convert.isEnabled()
     assert v.avail.count() > 3000 and v.statusBar().currentMessage() == ""
+    assert v.avail.currentRow() < 0 and not v.b_add.isEnabled()      # (nothing chosen yet)
     names = [v.avail.item(i).text() for i in range(v.avail.count())]
     assert names == sorted(names, key=str.lower)
     v.find.setText("GetWin")
@@ -1606,6 +1607,8 @@ def t_api94(d):
     v.add()
     v.kind.setCurrentText("Types")
     v.find.setText("REC")
+    assert v.selected_name().upper().startswith("REC")
+    v.find.setText("RECT")
     assert v.selected_name() == "RECT"
     v.add()
     assert not v.add() or len(v.sel.items) == 4           # (the same item once)
@@ -1626,7 +1629,11 @@ def t_api94(d):
     c.movePosition(c.MoveOperation.Down, n=2)
     v.selected.setTextCursor(c)
     app.processEvents()
-    assert v.b_remove.isEnabled() and v.remove()
+    assert not v.b_remove.isEnabled()                   # (only an item chosen by the user)
+    QTest.mouseClick(v.selected.viewport(), Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier,
+                     v.selected.cursorRect(c).center())
+    app.processEvents()
+    assert v.b_remove.isEnabled() and v.sel.item_at_line(v.cursor_line()) == 1 and v.remove()
     assert [n for _k, n in v.sel.items] == ["GetWindowText", "WM_SETTEXT", "RECT"]
     v.copy()
     clip = QApplication.clipboard().text()

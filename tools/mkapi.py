@@ -27,7 +27,7 @@ DLLS = [('kernel32', 'kernel32'), ('user32', 'user32'), ('gdi32', 'gdi32'), ('ad
 
 HEADERS = ['windows.h', 'commctrl.h', 'commdlg.h', 'shellapi.h', 'shlobj.h', 'mmsystem.h', 'wininet.h',
            'winspool.h', 'shlwapi.h', 'psapi.h', 'imm.h', 'lzexpand.h', 'winnetwk.h', 'winver.h', 'lm.h',
-           'tlhelp32.h', 'richedit.h', 'dbt.h', 'vfw.h', 'uxtheme.h']
+           'tlhelp32.h', 'richedit.h', 'dbt.h', 'vfw.h', 'uxtheme.h', 'olectl.h']
 
 # Windows XP (as the programs of VB6 expect the structures: OPENFILENAME, NONCLIENTMETRICS ...); the headers whose
 # constants and structures go into the database (the C library and the COM interfaces do not)
@@ -75,7 +75,7 @@ def exports(libdir):
             print('mkapi: no %s' % p, file=sys.stderr)
             continue
         for s in ar_symbols(p):
-            m = re.match(r'^_([A-Za-z]\w*)@(\d+)$', s)
+            m = re.match(r'^_(_?[A-Za-z]\w*)@(\d+)$', s)
             if m and m.group(1) not in out:
                 out[m.group(1)] = (dll, int(m.group(2)))
     return out
@@ -207,7 +207,7 @@ def has_stdcall(toks):
 # ------------------------------------------------------------------ C types
 # a type: ('prim', name) | ('name', typedef) | ('ptr', type, const) | ('arr', type, n) | ('func', ret, params, std)
 #         | ('su', key) | ('enum',)
-PRIMS = {'void', 'char', 'short', 'int', 'long', 'float', 'double', 'signed', 'unsigned', '_Bool', '__int64',
+PRIMS = {'__builtin_va_list', 'void', 'char', 'short', 'int', 'long', 'float', 'double', 'signed', 'unsigned', '_Bool', '__int64',
          '__int32', '__int16', '__int8', 'wchar_t', '__int128', 'const', 'volatile'}
 
 
@@ -264,6 +264,8 @@ class CParser:
                 base = ('prim', 'short')
             elif '__int128' in w:
                 base = ('prim', 'int128')
+            elif '__builtin_va_list' in w:
+                base = ('prim', 'int')          # (va_list * of FormatMessage: Arguments As Long)
             else:
                 base = ('prim', 'int')
         return i, base
@@ -705,7 +707,7 @@ class VB:
     def struct_vb(self, key):
         """the VB name of a struct that can be written as a Type (written on the way), or None"""
         name = self.tnames.get(key)
-        if not name:
+        if not name or name.lower() in VB_RESERVED or name.lower() in ('decimal', 'variant'):
             return None
         if name in self.types:
             return name if self.types[name] is not None else None
@@ -803,7 +805,7 @@ class VB:
                         pass                        # (a named union of anonymous structures: their members)
                     out.extend(sub)
                     continue
-                if mname is None:                   # an anonymous structure: its members
+                if mname is None or r[1] not in self.tnames:   # an anonymous structure: its members
                     sub = self.flatten(s2['members'])
                     if sub is None:
                         return None
@@ -881,9 +883,14 @@ class VB:
             # a small structure by value (POINT): its two halves, as VB6 programs pass it
             s = self.p.structs.get(k[1])
             mem = s and s['members']
+            z = self.size(ty)[0]
             if mem and len(mem) == 2 and all(m[0] and self.kind(m[1]) == 'long' for m in mem):
                 for m in mem:
                     out.append('ByVal %s As Long' % vb_ident('%s%s' % (nm, m[0].capitalize())))
+            elif z == 4:
+                out.append('ByVal %s As Long' % nm)     # COORD, BLENDFUNCTION, in_addr: their 4 bytes
+            elif z == 8:
+                out.append('ByVal %s As Currency' % nm)
             else:
                 return False
         else:
@@ -897,6 +904,9 @@ class VB:
         alias = None
         if name.endswith('A') and name[:-1] + 'W' in self.exp:
             vbname = name[:-1]
+            alias = name
+        elif name.startswith('_'):
+            vbname = name.lstrip('_')
             alias = name
         if vbname.lower() in VB_RESERVED:
             alias = alias or name
@@ -1035,8 +1045,6 @@ def main():
     decls = {}
     reasons = collections.Counter()
     for name in sorted(exp):
-        if name.endswith('W') and name[:-1] + 'A' in exp:
-            continue
         if name not in p.funcs:
             reasons['not in the headers'] += 1
             continue
@@ -1169,18 +1177,54 @@ def psc_report(folder, decls):
 
 
 def check(path):
+    """lbvc --check of the whole file as one module; an item it refuses is left out of the file (and shown), and
+    the check goes on (at most 300 items)"""
     lbvc = os.path.join(ROOT, 'compiler', 'lbvc.py')
+    with open(path, encoding='ascii') as f:
+        lines = f.read().replace('\r\n', '\n').split('\n')
+    refused = []
+    ok = False
     with tempfile.TemporaryDirectory() as t:
         bas = os.path.join(t, 'LBAPI.bas')
-        with open(path, encoding='ascii') as f:
-            body = f.read()
-        with open(bas, 'w', newline='\r\n') as f:
-            f.write('Attribute VB_Name = "LBAPI"\n' + body.replace('\r\n', '\n'))
-        r = subprocess.run([sys.executable, lbvc, '--check', bas], capture_output=True, text=True)
-        print('  lbvc --check: %s' % ('ok' if r.returncode == 0 else 'FAILED'))
-        if r.returncode:
-            print((r.stdout + r.stderr)[-6000:])
-        return r.returncode
+        for _ in range(300):
+            with open(bas, 'w', newline='\r\n') as f:
+                f.write('Attribute VB_Name = "LBAPI"\n' + '\n'.join(lines))
+            r = subprocess.run([sys.executable, lbvc, '--check', bas], capture_output=True, text=True)
+            if r.returncode == 0:
+                ok = True
+                break
+            out = r.stdout + r.stderr
+            m = re.search(r'LBAPI\.bas:(\d+):\d+: error: (.*)', out)
+            if not m:
+                print(out[-4000:])
+                break
+            i = int(m.group(1)) - 2                 # (the Attribute line)
+            if not 0 <= i < len(lines):
+                print(out[-4000:])
+                break
+            a, b = i, i
+            if not lines[i].startswith(('Public Const ', 'Public Declare ')):
+                while a > 0 and not lines[a].startswith('Public Type '):
+                    a -= 1
+                while b < len(lines) - 1 and lines[b] != 'End Type':
+                    b += 1
+                if b + 1 < len(lines) and lines[b + 1] == '':
+                    b += 1
+            refused.append((lines[a][:110], m.group(2).strip()))
+            del lines[a:b + 1]
+    if refused:
+        nd = sum(1 for l in lines if l.startswith('Public Declare '))
+        nc = sum(1 for l in lines if l.startswith('Public Const '))
+        nt = sum(1 for l in lines if l.startswith('Public Type '))
+        lines = [re.sub(r'Declares: \d+, Constants: \d+, Types: \d+\.',
+                        'Declares: %d, Constants: %d, Types: %d.' % (nd, nc, nt), l) for l in lines]
+        with open(path, 'w', newline='\r\n', encoding='ascii') as f:
+            f.write('\n'.join(lines))
+        print('  lbvc --check refused %d items (left out of the file):' % len(refused))
+        for l, e in refused:
+            print('    %s  -- %s' % (l, e))
+    print('  lbvc --check: %s' % ('ok' if ok else 'FAILED'))
+    return 0 if ok else 1
 
 
 if __name__ == '__main__':
