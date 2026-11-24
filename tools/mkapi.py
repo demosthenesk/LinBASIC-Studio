@@ -1188,7 +1188,7 @@ def check(path):
         bas = os.path.join(t, 'LBAPI.bas')
         for _ in range(300):
             with open(bas, 'w', newline='\r\n') as f:
-                f.write('Attribute VB_Name = "LBAPI"\n' + '\n'.join(lines))
+                f.write('Attribute VB_Name = "LBAPI"\n' + '\n'.join(lines) + '\nSub Main()\nEnd Sub\n')
             r = subprocess.run([sys.executable, lbvc, '--check', bas], capture_output=True, text=True)
             if r.returncode == 0:
                 ok = True

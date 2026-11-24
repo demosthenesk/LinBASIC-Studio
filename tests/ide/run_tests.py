@@ -1624,9 +1624,8 @@ def t_api94(d):
     v.a_full.trigger()
     # Remove: the item at the caret
     v.selected.setFocus()
-    c = v.selected.textCursor()
-    c.movePosition(c.MoveOperation.Start)
-    c.movePosition(c.MoveOperation.Down, n=2)
+    from PyQt6.QtGui import QTextCursor
+    c = QTextCursor(v.selected.document().findBlockByNumber(2))     # (the line of GetTickCount, not a wrapped one)
     v.selected.setTextCursor(c)
     app.processEvents()
     assert not v.b_remove.isEnabled()                   # (only an item chosen by the user)
