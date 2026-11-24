@@ -41,10 +41,13 @@ CBUILDER = "VB 6 Class Builder Utility"   # phase 9.2c (DEV-9/cb1-02: Add-Ins > 
 AXWIZ = "VB 6 ActiveX Ctrl Interface Wizard"   # phase 9.2d (DEV-9/ax1: Add-Ins > ActiveX Control Interface Wizard...)
 PPWIZ = "VB 6 Property Page Wizard"    # phase 9.2e (DEV-9/pp1: Add-Ins > Property Page Wizard...)
 DOWIZ = "VB 6 Data Object Wizard"      # phase 9.2f (DEV-9/do1: Add-Ins > VB 6 Data Object Wizard)
+APIVIEW = "VB 6 API Viewer"             # phase 9.4 (DEV-9 api-w: Add-Ins > API Viewer)
 ADDINS = [("DTC Framework Registrar", ""), (PDW, PDW), ("Source Code Control", ""),
           (AXWIZ, "Makes the properties, methods and events of a user control and the code under them "
                   "(ActiveX Control Interface Wizard)"), ("VB 6 ActiveX Doc Migration Wizard", ""),
-          ("VB 6 Add-In Toolbar", ""), ("VB 6 API Viewer", ""),
+          ("VB 6 Add-In Toolbar", ""),
+          (APIVIEW, "Shows the Constants, Declares and Types of the Windows API and puts them into the code (API "
+                    "Viewer)"),
           (APPWIZ, "Makes the start of a new application: its main form, menus, toolbar and standard forms "
                    "(Application Wizard), and toolbars of forms (Toolbar Wizard)"),
           (CBUILDER, "Makes the classes and collections of a project and their properties, methods, events and enums "
@@ -264,7 +267,8 @@ class AddInManagerDialog(QDialog):
                       CBUILDER: [bool(main.cbuilder_loaded), bool(S["addin_cbuilder_startup"]), False],
                       AXWIZ: [bool(main.axwiz_loaded), bool(S["addin_axwiz_startup"]), False],
                       PPWIZ: [bool(main.ppwiz_loaded), bool(S["addin_ppwiz_startup"]), False],
-                      DOWIZ: [bool(main.dowiz_loaded), bool(S["addin_dowiz_startup"]), False]}
+                      DOWIZ: [bool(main.dowiz_loaded), bool(S["addin_dowiz_startup"]), False],
+                      APIVIEW: [bool(main.apiviewer_loaded), bool(S["addin_apiviewer_startup"]), False]}
         lay = QGridLayout(self)
         self.list = QTableWidget(len(ADDINS), 2)
         self.list.setHorizontalHeaderLabels(["Available Add-Ins", "Load Behavior"])
@@ -368,6 +372,9 @@ class AddInManagerDialog(QDialog):
         loaded, startup, _ = self.state[DOWIZ]
         self.main.dowiz_loaded = loaded
         self.main.S["addin_dowiz_startup"] = startup
+        loaded, startup, _ = self.state[APIVIEW]
+        self.main.apiviewer_loaded = loaded
+        self.main.S["addin_apiviewer_startup"] = startup
         self.main.S.save()
         self.accept()
 

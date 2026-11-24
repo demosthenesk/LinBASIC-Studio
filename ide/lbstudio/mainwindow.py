@@ -164,6 +164,7 @@ class MainWindow(QMainWindow):
         self.axwiz_loaded = bool(self.S["addin_axwiz_startup"])   # and the VB 6 ActiveX Ctrl Interface Wizard (9.2d)
         self.ppwiz_loaded = bool(self.S["addin_ppwiz_startup"])   # and the VB 6 Property Page Wizard (9.2e)
         self.dowiz_loaded = bool(self.S["addin_dowiz_startup"])   # and the VB 6 Data Object Wizard (9.2f)
+        self.apiviewer_loaded = bool(self.S["addin_apiviewer_startup"])   # and the VB 6 API Viewer (9.4)
         self.res_editor = None
         self.res_sub = None
         self.runner = Runner(self)
@@ -601,6 +602,10 @@ class MainWindow(QMainWindow):
         self.sep_dowiz = m.addSeparator()
         from .dowizard import dowizard_icon
         self.a_dowiz = self._act(m, "VB 6 Data Object Wizard", self.data_object_wizard, icon=dowizard_icon(16))
+        # the VB 6 API Viewer: API Viewer (VB6 DEV-9 api-w, phase 9.4)
+        self.sep_apiview = m.addSeparator()
+        from .apiviewer import apiviewer_icon
+        self.a_apiview = self._act(m, "API Viewer", self.api_viewer, icon=apiviewer_icon(16))
 
         m = mb.addMenu("&Window")              # VB6 (DEV-8/me1, pictures 24, 37)
         self.window_menu = m
@@ -2442,6 +2447,11 @@ class MainWindow(QMainWindow):
             a.setVisible(bool(self.ppwiz_loaded))
         for a in (self.sep_dowiz, self.a_dowiz):                    # the VB 6 Data Object Wizard (9.2f)
             a.setVisible(bool(self.dowiz_loaded))
+        for a in (self.sep_apiview, self.a_apiview):                # the VB 6 API Viewer (9.4)
+            a.setVisible(bool(self.apiviewer_loaded))
+        v = getattr(self, "_apiviewer", None)
+        if not self.apiviewer_loaded and v is not None:
+            v.close()                           # (VB6: unloading the add-in closes its window)
         if not on and self.res_sub is not None:
             self.res_sub.hide()
             if self.res_editor.strings_win is not None:
@@ -2476,6 +2486,11 @@ class MainWindow(QMainWindow):
         """Add-Ins > VB 6 Data Object Wizard (phase 9.2f, dowizard.py)"""
         from .dowizard import open_wizard
         return open_wizard(self)
+
+    def api_viewer(self):
+        """Add-Ins > API Viewer (phase 9.4, apiviewer.py)"""
+        from .apiviewer import open_viewer
+        return open_viewer(self)
 
     def add_class_module(self):
         """Project > Add Class Module: the dialog of VB6 (Class Module, VB Class Builder, Complex Data Consumer,
@@ -4348,6 +4363,9 @@ class MainWindow(QMainWindow):
         self.S["geometry"] = bytes(self.saveGeometry().toHex()).decode()
         self.S["window_state"] = bytes(self.saveState().toHex()).decode()
         self.S.save()
+        v = getattr(self, "_apiviewer", None)
+        if v is not None:                       # the API Viewer of the add-in goes with the IDE
+            v.close()
         e.accept()
 
     def restore_layout(self):

@@ -50,6 +50,9 @@ checked in the files the IDE writes and in the program it runs.
     t_drep     a DataRepeater (phase 7.5): its properties, RepeatedControlName and RepeaterBindings set in the Properties
                window; the .frm as the VB6 IDE wrote the same control (VB6 oracle f_drep3), the .vbp
 
+    t_api94    the API Viewer (phase 9.4): Add-Ins > API Viewer, the lists, Add, Declare Scope, Line Item, Remove,
+               Copy, Insert into a module, Convert Text to Database, Load Last File, F5 with the inserted code
+
     python3 tests/ide/run_tests.py [names...]
 """
 import faulthandler
@@ -1553,6 +1556,151 @@ Sub ShowDb()
     Close #f
 End Sub
 """
+
+
+def t_api94(d):
+    """the API Viewer (phase 9.4, VB6 oracle DEV-9 api-w; our database LBAPI.TXT of tools/mkapi.py): the Add-In
+    Manager's "VB 6 API Viewer" gives Add-Ins > API Viewer; a text file: API Type, the first letters, Add (a Declare,
+    a Constant with its value, a Type), Declare Scope for all the selected items, Line Item / Full Text, Remove at the
+    caret, Copy, Insert into a module (the end of its declarations, before its procedures; "This will Insert the
+    selected items into: ..."); Convert Text to Database and the database (its order, the hint); the procedures the
+    runtime carries out on Linux; the viewer on its own (no Insert); F5 with the inserted code"""
+    from lbstudio import apimodel as A
+    from lbstudio.apiviewer import ApiViewer, insert_msg, COPIED, SEARCH_HINT, LINUX_OK, TITLE
+    from lbstudio.resedit import AddInManagerDialog, APIVIEW, ADDINS
+    assert os.path.isfile(A.default_file()), "tools/mkapi.py first: " + A.default_file()
+    w = MainWindow()
+    w.show()
+    p = w.project
+    assert not w.a_apiview.isVisible() and any(n == APIVIEW and desc for n, desc in ADDINS)
+    am = AddInManagerDialog(w)
+    am.state[APIVIEW] = [True, False, False]
+    am._ok()
+    w.apply_addins()
+    assert w.apiviewer_loaded and w.a_apiview.isVisible() and w.a_apiview.text() == "API Viewer"
+    v = ApiViewer(w, quiet=True)
+    w._apiviewer = v
+    v.show()
+    assert v.windowTitle() == TITLE and not v.b_add.isEnabled() and not v.scope_box.isEnabled()
+    assert not v.a_convert.isEnabled() and not v.b_insert.isHidden() and v.kind.currentText() == "Declares"
+    assert [v.kind.itemText(i) for i in range(v.kind.count())] == ["Constants", "Declares", "Types"]
+    assert v.load(A.default_file())
+    assert v.windowTitle() == "%s - %s" % (TITLE, A.default_file()) and v.a_convert.isEnabled()
+    assert v.avail.count() > 3000 and v.statusBar().currentMessage() == ""
+    names = [v.avail.item(i).text() for i in range(v.avail.count())]
+    assert names == sorted(names, key=str.lower)
+    v.find.setText("GetWin")
+    assert v.selected_name().lower().startswith("getwin")
+    v.avail.setCurrentRow(v._names.index("GetWindowText"))
+    assert v.b_add.isEnabled() and v.add()
+    assert v.selected.toPlainText() == ('Public Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" '
+                                        '(ByVal hWnd As Long, ByVal lpString As String, ByVal nMaxCount As Long) '
+                                        'As Long'), v.selected.toPlainText()
+    assert not v.b_remove.isEnabled() and v.b_clear.isEnabled() and v.b_copy.isEnabled() and v.b_insert.isEnabled()
+    v.find.setText("GetTickC")
+    assert v.selected_name() == "GetTickCount" and v.statusBar().currentMessage() == LINUX_OK
+    v.add()
+    v.kind.setCurrentText("Constants")
+    v.find.setText("WM_SETT")
+    assert v.selected_name() == "WM_SETTEXT" and v.avail.currentItem().text() == "WM_SETTEXT = &HC"
+    v.add()
+    v.kind.setCurrentText("Types")
+    v.find.setText("REC")
+    assert v.selected_name() == "RECT"
+    v.add()
+    assert not v.add() or len(v.sel.items) == 4           # (the same item once)
+    v.rb_private.setChecked(True)
+    t = v.selected.toPlainText().split("\n")
+    assert t[0].startswith("Private Declare Function GetWindowText ") and t[1] == ""
+    assert t[2] == 'Private Declare Function GetTickCount Lib "kernel32" () As Long' and t[4] == \
+        "Private Const WM_SETTEXT = &HC", t
+    assert t[6:] == ["Private Type RECT", "    left As Long", "    top As Long", "    right As Long",
+                     "    bottom As Long", "End Type"], t
+    v.a_line.trigger()
+    assert v.selected.toPlainText() == "GetWindowText\nGetTickCount\nWM_SETTEXT\nRECT"
+    v.a_full.trigger()
+    # Remove: the item at the caret
+    v.selected.setFocus()
+    c = v.selected.textCursor()
+    c.movePosition(c.MoveOperation.Start)
+    c.movePosition(c.MoveOperation.Down, n=2)
+    v.selected.setTextCursor(c)
+    app.processEvents()
+    assert v.b_remove.isEnabled() and v.remove()
+    assert [n for _k, n in v.sel.items] == ["GetWindowText", "WM_SETTEXT", "RECT"]
+    v.copy()
+    clip = QApplication.clipboard().text()
+    assert v.statusBar().currentMessage() == COPIED and clip.startswith("Private Declare Function GetWindowText ")
+    assert "\r\n\r\nPrivate Const WM_SETTEXT = &HC\r\n\r\nPrivate Type RECT" in clip, clip
+    # Insert: into Module1 (empty), then into Form1 before Form_Load
+    w.add_module("Module")
+    m = p.module("Module1")
+    w.select_in_tree(m)
+    v.sel.clear()
+    v.kind.setCurrentText("Declares")
+    v.find.setText("GetTickCount")
+    v.add()
+    v.kind.setCurrentText("Constants")
+    v.find.setText("WM_SETTEXT")
+    v.add()
+    v.kind.setCurrentText("Types")
+    v.find.setText("RECT")
+    v.add()
+    assert v.insert() and v.messages[-1] == insert_msg("Module1")
+    w._sync_editors()
+    lines = m.code_text().replace("\r\n", "\n").split("\n")
+    assert lines[:3] == ['Private Declare Function GetTickCount Lib "kernel32" () As Long', "",
+                         "Private Const WM_SETTEXT = &HC"], lines
+    code(w, m, m.code_text().replace("\r\n", "\n") +
+         "\nSub Main()\n    Dim r As RECT\n    r.right = 5\n    Open App.Path & \"/api.txt\" For Output As #1\n"
+         "    Print #1, CStr(GetTickCount() <> 0) & \" \" & CStr(r.right) & \" \" & CStr(WM_SETTEXT)\n"
+         "    Close #1\nEnd Sub\n")
+    v.sel.clear()
+    v.kind.setCurrentText("Constants")
+    v.find.setText("SW_SHOW")
+    v.add()
+    assert v.insert() and v.messages[-1] == insert_msg("Module1")
+    w._sync_editors()
+    lines = m.code_text().replace("\r\n", "\n").split("\n")
+    k = lines.index("End Type")
+    assert lines[k + 1:k + 5] == ["", "Private Const SW_SHOW = 5", "", "Sub Main()"], lines
+    f = p.module("Form1")
+    code(w, f, "Option Explicit\n\nPrivate Sub Form_Load()\n\nEnd Sub\n")
+    w.select_in_tree(f)
+    assert v.insert() and v.messages[-1] == insert_msg("Form1")
+    w._sync_editors()
+    assert f.code_text().replace("\r\n", "\n") == ("Option Explicit\n\nPrivate Const SW_SHOW = 5\n\n"
+                                                      "Private Sub Form_Load()\n\nEnd Sub\n"), f.code_text()
+    p.vbp.set("Startup", "Sub Main", quote=True)
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Api.vbp"))
+    assert w.save_project_as()
+    w.run_start()
+    wait(w)
+    with open(os.path.join(d, "api.txt")) as fh:
+        assert fh.read().split() == ["True", "5", "12"]
+    # Convert Text to Database: the database, loaded (its order: as it was written; the hint of the list)
+    db = os.path.join(d, "LBAPI.db")
+    assert v.convert(db) and os.path.isfile(db) and not v.data.is_text and not v.a_convert.isEnabled()
+    assert v.statusBar().currentMessage() == SEARCH_HINT and v.windowTitle() == "%s - %s" % (TITLE, db)
+    assert v.data.count() > 30000 and settings.S["apiviewer_last"] == db
+    v.kind.setCurrentText("Declares")
+    v.find.setText("SendMessage")
+    assert v.selected_name() == "SendMessage"
+    # View > Load Last File: the next viewer opens with it
+    v.a_load_last.trigger()
+    assert settings.S["apiviewer_load_last"]
+    v2 = ApiViewer(None, settings.S, quiet=True)
+    assert v2.loaded and v2.data.path == db and v2.b_insert.isHidden()    # (on its own: no Insert)
+    v2.a_load_last.trigger()
+    assert not settings.S["apiviewer_load_last"]
+    v2.close()
+    # unloading the add-in closes the viewer
+    am = AddInManagerDialog(w)
+    am.state[APIVIEW] = [False, False, False]
+    am._ok()
+    w.apply_addins()
+    assert not w.a_apiview.isVisible() and not v.isVisible()
+    done(w)
 
 
 def t_dowiz92(d):
@@ -5429,7 +5577,7 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 
