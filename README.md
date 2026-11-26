@@ -2,8 +2,9 @@
 
 **A Visual Basic 6 compatible development environment for Linux and Windows.**
 
-> **0.8.0-beta1** is a beta: the IDE work of Phase 8 is not finished yet (the Project Explorer and
-> Toolbox context menus are still to come). Please report what does not work as in VB6.
+> The latest release is **0.8.0-beta1**, a beta. The code here is newer: the IDE of Phase 8 and the
+> wizards, add-ins and portable packages of Phase 9 are finished (see [Add-Ins and wizards](#add-ins-and-wizards)).
+> Please report what does not work as in VB6.
 
 LinBASIC Studio opens, edits, runs and compiles projects written in Visual Basic 6:
 `.vbp`, `.vbg`, `.frm`, `.frx`, `.bas`, `.cls`, `.ctl`, `.pag` and `.dsr` files. Programs are built
@@ -29,6 +30,9 @@ they did on Windows: the same events in the same order, the same numbers and dat
   * the form designer, Toolbox, Properties window, Project Explorer and Menu Editor
   * the code window with IntelliSense, the debugger, and refactoring
   * Make for Linux, Windows 32-bit and Windows 64-bit
+  * the wizards and add-ins of VB6: Application, Data Form, Data Object, ActiveX Control Interface and
+    Property Page Wizards, the Class Builder, the API Viewer, and the Package and Deployment Wizard for
+    portable packages (an AppImage, a folder or an archive)
   * F1 help from your own MSDN Library (see [Help](#help): how to copy its files and connect them)
 
 ## Contents
@@ -39,6 +43,7 @@ they did on Windows: the same events in the same order, the same numbers and dat
 * [Windows](#windows)
 * [Examples](#examples)
 * [The IDE](#the-ide)
+* [Add-Ins and wizards](#add-ins-and-wizards)
 * [The language](#the-language)
 * [Forms and controls](#forms-and-controls)
 * [Databases](#databases)
@@ -296,6 +301,36 @@ VB6 writes, so the projects go on working in VB6.
   each tool window has its context menu with Dockable and Hide, and Tools → Options → Docking says
   which ones dock.
 
+## Add-Ins and wizards
+
+Add-Ins → Add-In Manager loads them as in VB6 (Loaded, Load on Startup); each one then has its
+command in the Add-Ins menu. Their pages follow VB6's; the code they write, their texts and their
+pictures are LinBASIC Studio's own.
+
+* **Application Wizard** (also File → New Project → VB Application Wizard): a new application with an
+  MDI, SDI or Explorer main form, its menus, toolbar and status bar, resources, a web browser, the
+  standard forms (Splash, Login, Options, About and the form templates) and data forms; profiles
+  (`.rwp`) and the Toolbar Wizard.
+* **Data Form Wizard:** forms bound to an Access or ODBC database: a single record (ADO code, a
+  class or the ADO Data control), a grid, master / detail, an MSHFlexGrid or an MSChart.
+* **Class Builder Utility:** the classes and collections of a project with their properties, methods,
+  events and enums.
+* **ActiveX Control Interface Wizard** and **Property Page Wizard:** the interface of a user control
+  (properties, methods, events mapped to its controls) and its property pages.
+* **Data Object Wizard:** classes that are a source of data from the commands of a Data Environment,
+  and user controls bound to them (single record, ListBox, ComboBox, DataGrid).
+* **Package and Deployment Wizard** (and `lbvc --package`): a portable package of the program with
+  everything it needs: on Linux an AppImage, a folder or a `.tar.gz`; for Windows a folder or a `.zip`
+  (no setup program).
+* **API Viewer:** the Constants, Declares and Types of the Windows API for VB6 (32 bits), copied into
+  the code (Insert) or to the clipboard. Its database, `LBAPI.TXT` (4342 Declares, 26318 Constants,
+  2351 Types), is made by `tools/mkapi.py` from the headers and import libraries of MinGW-w64; the
+  status bar tells which procedures the runtime carries out itself on Linux. It also runs on its own:
+  `python3 -m lbstudio.apiviewer`.
+
+Not included: the Visual Data Manager (see [Databases](#databases)), the SQL Builder and Data View of
+the Visual Database Tools, and add-ins written in VB (VBIDE).
+
 ## The language
 
 The whole VB6 language is compiled:
@@ -417,10 +452,17 @@ The whole VB6 language is compiled:
   boolean, picture and custom formats, the Format / UnFormat events).
 * **Data Environment and Data Report:** commands, hierarchies and aggregates, and the report
   sections. A report can be previewed, printed to PDF, and exported to HTML or text.
+* **The database files:** the databases of LinBASIC Studio are SQLite files, also when their name ends
+  in `.mdb`; what Jet knows and SQLite does not (the DAO field types, Required, AllowZeroLength,
+  validation rules, indexes, relations, queries) is kept in the `MSysLB_*` tables. There is no Visual
+  Data Manager: any SQLite tool (for example DB Browser for SQLite) shows and changes the records and
+  runs SQL; make the tables with DAO (`CreateTableDef`, `CreateField`, `CreateIndex`) or Jet SQL
+  (`CREATE TABLE`, `CREATE INDEX` through `Database.Execute`), so that they have the rules of Jet.
 
 ## Windows API
 
-`Declare` statements of the Windows API work on Linux too. The runtime has its own versions of the
+`Declare` statements of the Windows API work on Linux too. Add-Ins → API Viewer gives the `Declare`,
+`Const` and `Type` lines of the API (see [Add-Ins and wizards](#add-ins-and-wizards)). The runtime has its own versions of the
 procedures that VB6 programs call most. They were chosen from a test run over thousands of Planet
 Source Code projects.
 
@@ -664,6 +706,7 @@ data/vb6/          the VB6 object model recovered by REA (type libraries, IDE me
 examples/          the example projects (see Examples above)
 tests/             the tests, compared with VB6
 tools/rea/         the REA tools
+tools/mkapi.py     the database of the API Viewer (ide/lbstudio/data/api/LBAPI.TXT) from MinGW-w64
 packaging/         the AppImage, the Tiny C Compiler, the Windows editions, the releases
 licenses/          the licenses of the third-party software
 docs/              the feature map and the pictures of this README
