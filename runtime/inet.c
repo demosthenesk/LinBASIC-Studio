@@ -772,6 +772,14 @@ static int https_request(lbinet *r, const char *method, const char *host, int po
     int e = cu.perform(c);
     long st = 0;
     cu.getinfo(c, 0x200000 + 2, &st);                   /* RESPONSE_CODE */
+    long nred = 0;                                      /* libcurl follows the redirects: AsyncRead needs the URL */
+    if (e == 0 && cu.getinfo(c, 0x200000 + 20, &nred) == 0 && nred > 0) {   /* REDIRECT_COUNT */
+        const char *eu = 0;
+        if (cu.getinfo(c, 0x100000 + 1, &eu) == 0 && eu) {                 /* EFFECTIVE_URL */
+            r->redirects += (int)nred;
+            snprintf(r->finalurl, sizeof r->finalurl, "%s", eu);
+        }
+    }
     long vr = 0;
     if (e == 51 || e == 60) cu.getinfo(c, 0x200000 + 13, &vr);   /* SSL_VERIFYRESULT (OpenSSL: X509_V_ERR_...) */
     cu.cleanup(c);
@@ -1015,11 +1023,36 @@ static int ftp_data_open(lbinet *r, lbftp *f, sock_t *ls, sock_t *ds)
     return tcp_connect(r, ip, (int)(p1 * 256 + p2), r->timeout, ds, 0);
 }
 /* after the 1xx reply: the data socket (accepted for PORT) */
-static int ftp_data_ready(lbinet *r, sock_t *ls, sock_t *ds)
+static int sock_readable(sock_t s, int ms)
+{
+#ifdef _WIN32
+    fd_set f; FD_ZERO(&f); FD_SET(s, &f);
+    struct timeval tv = { 0, ms * 1000 };
+    return select(0, &f, 0, 0, &tv) > 0;
+#else
+    struct pollfd p = { s, POLLIN, 0 };
+    return poll(&p, 1, ms) > 0;
+#endif
+}
+/* PORT: the server connects to us, or answers on the control connection that it cannot (425: a firewall) */
+static int ftp_data_ready(lbinet *r, lbftp *f, sock_t *ls, sock_t *ds)
 {
     if (*ds != BADS) return 0;
-    int w = wait_io(r, *ls, 0, r->timeout ? r->timeout : 60);
-    if (w) return w;
+    long left = (r->timeout ? r->timeout : 60) * 1000L;
+    int e = 0;
+    while (!e) {
+        if (r->cancel) { e = 12017; break; }
+        if (sock_readable(*ls, 100)) break;
+        if (f->c.rpos < f->c.rn || sock_readable(f->c.s, 0)) {
+            buf t = { 0 };
+            int c = ftp_reply(r, f, &t);
+            bfree(&t);
+            if (c < 0) e = 12030;
+            else if (c / 100 >= 4) e = 12003;
+        }
+        if (!e && (left -= 100) <= 0) e = 12002;
+    }
+    if (e) { closes(*ls); *ls = BADS; return e; }
     *ds = accept(*ls, 0, 0);
     closes(*ls); *ls = BADS;
     return *ds == BADS ? 12030 : 0;
@@ -1036,7 +1069,7 @@ static int ftp_transfer(lbinet *r, lbftp *f, const char *type, const char *cmd, 
     if (e) { bfree(&t); return e; }
     c = ftp_cmd(r, f, cmd, &t);
     if (c / 100 != 1) { closes(ls); closes(ds); bfree(&t); return c < 0 ? 12030 : 12003; }
-    e = ftp_data_ready(r, &ls, &ds);
+    e = ftp_data_ready(r, f, &ls, &ds);
     if (e) { closes(ls); closes(ds); bfree(&t); return e; }
     lbconn dc; memset(&dc, 0, sizeof dc); dc.s = ds;
     if (up) {
@@ -1214,7 +1247,7 @@ static void ftp_job(lbinet *r)
                 snprintf(cmd, sizeof cmd, "RETR %s", r->a1);
                 c = c < 0 ? -1 : ftp_cmd(r, f, cmd, &t);
                 if (c / 100 != 1) { closes(ls); closes(ds); e = c < 0 ? 12030 : 12003; }
-                else if (!(e = ftp_data_ready(r, &ls, &ds))) {
+                else if (!(e = ftp_data_ready(r, f, &ls, &ds))) {
                     lbconn dc; memset(&dc, 0, sizeof dc); dc.s = ds;
                     char tmp[16384]; int got;
                     for (;;) {

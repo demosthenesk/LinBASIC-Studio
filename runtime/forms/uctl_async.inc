@@ -55,6 +55,10 @@ static QString async_systext(vb_u32 hr)
           "Δεν ήταν δυνατή η επίλυση του ονόματος ή της διεύθυνσης του διακομιστή" },
         { 0x80072EE2u, "The operation timed out", "Λήξη χρονικού ορίου λειτουργίας" },
         { 0x80004002u, "No such interface supported", "Δεν υποστηρίζεται τέτοια διασύνδεση" },
+        { 0x80070019u, "The drive cannot locate a specific area or track on the disk.",
+          "Δεν είναι δυνατό η μονάδα δίσκου να εντοπίσει μία συγκεκριμένη περιοχή ή ένα κομμάτι του δίσκου." },
+        { 0x80072EE3u, "The server returned extended information", "Ο διακομιστής επέστρεψε εκτεταμένες πληροφορίες" },
+        { 0x80072EEEu, "The password was not allowed", "Ο κωδικός πρόσβασης απορρίφθηκε" },
         { 0, nullptr, nullptr } };
     for (int i = 0; t[i].en; i++) if (t[i].hr == hr) return QString::fromUtf8(greek() ? t[i].el : t[i].en);
     return QString();
@@ -220,7 +224,11 @@ static bool async_poll(ARead *r)
     if (!r->req) return false;
     int e;
     while ((e = lbinet_event(r->req)) >= 0)
-        if ((e == 5 || e == 6) && !r->sent) { r->sent = true; if (!async_event(r, false, 11, QString(), 0, 0)) return false; }
+        /* SendingRequest; HTTPS: when the answer comes (a refused certificate has none, VB6: no 11) */
+        if ((e == 6 || (e == 5 && !r->https)) && !r->sent) {
+            r->sent = true;
+            if (!async_event(r, false, 11, QString(), 0, 0)) return false;
+        }
     if (!lbinet_done(r->req)) return true;
     long n = 0;
     const char *body = lbinet_body(r->req, &n);
@@ -231,8 +239,13 @@ static bool async_poll(ARead *r)
     QString final = QString::fromLatin1(lbinet_final(r->req, &redir));
     if (!ok) {
         if (code == 12029 && r->newport && !async_event(r, false, 2, r->host, 0, 0)) return false;   /* VB6: once more */
+        /* VB6 (oracle f_inetasync): a certificate refused -> &H80070019, the Status the server; FTP: the Status empty,
+         * a refused login -> 12014 (INCORRECT_PASSWORD), a missing file -> 12003 */
+        bool cert = code == 12037 || code == 12038 || code == 12044 || code == 12045 || code == 12055 ||
+                    code == 12157 || code == 12169 || code == 12170 || code == 12175;
+        vb_u32 hr = cert ? 0x80070019u : 0x80070000u | (vb_u32)((r->ftp && code == 12015 ? 12014 : code) & 0xFFFF);
         vb_i32 m = vb_mark();
-        async_event(r, true, 0, r->host, 0, 0, vb_v_empty(), 0x80070000u | (vb_u32)(code & 0xFFFF));
+        async_event(r, true, 0, r->ftp ? QString() : r->host, 0, 0, vb_v_empty(), hr);
         vb_release(m);
         return false;
     }
@@ -258,6 +271,11 @@ static bool async_poll(ARead *r)
     double sz = (double)data.size();
     if (!async_event(r, false, 13, mime, 0, 0)) return false;
     if (!async_event(r, false, 14, cache, 0, sz)) return false;
+    if (r->ftp && sz > 8192) {                  /* VB6: FTP in blocks of 8192 bytes, BeginDownloadData, DownloadingData */
+        if (!async_event(r, false, 4, cache, 8192, sz)) return false;
+        for (double k = 16384; k < sz; k += 8192) if (!async_event(r, false, 5, shown, k, sz)) return false;
+        if (!async_event(r, false, 5, shown, sz, sz)) return false;
+    }
     if (!async_event(r, false, 6, shown, sz, sz)) return false;
     vb_i32 m = vb_mark();
     vb_u32 err = 0;

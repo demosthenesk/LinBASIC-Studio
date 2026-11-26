@@ -40,6 +40,15 @@ Private Function Url(ByVal p As String) As String
     Url = "http://" & gHost & ":47120" & p
 End Function
 
+' HTTPS (47122 trusted, 47123 untrusted, 47124 expired) and FTP (47121, user vb password six) of inet_server.py
+Private Function Https(ByVal port As Long, ByVal p As String) As String
+    Https = "https://" & gHost & ":" & port & p
+End Function
+
+Private Function Ftp(ByVal user As String, ByVal p As String) As String
+    If user = "" Then Ftp = "ftp://" & gHost & ":47121" & p Else Ftp = "ftp://" & user & "@" & gHost & ":47121" & p
+End Function
+
 Private Sub L(ByVal s As String)
     WriteLog s
 End Sub
@@ -182,10 +191,58 @@ Private Sub RunStep(ByVal n As Long)
         Loader1.Start Url("/slow?e"), vbAsyncTypeByteArray
         Loader1.Cancel
     Case 24
-        L "24 Hyperlink"
+        L "24 HTTPS text as bytes"
+        WaitFor 1, 15
+        Loader1.Start Https(47122, "/hello.txt"), vbAsyncTypeByteArray, "SBytes", vbAsyncReadForceUpdate
+    Case 25
+        L "25 HTTPS text as a file"
+        WaitFor 1, 15
+        Loader1.Start Https(47122, "/hello.txt?f"), vbAsyncTypeFile, "SFile", vbAsyncReadForceUpdate
+    Case 26
+        L "26 HTTPS picture"
+        WaitFor 1, 15
+        Loader1.Start Https(47122, "/pic.bmp"), vbAsyncTypePicture, "SPic", vbAsyncReadForceUpdate
+    Case 27
+        L "27 HTTPS redirect"
+        WaitFor 1, 15
+        Loader1.Start Https(47122, "/redirect"), vbAsyncTypeByteArray, "SRedir", vbAsyncReadForceUpdate
+    Case 28
+        L "28 HTTPS 404"
+        WaitFor 1, 15
+        Loader1.Start Https(47122, "/missing"), vbAsyncTypeByteArray, "S404", vbAsyncReadForceUpdate
+    Case 29
+        L "29 HTTPS untrusted certificate"
+        WaitFor 1, 30
+        Loader1.Start Https(47123, "/hello.txt"), vbAsyncTypeByteArray, "SUntrusted", vbAsyncReadForceUpdate
+    Case 30
+        L "30 HTTPS expired certificate"
+        WaitFor 1, 30
+        Loader1.Start Https(47124, "/hello.txt"), vbAsyncTypeByteArray, "SExpired", vbAsyncReadForceUpdate
+    Case 31
+        L "31 FTP text as bytes"
+        WaitFor 1, 20
+        Loader1.Start Ftp("vb:six", "/hello.txt"), vbAsyncTypeByteArray, "FBytes", vbAsyncReadForceUpdate
+    Case 32
+        L "32 FTP anonymous, a file in a folder"
+        WaitFor 1, 20
+        Loader1.Start Ftp("", "/sub/inner.txt"), vbAsyncTypeFile, "FFile", vbAsyncReadForceUpdate
+    Case 33
+        L "33 FTP 100000 bytes"
+        WaitFor 1, 20
+        Loader1.Start Ftp("vb:six", "/big.dat"), vbAsyncTypeByteArray, "FBig", vbAsyncReadForceUpdate
+    Case 34
+        L "34 FTP missing file"
+        WaitFor 1, 20
+        Loader1.Start Ftp("vb:six", "/nothere.txt"), vbAsyncTypeByteArray, "FMissing", vbAsyncReadForceUpdate
+    Case 35
+        L "35 FTP wrong password"
+        WaitFor 1, 20
+        Loader1.Start Ftp("vb:bad", "/hello.txt"), vbAsyncTypeByteArray, "FLogin", vbAsyncReadForceUpdate
+    Case 36
+        L "36 Hyperlink"
         WaitFor 0, 0
         Loader1.Links True, Url("/hello.txt")
-    Case 25
+    Case 37
         L "end"
         gStep = 99
         Unload Me

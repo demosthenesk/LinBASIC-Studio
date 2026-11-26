@@ -128,7 +128,79 @@ start: events 0
   AsyncRead (none): err 0, events during the call 0
   CancelAsyncRead (none): err 0
   timeout: 1 complete event(s) did not come
-24 Hyperlink
+24 HTTPS text as bytes
+  AsyncRead SBytes: err 0, events during the call 0
+  complete SBytes: PropertyName 'SBytes', AsyncType 2, Target 'https://<server>:47122/hello.txt'
+    StatusCode 6, Status 'https://<server>:47122/hello.txt', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 21) sum 5059 first 72 last 10
+25 HTTPS text as a file
+  AsyncRead SFile: err 0, events during the call 0
+  complete SFile: PropertyName 'SFile', AsyncType 1, Target 'https://<server>:47122/hello.txt?f'
+    StatusCode 6, Status 'https://<server>:47122/hello.txt?f', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 13 14 6
+    Value String: another file, 22 bytes, Byte()(0 To 21) sum 5059 first 72 last 10
+26 HTTPS picture
+  AsyncRead SPic: err 0, events during the call 0
+  complete SPic: PropertyName 'SPic', AsyncType 0, Target 'https://<server>:47122/pic.bmp'
+    StatusCode 6, Status 'https://<server>:47122/pic.bmp', BytesRead 2454, BytesMax 2454
+    progress events: yes, codes 11 13 14 6
+    Value Picture Type 1 1058 x 529
+27 HTTPS redirect
+  AsyncRead SRedir: err 0, events during the call 0
+  complete SRedir: PropertyName 'SRedir', AsyncType 2, Target 'https://<server>:47122/redirect'
+    StatusCode 6, Status 'https://<server>:47122/hello.txt', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 3 11 13 14 6
+    Value Byte()(0 To 21) sum 5059 first 72 last 10
+28 HTTPS 404
+  AsyncRead S404: err 0, events during the call 0
+  complete S404: PropertyName 'S404', AsyncType 2, Target 'https://<server>:47122/missing'
+    StatusCode 0, Status '', BytesRead 0, BytesMax 0
+    progress events: yes, codes 11
+    Value err -2147024890 System Error &H80070006 (-2147024890).   Ο δείκτης χειρισμού δεν είναι έγκυρος. 
+29 HTTPS untrusted certificate
+  AsyncRead SUntrusted: err 0, events during the call 0
+  complete SUntrusted: PropertyName 'SUntrusted', AsyncType 2, Target 'https://<server>:47123/hello.txt'
+    StatusCode 0, Status '<server>', BytesRead 0, BytesMax 0
+    progress events: yes, codes 2
+    Value err -2147024871 System Error &H80070019 (-2147024871).   Δεν είναι δυνατό η μονάδα δίσκου να εντοπίσει μία συγκεκριμένη περιοχή ή ένα κομμάτι του δίσκου. 
+30 HTTPS expired certificate
+  AsyncRead SExpired: err 0, events during the call 0
+  complete SExpired: PropertyName 'SExpired', AsyncType 2, Target 'https://<server>:47124/hello.txt'
+    StatusCode 0, Status '<server>', BytesRead 0, BytesMax 0
+    progress events: yes, codes 2
+    Value err -2147024871 System Error &H80070019 (-2147024871).   Δεν είναι δυνατό η μονάδα δίσκου να εντοπίσει μία συγκεκριμένη περιοχή ή ένα κομμάτι του δίσκου. 
+31 FTP text as bytes
+  AsyncRead FBytes: err 0, events during the call 0
+  complete FBytes: PropertyName 'FBytes', AsyncType 2, Target 'ftp://vb:six@<server>:47121/hello.txt'
+    StatusCode 6, Status 'ftp://vb:six@<server>:47121/hello.txt', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 21) sum 5059 first 72 last 10
+32 FTP anonymous, a file in a folder
+  AsyncRead FFile: err 0, events during the call 0
+  complete FFile: PropertyName 'FFile', AsyncType 1, Target 'ftp://<server>:47121/sub/inner.txt'
+    StatusCode 6, Status 'ftp://<server>:47121/sub/inner.txt', BytesRead 8, BytesMax 8
+    progress events: yes, codes 11 13 14 6
+    Value String: another file, 8 bytes, Byte()(0 To 7) sum 2297 first 105 last 10
+33 FTP 100000 bytes
+  AsyncRead FBig: err 0, events during the call 0
+  complete FBig: PropertyName 'FBig', AsyncType 2, Target 'ftp://vb:six@<server>:47121/big.dat'
+    StatusCode 6, Status 'ftp://vb:six@<server>:47121/big.dat', BytesRead 100000, BytesMax 100000
+    progress events: yes, codes 11 13 14 4 5 6
+    Value Byte()(0 To 99999) sum 655 first 0 last 93
+34 FTP missing file
+  AsyncRead FMissing: err 0, events during the call 0
+  complete FMissing: PropertyName 'FMissing', AsyncType 2, Target 'ftp://vb:six@<server>:47121/nothere.txt'
+    StatusCode 0, Status '', BytesRead 0, BytesMax 0
+    progress events: yes, codes 11
+    Value err -2147012893 System Error &H80072EE3 (-2147012893).   Ο διακομιστής επέστρεψε εκτεταμένες πληροφορίες 
+35 FTP wrong password
+  AsyncRead FLogin: err 0, events during the call 0
+  complete FLogin: PropertyName 'FLogin', AsyncType 2, Target 'ftp://vb:bad@<server>:47121/hello.txt'
+    StatusCode 0, Status '', BytesRead 0, BytesMax 0
+    progress events: none, codes 
+    Value err -2147012882 System Error &H80072EEE (-2147012882).   Ο κωδικός πρόσβασης απορρίφθηκε 
+36 Hyperlink
   Hyperlink: err 0 Hyperlink
   GoBack: err -2147467262 System Error &H80004002 (-2147467262).   Δεν υποστηρίζεται τέτοια διασύνδεση 
   GoForward: err -2147467262 System Error &H80004002 (-2147467262).   Δεν υποστηρίζεται τέτοια διασύνδεση 

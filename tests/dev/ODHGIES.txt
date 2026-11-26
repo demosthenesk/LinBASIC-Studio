@@ -41,8 +41,10 @@ f_inethttps: το Inet με https:// (inet_server.py --tls-dir: 47122 έμπισ
 
 f_inetasync (Φάση 10.4): UserControl.AsyncRead / CancelAsyncRead, τα events AsyncReadProgress και
         AsyncReadComplete, το AsyncProperty (Value: StdPicture, αρχείο, Byte()), UserControl.Hyperlink, με
-        τοπικά αρχεία, file:// και HTTP απέναντι στο inet_server.py (47120: /hello.txt, /pic.bmp, /big, /slow,
-        /slowbig, /missing, /error, /redirect). Στο VM: VB-TESTS/DEV-10/ODHGIES.txt. Τα progress events
+        τοπικά αρχεία, file://, HTTP, HTTPS και FTP απέναντι στο inet_server.py (47120: /hello.txt, /pic.bmp,
+        /big, /slow, /slowbig, /missing, /error, /redirect· HTTPS 47122 έμπιστο, 47123 μη έμπιστο, 47124
+        ληγμένο· FTP 47121). Στο VM: VB-TESTS/DEV-10/ODHGIES.txt (server.txt = 192.168.56.1, το host-only
+        δίκτυο, για το FTP· τα πιστοποιητικά του DEV-7 στο Win7). Τα progress events
         (ο αριθμός τους αλλάζει) πάνε στο expected/f_inetasync-raw.txt, που δεν συγκρίνεται· οι κωδικοί 1 και 2
         (FindingResource, Connecting) δεν γράφονται (έρχονται ή όχι, όπως η μνήμη ονομάτων του WinINet). Το
         NavigateTo στο VB6 ανοίγει τον browser· στα tests του LinBASIC όχι (VBRT_NO_BROWSER του run_tests.py).

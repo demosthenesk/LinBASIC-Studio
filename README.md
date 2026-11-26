@@ -392,7 +392,7 @@ The whole VB6 language is compiled:
   * AsyncRead / CancelAsyncRead in user controls, with the events AsyncReadProgress and
     AsyncReadComplete and the AsyncProperty object of VB6 (files, `file:`, `http:`, `https:` and `ftp:`
     addresses, as a file, a byte array or a picture; the status codes of VB6), and UserControl.Hyperlink
-    (NavigateTo opens the address in the browser of the system)
+    (NavigateTo opens an address in the browser of the system, a file with the program of its type)
 
 ## Forms and controls
 
