@@ -1,0 +1,15 @@
+Load: Text1=0 Text2=abc V1=7 V2=3
+Activate: Text1=0 Text2=abc
+Timer: Text1=0 Text2=abc
+Set 9: Text1=9
+Text 12: V1=9
+Max 5: V1=5 Text1=5 changes=2
+V 2: changes=3
+Min 4: V1=4 Text1=4 changes=4
+Max 1 (< Min): V1=4 Text1=4 changes=4 Min=4 Max=1
+V 0: err=380 V1=4 Text1=4 changes=4
+V 10: err=380 V1=4 Text1=4 changes=4
+V 2: err=0 V1=2 Text1=2 changes=5
+Min 3 err=0
+Max 50 err=0 V1=3 changes=6
+Min 3: V1=3 Min=3 Max=1 changes=6

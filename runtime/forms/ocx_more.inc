@@ -99,7 +99,16 @@ struct OcxUpDown : Ocx {
     {
         (void)kind; (void)argc; (void)argv;
         struct { const char *nm; int *p; } ints[] = { { "min", &min }, { "max", &max }, { "increment", &inc }, { "orientation", &orientation }, { "alignment", &alignment } };
-        for (auto &e : ints) if (n == e.nm) { if (!set) return vb_v_l(*e.p); *e.p = vb_v2l(val); arrange(); return vb_v_empty(); }
+        for (auto &e : ints) if (n == e.nm) {
+            if (!set) return vb_v_l(*e.p);
+            *e.p = vb_v2l(val); arrange();
+            if (n == "min" || n == "max") {     /* the Value into the new range, the buddy and Change too (VB6 oracle
+                                                   DEV-11/updown: Max 5 with Value 9 -> 5, Text1 5, Change) */
+                int lo = std::min(min, max), hi = std::max(min, max), v = std::min(hi, std::max(lo, value));
+                if (v != value) { value = v; push(); fire_ctl(c, "change"); }
+            }
+            return vb_v_empty();
+        }
         if (n == "value") {
             if (!set) return vb_v_l(value);
             int v = vb_v2l(val);
