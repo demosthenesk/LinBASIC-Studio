@@ -539,7 +539,7 @@ CLASSES.update({
                             P("DataMember", "string", "", category="Data"),
                             P("DataSource", "string", "", category="Data", note="datasource"),
                             _c("ForeColor", WINDOWTEXT), _n("HeadLines", 1), _b("RecordSelectors", True, "Appearance"),
-                            _n("RowHeight", 15), _b("WrapCellPointer", False, "Behavior"),
+                            _n("RowHeight", 225.0709), _b("WrapCellPointer", False, "Behavior"),
                             P("(Columns)", "dgcolumns", None, category="Misc"), _n("DefColWidth", 0),
                             _e("RowDividerStyle", "dbgdivider", 2), _b("TabAcrossSplits", False, "Behavior"),
                             _e("TabAction", "dbgtab", 0, "Behavior")],
@@ -573,6 +573,7 @@ CLASSES.update({
                           P("DataSource", "string", "", category="Data", note="datasource"),
                           _n("DefColWidth", 0), _c("ForeColor", WINDOWTEXT), _n("HeadLines", 1),
                           _e("MarqueeStyle", "dbgmarquee", 6), _b("MarqueeUnique", True, "Behavior"),
+                          _n("RowHeight", 225.0709),
                           _b("RecordSelectors", True, "Appearance"), _e("RowDividerStyle", "dbgdivider", 2),
                           _e("ScrollBars", "dbgscroll", 4, "Behavior"), _b("TabAcrossSplits", False, "Behavior"),
                           _e("TabAction", "dbgtab", 0, "Behavior"), _b("WrapCellPointer", False, "Behavior"),
@@ -987,6 +988,38 @@ SPLIT_PROPS = [("Locked", False), ("MarqueeStyle", 6), ("ScrollBars", 4), ("Scro
 SPLIT_TOP = {("DataGrid", "AllowRowSizing"), ("DataGrid", "RecordSelectors")}
 
 
+def _buddy_of(ctl):
+    name = str(ctl.get("BuddyControl") or "").split("(")[0].strip().lower()
+    root = ctl
+    while getattr(root, "parent", None) is not None:
+        root = root.parent
+    return next((c for c in root.walk() if c.name.lower() == name), None) if name else None
+
+
+def buddy_property_name(ctl):
+    """BuddyProperty of an UpDown as its name: VB6 keeps the DISPID of the property of the buddy (Text of a TextBox
+    65547, the corpus of PSC; 0 the default one)"""
+    from lbvc.symbols import prop_dispids
+    v = ctl.get("BuddyProperty")
+    try:
+        n = int(str(v).strip())
+    except (TypeError, ValueError):
+        return str(v or "")
+    b = _buddy_of(ctl)
+    if not n or b is None:
+        return "(Default)" if v is not None else ""
+    return next((k for k, d in prop_dispids(b.cls).items() if d == n), str(n))
+
+
+def buddy_dispid(ctl, name):
+    from lbvc.symbols import prop_dispids
+    name = str(name or "").strip()
+    if not name or name == "(Default)":
+        return 0
+    b = _buddy_of(ctl)
+    return prop_dispids(b.cls).get(name, 0) if b is not None else 0
+
+
 def grid_split(ctl):
     """the properties of Split0 of a DataGrid: {name: value} (the defaults for those it does not have)"""
     sp = ctl.block("Split0")
@@ -1304,6 +1337,15 @@ def _special_get(ctl, p):
         return True, p.default if v is None else (int(_num(v)) & 0xFFFF)
     if (t, p.name) in SPLIT_TOP:
         return True, grid_split(ctl)[p.name]
+    if (t, p.name) == ("UpDown", "BuddyProperty"):
+        return True, buddy_property_name(ctl)
+    if (t, p.name) == ("DBGrid", "RowHeight"):       # the blob: _RowHeight, the pixels less 2 (s_rowh)
+        rh = get_prop(grid_blob(ctl), "_RowHeight")
+        px = 15 if rh is None or rh < -1000000 else rh + 2
+        return True, round(round(px * 2540 / 96) * 1440 / 2540, 4)
+    if (t, p.name) == ("DataGrid", "RowHeight"):     # the .frm: pixels; the IDE: twips, as VB6 (s_rowh: 15 -> 225.0709)
+        px = _num(ctl.get("RowHeight", 15))
+        return True, round(round(px * 2540 / 96) * 1440 / 2540, 4)
     if p.kind == "ppages":                       # the pages of a user control: a record of its .ctx (ppwizgen)
         from .ppwizgen import read_pages
         return True, read_pages(_frx_bytes(ctl, "PropertyPages"))
@@ -1351,6 +1393,16 @@ def _special_set(ctl, p, value):
         return True
     if (t, p.name) in SPLIT_TOP:
         set_grid_split(ctl, {p.name: bool(value)})
+        return True
+    if (t, p.name) == ("UpDown", "BuddyProperty"):
+        put(ctl, "BuddyProperty", buddy_dispid(ctl, value))
+        return True
+    if (t, p.name) == ("DataGrid", "RowHeight"):
+        put(ctl, "RowHeight", max(1, int(round(float(value) / 15))))
+        return True
+    if (t, p.name) == ("DBGrid", "RowHeight"):
+        put(ctl, "OleObjectBlob", FrxData("raw", set_prop(grid_blob(ctl), "_RowHeight",
+                                                          max(1, int(round(float(value) / 15))) - 2)))
         return True
     if t == "MSHFlexGrid" and p.name == "Cols" and ctl.get("_Band(0).Cols") is not None:
         put(ctl, "_Band(0).Cols", int(value))   # (VB6: the columns of band 0 follow; then Cols as always)

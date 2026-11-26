@@ -5954,6 +5954,29 @@ def t_ppages11(d):
                  ("title.location.visible", True), ("title.vtfont.size", 8.0),
                  ("backdrop.frame.style", 1), ("plot.seriescollection(1).datapoints(-1).edgepen.width", 60.0)):
         assert got.get(k) == v, (k, got.get(k))
+    # ---- the decisions after phase 11: BuddyProperty a DISPID, RowHeight of the grids, a new ODBC data source
+    tx = f.place_new("VB.TextBox", QRect(8, 300, 60, 20), None)
+    ud, dl = pages("MSComCtl2.UpDown", QRect(70, 300, 16, 20))
+    V.put(ud, "BuddyControl", tx.name)
+    V.put(ud, "SyncBuddy", True)
+    w.props.show_object(f.module, f, ud)
+    w.props.commit(V.prop_def("UpDown", "BuddyProperty"), "Text")
+    assert int(ud.get("BuddyProperty")) == 65547, ud.get("BuddyProperty")      # VB6.OLB: Text of a TextBox
+    assert V.value_of(ud, V.prop_def("UpDown", "BuddyProperty")) == "Text"
+    dl.close()
+    assert V.value_of(dg, V.prop_def("DataGrid", "RowHeight")) == 225.0709        # the .frm: 15 (pixels)
+    w.props.show_object(f.module, f, dg)
+    w.props.commit(V.prop_def("DataGrid", "RowHeight"), 300)
+    assert int(dg.get("RowHeight")) == 20
+    w.props.show_object(f.module, f, gb)
+    w.props.commit(V.prop_def("DBGrid", "RowHeight"), 300)                        # _RowHeight: the pixels less 2
+    from lbvc.project.oleblob import get_prop
+    assert get_prop(V.grid_blob(gb), "_RowHeight") == 18
+    assert abs(V.value_of(gb, V.prop_def("DBGrid", "RowHeight")) - 299.9055) < 0.001
+    from lbstudio.ocxpages import new_dsn_dialog
+    ini = os.path.join(d, "odbc.ini")
+    assert new_dsn_dialog(None, ini, ("People", "SQLite3", "/tmp/people.db", "")) == "People"
+    assert "[People]" in open(ini).read() and "Driver = SQLite3" in open(ini).read()
     dl = OcxPagesDialog(w, f, il2)              # the pictures again, from the control
     items = dl.lists["(ListImages)"].items
     assert len(items) == 2 and items[1]["Key"] == "two" and items[0]["Picture"], items

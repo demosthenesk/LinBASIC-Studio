@@ -322,6 +322,7 @@ struct OcxMonthView : Ocx {
 /* ---------------------------------------------------------------- FlatScrollBar */
 struct OcxFlatScroll : Ocx {
     QPointer<QScrollBar> sb;
+    int arrows = 0;                             /* cc2Both 0, cc2LeftUp 1 (only that arrow), cc2RightDown 2 */
     QWidget *make(QWidget *parent) override
     {
         sb = new QScrollBar(Qt::Horizontal, parent);
@@ -330,6 +331,12 @@ struct OcxFlatScroll : Ocx {
         QObject::connect(sb, &QScrollBar::valueChanged, [self](int) {
             Ctl *x = C(self); auto *o = x ? dynamic_cast<OcxFlatScroll *>(x->ocx) : nullptr;
             if (o && o->sb && !o->sb->isSliderDown()) fire_ctl(x, "change");
+        });
+        QObject::connect(sb, &QAbstractSlider::actionTriggered, [self](int act) {
+            Ctl *x = C(self); auto *o = x ? dynamic_cast<OcxFlatScroll *>(x->ocx) : nullptr;
+            if (!o || !o->sb || !o->arrows) return;
+            bool add = act == QAbstractSlider::SliderSingleStepAdd, sub = act == QAbstractSlider::SliderSingleStepSub;
+            if ((o->arrows == 1 && add) || (o->arrows == 2 && sub)) o->sb->setSliderPosition(o->sb->value());
         });
         QObject::connect(sb, &QScrollBar::sliderReleased, [self]() { fire_ctl(C(self), "change"); });
         return sb;
@@ -342,6 +349,7 @@ struct OcxFlatScroll : Ocx {
         sb->setRange((int)propn(p, "Min", 0), (int)propn(p, "Max", 100));
         sb->setValue((int)propn(p, "Value", 0));
         sb->setSingleStep((int)propn(p, "SmallChange", 1)); sb->setPageStep((int)propn(p, "LargeChange", 1));
+        arrows = (int)((long)propn(p, "Arrows", 0x10000) & 0xFFFF);
     }
     vbvar member(const std::string &n, vb_i32 kind, bool set, vbvar val, vb_i32 argc, vbvar *argv, int *found) override
     {
@@ -357,6 +365,7 @@ struct OcxFlatScroll : Ocx {
         if (n == "smallchange") { if (!set) return vb_v_l(sb->singleStep()); sb->setSingleStep(v); return vb_v_empty(); }
         if (n == "largechange") { if (!set) return vb_v_l(sb->pageStep()); sb->setPageStep(v); return vb_v_empty(); }
         if (n == "orientation") { if (!set) return vb_v_l(sb->orientation() == Qt::Horizontal ? 1 : 0); sb->setOrientation(v ? Qt::Horizontal : Qt::Vertical); return vb_v_empty(); }
+        if (n == "arrows") { if (!set) return vb_v_l(arrows); arrows = v; return vb_v_empty(); }
         *found = 0;
         return vb_v_empty();
     }
@@ -554,6 +563,9 @@ struct OcxFlexGrid : Ocx {
     int row = 1, col = 1, rowsel = 1, colsel = 1;
     int mouserow = 0, mousecol = 0, selmode = 0, highlight = 1, fillstyle = 0, mergecells = 0, gridlinewidth = 1;
     double rowheightmin = 0;                    /* RowHeightMin (twips) */
+    /* MSHFlexGrid: BandDisplay, RowSizingMode (1: a row the user sizes sizes them all), GridLinesUnpopulated and
+       band 0 of the Bands page (_Band(0).GridLinesBand ...): what the IDE writes, kept and given back */
+    int banddisplay = 0, rowsizing = 0, gridunpop = 0, b_grid = 1, b_text = 0, b_head = 0, b_indent = 0, b_colhead = 0;
     long back = 0x80000005L, fore = 0x80000008L, backfixed = 0x8000000FL, forefixed = 0x80000012L;
     long backsel = 0x8000000DL, foresel = 0x8000000EL, backbkg = 0x8000000CL, gridcolor = 0xC0C0C0;
     bool redraw = true, wordwrap = false, inside = false;
@@ -673,6 +685,20 @@ struct OcxFlexGrid : Ocx {
         highlight = (int)propn(p, "HighLight", 1); selmode = (int)propn(p, "SelectionMode", 0);
         fillstyle = (int)propn(p, "FillStyle", 0); mergecells = (int)propn(p, "MergeCells", 0);
         wordwrap = propn(p, "WordWrap", 0) != 0;
+        banddisplay = (int)propn(p, "BandDisplay", 0); rowsizing = (int)propn(p, "RowSizingMode", 0);
+        gridunpop = (int)propn(p, "GridLinesUnpopulated", 0);
+        b_grid = (int)propn(p, "_Band(0).GridLinesBand", 1); b_text = (int)propn(p, "_Band(0).TextStyleBand", 0);
+        b_head = (int)propn(p, "_Band(0).TextStyleHeader", 0); b_indent = (int)propn(p, "_Band(0).BandIndent", 0);
+        b_colhead = (int)propn(p, "_Band(0).ColHeader", 0);
+        if (tw && rowsizing == 1) {
+            QPointer<FlexTable> t = tw;
+            QObject::connect(tw->verticalHeader(), &QHeaderView::sectionResized, [t](int, int, int sz) {
+                if (!t || !t->verticalHeader()->property("lbsizing").isNull()) return;
+                t->verticalHeader()->setProperty("lbsizing", 1);
+                for (int r = 0; r < t->rowCount(); r++) t->setRowHeight(r, sz);
+                t->verticalHeader()->setProperty("lbsizing", QVariant());
+            });
+        }
         if (tw) {
             tw->setShowGrid(propn(p, "GridLines", 1) != 0);
             tw->setWordWrap(wordwrap);
@@ -1008,6 +1034,15 @@ vbvar OcxFlexGrid::member(const std::string &n, vb_i32 kind, bool set, vbvar val
     for (auto &e : ints) if (n == e.nm) { if (!set) return vb_v_l(*e.p); *e.p = ival(); paint_sel(); return vb_v_empty(); }
     if (n == "redraw") { if (!set) return vbool(redraw); redraw = vb_v2bool(val) != 0; if (redraw) paint_sel(); tw->setUpdatesEnabled(redraw); return vb_v_empty(); }
     if (n == "gridlines") { if (!set) return vb_v_l(tw->showGrid() ? 1 : 0); tw->setShowGrid(ival() != 0); return vb_v_empty(); }
+    struct { const char *nm; int *p; } hints[] = { { "banddisplay", &banddisplay }, { "rowsizingmode", &rowsizing },
+        { "gridlinesunpopulated", &gridunpop } };
+    for (auto &e : hints) if (n == e.nm) { if (!set) return vb_v_l(*e.p); *e.p = ival(); return vb_v_empty(); }
+    struct { const char *nm; int *p; } bands[] = { { "gridlinesband", &b_grid }, { "textstyleband", &b_text },
+        { "textstyleheader", &b_head }, { "bandindent", &b_indent }, { "colheader", &b_colhead } };
+    for (auto &e : bands) if (n == e.nm) {     /* (BandNumber): band 0, the only one of a grid without its data */
+        if (!set) return vb_v_l(*e.p);
+        *e.p = ival(); return vb_v_empty();
+    }
     if (n == "wordwrap") { if (!set) return vbool(wordwrap); wordwrap = vb_v2bool(val) != 0; tw->setWordWrap(wordwrap); return vb_v_empty(); }
     if (n == "scrollbars") { if (!set) return vb_v_l(3); return vb_v_empty(); }
     if (n == "allowuserresizing" || n == "focusrect" || n == "gridlinesfixed" || n == "textstyle" || n == "textstylefixed" ||

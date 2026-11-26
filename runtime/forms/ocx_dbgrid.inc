@@ -462,6 +462,11 @@ struct OcxDBGrid : Ocx {
         tabaction = (int)propn(p, "TabAction", 0);
         headlines = propn(p, "HeadLines", 1);
         defcolwidth = propn(p, "DefColWidth", 0);
+        {                                       /* _RowHeight of the blob: the pixels less 2 (VB6 oracle DEV-11 s_rowh:
+                                                   RowHeight 300 -> 18), 0x80000001 none */
+            double rh = propn(p, "_RowHeight", -2147483647.0);
+            if (rh > -1000000) rowheight = (rh + 2) * TPP;
+        }
         back = propc(p, "BackColor", 0x80000005L);
         fore = propc(p, "ForeColor", 0x80000008L);
         marquee = (int)propn(p, "Split0.MarqueeStyle", 6);

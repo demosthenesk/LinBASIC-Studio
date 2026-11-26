@@ -482,13 +482,27 @@ struct OcxProgress : Ocx {
 /* ---------------------------------------------------------------- Slider */
 struct OcxSlider : Ocx {
     QPointer<QSlider> s;
-    int selstart = 0, sellength = 0, tickstyle = 0, tickfreq = 1;
+    int selstart = 0, sellength = 0, tickstyle = 0, tickfreq = 1, textpos = 0;
     bool selrange = false;
     QWidget *make(QWidget *parent) override
     {
         s = new QSlider(Qt::Horizontal, parent);
         vbobj self = c->self;
-        QObject::connect(s, &QSlider::sliderMoved, [self](int) { fire_ctl(C(self), "scroll"); });
+        QObject::connect(s, &QSlider::sliderMoved, [self](int v) {
+            Ctl *x = C(self);
+            auto *o = x ? dynamic_cast<OcxSlider *>(x->ocx) : nullptr;
+            if (o && o->s) {                    /* the value beside the thumb while it moves: TextPosition
+                                                   0 above (left), 1 below (right) */
+                QStyleOptionSlider opt; opt.initFrom(o->s); opt.orientation = o->s->orientation();
+                opt.minimum = o->s->minimum(); opt.maximum = o->s->maximum(); opt.sliderPosition = v;
+                QRect h = o->s->style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, o->s);
+                bool horz = o->s->orientation() == Qt::Horizontal;
+                QPoint at = horz ? (o->textpos ? h.bottomLeft() + QPoint(0, 4) : h.topLeft() - QPoint(0, 24))
+                                 : (o->textpos ? h.topRight() + QPoint(4, 0) : h.topLeft() - QPoint(28, 0));
+                QToolTip::showText(o->s->mapToGlobal(at), QString::number(v), o->s);
+            }
+            fire_ctl(x, "scroll");
+        });
         QObject::connect(s, &QSlider::valueChanged, [self](int) {
             Ctl *x = C(self);
             auto *o = x ? dynamic_cast<OcxSlider *>(x->ocx) : nullptr;
@@ -511,7 +525,7 @@ struct OcxSlider : Ocx {
         s->setValue((int)propn(p, "Value", 0));
         s->setSingleStep((int)propn(p, "SmallChange", 1));
         s->setPageStep((int)propn(p, "LargeChange", 5));
-        tickstyle = (int)propn(p, "TickStyle", 0); tickfreq = (int)propn(p, "TickFrequency", 1);
+        tickstyle = (int)propn(p, "TickStyle", 0); tickfreq = (int)propn(p, "TickFrequency", 1); textpos = (int)propn(p, "TextPosition", 0);
         selrange = propn(p, "SelectRange", 0) != 0;
         selstart = (int)propn(p, "SelStart", 0); sellength = (int)propn(p, "SelLength", 0);
         ticks();
@@ -533,6 +547,7 @@ struct OcxSlider : Ocx {
         if (n == "orientation") { if (!set) return vb_v_l(s->orientation() == Qt::Vertical); s->setOrientation(v ? Qt::Vertical : Qt::Horizontal); return vb_v_empty(); }
         if (n == "tickstyle") { if (!set) return vb_v_l(tickstyle); tickstyle = v; ticks(); return vb_v_empty(); }
         if (n == "tickfrequency") { if (!set) return vb_v_l(tickfreq); tickfreq = v; ticks(); return vb_v_empty(); }
+        if (n == "textposition") { if (!set) return vb_v_l(textpos); textpos = v; return vb_v_empty(); }
         if (n == "selstart") { if (!set) return vb_v_l(selstart); selstart = v; return vb_v_empty(); }
         if (n == "sellength") { if (!set) return vb_v_l(sellength); sellength = v; return vb_v_empty(); }
         if (n == "selectrange") { if (!set) return vbool(selrange); selrange = v != 0; return vb_v_empty(); }
@@ -1130,7 +1145,9 @@ protected:
 struct OcxTabStrip : Ocx {
     OcxList tabs;
     vbobj il = nullptr; QString ilname;
-    int style = 0;
+    int style = 0, tabstyle = 0;
+    bool multiselect = false;
+    double tabminwidth = 0;                     /* twips (the General page: TabMinWidth) */
     QPointer<TabStripWidget> wd;
     bool syncing = false;
     ~OcxTabStrip() { if (il) vb_orelease(il); }
@@ -1172,6 +1189,10 @@ struct OcxTabStrip : Ocx {
     {
         prop(p, "ImageList", &ilname);
         style = (int)propn(p, "Style", 0);
+        tabstyle = (int)propn(p, "TabStyle", 0);
+        multiselect = propn(p, "MultiSelect", 0) != 0;
+        tabminwidth = propn(p, "TabMinWidth", 0);
+        min_width();
         int n = (int)propn(p, "Tabs.NumTabs", 1);
         for (int i = 1; i <= n; i++) {
             QString base = QString("Tabs.Tab%1").arg(i), key, tag, img;
@@ -1189,6 +1210,11 @@ struct OcxTabStrip : Ocx {
         }
         sync();
         if (wd) { QSignalBlocker b(wd->bar); wd->bar->setCurrentIndex(0); }
+    }
+    void min_width()                            /* TabMinWidth: no tab narrower */
+    {
+        if (wd && tabminwidth > 0)
+            wd->bar->setStyleSheet(QString("QTabBar::tab { min-width: %1px; }").arg((int)(tabminwidth / TPP + 0.5)));
     }
     double client(int what) const               /* ClientLeft, ClientTop, ClientWidth, ClientHeight (twips) */
     {
@@ -1214,6 +1240,12 @@ struct OcxTabStrip : Ocx {
             return vb_v_f((float)(w < 2 ? from_twips(c, t, w == 1, true) : from_twips(c, t, w == 3, false)));
         }
         if (n == "style") { if (!set) return vb_v_l(style); style = vb_v2i(val); return vb_v_empty(); }
+        if (n == "tabstyle") { if (!set) return vb_v_l(tabstyle); tabstyle = vb_v2i(val); return vb_v_empty(); }
+        if (n == "multiselect") { if (!set) return vbool(multiselect); multiselect = vb_v2bool(val); return vb_v_empty(); }
+        if (n == "tabminwidth") {
+            if (!set) return vb_v_f((float)from_twips(c, tabminwidth, false, false));
+            tabminwidth = to_twips(c, vb_v2d(val), false, false); min_width(); return vb_v_empty();
+        }
         if (n == "multirow" || n == "hottracking" || n == "separators" || n == "showtips") return set ? vb_v_empty() : vbool(n == "showtips");
         *found = 0;
         return vb_v_empty();

@@ -100,6 +100,9 @@ struct OcxDataGrid : Ocx {
     bool allowadd = false, allowdelete = false, allowupdate = true, recsel = true;
     int headlines = 1, curcol = 0, lastrow = -1, lastcol = -1;
     double rowheight = 0;
+    /* Split0 (its Splits page; VB6 keeps AllowRowSizing, RecordSelectors ... of the grid there) */
+    int marquee = 6, scrollbars = 4;
+    bool allowrowsizing = true, splitlocked = false;
     bool building = false;
     ~OcxDataGrid() override
     {
@@ -167,6 +170,16 @@ struct OcxDataGrid : Ocx {
         allowdelete = propn(p, "AllowDelete", 0) != 0;
         allowupdate = propn(p, "AllowUpdate", -1) != 0;
         headlines = (int)propn(p, "HeadLines", 1);
+        rowheight = propn(p, "RowHeight", 0) * 15;
+        marquee = (int)propn(p, "Split0.MarqueeStyle", 6); scrollbars = (int)propn(p, "Split0.ScrollBars", 4);
+        allowrowsizing = propn(p, "Split0.AllowRowSizing", -1) != 0; splitlocked = propn(p, "Split0.Locked", 0) != 0;
+        if (tw) {
+            tw->setSelectionBehavior(marquee == 3 || marquee == 4 ? QAbstractItemView::SelectRows : QAbstractItemView::SelectItems);
+            tw->verticalHeader()->setSectionResizeMode(allowrowsizing ? QHeaderView::Interactive : QHeaderView::Fixed);
+            Qt::ScrollBarPolicy pol[] = { Qt::ScrollBarAlwaysOff, Qt::ScrollBarAlwaysOn, Qt::ScrollBarAsNeeded };
+            int h = scrollbars == 4 ? 2 : (scrollbars & 1) ? 1 : 0, v = scrollbars == 4 ? 2 : (scrollbars & 2) ? 1 : 0;
+            tw->setHorizontalScrollBarPolicy(pol[h]); tw->setVerticalScrollBarPolicy(pol[v]);
+        }   /* the .frm: pixels (VB6: 15 is RowHeight 225 twips) */
         recsel = propn(p, "Split0.RecordSelectors", propn(p, "RecordSelectors", -1)) != 0;   /* VB6: in Split0 */
     }
     static void grid_listen(void *ctx, vbobj, const char *ev, int, vbvar *)
@@ -255,6 +268,10 @@ struct OcxDataGrid : Ocx {
         vb_release(m);
         for (int k = 0; k < (int)cols.size(); k++) tw->setColumnHidden(k, !cols[k].visible);
         tw->verticalHeader()->setVisible(recsel);
+        if (rowheight > 0) {                    /* RowHeight (twips): the height of the rows */
+            tw->verticalHeader()->setMinimumSectionSize(1);
+            tw->verticalHeader()->setDefaultSectionSize(std::max(1, (int)(rowheight / 15 + 0.5)));
+        }
         if (cur >= 0 && cur < tw->rowCount()) tw->setCurrentCell(cur, std::min(curcol, std::max(0, (int)cols.size() - 1)));
         building = false;
         int row = cur;

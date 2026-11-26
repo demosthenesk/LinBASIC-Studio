@@ -748,11 +748,30 @@ struct OcxAdodc : Ocx {
         lay->addWidget(b[2]); lay->addWidget(b[3]);
         return w;
     }
+    static QString udl_string(const QString &path)   /* a .udl (Data Link) file: the line after "[oledb]" and
+                                                        its comment, in UTF-16 (or plain) text */
+    {
+        QFile f(QFileInfo(path).isRelative() ? QDir(qs(vb_app_path())).filePath(path) : path);
+        if (!f.open(QIODevice::ReadOnly)) return QString();
+        QByteArray b = f.readAll();
+        QString t = b.startsWith("\xff\xfe") ? QString::fromUtf16((const char16_t *)(b.constData() + 2), (b.size() - 2) / 2)
+                                              : QString::fromLocal8Bit(b);
+        for (const QString &line : t.split(QRegularExpression("[\r\n]+"))) {
+            QString l = line.trimmed();
+            if (!l.isEmpty() && !l.startsWith('[') && !l.startsWith(';')) return l;
+        }
+        return QString();
+    }
     void load(const char *const *p) override
     {
         QString v;
-        if (prop(p, "OLEDBString", &v) && !v.isEmpty()) cs = v;
+        int cst = (int)propn(p, "ConnectStringType", 1);  /* the General page: 1 OLEDBString, 2 OLEDBFile, 3 DSN */
+        if (cst == 3 && prop(p, "DataSourceName", &v) && !v.isEmpty()) cs = "DSN=" + v;
+        else if (cst == 2 && prop(p, "OLEDBFile", &v) && !v.isEmpty()) cs = udl_string(v);
+        else if (prop(p, "OLEDBString", &v) && !v.isEmpty()) cs = v;
         else if (prop(p, "Connect", &v) && !v.isEmpty()) cs = v;
+        if (prop(p, "OtherAttributes", &v) && !v.trimmed().isEmpty() && cst != 1)
+            cs += (cs.endsWith(';') ? "" : ";") + v.trimmed();
         if (prop(p, "RecordSource", &v)) source = v;
         if (prop(p, "UserName", &v)) user = v;
         if (prop(p, "Password", &v)) pwd = v;

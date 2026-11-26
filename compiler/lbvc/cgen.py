@@ -1704,10 +1704,29 @@ class Compiler:
                     walk(it.items, prefix + it.name + '.')
                 elif isinstance(it, Property) and it.name.lower() == 'oleobjectblob' and isinstance(it.value, FrxRef):
                     blob(it)
+                elif isinstance(it, Property) and it.name.lower() == 'buddyproperty' and not prefix:
+                    out.extend(['"BuddyProperty"', f'"s{c_utf8(buddy_property(it))}"'])
                 elif isinstance(it, Property):
                     val = value(it)
                     if val is not None:
                         out.extend([f'"{c_utf8(prefix + it.name)}"', f'"{c_utf8(val)}"'])
+
+        def buddy_property(it):
+            """BuddyProperty of an UpDown: the DISPID VB6 writes -> the name of the property of the buddy ("" the
+            default property)"""
+            v = it.value
+            try:
+                n = int(str(v).strip())
+            except (TypeError, ValueError):
+                return str(v or "")
+            if n == 0:
+                return ""
+            from .symbols import prop_dispids
+            name = str(ctl.get("BuddyControl") or "").split("(")[0].strip().lower()
+            b = next((x for x in ci.form_root.walk() if x.name.lower() == name), None)
+            if b is None:
+                return ""
+            return next((k for k, d in prop_dispids(b.cls).items() if d == n), "")
         walk(ctl.items, '')
         return out
 

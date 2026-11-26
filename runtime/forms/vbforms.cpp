@@ -83,6 +83,7 @@ extern "C" {
 #include <QTabBar>
 #include <QHBoxLayout>
 #include <QToolTip>
+#include <QStyleOptionSlider>
 #include <QHelpEvent>
 #include <QTreeWidget>
 #include <QHeaderView>

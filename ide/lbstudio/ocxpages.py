@@ -537,6 +537,63 @@ def set_raw(dlg, name, value, default=None):
     dlg.changed(name, value)
 
 
+def odbc_drivers():
+    """the ODBC drivers of this computer (odbcinst.ini of unixODBC)"""
+    import configparser
+    out = []
+    for f in ("/etc/odbcinst.ini", "/usr/local/etc/odbcinst.ini", os.path.expanduser("~/.odbcinst.ini")):
+        c = configparser.ConfigParser(strict=False, interpolation=None)
+        try:
+            c.read(f)
+        except (configparser.Error, OSError):
+            continue
+        out += [n for n in c.sections() if n != "ODBC Drivers" and n not in out]
+    return out
+
+
+def new_dsn_dialog(parent, path=None, answer=None):
+    """a new user data source of ODBC (the New... of the Adodc General page): its name, driver, database,
+    server, description -> a section of ~/.odbc.ini; the name, or None. answer: (name, driver, database, server)
+    for the tests"""
+    import configparser
+    from PyQt6.QtWidgets import QDialog, QFormLayout, QComboBox, QDialogButtonBox
+    path = path or os.path.expanduser("~/.odbc.ini")
+    if answer is None:
+        d = QDialog(parent)
+        d.setWindowTitle("Create New Data Source")
+        f = QFormLayout(d)
+        name, drv, db, srv, desc = QLineEdit(), QComboBox(), QLineEdit(), QLineEdit(), QLineEdit()
+        drv.setEditable(True)
+        drv.addItems(odbc_drivers())
+        for t, wd in (("Data Source &Name:", name), ("&Driver:", drv), ("Data&base:", db), ("&Server:", srv),
+                      ("D&escription:", desc)):
+            f.addRow(t, wd)
+        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        bb.accepted.connect(d.accept)
+        bb.rejected.connect(d.reject)
+        f.addRow(bb)
+        if not d.exec() or not name.text().strip():
+            return None
+        answer = (name.text().strip(), drv.currentText().strip(), db.text().strip(), srv.text().strip(),
+                  desc.text().strip())
+    n, driver, database, server = answer[:4]
+    c = configparser.ConfigParser(strict=False, interpolation=None)
+    c.optionxform = str
+    try:
+        c.read(path)
+    except (configparser.Error, OSError):
+        pass
+    if not c.has_section(n):
+        c.add_section(n)
+    for k, v in (("Description", answer[4] if len(answer) > 4 else ""), ("Driver", driver), ("Database", database),
+                 ("Server", server)):
+        if v:
+            c.set(n, k, v)
+    with open(path, "w") as fh:
+        c.write(fh)
+    return n
+
+
 def odbc_dsns():
     """the data sources of ODBC of this computer (odbc.ini)"""
     import configparser
@@ -667,12 +724,20 @@ def _adodc_general(dlg, key, w, made):
     c_dsn.lineEdit().textEdited.connect(lambda t: set_raw(dlg, "DataSourceName", t))
     c_dsn.activated.connect(lambda i: set_raw(dlg, "DataSourceName", c_dsn.itemText(i)))
     e_other.textEdited.connect(lambda t: set_raw(dlg, "OtherAttributes", t))
-    b_new.setEnabled(False)                     # the ODBC Data Source Administrator of Windows: not here
+
+    def new_dsn():                              # VB6: the ODBC Data Source Administrator; here: a data source of
+        name = new_dsn_dialog(dlg)              # unixODBC in ~/.odbc.ini
+        if name:
+            c_dsn.clear()
+            c_dsn.addItems(odbc_dsns())
+            c_dsn.setEditText(name)
+            set_raw(dlg, "DataSourceName", name)
+    b_new.clicked.connect(new_dsn)
 
     def kind(n, user=True):
         for rb, k in ((r_cs, 1), (r_file, 2), (r_dsn, 3)):
             rb.setChecked(k == n)
-        for wd, k in ((e_file, 2), (b_browse, 2), (c_dsn, 3), (e_cs, 1), (b_build, 1)):
+        for wd, k in ((e_file, 2), (b_browse, 2), (c_dsn, 3), (b_new, 3), (e_cs, 1), (b_build, 1)):
             wd.setEnabled(k == n)
         if user:
             set_raw(dlg, "ConnectStringType", n)
@@ -829,13 +894,16 @@ def _updown_buddy(dlg, key, w, made):
     buddy = dlg.bound[key].get("BuddyControl")
     sync = dlg.bound[key].get("SyncBuddy")
 
+    from lbvc.symbols import prop_dispids     # (VB6 writes the DISPID of the property of the buddy)
+
     def fill():
         name = buddy.text().strip() if buddy is not None else ""
         root = dlg.designer.root if dlg.designer is not None else None
         b = next((c for c in root.walk() if c.name.lower() == name.lower()), None) if root is not None and name \
             else None
-        props = sorted(p.name for p in V.props_of(b.type_name) if p.kind in ("string", "text", "int", "num", "bool",
-                                                                              "enum")) if b is not None else []
+        props = (["(Default)"] + sorted(p.name for p in V.props_of(b.type_name)
+                                        if p.kind in ("string", "text", "int", "num", "bool", "enum")
+                                        and p.name in prop_dispids(b.cls))) if b is not None else []
         prop_c.clear()
         prop_c.addItems(props)
         on = b is not None and sync is not None and sync.isChecked()
