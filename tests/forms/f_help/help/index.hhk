@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+</HEAD><BODY>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Button">
+<param name="Local" value="button.htm">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Button 700">
+<param name="Local" value="button700.htm">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Error">
+<param name="Local" value="error.htm">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Form1">
+<param name="Local" value="main.htm">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Form2">
+<param name="Local" value="form2.htm">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Frame">
+<param name="Local" value="frame.htm">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Text 600">
+<param name="Local" value="text600.htm">
+</OBJECT>
+</UL>
+</BODY></HTML>

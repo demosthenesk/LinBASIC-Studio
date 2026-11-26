@@ -672,6 +672,8 @@ struct CDlg {
     long flags = 0, color = 0;
     bool cancelerror = false, bold = false, italic = false, underline = false, strike = false;
     double fontsize = 8.25;
+    QString helpfile, helpkey;                  /* ShowHelp (help.inc) */
+    vb_i32 helpcommand = 0, helpcontext = 0;
 };
 struct Ctl {
     Kind kind;
@@ -748,6 +750,8 @@ struct FormState {
     QString caption, tag;
     double left = 0, top = 0, clientw = 4800, clienth = 3600;
     bool enabled = true, keypreview = false;
+    bool whatsthis = false, whatsthisbtn = false;   /* WhatsThisHelp, WhatsThisButton (help.inc) */
+    vb_i32 helpctx = 0;                         /* HelpContextID: F1 (help.inc) */
     vbobj focus = nullptr;                      /* ActiveControl (weak: one of ctls) */
     vbobj picture = nullptr;
     bool dbl = false;
@@ -1592,6 +1596,9 @@ static void make_widget(Ctl *c, QWidget *parent)
         d->color = (long)propn(p, "Color", 0);
         d->fontsize = propn(p, "FontSize", 8.25);
         d->min = (int)propn(p, "Min", 0); d->max = (int)propn(p, "Max", 0);
+        if (prop(p, "HelpFile", &v)) d->helpfile = v;
+        if (prop(p, "HelpKey", &v)) d->helpkey = v;
+        d->helpcommand = (vb_i32)propn(p, "HelpCommand", 0); d->helpcontext = (vb_i32)propn(p, "HelpContext", 0);
         return;
     }
     case K_IMAGE: { auto *l = new QLabel(parent); l->setScaledContents(c->stretch); w = l; break; }
@@ -1953,6 +1960,16 @@ static bool scroll_key(Ctl *c, int vk)
     return true;
 }
 
+/* help.inc */
+static void help_f1(FormState *st, Ctl *c);
+static bool help_menu_f1(QMenu *m);
+static bool help_whatsthis_event(QObject *obj, QEvent *e);
+static void help_whatsthis_mode();
+static void whatsthis_ctl(Ctl *c, QPoint pt);
+static vb_i32 ctl_helpid(Ctl *c, const char *name);
+static void dlg_showhelp(Ctl *c);
+static void msgbox_help();
+
 /* one key: the VB6 events, then what the control does with what is left of the key */
 static void key_down(FormState *st, int key, Qt::KeyboardModifiers m, const QString &text, int vk, bool rep = false)
 {
@@ -1975,6 +1992,11 @@ static void key_down(FormState *st, int key, Qt::KeyboardModifiers m, const QStr
         if (!na) pass = false;
         else if (na != ascii) t = char_of(na);
     } else if (!code) pass = false;
+    if (pass && vk == 112 && st->loaded && !(m & (Qt::ControlModifier | Qt::AltModifier))) {   /* F1: the help (help.inc) */
+        if (!(m & Qt::ShiftModifier)) help_f1(st, c);
+        else if (st->whatsthis) help_whatsthis_mode();             /* Shift+F1: What's This */
+        return;
+    }
     if (pass && pw && st->loaded) {
         if (c && (c->kind == K_HSCROLL || c->kind == K_VSCROLL) && scroll_key(c, vk)) return;
         deliver(pw, QEvent::KeyPress, key, m, t, rep);
@@ -2144,8 +2166,11 @@ protected:
         QEvent::Type et = e->type();
         if (et == QEvent::MouseButtonPress || et == QEvent::MouseButtonRelease || et == QEvent::MouseButtonDblClick || et == QEvent::MouseMove)
             return mouse_event(obj, static_cast<QMouseEvent *>(e));
+        if (et == QEvent::WhatsThis || et == QEvent::QueryWhatsThis) return help_whatsthis_event(obj, e);
         if (bypass || (et != QEvent::KeyPress && et != QEvent::KeyRelease)) return false;
         if (!static_cast<QKeyEvent *>(e)->isAutoRepeat()) key_track(static_cast<QKeyEvent *>(e), et == QEvent::KeyPress);
+        if (et == QEvent::KeyPress && static_cast<QKeyEvent *>(e)->key() == Qt::Key_F1)   /* F1 in an open menu */
+            if (auto *mn = qobject_cast<QMenu *>(obj)) if (help_menu_f1(mn)) return true;
         if (obj != QApplication::focusWidget()) return false;
         FormState *st = form_of_widget(obj);
         if (!st || !st->loaded) return false;
@@ -2326,9 +2351,15 @@ class VBDialog : public QDialog {
 public:
     int esc = 0;                                /* what Esc and the close box give; 0: nothing */
     int result_code = 0;
+    bool help = false;                          /* MsgBox with a help file: F1 opens it (help.inc) */
     using QDialog::QDialog;
 protected:
     void reject() override { if (esc) { result_code = esc; QDialog::reject(); } }
+    void keyPressEvent(QKeyEvent *e) override
+    {
+        if (help && e->key() == Qt::Key_F1 && !(e->modifiers() & (Qt::ControlModifier | Qt::AltModifier))) { msgbox_help(); return; }
+        QDialog::keyPressEvent(e);
+    }
 };
 
 static bool monkey_on;
@@ -2382,7 +2413,7 @@ static vb_i32 msgbox_hook(vbs prompt, vb_i32 buttons, vbs title)
     row->addStretch();
     outer->addLayout(row);
     int def = (buttons >> 8) & 3;
-    if (def >= (int)set.size()) def = 0;
+    if (def >= (int)set.size() + ((buttons & 0x4000) ? 1 : 0)) def = 0;   /* the Help button can be the default */
     QPushButton *defb = nullptr;
     for (size_t i = 0; i < set.size(); i++) {
         auto *pb = new QPushButton(QString::fromUtf8(greek() ? set[i].el : set[i].en), &dlg);
@@ -2392,6 +2423,20 @@ static vb_i32 msgbox_hook(vbs prompt, vb_i32 buttons, vbs title)
         QObject::connect(pb, &QPushButton::clicked, [d, code]() { d->result_code = code; d->accept(); });
         row->addWidget(pb);
         if ((int)i == def) { pb->setDefault(true); defb = pb; }
+    }
+    {                                           /* vbMsgBoxHelpButton: Help opens the help, the MsgBox stays (h1) */
+        vb_i32 mk = vb_mark();
+        vbs hf;
+        vb_msgbox_helpinfo(&hf);
+        dlg.help = hf.len > 0;
+        vb_release(mk);
+    }
+    if (buttons & 0x4000) {
+        auto *pb = new QPushButton(QString::fromUtf8(greek() ? "Βοήθεια" : "Help"), &dlg);
+        pb->setAutoDefault(true);
+        QObject::connect(pb, &QPushButton::clicked, []() { msgbox_help(); });
+        row->addWidget(pb);
+        if (def == (int)set.size() && !defb) { pb->setDefault(true); defb = pb; }
     }
     row->addStretch();
     if (defb) defb->setFocus();
@@ -2485,6 +2530,7 @@ static void build_menus(FormState *st)
             if (!c->shortcut.isEmpty()) { c->act->setShortcut(shortcut_of(c->shortcut)); c->act->setShortcutContext(Qt::WindowShortcut); }
         }
         if (c->checked) c->act->setCheckable(true);
+        c->act->setProperty("vbmenu", QVariant::fromValue((qulonglong)(quintptr)self));   /* F1 in a menu (help.inc) */
         menu_apply(c);
     }
 }
@@ -2853,7 +2899,7 @@ static vbvar menu_member(Ctl *c, const std::string &n, bool set, vbvar val, int 
     else if (n == "visible") { if (!set) return vb_v_bool(c->visible ? -1 : 0); c->visible = vb_v2bool(val) != 0; }
     else if (n == "windowlist") { if (set) { vb_raise(382); return vb_v_empty(); } return vb_v_bool(propn(c->def->props, "WindowList", 0) ? -1 : 0); }
     else if (n == "negotiateposition") return vb_v_i((vb_i16)propn(c->def->props, "NegotiatePosition", 0));
-    else if (n == "helpcontextid") return vb_v_l(0);
+    else if (n == "helpcontextid") { if (!set) return vb_v_l(ctl_helpid(c, "helpcontextid")); c->misc["helpcontextid"] = vb_v2l(val); return vb_v_empty(); }
     else { *found = 0; return vb_v_empty(); }
     menu_apply(c);
     return vb_v_empty();
@@ -2956,7 +3002,11 @@ static vbvar dialog_member(Ctl *c, const std::string &n, bool set, vbvar val, in
     if (n == "fontunderline") return flag(&d->underline);
     if (n == "fontstrikethru") return flag(&d->strike);
     if (n == "fontsize") { if (set) { d->fontsize = vb_v2d(val); return vb_v_empty(); } return vb_v_f((float)d->fontsize); }
-    if (n == "maxfilesize" || n == "printerdefault" || n == "helpcommand" || n == "helpcontext" || n == "helpfile" || n == "helpkey" || n == "hdc")
+    if (n == "helpfile") { if (set) { d->helpfile = qs(vb_v2s(val)); return vb_v_empty(); } return vstr(d->helpfile); }
+    if (n == "helpkey") { if (set) { d->helpkey = qs(vb_v2s(val)); return vb_v_empty(); } return vstr(d->helpkey); }
+    if (n == "helpcommand") { if (set) { d->helpcommand = vb_v2l(val); return vb_v_empty(); } return vb_v_i((vb_i16)d->helpcommand); }
+    if (n == "helpcontext") { if (set) { d->helpcontext = vb_v2l(val); return vb_v_empty(); } return vb_v_l(d->helpcontext); }
+    if (n == "maxfilesize" || n == "printerdefault" || n == "hdc")
         return set ? vb_v_empty() : vb_v_l(0);
     if (n == "showopen" || n == "showsave") { dlg_file(c, n == "showsave"); return vb_v_empty(); }
     if (n == "showcolor") {
@@ -2985,7 +3035,8 @@ static vbvar dialog_member(Ctl *c, const std::string &n, bool set, vbvar val, in
                                  "The printout is written as a PDF file (Printer object).");
         return vb_v_empty();
     }
-    if (n == "showhelp" || n == "aboutbox") return vb_v_empty();
+    if (n == "showhelp") { dlg_showhelp(c); return vb_v_empty(); }
+    if (n == "aboutbox") return vb_v_empty();
     if (n == "action") {                        /* the VB3 way: Action = 1 Open, 2 Save, 3 Color, 4 Font, 5 Printer, 6 Help */
         if (!set) return vb_v_i(0);
         static const char *const act[] = { "", "showopen", "showsave", "showcolor", "showfont", "showprinter", "showhelp" };
@@ -3073,7 +3124,12 @@ static vbvar ctl_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
         return vstr(c->tooltip);
     }
     { vbvar dr; if (dde_member(c, true, n, set, val, &dr)) return dr; }
-    if (n == "whatsthishelpid" || n == "helpcontextid" || n == "oledragmode" || n == "oledropmode") {
+    if (n == "whatsthishelpid" || n == "helpcontextid") {     /* F1, What's This (help.inc) */
+        if (set) { c->misc[n] = vb_v2l(val); return vb_v_empty(); }
+        return vb_v_l(ctl_helpid(c, n.c_str()));
+    }
+    if (n == "showwhatsthis") { whatsthis_ctl(c, QCursor::pos()); return vb_v_empty(); }   /* at the mouse pointer (h1) */
+    if (n == "oledragmode" || n == "oledropmode") {
         auto &slot = c->misc[n];
         if (set) { slot = vb_v2l(val); return vb_v_empty(); }
         return vb_v_l(slot);
@@ -4020,6 +4076,8 @@ static void load_form(vbobj o)
     st->startpos = st->mdichild ? 3 : (int)propn(d->props, "StartUpPosition", 3);
     st->wstate = (int)propn(d->props, "WindowState", 0);
     st->autoshow = propn(d->props, "AutoShowChildren", -1) != 0;
+    st->whatsthis = propn(d->props, "WhatsThisHelp", 0) != 0;
+    st->whatsthisbtn = propn(d->props, "WhatsThisButton", 0) != 0;
     st->active_child = nullptr;
     if (!st->mdichild) {
         Qt::WindowFlags fl = Qt::Window;
@@ -4034,6 +4092,11 @@ static void load_form(vbobj o)
             if (st->maxbtn) fl |= Qt::WindowMaximizeButtonHint;
             break;
         }
+        /* the ? of the title bar: WhatsThisHelp and WhatsThisButton, a fixed dialog or a window without
+         * Minimize and Maximize (VB6); where the window manager draws it */
+        if (st->whatsthis && st->whatsthisbtn && st->controlbox &&
+            (st->bstyle == 3 || ((st->bstyle == 1 || st->bstyle == 2) && !st->minbtn && !st->maxbtn)))
+            fl |= Qt::WindowContextHelpButtonHint;
         fw->setWindowFlags(fl);
     }
     if (!prop(d->props, "Caption", &st->caption)) st->caption = QString::fromUtf8(d->name);
@@ -4049,6 +4112,7 @@ static void load_form(vbobj o)
     st->clientw = propn(d->props, "ClientWidth", 4800); st->clienth = propn(d->props, "ClientHeight", 3600);
     st->left = propn(d->props, "ClientLeft", 60); st->top = propn(d->props, "ClientTop", 345);
     st->keypreview = propn(d->props, "KeyPreview", 0) != 0;
+    st->helpctx = (vb_i32)propn(d->props, "HelpContextID", 0);
     st->font = VFont();
     font_from_props(&st->font, d->props);
     st->g = Gfx();
@@ -4575,7 +4639,11 @@ extern "C" vbvar vbf_form_member(vbobj o, const char *name, vb_i32 kind, vb_i32 
     if (n == "tag") { if (set) { st->tag = qs(vb_v2s(val)); return vb_v_empty(); } return vstr(st->tag); }
     if (n == "printform") return vb_v_empty();  /* the printout of the form: no printer at hand here */
     { vbvar dr; if (dde_member(st, false, n, set, val, &dr)) return dr; }
-    if (n == "whatsthishelp" || n == "whatsthisbutton" || n == "helpcontextid" || n == "oledropmode") return set ? vb_v_empty() : vb_v_l(0);
+    if (n == "helpcontextid") { if (set) { st->helpctx = vb_v2l(val); return vb_v_empty(); } return vb_v_l(st->helpctx); }
+    if (n == "whatsthishelp") { if (set) { st->whatsthis = vb_v2bool(val) != 0; return vb_v_empty(); } return vb_v_bool(st->whatsthis ? -1 : 0); }
+    if (n == "whatsthisbutton") { if (set) { vb_raise(382); return vb_v_empty(); } return vb_v_bool(st->whatsthisbtn ? -1 : 0); }
+    if (n == "whatsthismode") { help_whatsthis_mode(); return vb_v_empty(); }
+    if (n == "oledropmode") return set ? vb_v_empty() : vb_v_l(0);
     if (n == "keypreview") { if (set) { st->keypreview = vb_v2bool(val) != 0; return vb_v_empty(); } return vb_v_bool(st->keypreview ? -1 : 0); }
     if (n == "appearance" && !st->host) {      /* read-only at run time (VB6: 382) */
         if (set) { vb_raise(382); return vb_v_empty(); }
@@ -5871,6 +5939,7 @@ extern "C" void vbf_run(void)
 #include "ocx_data.inc"
 #include "ocx_rdc.inc"
 #include "ocx_drep.inc"
+#include "help.inc"
 
 static struct Init {
     Init()

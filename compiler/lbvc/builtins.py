@@ -585,6 +585,11 @@ def f_isobject(pg, node, args):
 def f_msgbox(pg, node, args):
     a = _args(pg, node, args, 1, 5, 'MsgBox')
     title = _opt(pg, a[2], 'String', node, None) or 'vb_stmp(0)'
+    if (len(a) > 3 and a[3] is not None) or (len(a) > 4 and a[4] is not None):   # HelpFile, Context: the Help button
+        hf = _opt(pg, a[3], 'String', node, None) if len(a) > 3 else None
+        ctx = _opt(pg, a[4], 'Long', node, '0') if len(a) > 4 else '0'
+        return _E()(f"(vb_i16)vb_msgbox_help({_x(pg, a[0], 'String', node)}, {_opt(pg, a[1], 'Long', node, '0')}, "
+                    f"{title}, {hf or 'vb_stmp(0)'}, {ctx})", 'Integer')
     return _E()(f"(vb_i16)vb_msgbox({_x(pg, a[0], 'String', node)}, {_opt(pg, a[1], 'Long', node, '0')}, {title})",
                 'Integer')
 
@@ -827,7 +832,7 @@ def lookup_member(obj, name):
     if obj == 'err':
         m = {'number': ("vb_err_number()", 'Long'), 'description': ("vb_err_description()", 'String'),
              'source': ("vb_err_source()", 'String'), 'lastdllerror': ("vb_lastdllerr", 'Long'),
-             'helpfile': ("vb_stmp(0)", 'String'), 'helpcontext': ("vb_err_helpcontext()", 'Long')}.get(name)
+             'helpfile': ("vb_err_helpfile()", 'String'), 'helpcontext': ("vb_err_helpcontext()", 'Long')}.get(name)
         if m:
             return lambda pg, node, args: _E()(*m)
     if obj == 'app':
@@ -864,7 +869,8 @@ def lookup_member_set(obj, name):
         return lambda pg, st, value: pg.emit(f"(void)({pg.conv(value, 'Boolean', st)});")
     if obj == 'err':
         fn = {'number': ('vb_err_set_number', 'Long'), 'description': ('vb_err_set_description', 'String'),
-              'source': ('vb_err_set_source', 'String'), 'helpcontext': ('vb_err_set_helpcontext', 'Long')}.get(name)
+              'source': ('vb_err_set_source', 'String'), 'helpcontext': ('vb_err_set_helpcontext', 'Long'),
+              'helpfile': ('vb_err_set_helpfile', 'String')}.get(name)
         if fn:
             return lambda pg, st, value: pg.emit(f"{fn[0]}({pg.conv(value, fn[1], st)});")
     return None
@@ -884,12 +890,14 @@ def lookup_method(obj, name):
             n = _x(pg, vals['number'], 'Long', st)
             src = _x(pg, vals['source'], 'String', st) if vals['source'] is not None else 'vb_stmp(0)'
             desc = _x(pg, vals['description'], 'String', st) if vals['description'] is not None else 'vb_stmp(0)'
-            if vals['helpfile'] is not None:
-                pg.emit(f"(void)({_x(pg, vals['helpfile'], 'String', st)});")
             ctx = _x(pg, vals['helpcontext'], 'Long', st) if vals['helpcontext'] is not None else '0'
             flags = (1 if vals['source'] is not None else 0) | (2 if vals['description'] is not None else 0) | \
                 (4 if vals['helpcontext'] is not None else 0)
-            pg.emit(f"vb_err_raise({n}, {src}, {desc}, {ctx}, {flags});")
+            if vals['helpfile'] is not None:    # Err.HelpFile (the Help button of a MsgBox of the error)
+                hf = _x(pg, vals['helpfile'], 'String', st)
+                pg.emit(f"vb_err_raise_hf({n}, {src}, {desc}, {hf}, {ctx}, {flags | 8});")
+            else:
+                pg.emit(f"vb_err_raise({n}, {src}, {desc}, {ctx}, {flags});")
         return h
     if obj == 'err' and name == 'clear':
         return lambda pg, st, args: pg.emit("vb_err_clear(); vb_lastdllerr = 0;")   # (On Error keeps LastDllError)

@@ -15,6 +15,7 @@ samples. The IDE opens the user's own MSDN help when the user owns it.
 |---|---|---|---|
 | SQLite 3 | `runtime/db/sqlite`, inside `libvbdb` / `vbdb.dll` | public domain | `SQLite-public-domain.txt` |
 | libmdb of MDB Tools | `runtime/db/mdb`, inside `libvbdb` / `vbdb.dll` | LGPL-2.0-or-later | `runtime/db/mdb/COPYING.LIB`, `LGPL-2.1.txt` |
+| CHMLib (Jed Wing), the .chm help of the programs | `runtime/forms/chm`, inside `libvbforms` / `vbforms.dll` | LGPL-2.1-or-later | `LGPL-2.1.txt` |
 | Parts of Linpad++ (editor, styles, languages) | `ide/lbstudio` | GPL-3.0 (same author) | `LICENSE` |
 
 ## Linux AppImage
@@ -58,9 +59,11 @@ terms of your choice, open or closed source; only a changed runtime must be give
 (GPL). Depending on what it uses, the program also contains these libraries of other authors:
 
 * forms: Qt (LGPL-3.0), loaded as shared libraries (`.so`, `.dll`) that can be replaced;
+* the help of a program with forms (.chm files: F1, What's This): CHMLib (LGPL-2.1), linked in, as
+  libmdb below;
 * DAO / ADO: SQLite (public domain) and libmdb (LGPL), linked in. If you give such a program to
   others, give them, or offer, the C source of your program (`lbvc -C`) or its object files, so
-  that it can be linked again with a changed libmdb;
+  that it can be linked again with a changed libmdb (or CHMLib);
 * Windows: the DLLs of the mingw-w64 C++ runtime that Qt needs (GCC Runtime Library Exception,
   winpthreads MIT);
 * the portable package for Linux (`lbvc --package`, Package and Deployment Wizard): Qt 6 and the

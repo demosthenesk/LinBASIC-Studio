@@ -1,0 +1,5 @@
+CHMLib 0.40 (Jed Wing, LGPL 2.1 or later: licenses/LGPL-2.1.txt), from https://github.com/jedwing/CHMLib
+(2bef8d0): chm_lib.c, chm_lib.h, lzx.c, lzx.h. It reads the .chm help files of the programs (F1, What's This,
+CommonDialog.ShowHelp: forms/help.inc). Changed for LinBASIC Studio: chm_open on Windows takes a UTF-8 name
+(CreateFileW) and shares the file for reading. Built into libvbforms.a by forms/build.sh and build-win.sh, its
+names with the prefix lbchm_ (the system's libchm may be loaded by other libraries).

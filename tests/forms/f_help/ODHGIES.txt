@@ -1,0 +1,13 @@
+﻿Tests φορμών VB6 (LinBASIC Studio, Φάση 10.1): f_help
+
+App.HelpFile, HelpContextID (φόρμα, controls, Frame, menu), WhatsThisHelp / WhatsThisButton /
+WhatsThisHelpID, Err.HelpFile / Err.HelpContext (Err.Raise, Err.Clear, ανάθεση), οι ιδιότητες
+βοήθειας του CommonDialog, ανάθεση στις ιδιότητες της φόρμας μέσω Object.
+Το VB6 γράφει μόνο τις τιμές (expected\f_help.txt). Τη βοήθεια (F1, What's This, ShowHelp) την
+κάνει μόνο το LinBASIC (VBRT_HELP_LOG) και συγκρίνεται με το expected\f_help-help.txt, που
+γράφτηκε από όσα έδειξε το VB6 στο oracle h1 (DEV-10).
+Κλείνει μόνο του σε λιγότερο από ένα δευτερόλεπτο.
+
+1. Άνοιξε το f_help\FHelp.vbp, File > Make FHelp.exe... OK, File > Exit (No).
+2. Τρέξε το FHelp.exe μία φορά.
+3. Πες μου «έτοιμο». Το αποτέλεσμα: f_help\expected\f_help.txt.

@@ -403,6 +403,7 @@ static vb_i32 pend_num, err_num, err_erl;
 static vbs pend_src, pend_desc, err_src, err_desc;
 static int pend_has_desc;
 static vb_i32 pend_ctx, err_ctx; static int pend_has_ctx;
+static vbs pend_hfile, err_hfile; static int pend_has_hfile;   /* Err.HelpFile: what Err.Raise gave, or "" */
 
 #include "errors.inc"
 const char *vb_errtext(int n)
@@ -435,7 +436,7 @@ static vbs persist(vbs *slot, vbs v) { vb_sset(slot, v); return *slot; }
 void vb_raise(vb_i32 number)
 {
     if (vb_errpend) return;                     /* the first error of a statement wins */
-    vb_errpend = 1; pend_num = number; pend_has_desc = 0; pend_has_ctx = 0; vb_fpstore = 0;
+    vb_errpend = 1; pend_num = number; pend_has_desc = 0; pend_has_ctx = 0; pend_has_hfile = 0; vb_fpstore = 0;
 }
 
 void vb_fpraise(vb_i32 number)
@@ -504,8 +505,13 @@ static const char *hresult_text(vb_u32 h)
     return 0;
 }
 
-/* Err.Raise / the Error statement. flags: 1 Source given, 2 Description given, 4 HelpContext given */
+/* Err.Raise / the Error statement. flags: 1 Source given, 2 Description given, 4 HelpContext given,
+ * 8 HelpFile given (vb_err_raise_hf) */
 void vb_err_raise(vb_i32 number, vbs source, vbs description, vb_i32 ctx, vb_i32 flags)
+{
+    vb_err_raise_hf(number, source, description, vb_stmp(0), ctx, flags & ~8);
+}
+void vb_err_raise_hf(vb_i32 number, vbs source, vbs description, vbs helpfile, vb_i32 ctx, vb_i32 flags)
 {
     if (vb_errpend) return;
     vb_i32 m = vb_mark();
@@ -528,6 +534,8 @@ void vb_err_raise(vb_i32 number, vbs source, vbs description, vb_i32 ctx, vb_i32
     pend_has_desc = 1;
     pend_ctx = (flags & 4) ? ctx : number < 0 ? 0 : errtab_pub(number) ? 1000000 + number : 1000095;
     pend_has_ctx = 1;
+    vb_sset(&pend_hfile, (flags & 8) ? helpfile : vb_stmp(0));
+    pend_has_hfile = (flags & 8) != 0;
     vb_release(m);
 }
 
@@ -543,7 +551,7 @@ void vb_raise_arg(vb_i32 number, const char *arg)
     vb_sset(&pend_desc, vb_sfromutf8(buf));
     vb_sfree(&pend_src);
     vb_release(m);
-    vb_errpend = 1; pend_num = number; pend_has_desc = 1; vb_fpstore = 0;
+    vb_errpend = 1; pend_num = number; pend_has_desc = 1; pend_has_ctx = 0; pend_has_hfile = 0; vb_fpstore = 0;
 }
 
 void vb_set_error_text(vbs *dst, int n)
@@ -612,10 +620,14 @@ void vb_err_take(vb_i32 erl)
     else if (vb_project_title) { vb_i32 m = vb_mark(); vb_sset(&err_src, vb_sfromutf8(vb_project_title)); vb_release(m); }
     else { vb_i32 m = vb_mark(); vb_sset(&err_src, vb_app_exename()); vb_release(m); }
     err_ctx = pend_has_ctx ? pend_ctx : help_context(err_num);
-    pend_has_desc = 0; pend_has_ctx = 0;
+    if (pend_has_hfile) vb_sset(&err_hfile, pend_hfile);
+    else vb_sfree(&err_hfile);
+    pend_has_desc = 0; pend_has_ctx = 0; pend_has_hfile = 0;
 }
 vb_i32 vb_err_helpcontext(void) { return err_ctx; }
 void vb_err_set_helpcontext(vb_i32 n) { err_ctx = n; }
+vbs vb_err_helpfile(void) { vbs r = vb_stmp(err_hfile.len); if (err_hfile.len) memcpy(r.p, err_hfile.p, 2 * err_hfile.len); return r; }
+void vb_err_set_helpfile(vbs s) { vb_sset(&err_hfile, s); }
 
 /* the project of the program (Err.Source of its own errors: App.Title, as VB6) */
 const char *vb_project_title;
@@ -624,7 +636,7 @@ void vb_set_project(const char *title) { vb_project_title = title; }
 void vb_err_clear(void)
 {
     err_num = 0; err_erl = 0; err_ctx = 0;
-    vb_sfree(&err_desc); vb_sfree(&err_src);
+    vb_sfree(&err_desc); vb_sfree(&err_src); vb_sfree(&err_hfile);
 }
 
 vb_i32 vb_err_number(void) { return err_num; }
@@ -1091,6 +1103,7 @@ static vbs app_get(const char *key)
         if (!strcmp(app_info[i].key, key)) return vb_scopy(app_info[i].val);
     return vb_stmp(0);
 }
+vbs vb_app_helpfile(void) { return vb_app_str(2, app_get("helpfile")); }
 static vbvar app_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
     char n[40]; int i = 0;
@@ -1166,15 +1179,20 @@ static vbvar errobj_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
         if (set) { vb_err_set_helpcontext(vb_v2l(val)); return vb_v_empty(); }
         return vb_v_l(vb_err_helpcontext());
     }
-    if (!strcmp(n, "helpfile")) return set ? vb_v_empty() : vb_v_s(vb_stmp(0));
+    if (!strcmp(n, "helpfile")) {
+        if (set) { vb_err_set_helpfile(vb_v2s(val)); return vb_v_empty(); }
+        return vb_v_s(vb_err_helpfile());
+    }
     if (!strcmp(n, "lastdllerror")) return vb_v_l(vb_lastdllerr);
     if (!strcmp(n, "clear")) { vb_err_clear(); vb_lastdllerr = 0; return vb_v_empty(); }
     if (!strcmp(n, "raise")) {
         if (argc < 1) { vb_raise(449); return vb_v_empty(); }
-        int fl = (arg_given(argc, argv, 1) ? 1 : 0) | (arg_given(argc, argv, 2) ? 2 : 0) | (arg_given(argc, argv, 4) ? 4 : 0);
-        vb_err_raise(vb_v2l(argv[0]), arg_given(argc, argv, 1) ? vb_v2s(argv[1]) : vb_stmp(0),
-                     arg_given(argc, argv, 2) ? vb_v2s(argv[2]) : vb_stmp(0),
-                     arg_given(argc, argv, 4) ? vb_v2l(argv[4]) : 0, fl);
+        int fl = (arg_given(argc, argv, 1) ? 1 : 0) | (arg_given(argc, argv, 2) ? 2 : 0) | (arg_given(argc, argv, 4) ? 4 : 0)
+                 | (arg_given(argc, argv, 3) ? 8 : 0);
+        vb_err_raise_hf(vb_v2l(argv[0]), arg_given(argc, argv, 1) ? vb_v2s(argv[1]) : vb_stmp(0),
+                        arg_given(argc, argv, 2) ? vb_v2s(argv[2]) : vb_stmp(0),
+                        arg_given(argc, argv, 3) ? vb_v2s(argv[3]) : vb_stmp(0),
+                        arg_given(argc, argv, 4) ? vb_v2l(argv[4]) : 0, fl);
         return vb_v_empty();
     }
     *found = 0;

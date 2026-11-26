@@ -63,8 +63,11 @@ void vb_raise(vb_i32 number);                  /* run-time error with the standa
 void vb_raise_arg(vb_i32 number, const char *arg);   /* ... whose |1 is arg */
 void vb_raise_full(vb_i32 number, vbs source, vbs description);
 void vb_err_raise(vb_i32 number, vbs source, vbs description, vb_i32 ctx, vb_i32 flags);   /* Err.Raise, Error */
+void vb_err_raise_hf(vb_i32 number, vbs source, vbs description, vbs helpfile, vb_i32 ctx, vb_i32 flags);   /* with HelpFile (flag 8) */
 vb_i32 vb_err_helpcontext(void);
 void vb_err_set_helpcontext(vb_i32 n);
+vbs vb_err_helpfile(void);
+void vb_err_set_helpfile(vbs s);
 void vb_err_take(vb_i32 erl);                  /* the pending error goes into Err */
 void vb_err_clear(void);
 vb_i32 vb_err_number(void);
@@ -574,6 +577,7 @@ vbobj vb_global_obj(void);                    /* VB.Global as an object */
 vbobj vb_app_obj(void);                       /* App as an object */
 void vb_app_info(const char *key, vbs v);     /* what the .vbp says of the program (vb_app_obj) */
 vbs vb_app_str(int which, vbs dflt);                /* App.Title (1), App.HelpFile (2): as set at run time, or dflt */
+vbs vb_app_helpfile(void);                              /* App.HelpFile now (the .vbp's, or as set at run time) */
 void vb_app_set_str(int which, vbs v);
 vbs vb_command(void);
 void vb_filecopy(vbs from, vbs to);
@@ -677,6 +681,8 @@ vbs vb_formatdatetime(vb_date d, vb_i32 named);
 vbs vb_monthname(vb_i32 m, vb_i32 abbrev);
 vbs vb_weekdayname(vb_i32 w, vb_i32 abbrev, vb_i32 firstday);
 vb_i32 vb_msgbox(vbs prompt, vb_i32 buttons, vbs title);
+vb_i32 vb_msgbox_help(vbs prompt, vb_i32 buttons, vbs title, vbs helpfile, vb_i32 context);   /* MsgBox with HelpFile, Context */
+vb_i32 vb_msgbox_helpinfo(vbs *helpfile);              /* the forms runtime: the help of the MsgBox shown (its Help button) */
 vbs vb_inputbox(vbs prompt, vbs title, vbs def);
 vbs vb_getsetting(vbs app, vbs section, vbs key, vbs def);
 void vb_savesetting(vbs app, vbs section, vbs key, vbs value);

@@ -1,0 +1,38 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=h1.chm
+Contents file=toc.hhc
+Index file=index.hhk
+Default topic=main.htm
+Display compile progress=No
+Language=0x409 English (United States)
+Title=H1 Help
+
+[ALIAS]
+IDH_FORM1=main.htm
+IDH_BUTTON=button.htm
+IDH_FRAME=frame.htm
+IDH_ERROR=error.htm
+IDH_FORM2=form2.htm
+IDH_WT600=text600.htm
+IDH_WT700=button700.htm
+
+[MAP]
+#define IDH_FORM1 100
+#define IDH_BUTTON 200
+#define IDH_FRAME 300
+#define IDH_ERROR 400
+#define IDH_FORM2 500
+#define IDH_WT600 600
+#define IDH_WT700 700
+
+[FILES]
+main.htm
+button.htm
+frame.htm
+error.htm
+form2.htm
+text600.htm
+button700.htm
+cshelp.txt
+h1.h

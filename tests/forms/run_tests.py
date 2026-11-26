@@ -47,6 +47,8 @@ def main():
         target = os.environ.get('LBVC_TARGET', 'linux')   # win32 / win64: the .exe runs in Wine
         exe = build_exe(csrc, exe, rt, target=target) or exe
         env = oracle_env()
+        help_log = os.path.join(work, 'help.txt')      # what the help of the program opens (VBRT_HELP_LOG)
+        env['VBRT_HELP_LOG'] = help_log if target == 'linux' else 'help.txt'
         cmd = [exe]
         if target != 'linux':                             # Wine on a virtual X screen (Xvfb)
             cmd = ['xvfb-run', '-a', '-s', '-screen 0 1024x768x24', 'wine', exe]
@@ -63,6 +65,20 @@ def main():
             pending += 1
             continue
         exp = open(exp_path, 'rb').read()
+        hexp_path = os.path.join(src, 'expected', n + '-help.txt')   # LinBASIC's help: no VB6 output of it
+        if got == exp and os.path.exists(hexp_path):
+            hgot = open(help_log, 'rb').read().replace(b'\r\n', b'\n') if os.path.exists(help_log) else b''
+            hexp = open(hexp_path, 'rb').read().replace(b'\r\n', b'\n')
+            if hgot != hexp:
+                failed += 1
+                print(f"FAIL {n} (help)")
+                hl, gl = hexp.decode('utf-8').split('\n'), hgot.decode('utf-8', 'replace').split('\n')
+                for i in range(max(len(hl), len(gl))):
+                    a = hl[i] if i < len(hl) else '<none>'
+                    b = gl[i] if i < len(gl) else '<none>'
+                    if a != b:
+                        print(f"   help line {i + 1}\n     expected: {a!r}\n     lbvc:     {b!r}")
+                continue
         if got == exp:
             print(f"ok   {n}")
             passed += 1

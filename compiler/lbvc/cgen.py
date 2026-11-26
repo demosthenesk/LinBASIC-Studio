@@ -2912,6 +2912,7 @@ class ProcGen:
                      'image', 'picture', 'borderstyle', 'popupmenu', 'printform', 'scalex', 'scaley', 'appearance',
                      'activeform', 'arrange', 'autoshowchildren', 'mdichild', 'minbutton', 'maxbutton', 'controlbox',
                      'showintaskbar', 'moveable', 'startupposition', 'paint', 'icon', 'whatsthisbutton',
+                     'whatsthishelp', 'whatsthismode', 'helpcontextid',
                      'validatecontrols', 'mousepointer', 'drag', 'dragmode', 'hdc', 'paintpicture', 'mouseicon', 'count'}
     UCTL_BUILTINS = {'ambient', 'extender', 'propertychanged', 'canpropertychange', 'size', 'parent',
                      'parentcontrols', 'backstyle', 'hasdc', 'clipcontrols', 'accesskeys', 'eventsfrozen',

@@ -499,6 +499,24 @@ vb_i32 vb_msgbox(vbs prompt, vb_i32 buttons, vbs title)
     vb_release(m);
     return 1;                                          /* vbOK */
 }
+/* MsgBox prompt, buttons, title, helpfile, context: the Help button (vbMsgBoxHelpButton) opens that help */
+static vbs mb_hfile; static vb_i32 mb_hctx, mb_hset;
+vb_i32 vb_msgbox_help(vbs prompt, vb_i32 buttons, vbs title, vbs helpfile, vb_i32 context)
+{
+    vbs saved = {0, 0, 0}; vb_i32 sctx = mb_hctx, sset = mb_hset;
+    vb_sset(&saved, mb_hfile);                  /* a MsgBox inside the events of another one */
+    vb_sset(&mb_hfile, helpfile); mb_hctx = context; mb_hset = 1;
+    vb_i32 r = vb_msgbox(prompt, buttons, title);
+    vb_sset(&mb_hfile, saved); mb_hctx = sctx; mb_hset = sset;
+    vb_sfree(&saved);
+    return r;
+}
+vb_i32 vb_msgbox_helpinfo(vbs *helpfile)
+{
+    if (!mb_hset) { *helpfile = vb_stmp(0); return 0; }
+    *helpfile = vb_scopy(mb_hfile);
+    return mb_hctx;
+}
 vbs vb_inputbox(vbs prompt, vbs title, vbs def)
 {
     if (vb_inputbox_hook) return vb_inputbox_hook(prompt, title.len ? title : vb_app_exename(), def);
