@@ -197,4 +197,49 @@ Private Sub RunHelp()
     App.HelpFile = App.Path & "\nofile.chm"
     Command1.SetFocus
     SendKeys "{F1}", True
+    RunHlp
+End Sub
+
+' LinBASIC only: the WinHelp files (h1.hlp Zeck, h1p.hlp phrases, h1u.hlp without compression), our reader
+Private Sub RunHlp()
+    App.HelpFile = App.Path & "\h1.hlp"
+    Command1.SetFocus
+    SendKeys "{F1}", True
+    Text1.SetFocus
+    SendKeys "{F1}", True
+    With CommonDialog1
+        .HelpFile = App.Path & "\h1p.hlp"
+        .HelpCommand = cdlHelpContext
+        .HelpContext = 300
+        .ShowHelp
+        .HelpContext = 999
+        .ShowHelp
+        .HelpFile = App.Path & "\h1u.hlp"
+        .HelpCommand = cdlHelpKey
+        .HelpKey = "container"
+        .ShowHelp
+        .HelpKey = "nothing"
+        .ShowHelp
+        .HelpCommand = cdlHelpPartialKey
+        .HelpKey = "Fo"
+        .ShowHelp
+        .HelpFile = App.HelpFile
+        .HelpCommand = cdlHelpContents
+        .ShowHelp
+        .HelpCommand = &HB
+        .ShowHelp
+        .HelpCommand = cdlHelpContextPopup
+        .HelpContext = 600
+        .ShowHelp
+        .HelpContext = 650
+        .ShowHelp
+        .HelpCommand = cdlHelpQuit
+        .ShowHelp
+    End With
+    Form2.Show
+    Form2.Command1.ShowWhatsThis
+    Form2.Hide
+    App.HelpFile = App.Path & "\nofile.hlp"
+    Command1.SetFocus
+    SendKeys "{F1}", True
 End Sub

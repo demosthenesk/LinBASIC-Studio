@@ -12,3 +12,17 @@ whatsthismode
 whatsthismode
 F1 h1.chm main.htm
 F1 nofile.chm -
+F1 h1.hlp Button
+F1 h1.hlp Form1
+context h1p.hlp Frame
+context h1p.hlp -
+key h1u.hlp container Frame
+key h1u.hlp nothing [Index]
+key h1u.hlp Fo [Index]
+contents h1.hlp Form1
+finder h1.hlp [Help Topics]
+popup 600 What's This: the text box (WhatsThisHelpID 600). Topic 600.
+popup 650 Δεν υπάρχει θέμα βοήθειας για αυτό το στοιχείο.
+quit
+popup 700 What's This: the WhatsThisMode button (WhatsThisHelpID 700). Topic 700.
+F1 nofile.hlp -

@@ -6,6 +6,8 @@ WhatsThisHelpID, Err.HelpFile / Err.HelpContext (Err.Raise, Err.Clear, ανάθ�
 Το VB6 γράφει μόνο τις τιμές (expected\f_help.txt). Τη βοήθεια (F1, What's This, ShowHelp) την
 κάνει μόνο το LinBASIC (VBRT_HELP_LOG) και συγκρίνεται με το expected\f_help-help.txt, που
 γράφτηκε από όσα έδειξε το VB6 στο oracle h1 (DEV-10).
+Τα αρχεία .hlp (h1.hlp Zeck, h1p.hlp Phrase, h1u.hlp χωρίς συμπίεση, h1.cnt) τα έφτιαξε το HCW 4.03 στο
+DEV-10/h2 από το help\hlp (h1.rtf, h1*.hpj): τα δείχνει μόνο το LinBASIC στο Linux (RunHlp).
 Κλείνει μόνο του σε λιγότερο από ένα δευτερόλεπτο.
 
 1. Άνοιξε το f_help\FHelp.vbp, File > Make FHelp.exe... OK, File > Exit (No).

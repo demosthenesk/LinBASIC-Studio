@@ -1,0 +1,10 @@
+:Base h1.hlp
+:Title H1 Help
+1 Form1=IDH_FORM1
+1 Controls
+2 Button=IDH_BUTTON
+2 Frame=IDH_FRAME
+1 Error=IDH_ERROR
+1 Form2=IDH_FORM2
+2 Text 600=IDH_WT600
+2 Button 700=IDH_WT700

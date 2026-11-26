@@ -1,8 +1,10 @@
 /* help.inc - the help of the programs (10.1): App.HelpFile and HelpContextID (F1), What's This
  * (WhatsThisHelp, WhatsThisButton, WhatsThisMode, ShowWhatsThis, WhatsThisHelpID), the Help button of a
- * MsgBox, CommonDialog.ShowHelp. The help files are .chm (HTML Help), read by CHMLib (chm/, LGPL).
+ * MsgBox, CommonDialog.ShowHelp. The help files are .chm (HTML Help), read by CHMLib (chm/, LGPL), and
+ * .hlp (WinHelp), read by hlp.inc on Linux.
  * Linux: a window of our own, as the HTML Help window of Windows (Hide, Back, Print, Options; Contents,
- * Index). Windows: HTML Help itself (hhctrl.ocx), as VB6. The text pop-ups of What's This: ours on both.
+ * Index); for .hlp, as the window of WinHelp 4 (hlp.inc). Windows: HTML Help itself (hhctrl.ocx) and
+ * WinHelp, as VB6. The text pop-ups of What's This (.chm): ours on both.
  *
  * What VB6 does (VB-TESTS/DEV-10, h1, 2026-11-26):
  *  - F1: the HelpContextID of the control with the focus, else of its container (Frame ...), else of the
@@ -386,9 +388,25 @@ protected:
     void keyPressEvent(QKeyEvent *) override { close(); }
     void mousePressEvent(QMouseEvent *) override { close(); }
 };
-/* the pop-up of a context number of a help file, its top center at pt (global pixels) */
+static bool is_hlp(const QString &file) { return QFileInfo(help_full_path(file)).suffix().compare("hlp", Qt::CaseInsensitive) == 0; }
+#ifndef _WIN32
+static bool hlp_popup(const QString &full, quint32 id, QPoint pt);
+#endif
+static void hlp_cmd(const QString &file, int cmd, quint32 id, const QString &key, const char *why);
+/* the pop-up of a context number of a help file, its top center at pt (global pixels); a .hlp: the pop-up of
+ * its topic (Windows: WinHelp, HELP_CONTEXTPOPUP, as VB6) */
 static void help_popup(const QString &file, quint32 id, QPoint pt)
 {
+    if (!file.trimmed().isEmpty() && is_hlp(file)) {
+#ifdef _WIN32
+        hlp_cmd(file, 8, id, QString(), "popup");
+        return;
+#else
+        if (hlp_popup(help_full_path(file), id, pt)) return;
+        help_popup(QString(), id, pt);
+        return;
+#endif
+    }
     ChmDoc *d = file.isEmpty() ? nullptr : chm_doc(file);
     QString text;
     if (d) { chm_popups(d); auto it = d->pop.find(id); if (it != d->pop.end()) text = it->second; }
@@ -614,19 +632,16 @@ public:
             }
     }
 };
-static std::map<ChmDoc *, QPointer<HelpWin>> help_wins;
-static HelpWin *help_win(ChmDoc *d)
+/* a help window to the front; the Help of a MsgBox: the window is usable while the MsgBox waits (a window of
+ * the dialog is not blocked by it), and stays when the MsgBox closes (as HTML Help and WinHelp) */
+static void help_raise(QWidget *w)
 {
-    QPointer<HelpWin> &w = help_wins[d];
-    if (!w) w = new HelpWin(d);
-    /* the Help of a MsgBox: the window is usable while the MsgBox waits (a window of the dialog is not
-     * blocked by it), and stays when the MsgBox closes (as HTML Help) */
     if (auto *dlg = qobject_cast<QDialog *>(QApplication::activeModalWidget())) {
-        if (w->parentWidget() != dlg) {
+        if (dlg != w && w->parentWidget() != dlg) {
             QRect g = w->geometry();
             w->setParent(dlg, Qt::Window);
             w->setGeometry(g);
-            QPointer<HelpWin> hw = w;
+            QPointer<QWidget> hw = w;
             QObject::connect(dlg, &QDialog::finished, [hw]() {
                 if (!hw) return;
                 bool vis = hw->isVisible();
@@ -641,11 +656,27 @@ static HelpWin *help_win(ChmDoc *d)
     if (w->isMinimized()) w->showNormal();
     w->raise();
     w->activateWindow();
+}
+static std::map<ChmDoc *, QPointer<HelpWin>> help_wins;
+static HelpWin *help_win(ChmDoc *d)
+{
+    QPointer<HelpWin> &w = help_wins[d];
+    if (!w) w = new HelpWin(d);
+    help_raise(w);
     return w;
 }
+
+/* ---------------------------------------------------------------- the .hlp files (Linux: our reader) */
+#ifndef _WIN32
+#include "hlp.inc"
+#endif
+
 static void help_close_all()
 {
     for (auto &p : help_wins) if (p.second) p.second->close();
+#ifndef _WIN32
+    hlp_close_all();
+#endif
 }
 
 /* ---------------------------------------------------------------- Windows: HTML Help */
@@ -665,10 +696,35 @@ static void *help_owner()                      /* the form (not a MsgBox: the he
 }
 #endif
 
+/* a command of WinHelp for a .hlp file: Windows calls WinHelp, as VB6; Linux, our reader (hlp.inc) */
+static void hlp_cmd(const QString &file, int cmd, quint32 id, const QString &key, const char *why)
+{
+    QString full = help_full_path(file);
+    if (full.isEmpty()) return;
+#ifdef _WIN32
+    help_log(QString("%1 %2 winhelp %3").arg(why, QFileInfo(full).fileName()).arg(cmd));
+    if (help_quiet()) return;
+    typedef int (__stdcall *WinHelpW_t)(void *, const wchar_t *, unsigned, quintptr);
+    static QLibrary u32("user32");
+    if (auto wh = (WinHelpW_t)u32.resolve("WinHelpW")) {
+        std::wstring f = QDir::toNativeSeparators(full).toStdWString(), k = key.toStdWString();
+        wh(help_owner(), f.c_str(), (unsigned)cmd, cmd == 0x101 || cmd == 0x105 ? (quintptr)k.c_str() : (quintptr)id);
+    }
+#else
+    if (cmd == 2) { if (!help_quiet()) hlp_close_all(); help_log("quit"); return; }
+    if (cmd == 8) {
+        if (!hlp_popup(full, id, QCursor::pos())) help_popup(QString(), id, QCursor::pos());
+        return;
+    }
+    hlp_open(full, cmd, id, key, why);
+#endif
+}
+
 /* what = 0 a topic (or the Default topic), 1 the Contents, 2 the Index at a keyword */
 static void help_open(const QString &file, int what, const QString &topic, const QString &key, const char *why, quint32 id)
 {
     if (file.trimmed().isEmpty()) return;
+    if (is_hlp(file)) { hlp_cmd(file, what == 2 ? 0x101 : what == 1 ? 3 : 1, id, key, why); return; }
     QString full = help_full_path(file);
     QString ext = QFileInfo(full).suffix().toLower();
     ChmDoc *d = chm_doc(full);
@@ -689,22 +745,7 @@ static void help_open(const QString &file, int what, const QString &topic, const
         hh(help_owner(), f.c_str(), what == 1 ? 0x0001 /* HH_DISPLAY_TOC */ : 0x0000, 0);
         return;
     }
-    if (ext == "hlp") {                         /* WinHelp, as VB6 (Windows 7 has it no more: its message) */
-        typedef int (__stdcall *WinHelpW_t)(void *, const wchar_t *, unsigned, quintptr);
-        static QLibrary u32("user32");
-        if (auto wh = (WinHelpW_t)u32.resolve("WinHelpW")) {
-            std::wstring f = QDir::toNativeSeparators(full).toStdWString();
-            wh(help_owner(), f.c_str(), what == 1 ? 0x000B /* HELP_FINDER */ : 0x0001 /* HELP_CONTEXT */, id);
-        }
-        return;
-    }
 #endif
-    if (ext == "hlp" && !d) {                   /* the WinHelp files: not read yet (decision after the .chm) */
-        QMessageBox::warning(dialog_parent(), "HTML Help",
-            greek_or("The help file %1 is a Windows Help (.hlp) file: LinBASIC shows .chm help files.",
-                     "Το αρχείο βοήθειας %1 είναι Windows Help (.hlp): το LinBASIC δείχνει αρχεία βοήθειας .chm.").arg(QDir::toNativeSeparators(full)));
-        return;
-    }
     if (!d) {                                   /* HTML Help: "Cannot open the file: ..." */
         QMessageBox::warning(dialog_parent(), "HTML Help",
             greek_or("Cannot open the file: %1.", "Δεν είναι δυνατό το άνοιγμα του αρχείου: %1.").arg(QDir::toNativeSeparators(full)));
@@ -726,6 +767,7 @@ static void help_open(const QString &file, int what, const QString &topic, const
 static void help_context(const QString &file, quint32 id, const char *why)
 {
     if (file.trimmed().isEmpty()) return;
+    if (is_hlp(file)) { hlp_cmd(file, 1, id, QString(), why); return; }
     ChmDoc *d = chm_doc(file);
     QString t = d && id ? chm_context(d, id) : QString();
     if (d && id && t.isEmpty() && d->ctx.count(id)) t = d->ctx[id];   /* in the map, not in the file: the window says so */
@@ -826,6 +868,14 @@ static void dlg_showhelp(Ctl *c)
 {
     CDlg *d = c->dlg;
     QString file = d->helpfile;
+    if (!file.trimmed().isEmpty() && is_hlp(file)) {   /* WinHelp: its commands as they are (cdlHelpContents 3, Finder 0x0B ...) */
+        static const char *why[] = { "contents", "context", "quit", "contents" };
+        int cmd = d->helpcommand;
+        if (cmd == 8) { help_popup(file, (quint32)d->helpcontext, QCursor::pos()); return; }
+        if (cmd != 1 && cmd != 2 && cmd != 0x0B && cmd != 0x101 && cmd != 0x105) cmd = 3;
+        hlp_cmd(file, cmd, (quint32)d->helpcontext, d->helpkey, cmd == 0x0B ? "finder" : cmd >= 0x101 ? "key" : why[cmd]);
+        return;
+    }
     switch (d->helpcommand) {
     case 1: help_context(file, (quint32)d->helpcontext, "context"); break;          /* cdlHelpContext */
     case 2: if (!help_quiet()) help_close_all(); help_log("quit"); break;            /* cdlHelpQuit */
