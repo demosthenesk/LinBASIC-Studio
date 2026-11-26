@@ -9,5 +9,6 @@ popup 600 Popup text 600: the text box.
 popup 700 Popup text 700: the WhatsThisMode button.
 popup 0 Δεν υπάρχει θέμα βοήθειας για αυτό το στοιχείο.
 whatsthismode
+whatsthismode
 F1 h1.chm main.htm
 F1 nofile.chm -

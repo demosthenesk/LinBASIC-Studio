@@ -188,6 +188,8 @@ Private Sub RunHelp()
     Form2.Text1.WhatsThisHelpID = 0
     Form2.Text1.ShowWhatsThis
     Form2.WhatsThisMode
+    Form2.Text1.SetFocus
+    SendKeys "+{F1}", True
     Form2.Hide
     Me.HelpContextID = 0
     Text1.SetFocus
