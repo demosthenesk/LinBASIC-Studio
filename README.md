@@ -3,7 +3,8 @@
 **A Visual Basic 6 compatible development environment for Linux and Windows.**
 
 > The latest release is **0.8.0-beta1**, a beta. The code here is newer: the IDE of Phase 8 and the
-> wizards, add-ins and portable packages of Phase 9 are finished (see [Add-Ins and wizards](#add-ins-and-wizards)).
+> wizards, add-ins and portable packages of Phase 9 are finished (see [Add-Ins and wizards](#add-ins-and-wizards)),
+> and of Phase 10 the help of the programs (`.chm`: F1, What's This, see [Forms and controls](#forms-and-controls)).
 > Please report what does not work as in VB6.
 
 LinBASIC Studio opens, edits, runs and compiles projects written in Visual Basic 6:
@@ -400,6 +401,11 @@ The whole VB6 language is compiled:
   FileListBox, Menu, the Data control.
 * **Control behaviour:** control arrays with Load / Unload, `Controls.Add`, keyboard and mouse events,
   focus and Validate, drag and drop, MousePointer, ToolTipText.
+* **The help of the programs** (`.chm` help files): App.HelpFile and HelpContextID (F1 on a control, its
+  container, the form, an open menu), What's This (WhatsThisHelp, WhatsThisButton, WhatsThisMode,
+  ShowWhatsThis, WhatsThisHelpID, the text pop-ups of `cshelp.txt`), the Help button of MsgBox,
+  Err.HelpFile, CommonDialog.ShowHelp. On Linux a help window of the runtime (Contents, Index, Back,
+  Print as PDF); on Windows HTML Help. The `.chm` files that chmcmd of Free Pascal 3.2.2 makes are read too.
 * **Graphics:** `Print`, `Cls`, `PSet`, `Line`, `Circle`, `Point`, `PaintPicture`, Scale and ScaleMode,
   AutoRedraw, the Paint event, LoadPicture / SavePicture, the Screen, Clipboard and App objects.
   The Printer object writes a PDF file.
@@ -410,7 +416,7 @@ The whole VB6 language is compiled:
 |---|---|
 | MSCOMCTL.OCX | ImageList, ProgressBar, Slider, StatusBar, Toolbar, TabStrip, TreeView, ListView, ImageCombo |
 | MSCOMCT2.OCX | UpDown, DTPicker, MonthView, FlatScrollBar, Animation |
-| COMDLG32.OCX | CommonDialog (Open, Save, Color, Font) |
+| COMDLG32.OCX | CommonDialog (Open, Save, Color, Font, Help) |
 | RICHTX32.OCX | RichTextBox (RTF read and written as VB6 does) |
 | MSFLXGRD.OCX, MSHFLXGD.OCX | MSFlexGrid |
 | MSCHRT20.OCX | MSChart (bar, line, area, step, pie, XY) |
@@ -626,6 +632,10 @@ network and no access to your desktop session or your screen.
   * a bridge to the real COM objects of Windows
 * **Win32 API:** a window of another program cannot be found or changed on Linux. `FindWindow`
   finds the program's own forms.
+* **Help:** the `.hlp` files of WinHelp are opened on Windows only (by WinHelp, as VB6); on Linux the
+  programs show `.chm` files. CommonDialog.ShowHelp opens a `.chm` file (VB6 calls WinHelp, which cannot).
+  On Linux the **?** of the title bar (WhatsThisButton) is there only if the window manager draws it;
+  Shift+F1 and WhatsThisMode do the same.
 * **Decimal:** there is no Decimal Variant: `CDec` and the `adNumeric` fields of ADO give a Double.
 * **The byte functions** (`MidB`, `InStrB`…) work on whole characters (two bytes each).
 * **MSChart** starts with its default settings: VB6 keeps a chart's settings in a binary block of
@@ -699,7 +709,8 @@ compiler/lbvc/     the compiler: lexer, parser, code generator, driver; project/
                    formats), typelib.py (COM type libraries)
 runtime/           the runtime (C): libvbrt (language, VBA, files, Declare and the Windows API,
                    Scripting, MCI, MSComm, the debugger's end), forms/ (libvbforms, C++ and Qt: forms,
-                   controls, .ocx controls, user controls, Data Report, the GUI Windows API),
+                   controls, .ocx controls, user controls, Data Report, the GUI Windows API, the
+                   help of the programs with CHMLib in forms/chm),
                    db/ (libvbdb: DAO, ADO, ODBC, data binding, SQLite, libmdb)
 ide/lbstudio/      the IDE (Python, PyQt6 + QScintilla; the editor of Linpad++)
 data/vb6/          the VB6 object model recovered by REA (type libraries, IDE menus, error messages)
