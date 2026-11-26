@@ -1104,6 +1104,12 @@ static vbs app_get(const char *key)
     return vb_stmp(0);
 }
 vbs vb_app_helpfile(void) { return vb_app_str(2, app_get("helpfile")); }
+vbs vb_app_title(void)                          /* App.Title now: the title of VB6's own boxes (Run-time error) */
+{
+    vbs d = app_get("title");
+    if (!d.len) d = vb_app_exename();
+    return vb_app_str(1, d);
+}
 static vbvar app_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
     char n[40]; int i = 0;

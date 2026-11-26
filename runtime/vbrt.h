@@ -577,6 +577,7 @@ vbobj vb_global_obj(void);                    /* VB.Global as an object */
 vbobj vb_app_obj(void);                       /* App as an object */
 void vb_app_info(const char *key, vbs v);     /* what the .vbp says of the program (vb_app_obj) */
 vbs vb_app_str(int which, vbs dflt);                /* App.Title (1), App.HelpFile (2): as set at run time, or dflt */
+vbs vb_app_title(void);                                /* App.Title now */
 vbs vb_app_helpfile(void);                              /* App.HelpFile now (the .vbp's, or as set at run time) */
 void vb_app_set_str(int which, vbs v);
 vbs vb_command(void);

@@ -2352,7 +2352,8 @@ public:
     int esc = 0;                                /* what Esc and the close box give; 0: nothing */
     int result_code = 0;
     bool help = false;                          /* MsgBox with a help file: F1 opens it (help.inc) */
-    using QDialog::QDialog;
+    /* no ? in the title bar (Qt 5 gives dialogs one on Windows; VB6's MsgBox and InputBox: only X) */
+    explicit VBDialog(QWidget *parent = nullptr) : QDialog(parent) { setWindowFlag(Qt::WindowContextHelpButtonHint, false); }
 protected:
     void reject() override { if (esc) { result_code = esc; QDialog::reject(); } }
     void keyPressEvent(QKeyEvent *e) override
@@ -5884,7 +5885,9 @@ static void monkey_start()
 static int error_box(vb_i32 n, const char *d)
 {
     if (!app || getenv("VBRT_NO_ERRBOX") || getenv("VBRT_DEBUG")) return 0;
-    QString title = QCoreApplication::applicationName();
+    vb_i32 m = vb_mark();
+    QString title = qs(vb_app_title());        /* VB6: App.Title (h1: "H1"), not the name Qt has ("vbapp") */
+    vb_release(m);
     QMessageBox::critical(dialog_parent(), title, QString("Run-time error '%1':\n\n%2").arg(n).arg(QString::fromUtf8(d)));
     return 0;
 }
@@ -5894,8 +5897,10 @@ static QString first_upper(QString s) { if (!s.isEmpty()) s[0] = s[0].toUpper();
 static int compile_box(const char *m)
 {
     if (!app || getenv("VBRT_NO_ERRBOX") || getenv("VBRT_DEBUG")) return 0;
-    QMessageBox::critical(dialog_parent(), QCoreApplication::applicationName(),
-                          QString("Compile error:\n\n%1").arg(first_upper(QString::fromUtf8(m))));
+    vb_i32 mk = vb_mark();
+    QString title = qs(vb_app_title());
+    vb_release(mk);
+    QMessageBox::critical(dialog_parent(), title, QString("Compile error:\n\n%1").arg(first_upper(QString::fromUtf8(m))));
     return 0;
 }
 

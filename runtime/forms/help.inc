@@ -537,6 +537,12 @@ public:
             move(std::max(a.left(), a.right() - width() - a.width() / 16), a.top() + a.height() / 5);
         }
     }
+    void closeEvent(QCloseEvent *e) override   /* opened again: a new window of HTML Help, no history */
+    {
+        view->clearHistory();
+        cur.clear();
+        QMainWindow::closeEvent(e);
+    }
     void fill_toc(const SmNode *n, QTreeWidgetItem *parent)
     {
         for (const SmNode &k : n->kids) {
@@ -797,7 +803,9 @@ static bool help_whatsthis_event(QObject *obj, QEvent *e)
     if (e->type() == QEvent::QueryWhatsThis) return true;
     Ctl *c = ctl_of_widget(w);
     if (c && c->kind == K_USER) { Ctl *in = uctl_inner_focus(c); if (in) c = in; }
-    whatsthis_ctl(c, c ? popup_point(c) : static_cast<QHelpEvent *>(e)->globalPos());
+    QPoint at = c ? popup_point(c) : static_cast<QHelpEvent *>(e)->globalPos();
+    QWhatsThis::leaveWhatsThisMode();           /* one click (VB6); Qt leaves it only when it shows the text itself */
+    whatsthis_ctl(c, at);
     return true;
 }
 static void help_whatsthis_mode()
