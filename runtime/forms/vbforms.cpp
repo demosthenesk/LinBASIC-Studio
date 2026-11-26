@@ -5888,7 +5888,7 @@ static int error_box(vb_i32 n, const char *d)
     vb_i32 m = vb_mark();
     QString title = qs(vb_app_title());        /* VB6: App.Title (h1: "H1"), not the name Qt has ("vbapp") */
     vb_release(m);
-    QMessageBox::critical(dialog_parent(), title, QString("Run-time error '%1':\n\n%2").arg(n).arg(QString::fromUtf8(d)));
+    QMessageBox::warning(dialog_parent(), title,       /* VB6's made program: the exclamation mark (h1, H-3) */ QString("Run-time error '%1':\n\n%2").arg(n).arg(QString::fromUtf8(d)));
     return 0;
 }
 

@@ -804,8 +804,15 @@ static bool help_whatsthis_event(QObject *obj, QEvent *e)
     Ctl *c = ctl_of_widget(w);
     if (c && c->kind == K_USER) { Ctl *in = uctl_inner_focus(c); if (in) c = in; }
     QPoint at = c ? popup_point(c) : static_cast<QHelpEvent *>(e)->globalPos();
-    QWhatsThis::leaveWhatsThisMode();           /* one click (VB6); Qt leaves it only when it shows the text itself */
-    whatsthis_ctl(c, at);
+    /* after this event: Qt's What's This is in the middle of its mouse press (leaving the mode here deletes it
+     * under its feet, and a pop-up shown before the release did not stay); one click, as VB6: then the mode ends */
+    vbobj o = c ? c->self : nullptr;
+    if (o) vb_oaddref(o);                       /* (the control may be unloaded before) */
+    QTimer::singleShot(0, [o, at]() {
+        QWhatsThis::leaveWhatsThisMode();
+        whatsthis_ctl(o ? C(o) : nullptr, at);
+        if (o) vb_orelease(o);
+    });
     return true;
 }
 static void help_whatsthis_mode()
