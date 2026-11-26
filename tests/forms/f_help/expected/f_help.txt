@@ -1,0 +1,20 @@
+load helpfile [h1.chm]
+set helpfile h1.chm
+ids 100 200 0 300 0
+whatsthis False False 0
+menu 250 0
+err11 11 [] 1000011
+err1000 1000 FHelp Test error [h1.chm] 400
+err1002 [] 1000095 Application-defined or object-defined error
+err1003 [h1.chm] 1000095
+clear [] 0
+set [x.chm] 7
+clear2 [] 0
+dlg0 0 0 [] []
+dlg1 257 300 [h1.chm] [Frame]
+form id 0 150
+form wth 382 False
+form wtb 382 False
+set ids 210 610 260
+form2 True True 600 700 500
+end

@@ -4640,7 +4640,7 @@ extern "C" vbvar vbf_form_member(vbobj o, const char *name, vb_i32 kind, vb_i32 
     if (n == "printform") return vb_v_empty();  /* the printout of the form: no printer at hand here */
     { vbvar dr; if (dde_member(st, false, n, set, val, &dr)) return dr; }
     if (n == "helpcontextid") { if (set) { st->helpctx = vb_v2l(val); return vb_v_empty(); } return vb_v_l(st->helpctx); }
-    if (n == "whatsthishelp") { if (set) { st->whatsthis = vb_v2bool(val) != 0; return vb_v_empty(); } return vb_v_bool(st->whatsthis ? -1 : 0); }
+    if (n == "whatsthishelp") { if (set) { vb_raise(382); return vb_v_empty(); } return vb_v_bool(st->whatsthis ? -1 : 0); }   /* read-only at run time (f_help: 382) */
     if (n == "whatsthisbutton") { if (set) { vb_raise(382); return vb_v_empty(); } return vb_v_bool(st->whatsthisbtn ? -1 : 0); }
     if (n == "whatsthismode") { help_whatsthis_mode(); return vb_v_empty(); }
     if (n == "oledropmode") return set ? vb_v_empty() : vb_v_l(0);
