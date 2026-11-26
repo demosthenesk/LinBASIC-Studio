@@ -57,6 +57,17 @@ class DesignSubWindow(QMdiSubWindow):
             fl.update()
 
 
+VISDATA_INFO = (
+    "The Visual Data Manager is not part of LinBASIC Studio.\n\n"
+    "The databases of LinBASIC Studio are SQLite files, also when their name ends in .mdb (a Jet .mdb of Access is "
+    "read and copied into one). Any SQLite tool, for example DB Browser for SQLite, opens them: their records can "
+    "be seen and changed there, and SQL can be run.\n\n"
+    "A table made by such a tool is seen by the programs with the types of SQLite and without the rules of Jet "
+    "(Required, AllowZeroLength, the validation rules, the indexes and relations of DAO). Make the tables of a "
+    "database with DAO (CreateTableDef, CreateField, CreateIndex) or with Jet SQL (CREATE TABLE, CREATE INDEX through "
+    "Database.Execute) in a program of LinBASIC Studio.")
+
+
 def _gsetting(schema, key):
     """the value of a gsettings key ('' when there is no such schema / key / gsettings)"""
     import subprocess
@@ -567,8 +578,8 @@ class MainWindow(QMainWindow):
         self.a_res_editor = self._act(m, "Resource Editor", self.show_res_editor, icon=res_icon("bitmap"))
 
         m = mb.addMenu("&Add-Ins")             # VB6 (DEV-8/me1, picture 23)
-        self.a_visdata = self._act(m, "&Visual Data Manager...", lambda: None)   # Phase 9.3
-        self.a_visdata.setEnabled(False)
+        # (phase 9.3: not made, decision 2026-11-26 - what to use instead)
+        self.a_visdata = self._act(m, "&Visual Data Manager...", self.visual_data_manager)
         m.addSeparator()
         self._act(m, "&Add-In Manager...", self.addin_manager)
         # a loaded add-in: its command at the end of the menu, after a separator, with its picture (VB6:
@@ -2486,6 +2497,12 @@ class MainWindow(QMainWindow):
         """Add-Ins > VB 6 Data Object Wizard (phase 9.2f, dowizard.py)"""
         from .dowizard import open_wizard
         return open_wizard(self)
+
+    def visual_data_manager(self):
+        """Add-Ins > Visual Data Manager...: it is not part of LinBASIC Studio (phase 9.3, decision of 2026-11-26);
+        what to use for the databases of the programs instead"""
+        QMessageBox.information(self, "Visual Data Manager", VISDATA_INFO)
+        return VISDATA_INFO
 
     def api_viewer(self):
         """Add-Ins > API Viewer (phase 9.4, apiviewer.py)"""

@@ -1573,6 +1573,9 @@ def t_api94(d):
     w.show()
     p = w.project
     assert not w.a_apiview.isVisible() and any(n == APIVIEW and desc for n, desc in ADDINS)
+    # (Add-Ins > Visual Data Manager...: not made - phase 9.3, decision 2026-11-26 - what to use instead)
+    from lbstudio.mainwindow import VISDATA_INFO
+    assert w.a_visdata.isEnabled() and w.visual_data_manager() == VISDATA_INFO and "SQLite" in VISDATA_INFO
     am = AddInManagerDialog(w)
     am.state[APIVIEW] = [True, False, False]
     am._ok()
