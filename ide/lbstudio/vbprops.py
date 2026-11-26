@@ -333,6 +333,19 @@ ENUMS.update({
                     (3, "ssTabOrientationRight")],
     "flexresize": [(0, "flexResizeNone"), (1, "flexResizeColumns"), (2, "flexResizeRows"), (3, "flexResizeBoth")],
     "flexgrid": [(0, "flexGridNone"), (1, "flexGridFlat"), (2, "flexGridInset"), (3, "flexGridRaised")],
+    # phase 11 (the property pages, VB6 oracle DEV-11): the values of the properties the pages set
+    "flexgridunpop": [(0, "flexGridNone"), (1, "flexGridFlat"), (2, "flexGridInset"), (3, "flexGridRaised"),
+                      (4, "flexGridDashes")],
+    "flextextstyle": [(0, "flexTextFlat"), (1, "flexTextRaised"), (2, "flexTextInset"), (3, "flexTextRaisedLight"),
+                      (4, "flexTextInsetLight")],
+    "flexpicture": [(0, "flexPictureColor"), (1, "flexPictureMonochrome")],
+    "flexbanddisplay": [(0, "flexBandDisplayHorizontal"), (1, "flexBandDisplayVertical")],
+    "flexrowsizing": [(0, "flexRowSizeIndividual"), (1, "flexRowSizeAll")],
+    "sldtextpos": [(0, "sldAboveLeft"), (1, "sldBelowRight")],
+    "tabtabstyle": [(0, "tabTabStandard"), (1, "tabTabOpposite")],
+    "fsbarrows": [(0, "cc2Both"), (1, "cc2LeftUp"), (2, "cc2RightDown")],
+    "fsborient": [(0, "cc2OrientationVertical"), (1, "cc2OrientationHorizontal")],
+    "cdlorient": [(1, "cdlPortrait"), (2, "cdlLandscape")],
     "flexfocus": [(0, "flexFocusNone"), (1, "flexFocusLight"), (2, "flexFocusHeavy")],
     "flexhighlight": [(0, "flexHighlightNever"), (1, "flexHighlightAlways"), (2, "flexHighlightWithFocus")],
     "flexfill": [(0, "flexFillSingle"), (1, "flexFillRepeat")],
@@ -397,7 +410,11 @@ CLASSES.update({
                                  _s("DefaultExt"), _s("DialogTitle"), _s("FileName"), _s("Filter"),
                                  _i("FilterIndex", 0), _i("Flags", 0), _s("FontName"), _n("FontSize", 8),
                                  _i("FromPage", 0), _i("ToPage", 0), _s("HelpFile"), _s("InitDir"), _i("Max", 0),
-                                 _i("Min", 0), P("MaxFileSize", "int", 260)],
+                                 _i("Min", 0), P("MaxFileSize", "int", 260),
+                                 _b("FontBold", False, "Misc"), _b("FontItalic", False, "Misc"),
+                                 _b("FontStrikethru", False, "Misc"), _b("FontUnderline", False, "Misc"),
+                                 _i("HelpCommand", 0), _i("HelpContext", 0), _s("HelpKey"),
+                                 _e("Orientation", "cdlorient", 1, "Misc"), _b("PrinterDefault", True, "Misc")],
     "ImageList": _OCX_ICON + [_c("BackColor", WINDOW), _i("ImageHeight", 0), _i("ImageWidth", 0),
                               _c("MaskColor", 0x00C0C0C0), _b("UseMaskColor", True, "Misc")],
     "ProgressBar": _OCX_EXT + [ENABLED, MOUSEPOINTER, OLEDROP, _e("Appearance", "ccappearance", 1),
@@ -408,7 +425,8 @@ CLASSES.update({
                           P("Min", "int", 0, category="Behavior"), _e("Orientation", "orientation", 0),
                           _b("SelectRange", False, "Misc"), _i("SelLength", 0), _i("SelStart", 0),
                           P("SmallChange", "int", 1, category="Behavior"), _i("TickFrequency", 1),
-                          _e("TickStyle", "tickstyle", 0), P("Value", "int", 0, category="Misc")],
+                          _e("TickStyle", "tickstyle", 0), P("Value", "int", 0, category="Misc"),
+                          _e("TextPosition", "sldtextpos", 0)],
     "StatusBar": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, OLEDROP, _e("Align", "align", 2, "Position"),
                              _b("ShowTips", False, "Misc"), _s("SimpleText"), _e("Style", "sbrstyle", 0)],
     "Toolbar": _OCX_EXT + [ENABLED, MOUSEPOINTER, OLEDROP, _e("Align", "align", 1, "Position"),
@@ -416,12 +434,13 @@ CLASSES.update({
                            _e("BorderStyle", "ccborder", 0), _n("ButtonHeight", 0), _n("ButtonWidth", 0),
                            _IL("DisabledImageList"), _IL("HotImageList"), _IL(), _b("ShowTips", True, "Misc"),
                            _e("Style", "tbrstyle", 0), _e("TextAlignment", "tbrtext", 0),
-                           _b("Wrappable", True, "Behavior")],
+                           _b("Wrappable", True, "Behavior"), _s("HelpFile")],
     "TabStrip": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, OLEDROP, _b("HotTracking", False, "Behavior"), _IL(),
                             _b("MultiRow", False, "Behavior"), _e("Placement", "placement", 0),
                             _b("Separators", False, "Appearance"), _b("ShowTips", True, "Misc"),
                             _e("Style", "tabstyle", 0), _n("TabFixedHeight", 0), _n("TabFixedWidth", 0),
-                            _e("TabWidthStyle", "tabwidth", 0)],
+                            _e("TabWidthStyle", "tabwidth", 0), _n("TabMinWidth", 566.9291),
+                            _b("MultiSelect", False, "Behavior"), _e("TabStyle", "tabtabstyle", 0)],
     "TreeView": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, OLEDRAG, OLEDROP, _e("Appearance", "ccappearance", 1),
                             _e("BorderStyle", "ccborder", 0), _b("Checkboxes", False, "Behavior"),
                             _b("FullRowSelect", False, "Behavior"), _b("HideSelection", True, "Behavior"),
@@ -462,7 +481,8 @@ CLASSES.update({
     "FlatScrollBar": _OCX_EXT + [ENABLED, MOUSEPOINTER, _e("Appearance", "fsbappearance", 1),
                                  P("LargeChange", "int", 1, category="Behavior"), P("Max", "int", 100, category="Behavior"),
                                  P("Min", "int", 0, category="Behavior"), P("SmallChange", "int", 1, category="Behavior"),
-                                 P("Value", "int", 0, category="Misc")],
+                                 P("Value", "int", 0, category="Misc"), _e("Arrows", "fsbarrows", 0, "Behavior"),
+                                 _e("Orientation", "fsborient", 1)],
     "SSTab": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, OLEDROP, _c("BackColor", BTNFACE), _c("ForeColor", BTNTEXT),
                          _b("ShowFocusRect", True, "Appearance"), _e("Style", "ssstyle", 0), P("Tab", "int", 0),
                          _n("TabHeight", 520), _n("TabMaxWidth", 0), _e("TabOrientation", "sstaborient", 0),
@@ -479,7 +499,9 @@ CLASSES.update({
                               _e("GridLinesFixed", "flexgrid", 2), _e("HighLight", "flexhighlight", 1),
                               _e("MergeCells", "flexmerge", 0), P("Rows", "int", 2, category="Misc"),
                               _e("ScrollBars", "scrollbars", 3, "Behavior"),
-                              _e("SelectionMode", "flexsel", 0, "Behavior"), _b("WordWrap", False, "Behavior")],
+                              _e("SelectionMode", "flexsel", 0, "Behavior"), _b("WordWrap", False, "Behavior"),
+                              _e("TextStyle", "flextextstyle", 0), _e("TextStyleFixed", "flextextstyle", 0),
+                              P("RowHeightMin", "int", 0, category="Misc"), _e("PictureType", "flexpicture", 0)],
     "Adodc": _OCX_EXT + [ENABLED, FONT, _e("Align", "align", 0, "Position"), _e("Appearance", "ccappearance", 1),
                          _c("BackColor", WINDOW), _e("BOFAction", "adobof", 0, "Behavior"), _n("CacheSize", 50),
                          _s("Caption", "", "Appearance"), _e("CommandType", "adocmd", 8, "Misc"),
@@ -502,7 +524,7 @@ CLASSES.update({
                          _s("UserName", "", "Misc")],
     # MSDataRepeaterLib (MSDatRep.Ocx, phase 7.5): RepeatedControlName and RepeaterBindings are blocks of the .frm
     # (drep_name, drep_bindings)
-    "DataRepeater": _OCX_EXT + [ENABLED, FONT, _e("Appearance", "drpappearance", 1), _c("BackColor", BTNFACE),
+    "DataRepeater": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, _e("Appearance", "drpappearance", 1), _c("BackColor", BTNFACE),
                                 _e("BorderStyle", "drpborder", 1), _s("Caption", "", "Appearance"),
                                 _e("CaptionStyle", "drpcaption", 1), _c("ForeColor", BTNTEXT),
                                 _b("IntegralHeight", True, "Appearance"), _b("RowIndicator", True, "Appearance"),
@@ -518,8 +540,10 @@ CLASSES.update({
                             P("DataSource", "string", "", category="Data", note="datasource"),
                             _c("ForeColor", WINDOWTEXT), _n("HeadLines", 1), _b("RecordSelectors", True, "Appearance"),
                             _n("RowHeight", 15), _b("WrapCellPointer", False, "Behavior"),
-                            P("(Columns)", "dgcolumns", None, category="Misc")],
-    "DataList": _OCX_EXT + [ENABLED, FONT, _e("Appearance", "ccappearance", 1), _c("BackColor", WINDOW),
+                            P("(Columns)", "dgcolumns", None, category="Misc"), _n("DefColWidth", 0),
+                            _e("RowDividerStyle", "dbgdivider", 2), _b("TabAcrossSplits", False, "Behavior"),
+                            _e("TabAction", "dbgtab", 0, "Behavior")],
+    "DataList": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, OLEDRAG, OLEDROP, _e("Appearance", "ccappearance", 1), _c("BackColor", WINDOW),
                             P("BoundColumn", "string", "", category="Data"),
                             P("DataField", "string", "", category="Data", note="datafield"),
                             P("DataFormat", "dataformat", None, category="Data"),
@@ -529,7 +553,7 @@ CLASSES.update({
                             P("ListField", "string", "", category="List"), _b("Locked", False, "Misc"),
                             _e("MatchEntry", "matchentry", 0, "Behavior"), P("RowMember", "string", "", category="Data"),
                             P("RowSource", "string", "", category="Data", note="datasource")],
-    "DataCombo": _OCX_EXT + [ENABLED, FONT, _e("Appearance", "ccappearance", 1), _c("BackColor", WINDOW),
+    "DataCombo": _OCX_EXT + [ENABLED, FONT, MOUSEPOINTER, OLEDRAG, OLEDROP, _e("Appearance", "ccappearance", 1), _c("BackColor", WINDOW),
                              P("BoundColumn", "string", "", category="Data"),
                              P("DataField", "string", "", category="Data", note="datafield"),
                              P("DataFormat", "dataformat", None, category="Data"),
@@ -625,7 +649,9 @@ CLASSES.update({
                            _pic("Picture", "Appearance"), _b("VariantHeight", True, "Appearance"),
                            P("(Bands)", "cbbands", None, category="Misc")],
 })
-CLASSES["MSHFlexGrid"] = CLASSES["MSFlexGrid"]      # the hierarchical flex grid (Data Form Wizard, 9.2b)
+CLASSES["MSHFlexGrid"] = CLASSES["MSFlexGrid"] + [   # the hierarchical flex grid (Data Form Wizard, 9.2b)
+    _e("BandDisplay", "flexbanddisplay", 0), _e("RowSizingMode", "flexrowsizing", 0, "Behavior"),
+    _e("GridLinesUnpopulated", "flexgridunpop", 0)]
 ENUMS["cc3orient"] = [(0, "cc3OrientationHorizontal"), (1, "cc3OrientationVertical")]
 
 # the frame of a form window at design time in pixels (left, top, right, bottom), as Windows 7
@@ -881,7 +907,7 @@ def grid_columns(ctl):
     for i in range(int(_num(n))):
         b, lay = ctl.block(f"Column{i:02d}"), _sub(split, f"Column{i:02d}")
         c = {"Caption": "", "DataField": "", "Width": None, "Alignment": 0, "Locked": False, "Visible": True,
-             "DataFormat": None}
+             "DataFormat": None, "AllowSizing": True, "WrapText": False, "Button": False, "DividerStyle": 2}
         if b is not None:
             c["Caption"], c["DataField"] = str(b.get("Caption", "") or ""), str(b.get("DataField", "") or "")
             df = _sub(b, "DataFormat")
@@ -893,6 +919,10 @@ def grid_columns(ctl):
             c["Locked"] = bool(_num(lay.get("Locked", 0)))
             vis = lay.get("Object.Visible", lay.get("Visible"))
             c["Visible"] = True if vis is None else bool(_num(vis))
+            for k, d in (("AllowSizing", True), ("WrapText", False), ("Button", False)):
+                v = lay.get(k)
+                c[k] = d if v is None else bool(_num(v))
+            c["DividerStyle"] = int(_num(lay.get("DividerStyle", 2)))
         out.append(c)
     return out
 
@@ -910,6 +940,11 @@ def set_grid_columns(ctl, cols):
         if isinstance(it, PropertyBlock) and (re.fullmatch(r"column\d+", it.name.lower()) or it.name.lower() == "split0"):
             remove(ctl, it.name, block=True)
     if not cols:
+        if keep:                                 # (the properties of the split stay)
+            _append(ctl, Property("SplitCount", 1))
+            sp = PropertyBlock("Split0")
+            sp.items = keep
+            _append(ctl, sp)
         return
     _append(ctl, Property("ColumnCount", len(cols)))
     for i, c in enumerate(cols):
@@ -922,18 +957,70 @@ def set_grid_columns(ctl, cols):
     sp = PropertyBlock("Split0")
     sp.items = keep
     for i, c in enumerate(cols):
-        cb = PropertyBlock(f"Column{i:02d}")
+        cb = PropertyBlock(f"Column{i:02d}")   # the order of the corpus of PSC (tools/blockorder.py)
         if int(c.get("Alignment", 0) or 0):
             cb.items.append(Property("Alignment", int(c["Alignment"])))
+        if int(c.get("DividerStyle", 2)) != 2:
+            cb.items.append(Property("DividerStyle", int(c["DividerStyle"])))
+        if not c.get("AllowSizing", True):
+            cb.items.append(Property("AllowSizing", False))
+        if c.get("Button"):
+            cb.items.append(Property("Button", True))
+        if c.get("Locked"):
+            cb.items.append(Property("Locked", True))
+        if c.get("WrapText"):
+            cb.items.append(Property("WrapText", True))
+        if not c.get("Visible", True):
+            cb.items.append(Property("Object.Visible", False))
         if c.get("Width") is not None:
             w = float(c["Width"])
             cb.items.append(Property("ColumnWidth", int(w) if w == int(w) else w))
-        if c.get("Locked"):
-            cb.items.append(Property("Locked", True))
-        if not c.get("Visible", True):
-            cb.items.append(Property("Object.Visible", False))
         sp.items.append(cb)
     _append(ctl, sp)
+
+
+# the properties of Split0 of a DataGrid (its Splits page; AllowRowSizing and RecordSelectors of the Properties window
+# too: the corpus of PSC has them in Split0, never on the grid), in the order of the corpus, with their defaults
+SPLIT_PROPS = [("Locked", False), ("MarqueeStyle", 6), ("ScrollBars", 4), ("ScrollGroup", 1), ("AllowFocus", True),
+               ("AllowRowSizing", True), ("AllowSizing", False), ("RecordSelectors", True), ("Size", 1),
+               ("SizeMode", 0)]
+SPLIT_TOP = {("DataGrid", "AllowRowSizing"), ("DataGrid", "RecordSelectors")}
+
+
+def grid_split(ctl):
+    """the properties of Split0 of a DataGrid: {name: value} (the defaults for those it does not have)"""
+    sp = ctl.block("Split0")
+    out = {}
+    for k, d in SPLIT_PROPS:
+        v = sp.get(k) if sp is not None else None
+        if v is None and k in ("AllowRowSizing", "RecordSelectors"):
+            v = ctl.get(k)                       # (a form of an IDE before: on the grid)
+        out[k] = d if v is None else (bool(_num(v)) if isinstance(d, bool) else
+                                      (int(_num(v)) if isinstance(d, int) else _num(v)))
+    return out
+
+
+def set_grid_split(ctl, values):
+    """write the properties of Split0 (before its columns), as the corpus has them: only those that are not their
+    defaults; SplitCount 1 and Split0 when the grid has none"""
+    sp = ctl.block("Split0")
+    if sp is None:
+        _append(ctl, Property("SplitCount", 1))
+        sp = PropertyBlock("Split0")
+        _append(ctl, sp)
+    cur = grid_split(ctl)
+    cur.update(values)
+    for k in ("AllowRowSizing", "RecordSelectors"):
+        remove(ctl, k)                           # (not on the grid)
+    names = {k.lower() for k, _ in SPLIT_PROPS}
+    cols = [x for x in sp.items if not (isinstance(x, Property) and x.name.lower() in names)]
+    own = []
+    for k, d in SPLIT_PROPS:
+        v = cur[k]
+        if v == d:
+            continue
+        own.append(Property(k, bool(v) if isinstance(d, bool) else (int(v) if float(v) == int(v) else float(v))))
+    sp.items = own + cols
 
 
 # ---------------------------------------------------------------- the bands of a CoolBar (ComCtl3)
@@ -1163,6 +1250,8 @@ def drep_bindings(ctl):
         for x in b.items:
             if isinstance(x, Property) and x.name in d:
                 d[x.name] = str(x.value or "")
+            elif isinstance(x, PropertyBlock) and x.name.lower() == "dataformat":
+                d["DataFormat"] = _dfmt_dict(x)  # (the Format page of the DataRepeater)
         out.append(d)
     return out
 
@@ -1171,7 +1260,10 @@ def set_drep(ctl, name=None, binds=None):
     """write RepeatedControlName and the RepeaterBindings again (None: as they are), after the other properties"""
     import re
     name = drep_name(ctl) if name is None else str(name or "")
-    binds = drep_bindings(ctl) if binds is None else list(binds)
+    old = {str(d.get("PropertyName", "")).lower(): d.get("DataFormat") for d in drep_bindings(ctl)}
+    binds = drep_bindings(ctl) if binds is None else \
+        [d if "DataFormat" in d else dict(d, DataFormat=old.get(str(d.get("PropertyName", "")).lower()))
+         for d in binds]                         # (a binding keeps its DataFormat: the Format page sets it)
     for it in list(ctl.items):
         n = it.name.lower()
         if (isinstance(it, PropertyBlock) and (n == "repeatedcontrolname" or re.fullmatch(r"repeaterbinding\(\d+\)", n))) \
@@ -1192,13 +1284,26 @@ def set_drep(ctl, name=None, binds=None):
                        Property("DataField", str(d.get("DataField", "") or ""))]
             if str(d.get("Key", "") or ""):
                 b.items.append(Property("Key", str(d["Key"])))
+            if d.get("DataFormat"):              # its DataFormat (the Format page), after its properties
+                df = PropertyBlock("DataFormat", DFMT_GUID)
+                df.items = _dfmt_items(d["DataFormat"])
+                b.items.append(df)
             _append(ctl, b)
+
+
+# properties the .frm keeps with a base added to the value (VB6: FlatScrollBar Orientation = 1179648 is vertical)
+OFFSET_PROPS = {("FlatScrollBar", "Arrows"): 0x10000, ("FlatScrollBar", "Orientation"): 0x120000}
 
 
 def _special_get(ctl, p):
     """(True, value) for a property of the blob or of the Bindings, (False, None) otherwise"""
     from lbvc.project.oleblob import get_prop, bindings
     t = getattr(ctl, "type_name", "")
+    if (t, p.name) in OFFSET_PROPS:
+        v = ctl.get(p.name)
+        return True, p.default if v is None else (int(_num(v)) & 0xFFFF)
+    if (t, p.name) in SPLIT_TOP:
+        return True, grid_split(ctl)[p.name]
     if p.kind == "ppages":                       # the pages of a user control: a record of its .ctx (ppwizgen)
         from .ppwizgen import read_pages
         return True, read_pages(_frx_bytes(ctl, "PropertyPages"))
@@ -1238,6 +1343,17 @@ def _special_get(ctl, p):
 def _special_set(ctl, p, value):
     from lbvc.project.oleblob import set_prop, bindings_set
     t = getattr(ctl, "type_name", "")
+    if (t, p.name) in OFFSET_PROPS:
+        if int(value) == p.default:
+            remove(ctl, p.name)
+        else:
+            put(ctl, p.name, int(value) + OFFSET_PROPS[(t, p.name)])
+        return True
+    if (t, p.name) in SPLIT_TOP:
+        set_grid_split(ctl, {p.name: bool(value)})
+        return True
+    if t == "MSHFlexGrid" and p.name == "Cols" and ctl.get("_Band(0).Cols") is not None:
+        put(ctl, "_Band(0).Cols", int(value))   # (VB6: the columns of band 0 follow; then Cols as always)
     if p.kind == "ppages":
         from .ppwizgen import pages_blob
         if value:

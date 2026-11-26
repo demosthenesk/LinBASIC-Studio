@@ -115,7 +115,9 @@ class Property:
         com = ""
         if not isinstance(self.value, bool) and self.comment is not None and self.value == self._orig:
             com = "  '" + self.comment
-        return f"{INDENT * depth}{self.name:<{NAME_WIDTH}}=   {rv}{com}"
+        n = self.name                   # VB6: "Object." before a name padded as it is (Object.Width           =)
+        head = f"Object.{n[7:]:<{NAME_WIDTH}}" if n.startswith("Object.") else f"{n:<{NAME_WIDTH}}"
+        return f"{INDENT * depth}{head}=   {rv}{com}"
 
     def __repr__(self):
         return f"{self.name}={self.value!r}"

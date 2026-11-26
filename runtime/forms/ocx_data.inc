@@ -167,7 +167,7 @@ struct OcxDataGrid : Ocx {
         allowdelete = propn(p, "AllowDelete", 0) != 0;
         allowupdate = propn(p, "AllowUpdate", -1) != 0;
         headlines = (int)propn(p, "HeadLines", 1);
-        recsel = propn(p, "RecordSelectors", -1) != 0;
+        recsel = propn(p, "Split0.RecordSelectors", propn(p, "RecordSelectors", -1)) != 0;   /* VB6: in Split0 */
     }
     static void grid_listen(void *ctx, vbobj, const char *ev, int, vbvar *)
     {

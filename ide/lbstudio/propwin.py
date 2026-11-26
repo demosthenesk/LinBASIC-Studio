@@ -22,6 +22,9 @@ CONNECTS = ["Access", "dBASE III;", "dBASE IV;", "dBASE 5.0;", "Excel 3.0;", "Ex
             "Lotus WK4;", "Paradox 3.X;", "Paradox 4.X;", "Paradox 5.X;", "Text;"]
 
 
+CUSTOM = V.P("(Custom)", "custom", "", category="Misc")   # the property pages of an ActiveX control (phase 11)
+
+
 def is_data_source(c):
     """a control the DataSource of a bound control can name: the Data control, an ADO Data control"""
     t = c.type_name
@@ -267,6 +270,9 @@ class PropertiesWindow(QWidget):
                         self.rows.append(V.P(p.name, "readonly", p.raw_value))
         else:
             props = V.props_of(self.ctl.type_name)
+            from .ocxpages import pages_of
+            if pages_of(self.ctl.type_name):     # its property pages (phase 11): VB6's (Custom) row
+                props = props[:1] + [CUSTOM] + props[1:] if props and props[0].name == "(Name)" else [CUSTOM] + props
             if self.tabs.currentIndex() == 1:
                 rows = []
                 for cat in V.CATEGORIES:
@@ -303,6 +309,8 @@ class PropertiesWindow(QWidget):
                 self.grid.setCurrentCell(0, 1)
 
     def value(self, p):
+        if p is CUSTOM:
+            return ""
         if self.project is not None:
             return self.project.name
         if self.ctl is None:
@@ -385,6 +393,8 @@ class PropertiesWindow(QWidget):
             extra = "Ctrl+Enter starts a new line, Enter ends. Saved in the .frx file."
         elif p.kind == "text":
             extra = "With MultiLine = True the arrow opens the text: Ctrl+Enter starts a new line."
+        elif p is CUSTOM:
+            extra = "... opens the property pages of the control (Shift+F4)."
         return f"<b>{p.name}</b><br>{extra}"
 
     def _make_editor(self, p):
@@ -447,6 +457,20 @@ class PropertiesWindow(QWidget):
             cb.lineEdit().returnPressed.connect(lambda p=p, cb=cb: self._text_done(p, cb.lineEdit()))
             cb.lineEdit().editingFinished.connect(lambda p=p, cb=cb: self._text_done(p, cb.lineEdit()))
             return cb
+        if p is CUSTOM and self.ctl is not None:              # (Custom): the property pages of the control
+            w = QWidget()
+            h = QHBoxLayout(w)
+            h.setContentsMargins(0, 0, 0, 0)
+            h.setSpacing(0)
+            lab = QLineEdit("")
+            lab.setReadOnly(True)
+            lab.setFrame(False)
+            h.addWidget(lab, 1)
+            b = QToolButton()
+            b.setText("...")
+            b.clicked.connect(lambda _=False: self.main.property_pages())
+            h.addWidget(b)
+            return w
         if p.kind == "ppages" and self.ctl is not None:       # the PropertyPages of a user control (ppwizard.py)
             w = QWidget()
             h = QHBoxLayout(w)
@@ -819,6 +843,8 @@ class PropertiesWindow(QWidget):
                 self.commit(p, ks[(ks.index(v) + 1) % len(ks)])
         elif p.kind == "font":
             self._font_dialog(p)
+        elif p is CUSTOM:
+            self.main.property_pages()
 
     def commit(self, p, value):
         if self.project is not None:

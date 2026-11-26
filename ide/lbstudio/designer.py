@@ -337,6 +337,27 @@ class OcxLook(QWidget):
 
         if k in ("TreeView", "ListView", "RichTextBox", "Animation"):
             sunken(r)
+            if k == "ListView" and geti(c, "View", 0) == 3 and not geti(c, "HideColumnHeaders", 0):
+                from .ocxlists import items_of      # lvwReport: its column headers (ocxlists)
+                x, hh = 2, fm.height() + 6
+                for col in items_of(c, "ColumnHeader"):
+                    cw = max(1, int(round(float(col.get("Width", 1440)) / TPP)))
+                    hr = QRect(x, 2, cw, hh)
+                    p.fillRect(hr, face)
+                    p.setPen(white); p.drawLine(hr.topLeft(), hr.topRight()); p.drawLine(hr.topLeft(), hr.bottomLeft())
+                    p.setPen(dark); p.drawLine(hr.topRight(), hr.bottomRight()); p.drawLine(hr.bottomLeft(), hr.bottomRight())
+                    p.setPen(QColor("#000000"))
+                    al = {1: Qt.AlignmentFlag.AlignRight, 2: Qt.AlignmentFlag.AlignHCenter}.get(
+                        int(col.get("Alignment", 0)), Qt.AlignmentFlag.AlignLeft)
+                    p.drawText(hr.adjusted(4, 0, -4, 0), al | Qt.AlignmentFlag.AlignVCenter, str(col.get("Text", "")))
+                    x += cw
+                    if x > r.width():
+                        break
+                if x < r.width() - 2:
+                    hr = QRect(x, 2, r.width() - 2 - x, hh)
+                    p.fillRect(hr, face)
+                    p.setPen(white); p.drawLine(hr.topLeft(), hr.topRight())
+                    p.setPen(dark); p.drawLine(hr.bottomLeft(), hr.bottomRight())
             if k == "RichTextBox":
                 p.setPen(QColor("#000000"))
                 p.drawText(r.adjusted(3, 2, -2, -2), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, c.name)
@@ -353,9 +374,39 @@ class OcxLook(QWidget):
                 p.drawLine(x, y + 10, x, y + 13)
             p.setBrush(face); p.setPen(dark)
             p.drawPolygon(QPolygon([QPoint(6, y - 7), QPoint(14, y - 7), QPoint(14, y + 4), QPoint(10, y + 8), QPoint(6, y + 4)]))
-        elif k == "StatusBar":
+        elif k == "StatusBar":                  # its panels (ocxlists): Width, AutoSize (a spring), Bevel, the text
+            from .ocxlists import items_of
             p.fillRect(r, face)
-            sunken(QRect(2, 2, r.width() - 18, r.height() - 3), face)
+            if geti(c, "Style", 0) == 1:        # sbrSimple: the SimpleText
+                sunken(QRect(2, 2, r.width() - 18, r.height() - 3), face)
+                p.setPen(QColor("#000000"))
+                p.drawText(QRect(5, 2, r.width() - 24, r.height() - 3), Qt.AlignmentFlag.AlignVCenter,
+                           str(c.get("SimpleText", "") or ""))
+                panels = []
+            else:
+                panels = items_of(c, "Panel")
+            ws = [max(1, int(round(float(pn.get("Width", 1440)) / TPP))) for pn in panels]
+            free = r.width() - 18 - sum(ws) - 2 * len(ws)
+            springs = [i for i, pn in enumerate(panels) if int(pn.get("AutoSize", 0)) == 1]
+            for i in springs:
+                ws[i] += max(0, free) // len(springs)
+            x = 2
+            for pn, pw in zip(panels, ws):
+                if not pn.get("Visible", True):
+                    continue
+                pr = QRect(x, 2, pw, r.height() - 3)
+                bev = int(pn.get("Bevel", 1))
+                if bev == 1:
+                    sunken(pr, face)
+                elif bev == 2:
+                    p.setPen(white); p.drawLine(pr.topLeft(), pr.topRight()); p.drawLine(pr.topLeft(), pr.bottomLeft())
+                    p.setPen(dark); p.drawLine(pr.bottomLeft(), pr.bottomRight()); p.drawLine(pr.topRight(), pr.bottomRight())
+                p.setPen(QColor("#000000") if pn.get("Enabled", True) else dark)
+                al = {1: Qt.AlignmentFlag.AlignHCenter, 2: Qt.AlignmentFlag.AlignRight}.get(int(pn.get("Alignment", 0)),
+                                                                                          Qt.AlignmentFlag.AlignLeft)
+                p.drawText(pr.adjusted(3, 0, -3, 0), al | Qt.AlignmentFlag.AlignVCenter,
+                           str(pn.get("TextSave") or pn.get("Text") or ""))
+                x += pw + 2
             p.setPen(dark)
             for i in range(3):
                 p.drawLine(r.right() - 2 - 4 * i, r.bottom(), r.right(), r.bottom() - 2 - 4 * i)
@@ -429,13 +480,23 @@ class OcxLook(QWidget):
             th = int(geti(c, "TabHeight", 520)) // TPP if k == "SSTab" else fm.height() + 8
             n = int(geti(c, "Tabs", 3)) if k == "SSTab" else 1
             per = max(1, int(geti(c, "TabsPerRow", 3))) if k == "SSTab" else 1
+            caps = None
+            if k == "TabStrip":                 # its tabs (ocxlists): the captions of the Tabs block
+                from .ocxlists import items_of
+                caps = [str(t.get("Caption", "")) for t in items_of(c, "Tab")] if c.block("Tabs") is not None \
+                    else ["Tab 1"]
+                n = per = len(caps)
             tw = max(30, r.width() // per) if k == "SSTab" else fm.horizontalAdvance("Tab 1") + 16
             p.setPen(dark); p.drawRect(QRect(0, th, r.width(), r.height() - th))
+            x = 0
             for i in range(min(n, per)):
-                tr = QRect(i * tw, 2 if i else 0, tw - 1, th - (2 if i else 0))
+                if caps is not None:
+                    tw = max(fm.horizontalAdvance(strip_amp(caps[i])) + 16, 24)
+                tr = QRect(x, 2 if i else 0, tw - 1, th - (2 if i else 0))
+                x += tw
                 p.fillRect(tr, face); p.setPen(white); p.drawLine(tr.topLeft(), tr.topRight()); p.drawLine(tr.topLeft(), tr.bottomLeft())
                 p.setPen(dark); p.drawLine(tr.topRight(), tr.bottomRight())
-                cap = str(c.get(f"TabCaption({i})", f"Tab {i}")) if k == "SSTab" else "Tab 1"
+                cap = str(c.get(f"TabCaption({i})", f"Tab {i}")) if k == "SSTab" else strip_amp(caps[i])
                 p.setPen(QColor("#000000")); p.drawText(tr, Qt.AlignmentFlag.AlignCenter, cap)
         elif k in ("ImageCombo", "DTPicker"):
             sunken(r)
@@ -460,7 +521,10 @@ class OcxLook(QWidget):
         elif k == "FlatScrollBar":
             p.fillRect(r, QColor("#E8E8E8"))
             s = min(r.width(), r.height())
-            p.fillRect(QRect(0, 0, s, s), face); p.fillRect(QRect(r.width() - s, 0, s, s), face)
+            if (int(geti(c, "Orientation", 0x120001)) & 0xFFFF) == 0:   # vertical (the .frm: 0x120000 + value)
+                p.fillRect(QRect(0, 0, s, s), face); p.fillRect(QRect(0, r.height() - s, s, s), face)
+            else:
+                p.fillRect(QRect(0, 0, s, s), face); p.fillRect(QRect(r.width() - s, 0, s, s), face)
             p.setPen(dark); p.drawRect(r)
         elif k == "MonthView":
             sunken(r)
@@ -1975,7 +2039,12 @@ class FormDesigner(QScrollArea):
             set_prop(c, "_Version", oc.version)
         for k, v in oc.extra:
             v = {"$NAME": name, "$W": w, "$H": h}.get(v, v) if isinstance(v, str) else v
+            if k == "Align":                    # an extender property: first, as VB6 writes it (Align = 2 'Align Bottom)
+                V.put(c, k, v, comment=dict(V.ENUMS["align"]).get(v))
+                continue
             append_prop(c, k, v)                # Caption = "Adodc1", Text = "DataCombo1", _CBWidth = 4800
+        if oc.cls == "DataGrid":                # VB6: a new grid has two blank columns (ColumnCount, Split0)
+            V.set_grid_columns(c, [{"Caption": "", "DataField": ""}, {"Caption": "", "DataField": ""}])
         sf = self.module.sf
         if sf is not None and not any(ocxlib.lib_of_object_line(o) is lib for o in sf.objects):
             sf.objects.append(lib.frm_line)

@@ -30,6 +30,7 @@ they did on Windows: the same events in the same order, the same numbers and dat
   Windows 7 or later (see [Windows](#windows)).
 * **The IDE:**
   * the form designer, Toolbox, Properties window, Project Explorer and Menu Editor
+  * the property pages of the ActiveX controls (CommonDialog, ListView, Toolbar, MSChart, the grids ...)
   * the code window with IntelliSense, the debugger, and refactoring
   * Make for Linux, Windows 32-bit and Windows 64-bit
   * the wizards and add-ins of VB6: Application, Data Form, Data Object, ActiveX Control Interface and
@@ -273,6 +274,13 @@ VB6 writes, so the projects go on working in VB6.
   * the Form Layout window (StartUpPosition) and the Color Palette
   * the position and size of the selected control in the Standard toolbar
   * double-clicking a control opens the code of its default event
+  * the property pages of the `.ocx` controls, as VB6 shows them: (Custom) in the Properties
+    window, Properties in the menu of the control, or Shift+F4. The General pages, Color, Font and
+    Picture, the lists (the Tabs of a TabStrip, the Panels of a StatusBar, the Buttons and
+    ButtonMenus of a Toolbar, the Column Headers of a ListView, the Images of an ImageList, the
+    Bands of a CoolBar), the Columns, Layout, Splits and Format pages of the DataGrid and the
+    DBGrid, and the eight pages of the MSChart; what they set is written to the `.frm` and the
+    `.frx` as VB6 writes it
 * **The Properties window (F4):**
   * every property of the forms and controls, Alphabetic and Categorized, with the value lists of
     VB6, the Palette / System colors and the Font dialog

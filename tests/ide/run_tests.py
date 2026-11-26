@@ -50,6 +50,9 @@ checked in the files the IDE writes and in the program it runs.
     t_drep     a DataRepeater (phase 7.5): its properties, RepeatedControlName and RepeaterBindings set in the Properties
                window; the .frm as the VB6 IDE wrote the same control (VB6 oracle f_drep3), the .vbp
 
+    t_ppages11 the property pages of the ActiveX controls (phase 11): (Custom), Shift+F4, the tabs and the layout of VB6
+               (VB6 oracle DEV-11/ppcap), General / Color / Font set on Apply, the .frm
+
     t_api94    the API Viewer (phase 9.4): Add-Ins > API Viewer, the lists, Add, Declare Scope, Line Item, Remove,
                Copy, Insert into a module, Convert Text to Database, Load Last File, F5 with the inserted code
 
@@ -860,7 +863,7 @@ def t_dgcols(d):
     assert "ColumnCount     =   3" in grid and 'Caption         =   "Years"' in grid and \
         "BeginProperty DataFormat {6D835690-900B-11D0-9484-00A0C91110ED}" in grid and 'Format          =   "000"' in grid and \
         "SplitCount      =   1" in grid and "ColumnWidth     =   1200" in grid and "Alignment       =   2" in grid and \
-        "Object.Visible  =   0" in grid and "Bindings" in grid and "DataSource" not in grid, grid
+        "Object.Visible         =   0" in grid and "Bindings" in grid and "DataSource" not in grid, grid
     lblock = frm[frm.index("Begin MSDataListLib.DataList DataList1"):]
     lblock = lblock[:lblock.index("\n   End")]
     assert "BeginProperty DataFormat {6D835690-900B-11D0-9484-00A0C91110ED}" in lblock and 'Format          =   "0.0"' in lblock, lblock
@@ -2840,7 +2843,7 @@ def t_appwizgen92(d):
                      'ResFile32="Project1.RES"', 'Startup="Sub Main"'], lines
     m = frm(pd, "frmMain")
     for want in ('      Caption         =   "1000"', "      Begin VB.Menu mnuFileMRU ", '      Shortcut        =   ^N',
-                 '            Object.ToolTipText=   "1029"', "    LoadResStrings Me",
+                 '            Object.ToolTipText     =   "1029"', "    LoadResStrings Me",
                  '    frmB.StartingAddress = "http://www.microsoft.com"', '            Picture         =   "frmMain.frx":'):
         assert want in m, (want, m[:3000])
     assert os.path.getsize(os.path.join(pd, "frmMain.frx")) > 13 * 800
@@ -5586,7 +5589,446 @@ def t_cwbreak92(d):
     done(w)
 
 
-TESTS = {"t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+def t_ppages11(d):
+    """the property pages of an ActiveX control (phase 11, VB6 oracle DEV-11/ppcap): a ListView on a form has (Custom)
+    in the Properties window and Properties in its menu; Shift+F4 opens its pages with the tabs of VB6, laid out as
+    VB6 lays them out; General (View, LabelEdit, GridLines ...), Color (Standard Colors / Windows System Colors) and
+    Font set the control on Apply, as the Properties window sets it; the .frm; a control without pages has none"""
+    from lbstudio import ocxpages
+    from lbstudio.ocxpages import OcxPagesDialog, pages_of, plain
+    from lbstudio.propwin import CUSTOM
+    from PyQt6.QtWidgets import QComboBox, QCheckBox, QLabel
+    w = MainWindow()
+    w.show()
+    p = w.project
+    f = w.current_designer()
+    p.set_components(["MSComctlLib"])
+    lv = f.place_new("MSComctlLib.ListView", QRect(8, 8, 160, 100), None)
+    assert lv is not None and lv.type_name == "ListView", lv
+    info = pages_of("ListView")
+    assert info is not None and len(info["pages"]) == 7 and info["props"]["StdColor"] == ["BackColor", "ForeColor"]
+    assert pages_of("TextBox") is None and pages_of("SysInfo") is None
+    # ---- (Custom) and the menu of the control
+    w.props.show_object(f.module, f, lv)
+    assert [r.name for r in w.props.rows[:2]] == ["(Name)", "(Custom)"] and w.props.rows[1] is CUSTOM
+    assert any(e and e[1] == "P&roperties" for e in w.designer_menu_items(f, f.items[lv]))
+    # ---- Shift+F4: the frame and its tabs
+    dlg = w.property_pages(quiet=True)
+    assert isinstance(dlg, OcxPagesDialog) and dlg.windowTitle() == "Property Pages"
+    assert [dlg.tabs.tabText(i) for i in range(dlg.tabs.count())] == \
+        ["General", "Image Lists", "Sorting", "Column Headers", "Color", "Font", "Picture"]
+    assert (dlg.width(), dlg.height()) == (413, 352), (dlg.width(), dlg.height())     # VB6: the page 393 x 284
+    assert [b.text() for b in (dlg.b_ok, dlg.b_cancel, dlg.b_apply, dlg.b_help)] == ["OK", "Cancel", "&Apply", "Help"]
+    assert dlg.b_ok.geometry().getRect() == (89, 323, 75, 23) and not dlg.b_apply.isEnabled()
+    key = dlg.page_keys[0]
+    b = dlg.bound[key]
+    for n in ("MousePointer", "View", "Arrange", "LabelEdit", "BorderStyle", "Appearance", "OLEDragMode",
+              "OLEDropMode", "HideColumnHeaders", "HideSelection", "LabelWrap", "MultiSelect", "Enabled",
+              "AllowColumnReorder", "Checkboxes", "FlatScrollBar", "FullRowSelect", "GridLines", "HotTracking",
+              "HoverSelection"):
+        assert n in b, (n, sorted(b))
+    assert dlg.unbound[key] == [], dlg.unbound[key]
+    view = b["View"]
+    assert isinstance(view, QComboBox) and view.currentText() == "0 - lvwIcon" and view.count() == 4
+    assert view.geometry().getRect() == (90, 39, 143, 21), view.geometry().getRect()      # VB6: 100,68 in the frame
+    labs = [x for x in dlg.tabs.widget(0).findChildren(QLabel) if plain(x.text()) == "View"]
+    assert labs and labs[0].buddy() is view
+    # ---- General: View, LabelEdit, GridLines; Apply
+    view.setCurrentIndex(3)
+    view.activated.emit(3)
+    b["LabelEdit"].setCurrentIndex(1)
+    b["LabelEdit"].activated.emit(1)
+    assert isinstance(b["GridLines"], QCheckBox)
+    b["GridLines"].setChecked(True)
+    assert dlg.b_apply.isEnabled() and V.value_of(lv, V.prop_def("ListView", "View")) == 0     # not before Apply
+    assert dlg.apply() and not dlg.b_apply.isEnabled()
+    assert V.value_of(lv, V.prop_def("ListView", "View")) == 3
+    assert V.value_of(lv, V.prop_def("ListView", "LabelEdit")) == 1
+    assert V.value_of(lv, V.prop_def("ListView", "GridLines")) is True
+    # ---- Color: the colours of the control, the sets of msstkprp.dll
+    assert [dlg.color_props.item(i).text() for i in range(dlg.color_props.count())] == ["BackColor", "ForeColor"]
+    assert dlg.color_set.currentText() == "Windows System Colors"                   # BackColor: Window Background
+    assert dlg.color_list.count() == 26 and dlg.color_list.currentItem().text() == "Window Background"
+    dlg.color_set.setCurrentIndex(0)
+    assert [dlg.color_list.item(i).text() for i in range(4)] == ["<Custom...>", "Black", "White", "Red"]
+    dlg.set_color(dlg.color_list.item(3).data(Qt.ItemDataRole.UserRole))
+    # ---- Font: Bold, 12
+    assert [dlg.font_props.item(i).text() for i in range(dlg.font_props.count())] == ["Font"]
+    assert [dlg.font_size.itemText(i) for i in range(dlg.font_size.count())] == ["8", "10", "12", "14", "18", "24"]
+    dlg.font_bold.setChecked(True)
+    dlg.font_size.setCurrentText("12")
+    dlg.ok()
+    assert V.value_of(lv, V.prop_def("ListView", "BackColor")) == 0x0000FF
+    fo = V.value_of(lv, V.prop_def("ListView", "Font"), f.root)
+    assert int(fo["Weight"]) == 700 and float(fo["Size"]) == 12, fo
+    # ---- every control with pages opens them; a General page binds its boxes
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib"])
+    for cls, n in (("MSComctlLib.Toolbar", "ButtonWidth"), ("MSComCtl2.UpDown", "Increment"),
+                   ("MSComDlg.CommonDialog", "DialogTitle"), ("MSCommLib.MSComm", "Settings"),
+                   ("TabDlg.SSTab", "Tabs"), ("MSFlexGridLib.MSFlexGrid", "FixedRows")):
+        c = f.place_new(cls, QRect(8, 120, 60, 40), None)
+        assert c is not None, cls
+        dl = OcxPagesDialog(w, f, c)
+        assert any(n in bb for bb in dl.bound.values()), (cls, n, dl.bound)
+        dl.close()
+    # ---- 2b: the pages with code of their own and the properties they added (VB6 oracle DEV-11 s_defaults)
+    from PyQt6.QtWidgets import QDateTimeEdit, QLineEdit
+    from lbstudio.ocxpages import by_id
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib",
+                      "MSAdodcLib"])
+
+    def pages(cls, rect=QRect(8, 160, 80, 40)):
+        c = f.place_new(cls, rect, None)
+        assert c is not None, cls
+        return c, OcxPagesDialog(w, f, c)
+
+    def made(dl, title):
+        i = [dl.tabs.tabText(k) for k in range(dl.tabs.count())].index(title)
+        return dl.widgets[dl.page_keys[i]]
+    il, dl = pages("MSComctlLib.ImageList")                 # 16 x 16 / 32 x 32 / 48 x 48 / Custom
+    m = made(dl, "General")
+    assert by_id(m, 232).isChecked() and not by_id(m, 235).isEnabled()
+    by_id(m, 233).click()
+    assert by_id(m, 235).text() == "32" and dl.apply()
+    assert V.value_of(il, V.prop_def("ImageList", "ImageHeight")) == 32 == V.value_of(il, V.prop_def("ImageList", "ImageWidth"))
+    by_id(m, 234).click()
+    assert by_id(m, 235).isEnabled() and by_id(m, 218).isEnabled()
+    dl.close()
+    st, dl = pages("TabDlg.SSTab", QRect(200, 160, 160, 80))  # Current Tab, < >, TabCaption(i)
+    m = made(dl, "General")
+    cap = by_id(m, 113)
+    assert cap.text() == "Tab 0"
+    by_id(m, 112).click()
+    assert dl.bound[dl.page_keys[0]]["Tab"].text() == "1" and cap.text() == "Tab 1"
+    cap.setText("Second")
+    cap.textEdited.emit("Second")
+    by_id(m, 111).click()
+    assert cap.text() == "Tab 0"
+    dl.ok()
+    assert st.get("TabCaption(1)") == "Second" and V.value_of(st, V.prop_def("SSTab", "Tab")) == 0
+    fs, dl = pages("MSComCtl2.FlatScrollBar")              # Orientation: 0x120000 + the value in the .frm
+    b = dl.bound[dl.page_keys[0]]
+    assert b["Orientation"].currentText() == "1 - cc2OrientationHorizontal" and "Arrows" in b
+    b["Orientation"].setCurrentIndex(0)
+    b["Orientation"].activated.emit(0)
+    dl.ok()
+    assert fs.get("Orientation") == 0x120000 and V.value_of(fs, V.prop_def("FlatScrollBar", "Orientation")) == 0
+    cd, dl = pages("MSComDlg.CommonDialog")                 # Font: FontBold ...; Print: PrinterDefault, Orientation
+    bb = {}
+    for k in dl.page_keys:
+        bb.update(dl.bound.get(k, {}))
+    for n in ("FontBold", "FontItalic", "FontUnderline", "FontStrikethru", "PrinterDefault", "Orientation",
+              "HelpContext", "HelpCommand", "HelpKey", "Color"):
+        assert n in bb, (n, sorted(bb))
+    assert bb["PrinterDefault"].isChecked() and bb["Orientation"].currentText() == "1 - cdlPortrait"
+    bb["FontBold"].setChecked(True)
+    bb["Color"].setText("255")
+    bb["Color"].textEdited.emit("255")
+    dl.ok()
+    assert V.value_of(cd, V.prop_def("CommonDialog", "FontBold")) is True
+    assert V.value_of(cd, V.prop_def("CommonDialog", "Color")) == 255
+    ad, dl = pages("MSAdodcLib.Adodc")                      # the Source of Connection: ConnectStringType
+    m = made(dl, "General")
+    assert by_id(m, 2202).isChecked() and by_id(m, 2205).isEnabled() and not by_id(m, 2206).isEnabled()
+    by_id(m, 2204).click()
+    assert by_id(m, 2207).isEnabled() and not by_id(m, 2205).isEnabled()
+    by_id(m, 2207).setEditText("MyDSN")
+    by_id(m, 2207).lineEdit().textEdited.emit("MyDSN")
+    m2 = made(dl, "RecordSource")
+    assert by_id(m2, 2242).isEnabled() and not by_id(m2, 2243).isEnabled()     # adCmdUnknown: the text
+    by_id(m2, 2242).setPlainText("SELECT * FROM People")
+    dl.ok()
+    assert int(ad.get("ConnectStringType")) == 3 and ad.get("DataSourceName") == "MyDSN"
+    assert V.value_of(ad, V.prop_def("Adodc", "RecordSource")) == "SELECT * FROM People"
+    mv, dl = pages("MSComCtl2.MonthView", QRect(400, 160, 180, 160))   # Value: CurrentDate (a date of OLE)
+    dt = [wd for it, wd in made(dl, "General") if isinstance(wd, QDateTimeEdit)]
+    assert len(dt) == 3 and dt[1].date().year() == 1753 and dt[2].date().year() == 9999
+    from PyQt6.QtCore import QDate
+    dt[0].setDate(QDate(2000, 1, 1))
+    mx = dl.bound[dl.page_keys[0]]["MaxSelCount"]
+    assert not mx.isEnabled()
+    dl.bound[dl.page_keys[0]]["MultiSelect"].setChecked(True)
+    assert mx.isEnabled()
+    dl.ok()
+    assert int(float(mv.get("CurrentDate"))) == 36526, mv.get("CurrentDate")        # 1 January 2000
+    # ---- 2c: the pages of lists (VB6 oracle DEV-11 s_lists, s_lists2; the blocks of the corpus of PSC)
+    def edit(wd, text):
+        wd.setText(text)
+        wd.textEdited.emit(text)
+
+    def pick(wd, i):
+        wd.setCurrentIndex(i)
+        wd.activated.emit(i)
+    ts, dl = pages("MSComctlLib.TabStrip", QRect(8, 330, 200, 100))   # one tab of VB6; Insert Tab after the current
+    m = made(dl, "Tabs")
+    ed = dl.lists["(Tabs)"]
+    assert len(ed.items) == 1 and by_id(m, 209).text() == "1" and not by_id(m, 219).isEnabled()
+    edit(by_id(m, 212), "One")
+    by_id(m, 3).click()
+    assert by_id(m, 209).text() == "2" and by_id(m, 212).text() == ""
+    edit(by_id(m, 212), "Two")
+    edit(by_id(m, 214), "k2")
+    by_id(m, 3).click()
+    by_id(m, 4).click()                         # Remove Tab: the one before is shown
+    assert len(ed.items) == 2 and by_id(m, 212).text() == "Two"
+    dl.ok()
+    sb, dl = pages("MSComctlLib.StatusBar", QRect(8, 440, 300, 30))
+    m = made(dl, "Panels")
+    edit(by_id(m, 220), "2000")                 # Minimum Width: the Actual Width too
+    assert by_id(m, 218).text() == "2000"
+    pick(by_id(m, 206), 5)                      # sbrTime
+    by_id(m, 3).click()
+    edit(by_id(m, 212), "Ready")
+    dl.ok()
+    tb, dl = pages("MSComctlLib.Toolbar", QRect(8, 480, 300, 30))
+    m = made(dl, "Buttons")
+    assert not by_id(m, 212).isEnabled() and not by_id(m, 4).isEnabled()
+    by_id(m, 3).click()
+    edit(by_id(m, 212), "B1")
+    assert not by_id(m, 222).isEnabled()
+    pick(by_id(m, 206), 4)                      # a placeholder: its Width
+    assert by_id(m, 222).isEnabled()
+    pick(by_id(m, 206), 5)                      # a drop-down button and its ButtonMenus
+    by_id(m, 297).click()
+    edit(by_id(m, 299), "M1")
+    by_id(m, 297).click()
+    edit(by_id(m, 299), "M2")
+    assert by_id(m, 295).text() == "2"
+    by_id(m, 3).click()                         # a new button: no menus
+    assert by_id(m, 295).text() == "0" and not by_id(m, 299).isEnabled()
+    edit(by_id(m, 212), "B2")
+    dl.ok()
+    lv, dl = pages("MSComctlLib.ListView", QRect(320, 330, 200, 100))
+    m = made(dl, "Column Headers")
+    by_id(m, 3).click()
+    edit(by_id(m, 212), "Name")
+    pick(by_id(m, 211), 1)
+    dl.quiet = True
+    assert not dl.apply() and dl.messages[-1] == "The first column in a ListView control must be left aligned"
+    pick(by_id(m, 211), 0)
+    edit(by_id(m, 218), "2000")
+    by_id(m, 3).click()
+    edit(by_id(m, 212), "Size")
+    pick(by_id(m, 211), 1)
+    pick(dl.bound[dl.page_keys[0]]["View"], 3)  # lvwReport: the designer draws the column headers
+    dl.ok()
+    from PyQt6.QtGui import QImage, QColor
+    img = QImage(16, 16, QImage.Format.Format_RGB32)
+    img.fill(QColor(255, 0, 0))
+    bmp = os.path.join(d, "red.bmp")
+    img.save(bmp)
+    il2, dl = pages("MSComctlLib.ImageList", QRect(540, 330, 40, 40))
+    m = made(dl, "Images")
+    dl.lists["(ListImages)"].add_files([bmp, bmp])
+    assert by_id(m, 229).text() == "2" and by_id(m, 180).count() == 2
+    edit(by_id(m, 214), "two")
+    dl.ok()
+    assert V.value_of(il2, V.prop_def("ImageList", "ImageWidth")) == 16
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib",
+                      "MSAdodcLib", "ComCtl3"])
+    cb, dl = pages("ComCtl3.CoolBar", QRect(0, 0, 300, 28))   # its three bands; a page written in VB
+    m = made(dl, "Bands")
+    assert by_id(m, 16412).text() == "1" and not by_id(m, 16391).isEnabled() and not by_id(m, 16409).isEnabled()
+    edit(by_id(m, 16406), "First")
+    by_id(m, 16390).click()
+    assert by_id(m, 16412).text() == "2" and by_id(m, 16409).isEnabled() and by_id(m, 16406).text() == ""
+    by_id(m, 16411).click()                     # Insert Band: after the current one
+    edit(by_id(m, 16406), "Third")
+    assert len(dl.lists["(Bands)"].items) == 4
+    dl.ok()
+    bands = V.cool_bands(cb)
+    assert [b["Caption"] for b in bands] == ["First", "", "Third", ""], bands
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib",
+                      "MSAdodcLib", "ComCtl3", "MSDataRepeaterLib"])
+    rp, dl = pages("MSDataRepeaterLib.DataRepeater", QRect(200, 200, 200, 120))     # RepeaterBindings
+    m = made(dl, "RepeaterBindings")
+    assert not by_id(m, 1012).isEnabled() and not by_id(m, 1017).isEnabled()
+    by_id(m, 1008).setEditText("Text")
+    by_id(m, 1009).setEditText("Name")
+    assert by_id(m, 1012).isEnabled()
+    by_id(m, 1012).click()
+    by_id(m, 1008).setEditText("Caption")
+    by_id(m, 1009).setEditText("City")
+    edit(by_id(m, 1018), "k")
+    by_id(m, 1012).click()
+    assert by_id(m, 1010).rowCount() == 2 and by_id(m, 1016).text() == "Repeater&Bindings(2)"
+    by_id(m, 1010).selectRow(0)
+    by_id(m, 1013).click()
+    dl.ok()
+    assert V.drep_bindings(rp) == [{"PropertyName": "Caption", "DataField": "City", "Key": "k"}], V.drep_bindings(rp)
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib",
+                      "MSAdodcLib", "ComCtl3", "MSDataRepeaterLib", "MSDataGridLib", "MSDBGrid"])
+    dg, dl = pages("MSDataGridLib.DataGrid", QRect(8, 200, 240, 120))    # its two blank columns (VB6)
+    m = made(dl, "Columns")
+    assert [by_id(m, 3018).itemText(i) for i in range(by_id(m, 3018).count())] == ["Column 0", "Column 1"]
+    edit(by_id(m, 3019), "Name")
+    by_id(m, 3020).setEditText("FName")
+    dl.tabs.setCurrentIndex([dl.tabs.tabText(k) for k in range(dl.tabs.count())].index("Layout"))
+    m = made(dl, "Layout")
+    assert by_id(m, 3027).isChecked() and not by_id(m, 3025).isChecked()
+    by_id(m, 3025).setChecked(True)            # Locked
+    by_id(m, 3028).setChecked(True)            # WrapText
+    pick(by_id(m, 3030), 3)                    # DividerStyle dbgRaised
+    edit(by_id(m, 3032), "2000")
+    m = made(dl, "Splits")
+    by_id(m, 3038).setChecked(False)           # RecordSelectors
+    pick(by_id(m, 3041), 3)                    # MarqueeStyle dbgHighlightRow
+    m = made(dl, "Format")
+    dl.tabs.setCurrentIndex([dl.tabs.tabText(k) for k in range(dl.tabs.count())].index("Format"))
+    by_id(m, 3018).setCurrentIndex(1)
+    by_id(m, 3006).setCurrentRow(1)            # Number, 2 decimal places, 1000 separator
+    dl.dfmt_dec = [wd for wd in m[0][1].parent().findChildren(QLineEdit) if wd.geometry().x() == 225][0]
+    edit(dl.dfmt_dec, "2")
+    dl.ok()
+    cols = V.grid_columns(dg)
+    assert cols[0]["Caption"] == "Name" and cols[0]["DataField"] == "FName" and cols[0]["Locked"] and \
+        cols[0]["WrapText"] and cols[0]["DividerStyle"] == 3 and cols[0]["Width"] == 2000, cols[0]
+    assert cols[1]["DataFormat"]["Format"] == "0.00" and cols[1]["DataFormat"]["SubFormatType"] == 1, cols[1]
+    sp = V.grid_split(dg)
+    assert sp["RecordSelectors"] is False and sp["MarqueeStyle"] == 3, sp
+    assert V.value_of(dg, V.prop_def("DataGrid", "RecordSelectors")) is False
+    gb, dl = pages("MSDBGrid.DBGrid", QRect(260, 200, 240, 120))           # the OleObjectBlob
+    m = made(dl, "Columns")
+    edit(by_id(m, 5), "Title")
+    m = made(dl, "Layout")
+    by_id(m, 16).setChecked(True)               # Locked: the flag 0x2000 of the record 0x425
+    by_id(m, 22).setChecked(False)              # Visible: 0x42B
+    edit(by_id(m, 23), "1000")                  # 1000 twips: 67 pixels, 1773 HIMETRIC (s_dbgbag2)
+    m = made(dl, "Splits")
+    by_id(m, 15).setChecked(False)              # AllowRowSizing
+    dl.ok()
+    from lbvc.project.oleblob import get_columns, get_split, column_records, parse
+    blob = V.grid_blob(gb)
+    c0 = get_columns(blob)[0]
+    assert c0["Caption"] == "Title" and c0["Locked"] and not c0["Visible"] and c0["Width"] == 1773, c0
+    rec = column_records(parse(blob)[1].get("Splits")[0].get("_ColumnProps"))[0]
+    assert rec[0x425] & 0x2000 and rec[0x42B] == 0, rec
+    assert get_split(blob)["AllowRowSizing"] == 0, get_split(blob)
+    dl = OcxPagesDialog(w, f, rp)               # the DataRepeater: the Format of a binding
+    m = made(dl, "Format")
+    assert by_id(m, 3018).itemText(0) == "Caption"
+    by_id(m, 3006).setCurrentRow(3)            # Date
+    dl.ok()
+    assert V.drep_bindings(rp)[0]["DataFormat"]["SubFormatType"] == 3, V.drep_bindings(rp)
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib",
+                      "MSAdodcLib", "ComCtl3", "MSDataRepeaterLib", "MSDataGridLib", "MSDBGrid",
+                      "MSHierarchicalFlexGridLib"])
+    hf, dl = pages("MSHierarchicalFlexGridLib.MSHFlexGrid", QRect(260, 330, 160, 80))   # band 0
+    m = made(dl, "Bands")
+    assert by_id(m, 229).currentText() == "Band 0 ()" and by_id(m, 230).currentText() == "1 - Flat"
+    assert not by_id(m, 227).isEnabled() and not by_id(m, 234).isEnabled()
+    pick(by_id(m, 237), 2)                      # TextStyle: Inset
+    dl.ok()
+    # ---- 2d: MSChart - its tabs in two rows, the pages change its OleObjectBlob (chartblob.ChartEdit)
+    p.set_components(["MSComctlLib", "MSComCtl2", "MSComDlg", "MSCommLib", "MSWinsockLib", "TabDlg", "MSFlexGridLib",
+                      "MSAdodcLib", "ComCtl3", "MSDataRepeaterLib", "MSDataGridLib", "MSDBGrid",
+                      "MSHierarchicalFlexGridLib", "MSChart20Lib"])
+    ch, dl = pages("MSChart20Lib.MSChart", QRect(420, 200, 200, 150))
+    assert len(dl.row_bars) == 2 and (dl.width(), dl.height()) == (398, 271), (dl.width(), dl.height())
+    m = made(dl, "Chart")
+    by_id(m, 9321).setChecked(True)             # 3D: 3dBar
+    by_id(m, 9398).setChecked(True)             # Show legend
+    m = made(dl, "Axis")
+    by_id(m, 1300).setCurrentIndex(1)           # Y Axis: a scale of its own, 0 - 50
+    by_id(m, 9211).setChecked(False)
+    assert by_id(m, 9212).isEnabled()
+    edit(by_id(m, 9212), "50")
+    pick(by_id(m, 9310), 2)                     # 2pt
+    m = made(dl, "Text")
+    by_id(m, 9262).setPlainText("Sales")        # a new VtString in the stream (the ids after it: one up)
+    by_id(m, 1319).setCurrentIndex(3)           # Y Axis Title
+    by_id(m, 9262).setPlainText("Units")
+    m = made(dl, "Fonts")
+    by_id(m, 5129).setCurrentIndex(1)
+    by_id(m, 5129).activated.emit(1)            # Title: Bold
+    m = made(dl, "Backdrop")
+    pick(by_id(m, 1329), 1)                     # the chart: a single line
+    m = made(dl, "Series Color")
+    pick(by_id(m, 9121), 3)                     # C1: an edge of 3pt
+    dl.ok()
+    from lbvc.project import chartblob
+    got = dict(chartblob.decode(V._frx_bytes(ch, "OleObjectBlob")))
+    for k, v in (("ChartType", 0), ("ShowLegend", True), ("plot.axis(1).valuescale.auto", False),
+                 ("plot.axis(1).valuescale.maximum", 50.0), ("plot.axis(1).pen.width", 40.0), ("title.text", "Sales"),
+                 ("plot.axis(1).axistitle.text", "Units"), ("title.vtfont.style", 1),
+                 ("title.location.visible", True), ("title.vtfont.size", 8.0),
+                 ("backdrop.frame.style", 1), ("plot.seriescollection(1).datapoints(-1).edgepen.width", 60.0)):
+        assert got.get(k) == v, (k, got.get(k))
+    dl = OcxPagesDialog(w, f, il2)              # the pictures again, from the control
+    items = dl.lists["(ListImages)"].items
+    assert len(items) == 2 and items[1]["Key"] == "two" and items[0]["Picture"], items
+    dl.close()
+    if os.environ.get("LBVC_SHOT"):            # the form as the designer draws it (a look by eye)
+        for c, x, y, cw, ch in ((ts, 120, 600, 3000, 1000), (lv, 3300, 600, 3600, 1000)):
+            for n, v in (("Left", x), ("Top", y), ("Width", cw), ("Height", ch)):
+                V.put(c, n, v)
+        V.put(f.root, "ClientWidth", 7200)
+        f.build()
+        QApplication.processEvents()
+        f.grab().save(os.environ["LBVC_SHOT"])
+    # ---- the .frm
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Pages.vbp"))
+    assert w.save_project_as()
+    frm = open(os.path.join(d, "Form1.frm"), encoding="cp1252").read()
+    blk = frm[frm.index("Begin MSComctlLib.ListView ListView1"):]
+    blk = blk[:blk.index("\n   End")]
+    for line in ("View            =   3", "LabelEdit       =   1", "GridLines       =   -1  'True"):
+        assert line in blk, (line, blk)
+    assert "BeginProperty Font" in blk and "Size            =   12" in blk and "Weight          =   700" in blk, blk
+    assert ocxpages.data()["pages"]["StdColor"]["title"] == "Color"
+    for line in ('TabCaption(1)   =   "Second"', "Orientation     =   1179648", "FontBold        =   -1  'True",
+                 "ConnectStringType=   3", 'DataSourceName  =   "MyDSN"'):
+        assert line in frm, (line, frm)
+    import re
+
+    def block(name):
+        b = frm[frm.index(f"Begin {name}"):]
+        return b[:b.index("\n   End")].replace("\r", "")
+    want = {f"MSComctlLib.TabStrip {ts.name}": [
+                "BeginProperty Tabs {1EFB6598-857C-11D1-B16A-00C0F0283628} ", "NumTabs         =   2",
+                "BeginProperty Tab1 {1EFB659A-857C-11D1-B16A-00C0F0283628} ", 'Caption         =   "One"',
+                'Caption         =   "Two"', 'Key             =   "k2"', "ImageVarType    =   2"],
+            f"MSComctlLib.StatusBar {sb.name}": [
+                "NumPanels       =   2", "Style           =   5", "Object.Width           =   2000",
+                "MinWidth        =   2000", 'Text            =   "Ready"', 'TextSave        =   "Ready"'],
+            f"MSComctlLib.Toolbar {tb.name}": [
+                "NumButtons      =   2", 'Caption         =   "B1"', "Style           =   5",
+                "BeginProperty ButtonMenus {66833FEC-8583-11D1-B16A-00C0F0283628} ", "NumButtonMenus  =   2",
+                "BeginProperty ButtonMenu2 {66833FEE-8583-11D1-B16A-00C0F0283628} ", 'Text            =   "M2"'],
+            f"MSComctlLib.ListView {lv.name}": [
+                "NumItems        =   2", "BeginProperty ColumnHeader(1) {BDD1F052-858B-11D1-B16A-00C0F0283628} ",
+                'Text            =   "Name"', "Object.Width           =   2000", "SubItemIndex    =   1",
+                "Alignment       =   1"],
+            f"MSComctlLib.ImageList {il2.name}": [
+                "BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} ", "NumListImages   =   2",
+                'Picture         =   "Form1.frx":', 'Key             =   ""', 'Key             =   "two"']}
+    want[f"ComCtl3.CoolBar {cb.name}"] = ["BandCount       =   4", 'Caption1        =   "First"',
+                                          'Caption3        =   "Third"']
+    want[f"MSDataGridLib.DataGrid {dg.name}"] = [
+        "ColumnCount     =   2", 'Caption         =   "Name"', "SplitCount      =   1", "MarqueeStyle    =   3",
+        "RecordSelectors =   0   'False", "DividerStyle    =   3", "Locked          =   -1  'True",
+        "WrapText        =   -1  'True", "ColumnWidth     =   2000", 'Format          =   "0.00"']
+    want[f"MSHierarchicalFlexGridLib.MSHFlexGrid {hf.name}"] = [
+        "_NumberOfBands  =   1", "_Band(0).Cols   =   2", "_Band(0).GridLinesBand=   1", "_Band(0).TextStyleBand=   2",
+        "_Band(0).TextStyleHeader=   0"]
+    for name, lines in want.items():
+        b = block(name)
+        for line in lines:
+            assert line in b, (name, line, b)
+    b = block(f"MSComctlLib.Toolbar {tb.name}")
+    assert b.index("_Version") < b.index("BeginProperty Buttons"), b
+    assert "Object.Width" not in b.split("ButtonMenus")[0] or "Style           =   4" in b, b
+    b = block(f"MSComctlLib.StatusBar {sb.name}")
+    assert b.index("Object.Width") < b.index("MinWidth") < b.index("TextSave"), b
+    p2 = b[b.index("BeginProperty Panel2"):]
+    assert p2.index("Text  ") < p2.index("TextSave"), p2
+    assert b.split("\n")[1].strip() == "Align           =   2  'Align Bottom", b     # an extender property: first
+    t1 = re.search(r'TextSave        =   "([^"]*)"', b).group(1)
+    assert re.fullmatch(r"\d{1,2}[:.]\d\d( ?\S+)?", t1), t1                    # the time: no seconds
+    done(w)
+
+
+TESTS = {"t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

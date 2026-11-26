@@ -387,17 +387,72 @@ def _column(i, caption='', field='', default='', numfmt=''):
     return c
 
 
-def _column_props(n, him, aligns=None):
+# the Layout page of a column (VB6 oracle DEV-11 s_dbgbag, s_dbgbag2: the stream of the grid in a PropertyBag after
+# each change): DividerStyle -> (0x501, 0x4FF the colour of the line, the pixels the width gains), Locked: the flag
+# 0x2000 of 0x425 (with the Alignment), AllowSizing 0x507, Visible 0x42B, WrapText 0x4D4, Button 0x4C8
+DIVIDERS = {0: (0, None, -1), 1: (1, 0x000000, 0), 2: (1, 0x808080, 0), 3: (2, None, 1), 4: (3, None, 1), 5: (4, None, 0)}
+LAYOUT_FLAGS = (("AllowSizing", 0x507, True), ("Visible", 0x42B, True), ("WrapText", 0x4D4, False),
+                ("Button", 0x4C8, False))
+
+
+def column_records(blob):
+    """the records of each column of a _ColumnProps: {column (from 0): {id: value}}"""
+    out = {}
+    if not blob.startswith(b'BigRed') or len(blob) < 12:
+        return out
+    n = _u32(blob, 8)
+    o = 12
+    for _ in range(n):
+        if o + 8 > len(blob):
+            break
+        num, k = _u32(blob, o), _u32(blob, o + 4)
+        o += 8
+        r = out.setdefault(num - 1, {})
+        for _ in range(k):
+            if o + 16 > len(blob):
+                break
+            r[_u32(blob, o + 4)] = _i32(blob, o + 8)
+            o += 16
+    return out
+
+
+def divider_of(rec):
+    """the DividerStyle of a column from its records"""
+    kind, color = rec.get(0x501, 1), rec.get(0x4FF, 0x808080)
+    if kind == 1:
+        return 1 if (color & 0xFFFFFF) == 0 else 2
+    return {0: 0, 2: 3, 3: 4, 4: 5}.get(kind, 2)
+
+
+def _align_raw(al, lay):
+    """the record 0x425 of an Alignment: 0x10 a column whose Alignment was never set (VB6 oracle DEV-11 s_dbgal: the
+    page shows 0 - Left for it); one set on the Layout page: 0 Left, 2 Right, 1 Center, 4 General"""
+    if not lay or (int(al) == 3 and lay.get('AlignFlag', 'DividerStyle' not in lay)):
+        return ALIGN_WRITE.get(int(al), 0x10)
+    return {0: 0, 1: 2, 2: 1, 3: 4}.get(int(al), 4)
+
+
+def him_of_twips(tw):
+    """a width typed in twips as the grid keeps it: whole pixels, in HIMETRIC (s_dbgbag2: 1000 -> 1773)"""
+    return int(round(round(float(tw) / 15) * 2540 / 96))
+
+
+def _column_props(n, him, aligns=None, layout=None):
     """the _ColumnProps of a Split: n columns of the width him (a list: one for each), the other values as VB6
     writes them for a new grid: 0x501 1, 0x4FF the divider color, 0x4EE 1, 0x507 1, 0x425 16, 0x42B 1, 0x4D4 0,
-    0x4C8 0, 0x484 0"""
+    0x4C8 0, 0x484 0; layout: a dict for each column (Locked, AllowSizing, Visible, WrapText, Button,
+    DividerStyle) or None"""
     widths = him if isinstance(him, (list, tuple)) else [him] * n
     out = bytearray(b'BigRed\x01\x01' + struct.pack('<I', n))
     for i in range(n):
         al = aligns[i] if aligns and i < len(aligns) and aligns[i] is not None else 3
-        recs = [(0x519, int(widths[i])), (0x501, 1), (0x4FF, 0x808080), (0x4EE, 1), (0x507, 1),
-                (0x425, ALIGN_WRITE.get(int(al), 0x10)),
-                (0x42B, 1), (0x4D4, 0), (0x4C8, 0), (0x484, 0)]
+        lay = (layout[i] if layout and i < len(layout) else None) or {}
+        kind, color, _ = DIVIDERS.get(int(lay.get('DividerStyle', 2)), DIVIDERS[2])
+        flags = {pid: (1 if lay.get(k, d) else 0) for k, pid, d in LAYOUT_FLAGS}
+        recs = [(0x519, int(widths[i])), (0x501, kind), (0x4FF, 0x808080 if color is None else color), (0x4EE, 1),
+                (0x507, flags[0x507]),
+                (0x425, _align_raw(al, lay) | (0x2000 if lay.get('Locked') else 0)),
+                (0x42B, flags[0x42B]), (0x4D4, flags[0x4D4]), (0x4C8, flags[0x4C8]), (0x484, 0)]
         out += struct.pack('<II', i + 1, len(recs))
         for k, v in recs:
             out += struct.pack('<IIiI', 4, k, v, 0)
@@ -417,11 +472,18 @@ def get_columns(data):
     sp = g.get('Splits') or []
     widths = column_widths(sp[0].get('_ColumnProps') or b'') if sp else {}
     aligns = column_aligns(sp[0].get('_ColumnProps') or b'') if sp else {}
+    recs = column_records(sp[0].get('_ColumnProps') or b'') if sp else {}
     out = []
     for i, c in enumerate(g.get('Columns') or []):
         d = {k: c.get(k, '') or '' for k in COLUMN_KEYS}
         d['Width'] = widths.get(i, DEFAULT_COL_WIDTH)
         d['Alignment'] = aligns.get(i, 3)
+        r = recs.get(i, {})
+        d['Locked'] = bool(r.get(0x425, 0) & 0x2000)
+        for k, pid, dflt in LAYOUT_FLAGS:
+            d[k] = bool(r.get(pid, 1 if dflt else 0))
+        d['DividerStyle'] = divider_of(r)
+        d['AlignFlag'] = bool(r.get(0x425, 0x10) & 0x10)    # (never set: the Layout page shows 0 - Left)
         out.append(d)
     return out
 
@@ -437,7 +499,36 @@ def set_columns(data, cols, layout=4):
     sp = g.get('Splits') or []
     if sp:
         sp[0].set('_ColumnProps', _column_props(len(cols), [int(c.get('Width') or DEFAULT_COL_WIDTH) for c in cols],
-                                                [c.get('Alignment', 3) for c in cols]))
+                                                [c.get('Alignment', 3) for c in cols], cols))
+    return build(head, g)
+
+
+SPLIT_PAGE = ('Locked', 'AllowFocus', 'AllowSizing', 'AllowRowSizing', 'RecordSelectors', 'ScrollGroup', 'ScrollBars',
+              'MarqueeStyle', 'Size', 'SizeMode')
+
+
+def get_split(data):
+    """the properties of Split0 (the Splits page): {name: value}"""
+    try:
+        head, g = parse(data)
+    except (ValueError, IndexError, struct.error):
+        return {}
+    sp = g.get('Splits') or []
+    return {k: sp[0].get(k) for k in SPLIT_PAGE if sp and sp[0].get(k) is not None}
+
+
+def set_split(data, values):
+    """the blob with these properties of Split0 (booleans: -1 / 0, Size: a float when its type is one)"""
+    head, g = parse(data)
+    sp = g.get('Splits') or []
+    if not sp:
+        return bytes(data)
+    for k, v in values.items():
+        pid = sp[0].pid(k)
+        if pid is None or pid not in sp[0].values:
+            continue
+        vt = sp[0].values[pid][0]
+        sp[0].set(k, (-1 if v else 0) if vt == VT_BOOL else float(v) if vt in (VT_R4, VT_R8) else int(v))
     return build(head, g)
 
 

@@ -471,14 +471,20 @@ class _Obj:
         self.cls, self.f = cls, {}
 
 
+class _Raw(bytes):
+    """bytes of the stream that know where they are (at): the pages of the chart change them there (ChartEdit)"""
+
+
 class _Reader:
     def __init__(self, data, pos):
         self.d, self.p, self.objs, self.classes = data, pos, [], []
+        self.ids = []                           # (where, id) of each object id of the stream: new ones and references
 
     def raw(self, n):
         if self.p + n > len(self.d):
             raise ChartError('the chart ends at %d' % self.p)
-        v = self.d[self.p:self.p + n]
+        v = _Raw(self.d[self.p:self.p + n])
+        v.at = self.p
         self.p += n
         return v
 
@@ -512,6 +518,7 @@ class _Reader:
         oid = self.u32()
         if oid == 0xFFFFFFFF:
             return None
+        self.ids.append((self.p - 4, oid))
         if oid < len(self.objs):
             return self.objs[oid]
         if oid != len(self.objs):
@@ -538,7 +545,9 @@ def _r_value(r, o):
 
 
 def _r_string(r, o):
+    o.f['at'] = r.p                             # its text: [u16 length][the characters][0]
     o.f['s'] = r.cstr()
+    o.f['end'] = r.p
     r.base(o, 'VtValue')
 
 
@@ -613,11 +622,13 @@ def _r_textblock(r, o):
     o.f['backdrop'] = r.obj(['VtBackdrop'])
     o.f['font'] = r.obj(['VtFont'])
     r.raw(26)                                   # where it was drawn
+    o.f['text_at'] = r.p
     o.f['text'] = r.obj(['VtString'])
     r.raw(30)
 
 
 def _r_font(r, o):
+    o.f['name_at'] = r.p
     o.f['name'] = r.obj(['VtString'])
     o.f['raw'] = r.raw(16)
 
@@ -761,14 +772,17 @@ _CLASSES = {
 }
 
 
-def read(data):
-    """the chart of an OleObjectBlob: (the head of the control (34 bytes), the root object); ChartError"""
+def read(data, reader=False):
+    """the chart of an OleObjectBlob: (the head of the control (34 bytes), the root object); ChartError.
+    reader: (head, root, the reader: its ids and classes) for ChartEdit"""
     data = bytes(data)
     if not is_chart_blob(data):
         raise ChartError('not the OleObjectBlob of an MSChart')
     at = HEAD + 16
     r = _Reader(data, at + len(CONST))
     root = r.obj(['VtChart'])
+    if reader:
+        return data[at:at + len(CONST)], root, r
     return data[at:at + len(CONST)], root
 
 
@@ -1041,3 +1055,116 @@ def decode(data):
             put(base + '.legendtext', lt.f['s'])
     put('Stacking', stacked)
     return out.items
+
+
+# ---------------------------------------------------------------- changing a chart (phase 11: its property pages)
+class ChartEdit:
+    """the settings of a chart changed in its blob, where decode() reads them: numbers in place; a text (a title, the
+    name of a font) in its VtString, or a new VtString where there was none (the ids of the objects after it go one
+    up); the scale of an axis (24 bytes after its 't' when it is not automatic). blob() gives the blob again."""
+
+    def __init__(self, data):
+        self.b = bytearray(data)
+        self._load()
+
+    def _load(self):
+        _, self.root, self.r = read(bytes(self.b), reader=True)
+
+    def blob(self):
+        return bytes(self.b)
+
+    # -------------------------------------------------- the parts
+    def part(self, path):
+        """the object or the raw bytes of a part: chart, list, legend, plot, title, footnote, axis(n), series(n)"""
+        ch = self.root.f
+        if path == 'chart':
+            return self.root
+        if path in ('legend', 'plot', 'title', 'footnote', 'list'):
+            return ch[path]
+        if path.startswith('axis('):
+            return ch['plot'].f['axes'][int(path[5:-1])]
+        if path.startswith('series('):
+            items = [x for x in ch['plot'].f['series'].f['items'] if x is not None]
+            return items[int(path[7:-1]) - 1]
+        raise KeyError(path)
+
+    def series_count(self):
+        return len([x for x in self.root.f['plot'].f['series'].f['items'] if x is not None])
+
+    # -------------------------------------------------- numbers in place
+    def put(self, raw, off, fmt, value):
+        struct.pack_into('<' + fmt, self.b, raw.at + off, value)
+        self._load()
+
+    def get(self, raw, off, fmt):
+        return struct.unpack_from('<' + fmt, bytes(raw), off)[0]
+
+    def put_color(self, raw, off, rgb, automatic=False):
+        """a VtColor: [u16][R][G][B][flags: 0x80 Automatic]"""
+        at = raw.at + off
+        self.b[at + 2], self.b[at + 3], self.b[at + 4] = rgb & 0xFF, (rgb >> 8) & 0xFF, (rgb >> 16) & 0xFF
+        self.b[at + 5] = (self.b[at + 5] | 0x80) if automatic else (self.b[at + 5] & 0x7F)
+        self._load()
+
+    @staticmethod
+    def color(raw, off):
+        return raw[off + 2] | (raw[off + 3] << 8) | (raw[off + 4] << 16)
+
+    # -------------------------------------------------- the bytes of the stream
+    def _splice(self, at, n, new):
+        """bytes at..at+n -> new; the length in the head follows"""
+        self.b[at:at + n] = new
+        struct.pack_into('<I', self.b, 4, len(self.b) - HEAD)
+
+    def _class_id(self, name):
+        return self.r.classes.index(name)
+
+    def _string_bytes(self, s):
+        raw = s.encode('cp1252', 'replace')
+        return struct.pack('<H', len(raw)) + raw + b'\0' if raw else struct.pack('<H', 0)
+
+    def set_string(self, owner, slot, s):
+        """the text of a VtString of owner (slot 'text' of a VtTextBlock, 'name' of a VtFont): changed, or a new
+        VtString object where there was none (the ids after it go one up)"""
+        st = owner.f[slot]
+        if st is not None:
+            self._splice(st.f['at'], st.f['end'] - st.f['at'], self._string_bytes(s))
+            self._load()
+            return
+        if s == '':
+            return
+        at = owner.f[slot + '_at']
+        k = self._new_id_at(at)
+        for p, oid in sorted(self.r.ids, reverse=True):     # the ids from k up: one more
+            if p > at and oid >= k:
+                struct.pack_into('<I', self.b, p, oid + 1)
+        obj = struct.pack('<II', k, self._class_id('VtString')) + self._string_bytes(s) + \
+            struct.pack('<II', self._class_id('VtValue'), self._class_id('VtObject'))
+        self._splice(at, 4, obj)
+        self._load()
+
+    def _new_id_at(self, at):
+        """the id a new object at this place of the stream has: the number of objects before it"""
+        n = 0
+        for p, oid in self.r.ids:
+            if p >= at:
+                break
+            if oid == n:                        # (a reference is to an object before: its id is less)
+                n += 1
+        return n
+
+    def set_auto_scale(self, axis, auto):
+        """the scale of an axis: automatic (no scale block) or its own (24 bytes: Minimum, Maximum (f64), the
+        major and minor divisions, the divisions per label and per tick (i16))"""
+        ax = self.part('axis(%d)' % axis).f
+        h = ax['h']
+        has = bool(h[6] & 1)
+        if auto == (not has):
+            return
+        if auto:
+            self._splice(ax['scale'].at, 24, b'')
+            self.b[h.at + 6] &= 0xFE
+        else:
+            self._splice(ax['t'].at + 34, 0, struct.pack('<ddhhhh', 0.0, 100.0, 10, 1, 1, 1))
+            self.b[h.at + 6] |= 1
+        self._load()

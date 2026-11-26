@@ -308,7 +308,8 @@ class Frm:
     def p(self, name, value):
         if value is None:
             return
-        self.lines.append("   " * self.depth + f"{name:<16}=   {_fmt(value)}")
+        head = f"Object.{name[7:]:<16}" if name.startswith("Object.") else f"{name:<16}"   # as VB6 pads it
+        self.lines.append("   " * self.depth + f"{head}=   {_fmt(value)}")
 
     def props(self, **kw):
         for k, v in kw.items():

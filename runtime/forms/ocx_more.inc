@@ -337,8 +337,9 @@ struct OcxFlatScroll : Ocx {
     void load(const char *const *p) override
     {
         QSignalBlocker b(sb);
-        sb->setOrientation(propn(p, "Orientation", 1) == 0 ? Qt::Vertical : Qt::Horizontal);
-        sb->setRange((int)propn(p, "Min", 0), (int)propn(p, "Max", 32767));
+        /* the .frm keeps Orientation as 0x120000 + the value and Arrows as 0x10000 + the value (VB6, DEV-11) */
+        sb->setOrientation(((long)propn(p, "Orientation", 1) & 0xFFFF) == 0 ? Qt::Vertical : Qt::Horizontal);
+        sb->setRange((int)propn(p, "Min", 0), (int)propn(p, "Max", 100));
         sb->setValue((int)propn(p, "Value", 0));
         sb->setSingleStep((int)propn(p, "SmallChange", 1)); sb->setPageStep((int)propn(p, "LargeChange", 1));
     }
