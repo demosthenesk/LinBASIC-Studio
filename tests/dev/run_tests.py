@@ -66,7 +66,7 @@ def oracle_env():
     rt = os.path.join(HERE, 'work', '.xdg')
     os.makedirs(rt, mode=0o700, exist_ok=True)
     os.chmod(rt, 0o700)
-    env = dict(os.environ, QT_QPA_PLATFORM='offscreen', XDG_RUNTIME_DIR=rt, VBRT_NO_ERRBOX='1')
+    env = dict(os.environ, QT_QPA_PLATFORM='offscreen', XDG_RUNTIME_DIR=rt, VBRT_NO_ERRBOX='1', VBRT_NO_BROWSER='1')
     env.setdefault('VBRT_MCI_SINK', 'fakesink')
     p = os.path.join(HERE, '..', 'lang', 'expected', 'LOCALE.txt')
     if os.path.exists(p):

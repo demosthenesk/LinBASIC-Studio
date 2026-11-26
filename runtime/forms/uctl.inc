@@ -12,6 +12,10 @@
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 
 static void drep_prop_changed(vbobj uc, vbvar name);   /* ocx_drep.inc: the DataRepeater's repeated control */
+static void async_read(vbobj uc, vb_i32 argc, vbvar *argv);      /* uctl_async.inc */
+static void async_cancel(vbobj uc, vb_i32 argc, vbvar *argv);
+static void async_cancel_all(vbobj uc);
+static vbvar async_hyperlink(vbobj uc);
 
 /* the user controls of the program and of the control projects it has: "project.name" and "name" */
 static std::map<std::string, const vb_class *> &uctl_registry()
@@ -388,6 +392,7 @@ static void uctl_release(Ctl *c)
     vbobj uc = c->uc;
     if (!uc) return;
     c->uc = nullptr;
+    async_cancel_all(uc);                       /* its AsyncReads stop (no more events) */
     FormState *ust = fstate(uc);
     if (ust->focus && !c->form) {               /* the form goes: one of its controls had the focus once (f_uctl2) */
         ust->focus = nullptr;
@@ -421,7 +426,11 @@ static vbvar uctl_member(Ctl *c, const std::string &n, vb_i32 kind, bool set, vb
     if (n == "object") return vb_vtmp(vb_v_obj(uc));
     /* an Extender property wins over the control's own of the same name (VB6: Extender.ToolTipText inside
      * Property Get ToolTipText is the container's, not an endless recursion) */
-    if (extender_name(n)) { *found = 0; return vb_v_empty(); }
+    /* (Default and Cancel are the Extender's only with DefaultCancel = True: else the control's own, as
+     * Loader1.Cancel "Slow" of f_inetasync) */
+    if (extender_name(n) && !((n == "cancel" || n == "default") && !propn(fstate(uc)->def->props, "DefaultCancel", 0))) {
+        *found = 0; return vb_v_empty();
+    }
     const vb_class *cls = uc->cls;
     std::string name = n.empty() && cls->defmember ? std::string(cls->defmember) : n;
     vb_i32 want = kind == VBM_GET ? (VBM_GET | VBM_METHOD) : kind == VBM_METHOD ? (VBM_METHOD | VBM_GET) : kind;
@@ -550,6 +559,9 @@ static vbvar uctl_self_member(vbobj o, const std::string &n, bool set, vbvar val
         }
     }
     if (n == "eventsfrozen") return vb_v_bool(0);
+    if (n == "asyncread") { async_read(o, argc, argv); return vb_v_empty(); }
+    if (n == "cancelasyncread") { async_cancel(o, argc, argv); return vb_v_empty(); }
+    if (n == "hyperlink") return async_hyperlink(o);
     static const std::set<std::string> no = { "show", "hide", "caption", "left", "top", "move", "windowstate", "visible",
                                               "icon", "zorder", "activeform", "arrange", "mdichild", "controlbox",
                                               "minbutton", "maxbutton", "showintaskbar", "moveable", "keypreview",

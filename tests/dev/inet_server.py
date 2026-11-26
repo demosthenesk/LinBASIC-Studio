@@ -35,6 +35,9 @@ def log(*a):
 HELLO = b'Hello, Inet!\r\nline 2\r\n'
 BIN = bytes(range(256))
 BIG = bytes((i * 7 + i // 256) % 251 for i in range(100000))
+# the picture of f_inetasync (AsyncRead of a picture over HTTP)
+_PIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'f_inetasync', 'pic.bmp')
+PIC = open(_PIC, 'rb').read() if os.path.exists(_PIC) else b''
 
 
 class Http(BaseHTTPRequestHandler):
@@ -105,6 +108,19 @@ class Http(BaseHTTPRequestHandler):
             return self.reply(200, b'late')
         if p == '/error':
             return self.reply(500, b'broken')
+        if p == '/pic.bmp':
+            return self.reply(200, PIC, 'image/bmp')
+        if p == '/slowbig':                      # 50000 bytes in 10 parts, 0.4 s apart (AsyncRead: progress, cancel)
+            body = BIG[:50000]
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/octet-stream')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            for k in range(0, len(body), 5000):
+                self.wfile.write(body[k:k + 5000])
+                self.wfile.flush()
+                time.sleep(0.4)
+            return
         return self.reply(404, b'not here')
 
     do_GET = do_HEAD = do_POST = do_PUT = do_DELETE = handle_any

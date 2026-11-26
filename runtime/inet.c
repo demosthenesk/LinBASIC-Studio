@@ -133,6 +133,8 @@ typedef struct lbinet {
     int cnew, cpre;                     /* https: a new connection was opened; the request is being sent */
     char info[2048];
     buf body, headers;
+    char finalurl[2400];                /* HTTP: the URL of the last redirect (AsyncRead: its Status) */
+    int redirects;
 } lbinet;
 
 static void ev(lbinet *r, int st)
@@ -600,6 +602,9 @@ static void http_job(lbinet *r)
             split_location(loc, nhost, sizeof nhost, &np, path, sizeof path, &nh);
             snprintf(host, sizeof host, "%s", nhost);
             port = np; https = nh;
+            r->redirects++;
+            if (port == (https ? 443 : 80)) snprintf(r->finalurl, sizeof r->finalurl, "%s://%s%s", https ? "https" : "http", host, path);
+            else snprintf(r->finalurl, sizeof r->finalurl, "%s://%s:%d%s", https ? "https" : "http", host, port, path);
             if (status == 303 || ((status == 301 || status == 302) && strcasecmp(method, "GET") && strcasecmp(method, "HEAD"))) {
                 snprintf(method, sizeof method, "GET");
                 with_data = 0;
@@ -810,6 +815,10 @@ static void CALLBACK wi_status(HINTERNET h, DWORD_PTR ctx, DWORD st, LPVOID info
     if (st == INTERNET_STATUS_CONNECTING_TO_SERVER) ev(r, 3);
     else if (st == INTERNET_STATUS_CONNECTED_TO_SERVER) ev(r, 4);
     else if (st == INTERNET_STATUS_SENDING_REQUEST && !r->cpre) { r->cpre = 1; ev(r, 5); }
+    else if (st == INTERNET_STATUS_REDIRECT && info) {     /* WinINet follows them itself: AsyncRead needs the URL */
+        r->redirects++;
+        snprintf(r->finalurl, sizeof r->finalurl, "%s", (const char *)info);
+    }
 }
 /* the sessions of WinINet, kept for the whole program (by AccessType and Proxy): their connections stay open */
 static HINTERNET wi_session(int access, const char *proxy)
@@ -1382,6 +1391,8 @@ int lbinet_code(void *p) { return ((lbinet *)p)->code; }
 const char *lbinet_info(void *p) { return ((lbinet *)p)->info; }
 const char *lbinet_body(void *p, long *n) { lbinet *r = (lbinet *)p; *n = (long)r->body.n; return r->body.p ? r->body.p : ""; }
 const char *lbinet_headers(void *p) { lbinet *r = (lbinet *)p; return r->headers.p ? r->headers.p : ""; }
+/* HTTP: the URL after the redirects ("" none) and their number */
+const char *lbinet_final(void *p, int *redirects) { lbinet *r = (lbinet *)p; *redirects = r->redirects; return r->finalurl; }
 /* the kept connection back to the control (after the request) */
 void *lbinet_take_conn(void *p) { lbinet *r = (lbinet *)p; void *c = r->conn; r->conn = 0; return c; }
 void *lbinet_take_ftp(void *p) { lbinet *r = (lbinet *)p; void *f = r->ftp; r->ftp = 0; return f; }

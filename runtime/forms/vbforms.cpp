@@ -5939,6 +5939,7 @@ extern "C" void vbf_run(void)
 
 #include "ocx.inc"
 #include "uctl.inc"
+#include "uctl_async.inc"
 #include "data.inc"
 #include "report.inc"
 #include "ocx_data.inc"

@@ -38,3 +38,11 @@ f_inethttps: το Inet με https:// (inet_server.py --tls-dir: 47122 έμπισ
         Η αναμενόμενη έξοδος είναι του VB6 (VB-TESTS/DEV-7/f_inethttps/expected/f_inethttps-raw.txt) με ένα bug
         του VB6 διορθωμένο: τα ResponseInfo των 12037, 12038, 12045 (το MSINET δίνει το κείμενο του επόμενου
         κωδικού από το 12035 και μετά)· το LinBASIC δίνει το σωστό κείμενο.
+
+f_inetasync (Φάση 10.4): UserControl.AsyncRead / CancelAsyncRead, τα events AsyncReadProgress και
+        AsyncReadComplete, το AsyncProperty (Value: StdPicture, αρχείο, Byte()), UserControl.Hyperlink, με
+        τοπικά αρχεία, file:// και HTTP απέναντι στο inet_server.py (47120: /hello.txt, /pic.bmp, /big, /slow,
+        /slowbig, /missing, /error, /redirect). Στο VM: VB-TESTS/DEV-10/ODHGIES.txt. Τα progress events
+        (ο αριθμός τους αλλάζει) πάνε στο expected/f_inetasync-raw.txt, που δεν συγκρίνεται· οι κωδικοί 1 και 2
+        (FindingResource, Connecting) δεν γράφονται (έρχονται ή όχι, όπως η μνήμη ονομάτων του WinINet). Το
+        NavigateTo στο VB6 ανοίγει τον browser· στα tests του LinBASIC όχι (VBRT_NO_BROWSER του run_tests.py).

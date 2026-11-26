@@ -1,0 +1,138 @@
+start: events 0
+1 local picture
+  complete Pic1: PropertyName 'Pic1', AsyncType 0, Target '<dir>/pic.bmp'
+    StatusCode 6, Status 'file://<dir>/pic.bmp', BytesRead 2454, BytesMax 2454
+    progress events: yes, codes 11 13 14 6
+    Value Picture Type 1 1058 x 529
+  AsyncRead Pic1: err 0, events during the call 5
+2 local file as a file
+  complete File1: PropertyName 'File1', AsyncType 1, Target '<dir>/data.dat'
+    StatusCode 6, Status 'file://<dir>/data.dat', BytesRead 276, BytesMax 276
+    progress events: yes, codes 11 13 14 6
+    Value String: another file, 276 bytes, Byte()(0 To 275) sum 4327 first 65 last 255
+  AsyncRead File1: err 0, events during the call 5
+3 local file as bytes
+  complete Bytes1: PropertyName 'Bytes1', AsyncType 2, Target '<dir>/data.dat'
+    StatusCode 6, Status 'file://<dir>/data.dat', BytesRead 276, BytesMax 276
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 275) sum 4327 first 65 last 255
+  AsyncRead Bytes1: err 0, events during the call 5
+4 file:// URL as bytes
+  complete Bytes2: PropertyName 'Bytes2', AsyncType 2, Target 'file:///<dir>/data.dat'
+    StatusCode 6, Status 'file://<dir>/data.dat', BytesRead 276, BytesMax 276
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 275) sum 4327 first 65 last 255
+  AsyncRead Bytes2: err 0, events during the call 5
+5 a local file that is not there
+  AsyncRead Miss1: err 53 File not found, events during the call 1
+  timeout: 1 complete event(s) did not come
+6 no PropertyName
+  complete (none): PropertyName '', AsyncType 2, Target '<dir>/data.dat'
+    StatusCode 6, Status 'file://<dir>/data.dat', BytesRead 276, BytesMax 276
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 275) sum 4327 first 65 last 255
+  AsyncRead (none): err 0, events during the call 5
+7 AsyncType 7
+  AsyncRead Bad1: err -2147024882 System Error &H80070057 (-2147024809).   Η παράμετρος είναι εσφαλμένη. , events during the call 0
+  timeout: 1 complete event(s) did not come
+8 empty Target
+  AsyncRead Empty1: err 693 An unknown protocol was specified in Target parameter, events during the call 0
+  timeout: 1 complete event(s) did not come
+9 HTTP text as a file
+  AsyncRead HFile: err 0, events during the call 0
+  complete HFile: PropertyName 'HFile', AsyncType 1, Target 'http://<server>:47120/hello.txt'
+    StatusCode 6, Status 'http://<server>:47120/hello.txt', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 13 14 6
+    Value String: another file, 22 bytes, Byte()(0 To 21) sum 5059 first 72 last 10
+10 HTTP text as bytes, ForceUpdate
+  AsyncRead HBytes: err 0, events during the call 0
+  complete HBytes: PropertyName 'HBytes', AsyncType 2, Target 'http://<server>:47120/hello.txt'
+    StatusCode 6, Status 'http://<server>:47120/hello.txt', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 21) sum 5059 first 72 last 10
+11 HTTP picture
+  AsyncRead HPic: err 0, events during the call 0
+  complete HPic: PropertyName 'HPic', AsyncType 0, Target 'http://<server>:47120/pic.bmp'
+    StatusCode 6, Status 'http://<server>:47120/pic.bmp', BytesRead 2454, BytesMax 2454
+    progress events: yes, codes 11 13 14 6
+    Value Picture Type 1 1058 x 529
+12 HTTP 100000 bytes
+  AsyncRead HBig: err 0, events during the call 0
+  complete HBig: PropertyName 'HBig', AsyncType 2, Target 'http://<server>:47120/big'
+    StatusCode 6, Status 'http://<server>:47120/big', BytesRead 100000, BytesMax 100000
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 99999) sum 655 first 0 last 93
+13 HTTP 404
+  AsyncRead H404: err 0, events during the call 0
+  complete H404: PropertyName 'H404', AsyncType 2, Target 'http://<server>:47120/missing'
+    StatusCode 0, Status '', BytesRead 0, BytesMax 0
+    progress events: yes, codes 11
+    Value err -2147024890 System Error &H80070006 (-2147024890).   Ο δείκτης χειρισμού δεν είναι έγκυρος. 
+14 HTTP 500
+  AsyncRead H500: err 0, events during the call 0
+  complete H500: PropertyName 'H500', AsyncType 1, Target 'http://<server>:47120/error'
+    StatusCode 0, Status '', BytesRead 0, BytesMax 0
+    progress events: yes, codes 11
+    Value err -2147024888 System Error &H80070008 (-2147024888).   Ο διαθέσιμος αποθηκευτικός χώρος δεν επαρκεί για να εκτελεστεί αυτή η εντολή. 
+15 HTTP refused (port 47199)
+  AsyncRead HRefused: err 0, events during the call 0
+  complete HRefused: PropertyName 'HRefused', AsyncType 2, Target 'http://<server>:47199/x.txt'
+    StatusCode 0, Status '<server>', BytesRead 0, BytesMax 0
+    progress events: yes, codes 2
+    Value err -2147012867 System Error &H80072EFD (-2147012867).   Δεν ήταν δυνατή η δημιουργία μιας σύνδεσης με το διακομιστή 
+16 HTTP redirect
+  AsyncRead HRedir: err 0, events during the call 0
+  complete HRedir: PropertyName 'HRedir', AsyncType 2, Target 'http://<server>:47120/redirect'
+    StatusCode 6, Status 'http://<server>:47120/hello.txt', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 3 11 13 14 6
+    Value Byte()(0 To 21) sum 5059 first 72 last 10
+17 SynchronousDownload
+  complete HSync: PropertyName 'HSync', AsyncType 2, Target 'http://<server>:47120/hello.txt?sync'
+    StatusCode 6, Status 'http://<server>:47120/hello.txt?sync', BytesRead 22, BytesMax 22
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 21) sum 5059 first 72 last 10
+  AsyncRead HSync: err 0, events during the call 5
+  after the call
+18 the same PropertyName twice
+  AsyncRead Dup: err 0, events during the call 0
+  AsyncRead Dup: err 689 PropertyName parameter conflicts with the PropertyName of an AsyncRead in progress, events during the call 0
+  complete Dup: PropertyName 'Dup', AsyncType 2, Target 'http://<server>:47120/slow?a'
+    StatusCode 6, Status 'http://<server>:47120/slow?a', BytesRead 4, BytesMax 4
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 3) sum 1054 first 108 last 101
+  timeout: 1 complete event(s) did not come
+19 two reads at once
+  AsyncRead TwoA: err 0, events during the call 0
+  complete TwoB: PropertyName 'TwoB', AsyncType 2, Target '<dir>/data.dat'
+    StatusCode 6, Status 'file://<dir>/data.dat', BytesRead 276, BytesMax 276
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 275) sum 4327 first 65 last 255
+  AsyncRead TwoB: err 0, events during the call 5
+  complete TwoA: PropertyName 'TwoA', AsyncType 2, Target 'http://<server>:47120/slow?c'
+    StatusCode 6, Status 'http://<server>:47120/slow?c', BytesRead 4, BytesMax 4
+    progress events: yes, codes 11 13 14 6
+    Value Byte()(0 To 3) sum 1054 first 108 last 101
+20 CancelAsyncRead in a progress event
+  AsyncRead Slow: err 0, events during the call 0
+  (a progress event of Slow: CancelAsyncRead)
+  CancelAsyncRead Slow: err 0
+  timeout: 1 complete event(s) did not come
+21 CancelAsyncRead right after AsyncRead
+  AsyncRead Slow2: err 0, events during the call 0
+  CancelAsyncRead Slow2: err 0
+  timeout: 1 complete event(s) did not come
+22 CancelAsyncRead of a name that is not read, without a name
+  CancelAsyncRead Nothing: err -2147024882 System Error &H80070057 (-2147024809).   Η παράμετρος είναι εσφαλμένη. 
+  CancelAsyncRead (none): err -2147024882 System Error &H80070057 (-2147024809).   Η παράμετρος είναι εσφαλμένη. 
+23 CancelAsyncRead without a name, a read without a name
+  AsyncRead (none): err 0, events during the call 0
+  CancelAsyncRead (none): err 0
+  timeout: 1 complete event(s) did not come
+24 Hyperlink
+  Hyperlink: err 0 Hyperlink
+  GoBack: err -2147467262 System Error &H80004002 (-2147467262).   Δεν υποστηρίζεται τέτοια διασύνδεση 
+  GoForward: err -2147467262 System Error &H80004002 (-2147467262).   Δεν υποστηρίζεται τέτοια διασύνδεση 
+  NavigateTo: err 0 
+  NavigateTo file: err 0 
+  NavigateTo empty: err -2147024809 System Error &H80070057 (-2147024809).   Η παράμετρος είναι εσφαλμένη. 
+end

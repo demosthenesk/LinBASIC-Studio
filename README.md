@@ -4,7 +4,8 @@
 
 > The latest release is **0.8.0-beta1**, a beta. The code here is newer: the IDE of Phase 8 and the
 > wizards, add-ins and portable packages of Phase 9 are finished (see [Add-Ins and wizards](#add-ins-and-wizards)),
-> and of Phase 10 the help of the programs (`.chm` and `.hlp`: F1, What's This, see [Forms and controls](#forms-and-controls)).
+> and of Phase 10 the help of the programs (`.chm` and `.hlp`: F1, What's This, see [Forms and controls](#forms-and-controls))
+> and AsyncRead / Hyperlink in user controls.
 > Please report what does not work as in VB6.
 
 LinBASIC Studio opens, edits, runs and compiles projects written in Visual Basic 6:
@@ -388,6 +389,10 @@ The whole VB6 language is compiled:
 * **ActiveX components** are compiled into the program that uses them, without COM or registration:
   * ActiveX DLL and EXE projects, with Instancing (including SingleUse and GlobalMultiUse)
   * user controls (`.ctl`) with PropertyBag, Extender and Ambient, and property pages
+  * AsyncRead / CancelAsyncRead in user controls, with the events AsyncReadProgress and
+    AsyncReadComplete and the AsyncProperty object of VB6 (files, `file:`, `http:`, `https:` and `ftp:`
+    addresses, as a file, a byte array or a picture; the status codes of VB6), and UserControl.Hyperlink
+    (NavigateTo opens the address in the browser of the system)
 
 ## Forms and controls
 

@@ -2918,7 +2918,7 @@ class ProcGen:
                      'parentcontrols', 'backstyle', 'hasdc', 'clipcontrols', 'accesskeys', 'eventsfrozen',
                      'containedcontrols', 'canGetFocus', 'forwardfocus', 'controlcontainer', 'maskcolor',
                      'maskpicture', 'palette', 'palettemode', 'toolboxbitmap', 'windowless', 'invisibleatruntime',
-                     'hyperlink', 'righttoleft', 'scalemode', 'olemousepointer'}
+                     'hyperlink', 'righttoleft', 'scalemode', 'olemousepointer', 'asyncread', 'cancelasyncread'}
 
     def form_builtin(self, name, node=None):
         """an unqualified built-in member of the form inside its own code (Caption = "x", Hide)"""
