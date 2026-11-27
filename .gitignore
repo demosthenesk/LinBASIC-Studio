@@ -57,3 +57,5 @@ runtime/tcc-linux/
 # the packages (packaging/build-appimage.sh, make-win.py)
 /build/
 tests/odbc_servers/work/
+# the 32-bit SQLite ODBC driver of the win32 tests (tests/db/sqliteodbc/build32.sh)
+tests/db/sqliteodbc/i386/
