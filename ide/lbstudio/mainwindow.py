@@ -200,11 +200,13 @@ class MainWindow(QMainWindow):
         from .cmdbars import CommandBars        # View > Toolbars > Customize... (phase 12.2)
         self.cmdbars = CommandBars(self)
         self.apply_addins()
+        self.addin_hosts = {}                   # the add-ins of the user that are loaded (addinhost.py, phase 12.5)
+        self.addin_errors = []
+        QTimer.singleShot(0, self.load_startup_addins)
         self.apply_theme()
         hints = QApplication.instance().styleHints()
         if hasattr(hints, "colorSchemeChanged"):           # Qt 6.5
             hints.colorSchemeChanged.connect(self.system_theme_changed)
-        from PyQt6.QtCore import QTimer
         self.theme_timer = QTimer(self)                     # Theme = system: the desktops that do not tell Qt
         self.theme_timer.setInterval(3000)
         self.theme_timer.timeout.connect(self.system_theme_changed)
@@ -603,6 +605,7 @@ class MainWindow(QMainWindow):
         self.a_res_editor = self._act(m, "Resource Editor", self.show_res_editor, icon=res_icon("bitmap"))
 
         m = mb.addMenu("&Add-Ins")             # VB6 (DEV-8/me1, picture 23)
+        self.m_addins = m                       # (the add-ins of the user add their commands to it, phase 12.5)
         # (phase 9.3: not made, decision 2026-11-26 - what to use instead)
         self.a_visdata = self._act(m, "&Visual Data Manager...", self.visual_data_manager)
         m.addSeparator()
@@ -1773,6 +1776,7 @@ class MainWindow(QMainWindow):
         if getattr(self, "palette_win", None) is not None:   # (the first form is made before the palette)
             self.palette_win.show_for(d, ctl)
         self.update_toolbar_pos()
+        self.addins_sync()
 
     def on_designer_modified(self, m):
         if getattr(self, "formlayout", None) is not None:
@@ -1851,6 +1855,13 @@ class MainWindow(QMainWindow):
         self.tree.blockSignals(False)
         self.fill_properties()
         self.update_pe_buttons()
+        self.addins_sync()
+
+    def addins_sync(self):
+        """the add-ins of the user see what changed (their events: addinhost.sync)"""
+        if getattr(self, "addin_hosts", None):
+            from . import addinhost as AH
+            AH.sync_all(self)
 
     def _pe_key(self, it):
         """the key of a branch whose open / closed state is kept: (project, folder name or None)"""
@@ -1999,6 +2010,7 @@ class MainWindow(QMainWindow):
             self.set_active(q)
         self.fill_properties()
         self.update_pe_buttons()
+        self.addins_sync()
 
     def _tree_expanded(self, it):
         if self.pe_kind(it) == "folder":
@@ -2011,6 +2023,7 @@ class MainWindow(QMainWindow):
         self.project = p
         self.refresh_toolbox()
         self.update_title()
+        self.addins_sync()
 
     def _tree_menu(self, pos):
         """the menus of the Project Explorer, as VB6's (DEV-8/me5 pictures 5-10, 17, 18; rs1 picture 29). The
@@ -2300,6 +2313,16 @@ class MainWindow(QMainWindow):
             k, val = e
             if val is not None and k.strip() == m.kind and ";" in val and val.split(";")[0].strip().lower() == old.lower():
                 e[1] = f"{new}; {val.split(';', 1)[1].strip()}"
+        # a file never written takes the new name (VB6 writes Module1 renamed ModEv as ModEv.bas, oracle evlog)
+        rel = m.rel.replace("\\", "/")
+        if (getattr(m, "never_saved", False) or not os.path.exists(m.path)) and \
+                os.path.splitext(os.path.basename(rel))[0].lower() == old.lower():
+            d = os.path.dirname(rel)
+            nrel = (d + "/" if d else "") + new + os.path.splitext(rel)[1]
+            for e in v.entries:
+                if e[1] is not None and e[0].strip() == m.kind and e[1].split(";")[-1].strip() == m.rel:
+                    e[1] = e[1][:len(e[1]) - len(m.rel)] + nrel
+            m.rel = nrel
         m.dirty = True
         self.project.dirty = True
         sw = self.design_windows.get(m)
@@ -2354,14 +2377,14 @@ class MainWindow(QMainWindow):
             return
         self.close_group()
 
-    def close_group(self):
+    def close_group(self, ask=True):
         """File > Close Project Group: every project of the group (or the one project) closes; the IDE
         asks first to save what changed"""
         if self.project is None:
             return
         if self.runner.state != "design":
             self.runner.stop()
-        if not self.confirm_discard() or not self.res_confirm():
+        if ask and (not self.confirm_discard() or not self.res_confirm()):
             return
         self.close_all_code()
         self.project = None
@@ -2392,7 +2415,11 @@ class MainWindow(QMainWindow):
             return
         self.close_all_code()
         self.group = None
-        self.project = VBProject.new(self.codepage(), ptype)
+        if ptype == "Addin":                    # an add-in project (phase 12.5)
+            from .vbmodel import new_addin_project
+            self.project = new_addin_project(self.codepage())
+        else:
+            self.project = VBProject.new(self.codepage(), ptype)
         self.res_rebind()
         self.fill_tree()
         self.update_title()
@@ -2449,13 +2476,16 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(0, self.pe_opened)
         return True
 
-    def save_project(self):
+    def save_project(self, ask_new=True):
         p = self.project
         if p is None:
             return False
         if p.untitled:
             return self.save_project_as()
         self._sync_editors()
+        for m in p.modules:                     # VB6: Save File As for each file never saved (oracle 12.5/evlog-vb6-gui)
+            if ask_new and getattr(m, "never_saved", False) and not self._ask_new_file(m):
+                return False
         try:
             p.save()
         except OSError as e:
@@ -2502,10 +2532,34 @@ class MainWindow(QMainWindow):
                 m.rel = os.path.relpath(os.path.join(start, os.path.basename(m.rel)), os.path.dirname(p.path))
             p._vbp_add(m)
         self.add_recent(p.path)
-        ok = self.save_project()
+        ok = self.save_project(ask_new=False)   # (the files were asked for above)
         self.fill_tree()
         self.update_title()
         return ok
+
+    def _ask_new_file(self, m):
+        """Save File As for a file never saved in a saved project: its name and folder (the .vbp follows)"""
+        p = m.project
+        ext = os.path.splitext(m.rel)[1]
+        if getattr(self, "addin_hosts", None):  # (the add-ins: DoGetNewFileName before the dialog, as VB6)
+            from . import addinhost as AH
+            from .vbide import file_type
+            AH.file_event(self, "DoGetNewFileName", p, file_type(m), m.name, m.name, False)
+            m._lb_getnew_done = True
+        path, _ = QFileDialog.getSaveFileName(self, "Save File As", os.path.join(os.path.dirname(p.path),
+                                                                                 os.path.basename(m.rel)),
+                                              file_filter(f"{m.kind} Files", [ext[1:]]))
+        if not path:
+            m._lb_getnew_done = False
+            return False
+        old = m.rel
+        m.rel = os.path.relpath(path, os.path.dirname(p.path))
+        for e in p.vbp.entries:
+            if e[1] is not None and e[0].strip() == m.kind and e[1].split(";")[-1].strip() == old:
+                e[1] = e[1][:len(e[1]) - len(old)] + m.rel
+        p.dirty = True
+        m.dirty = True
+        return True
 
     def save_file(self):
         m = self.selected_module()
@@ -2515,7 +2569,13 @@ class MainWindow(QMainWindow):
             self.save_project_as()
             return
         self._sync_editors()
-        m.save()
+        if getattr(m, "never_saved", False):
+            if not self._ask_new_file(m):
+                return
+            m.save()                            # (the .vbp has its new name when the project is saved)
+            self.fill_tree()
+        else:
+            m.save()
         sw = self.code_windows.get(m)
         if sw:
             sw.widget().mark_saved()
@@ -2543,13 +2603,17 @@ class MainWindow(QMainWindow):
         self.fill_tree()
 
     def add_module(self, kind):
-        m = self.project.add_module(kind)
-        self.fill_tree()
-        if m.has_designer:                      # VB6: a new form or user control opens in its designer
-            self.open_designer(m)
-        else:
-            self.open_code(m)
-        self.update_title()
+        from . import addinhost as AH
+        with AH.hold(self):                     # (the add-ins: ItemAdded and ItemSelected in VB6's order)
+            m = self.project.add_module(kind)
+            self.fill_tree()
+            if m.has_designer:                  # VB6: a new form or user control opens in its designer
+                self.open_designer(m)
+            else:
+                self.open_code(m)
+            self.select_in_tree(m)
+            self.update_title()
+        self.addins_sync()
 
     def add_file(self):
         start = os.path.dirname(self.project.path) if self.project.path else os.path.expanduser("~")
@@ -2560,8 +2624,9 @@ class MainWindow(QMainWindow):
             return
         self.add_file_path(path)
 
-    def add_file_path(self, path):
-        """Project > Add File... (and the Existing tab of Add MDI Form): a module of a file into the project"""
+    def add_file_path(self, path, events=True):
+        """Project > Add File... (and the Existing tab of Add MDI Form): a module of a file into the project
+        (the add-ins: ItemAdded, AfterAddFile; events False: VBComponents.AddFile gives them itself)"""
         if path.lower().endswith(".res"):       # the resource file of the project (ResFile32=)
             self.attach_res_file(path)
             return
@@ -2576,17 +2641,55 @@ class MainWindow(QMainWindow):
         self.project._vbp_add(m)
         self.project.dirty = True
         self.fill_tree()
+        if events and getattr(self, "addin_hosts", None):
+            from . import addinhost as AH
+            from .vbide import file_type
+            AH.file_event(self, "AfterAddFile", self.project, file_type(m), os.path.abspath(path))
 
     def remove_module(self):
         m = self.selected_module()
         if m is None:
             return
-        for sw in (self.code_windows.get(m), self.design_windows.get(m)):
-            if sw:
-                sw.close()
-        self.project.remove_module(m)
+        self._sync_editors()
+        if m.dirty:                             # VB6 (oracle 12.5/evlog-vb6-gui): Save changes to the following files?
+            r = QMessageBox.question(self, APP_NAME, f"Save changes to the following files?\n\n{m.name}",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No |
+                                     QMessageBox.StandardButton.Cancel)
+            if r == QMessageBox.StandardButton.Cancel:
+                return
+            if r == QMessageBox.StandardButton.Yes:
+                if os.path.exists(m.path) or not self.project.untitled:
+                    m.save()
+                else:
+                    ext = os.path.splitext(m.rel)[1]
+                    path, _ = QFileDialog.getSaveFileName(self, f"Save File As ({m.name})", m.name + ext,
+                                                          file_filter(f"{m.kind} Files", [ext[1:]]))
+                    if not path:
+                        return
+                    m.save(path)
+        from . import addinhost as AH
+        with AH.hold(self):
+            for sw in (self.code_windows.get(m), self.design_windows.get(m)):
+                if sw:
+                    sw.close()
+            # the Project Explorer follows the window in front (VB6: ItemSelected of it before ItemRemoved; none
+            # when no window is left - oracle 12.5/evlog-vb6-gui)
+            subs = [x for x in self.mdi.subWindowList(QMdiArea.WindowOrder.ActivationHistoryOrder) if x.isVisible()]
+            front = self.mdi.activeSubWindow() or (subs[-1] if subs else None)
+            fm = getattr(front.widget(), "module", None) if front is not None else None
+            if fm is not None and fm is not m:
+                self.select_in_tree(fm)
+            else:
+                self.tree.setCurrentItem(None)
+        self.addins_sync()
+        p = self.project
+        p.remove_module(m)
         self.fill_tree()
         self.update_title()
+        if getattr(self, "addin_hosts", None) and os.path.exists(m.path):
+            from . import addinhost as AH
+            from .vbide import file_type
+            AH.file_event(self, "AfterRemoveFile", p, file_type(m), m.path)
 
     # ================================================================ the VB 6 Resource Editor (phase 8.6)
     def apply_addins(self):
@@ -2711,6 +2814,50 @@ class MainWindow(QMainWindow):
         dlg = AddInManagerDialog(self)
         if dlg.exec():
             self.apply_addins()
+
+    # ------------------------------------------------------------ the add-ins of the user (phase 12.5)
+    def load_startup_addins(self, cmdline=False):
+        """Load on Startup (and Command Line, when the IDE starts with a project on its command line): OnConnection
+        with ext_cm_Startup / ext_cm_CommandLine, then OnStartupComplete"""
+        from . import addinhost as AH
+        done = []
+        for a in AH.user_addins(self):
+            if a.get("startup") or (cmdline and a.get("cmdline")):
+                h = AH.load_addin(self, a["progid"], AH.CM_COMMANDLINE if cmdline and not a.get("startup")
+                                  else AH.CM_STARTUP)
+                if h is not None:
+                    done.append(h)
+        for h in done:
+            try:
+                h.call("startup")
+            except AH.AddInError as e:
+                self.addin_error(h.info, f"{e.description} ({e.number})")
+
+    def unload_user_addins(self, shutdown=False):
+        from . import addinhost as AH
+        hosts = list(self.addin_hosts.values())
+        if shutdown:
+            self.addins_begin_shutdown()
+        for h in hosts:
+            AH.unload_addin(self, h.info["progid"], AH.DM_HOSTSHUTDOWN if shutdown else AH.DM_USERCLOSED)
+
+    def addins_begin_shutdown(self):
+        """OnBeginShutdown of each add-in, once"""
+        from . import addinhost as AH
+        for h in list(getattr(self, "addin_hosts", {}).values()):
+            if getattr(h, "shut", False) or not h.running():
+                continue
+            h.shut = True
+            try:
+                h.call("shutdown")
+            except AH.AddInError as er:
+                self.addin_error(h.info, f"{er.description} ({er.number})")
+
+    def addin_error(self, info, text):
+        """an add-in that could not be loaded, or an error of its event procedures"""
+        msg = f"'{info.get('name', info.get('progid', ''))}' could not be loaded or used: {text}"
+        self.addin_errors.append(msg)
+        self.message(msg, "error", show=True)
 
     def resource_editor(self):
         """the Resource Editor (one for the IDE), with the resource file of the active project"""
@@ -2857,7 +3004,15 @@ class MainWindow(QMainWindow):
                 i = 1
                 while f"project{i}" in names:
                     i += 1
-                q = VBProject.new(self.codepage(), ptype, f"Project{i}")
+                if ptype == "Addin":            # (phase 12.5) MyAddIn, as New Project makes it
+                    from .vbmodel import new_addin_project
+                    q = new_addin_project(self.codepage())
+                    k = 1
+                    while q.name.lower() in names:
+                        k += 1
+                        q.vbp.set("Name", f"MyAddIn{k}", quote=True)
+                else:
+                    q = VBProject.new(self.codepage(), ptype, f"Project{i}")
         except Exception as e:                  # noqa: BLE001 - shown to the user
             self.message(f"Can't add the project: {e}", "error", show=True)
             return None
@@ -2871,13 +3026,16 @@ class MainWindow(QMainWindow):
             self.open_designer(first) if first.has_designer else self.open_code(first)
         return q
 
-    def remove_project(self, q):
+    def remove_project(self, q, ask=True):
         if q is None:
             return
         if self.group is None or len(self.group.projects) < 2:
-            self.close_project()
+            if ask:
+                self.close_project()
+            else:
+                self.close_group(ask=False)
             return
-        if q.any_dirty():
+        if ask and q.any_dirty():
             r = QMessageBox.question(self, APP_NAME, f"Save changes to {q.name}?",
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No |
                                      QMessageBox.StandardButton.Cancel)
@@ -3058,6 +3216,8 @@ class MainWindow(QMainWindow):
         if self.project is None:
             return
         p = self.project
+        if p.is_addin:                          # an add-in (phase 12.5): a program the Add-In Manager loads
+            return self.make_addin()
         if p.ptype in ("OleDll", "Control"):    # no program: checked, then registered for the programs that use it
             if p.untitled and not self.save_project_as():
                 return
@@ -3091,6 +3251,41 @@ class MainWindow(QMainWindow):
             os.makedirs(os.path.dirname(path), exist_ok=True)
         self.runner.start(p, self.codepage(), make_target=path, target=target)
 
+    def make_addin(self, path=None):
+        """File > Make <name>.dll... of an add-in project: the program of the add-in (for this computer), then it is
+        registered in the Add-In Manager with the Display Name, Description and Initial Load Behavior of its Connect
+        designer (VB6: oracles 12.5)"""
+        p = self.project
+        if p.untitled and not self.save_project_as():
+            return
+        if path is None:
+            start = os.path.dirname(p.path)
+            name = os.path.basename(p.vbp.exe_name.replace(chr(92), "/")) if p.vbp and p.vbp.exe_name else p.name + ".dll"
+            if not name.lower().endswith(".dll"):
+                name = os.path.splitext(name)[0] + ".dll"
+            path, _ = QFileDialog.getSaveFileName(self, "Make Project", os.path.join(start, name),
+                                                  "Add-In (*.dll);;All Files (*)")
+            if not path:
+                return
+        self._made_name(path)
+        self._sync_editors()
+        self.output.clear()
+        self.message(f"------ {p.name}: making the add-in {path} ------", "head", show=True)
+        self._making_addin = p
+        self.runner.start(p, self.codepage(), make_target=path)
+
+    def register_made_addin(self, p, path):
+        from . import addinhost as AH
+        from lbvc.designers import addin_info
+        d = p.addin_designer()
+        info = addin_info(d.sf)
+        progid = f"{p.name}.{d.name}"
+        lb = info["loadbehavior"]
+        AH.register_addin(self, {"progid": progid, "name": info["displayname"], "description": info["description"],
+                                 "exe": os.path.abspath(path), "vbp": p.path, "startup": bool(lb & 1),
+                                 "cmdline": bool(lb & 4), "cmdsafe": info["cmdlinesupport"]})
+        return progid
+
     def _made_name(self, path, q=None):
         """Make writes the name of the program in the .vbp (ExeName32=, after Title) and, for an ActiveX EXE with
         Project / Binary Compatibility and no file for it yet, takes it as the compatible component
@@ -3109,6 +3304,13 @@ class MainWindow(QMainWindow):
         self.update_title()
 
     def on_built(self, path):
+        a = getattr(self, "_making_addin", None)
+        if a is not None:                       # an add-in: registered for the Add-In Manager (phase 12.5)
+            self._making_addin = None
+            progid = self.register_made_addin(a, path)
+            self.message(f"Built {path}; the add-in {progid} is in the Add-In Manager", "ok", show=True)
+            self.statusBar().showMessage(f"Built {path}", 8000)
+            return
         p = getattr(self, "_making", None) or self.project
         if getattr(self, "_group_jobs", None) is not None:   # Make Project Group: the next project
             QTimer.singleShot(0, self._next_group_job)
@@ -4525,6 +4727,7 @@ class MainWindow(QMainWindow):
     def closeEvent(self, e):
         if self.runner.state != "design":
             self.runner.stop()
+        self.addins_begin_shutdown()            # (VB6: OnBeginShutdown before it asks to save)
         if not self.confirm_discard() or not self.res_confirm():
             e.ignore()
             return
@@ -4534,6 +4737,10 @@ class MainWindow(QMainWindow):
         v = getattr(self, "_apiviewer", None)
         if v is not None:                       # the API Viewer of the add-in goes with the IDE
             v.close()
+        if getattr(self, "addin_hosts", None):
+            from . import addinhost as AH
+            AH.close_events(self)               # the projects close: ItemRemoved ... AfterCloseFile
+        self.unload_user_addins(shutdown=True)  # OnDisconnection (ext_dm_HostShutdown)
         e.accept()
 
     def restore_layout(self):

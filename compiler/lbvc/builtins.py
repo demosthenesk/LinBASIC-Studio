@@ -800,6 +800,14 @@ def s_beep(pg, st, args):
     pg.emit("vb_beep();")
 
 
+@stmt('lbaddin_hostrun')
+def s_lbaddin_hostrun(pg, st, args):
+    """the host of an add-in (runtime/addin.c): talks with the IDE until it unloads the add-in (phase 12.5; the
+    start of an add-in made as a program, designers.addin_host_source)"""
+    a = _args(pg, st, args, 1, 1, 'LbAddIn_HostRun')
+    pg.emit(f"vb_addin_run({_x(pg, a[0], 'Object', st)});")
+
+
 @stmt('doevents')
 def s_doevents(pg, st, args):
     pg.emit("vb_doevents();")

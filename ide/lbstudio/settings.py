@@ -43,6 +43,8 @@ DEFAULTS = {
     "dowiz_default_uc": False,  # Data Object Wizard: "Save current settings as default": a user control first
     "dowiz_default_uctype": "Single Record",  # and its kind
     "addin_apiviewer_startup": False,  # Add-In Manager: VB 6 API Viewer, Load on Startup (9.4)
+    "user_addins": [],  # the add-ins of the user (phase 12.5): [{"progid", "name", "description", "exe", "vbp",
+                        # "startup", "cmdline", "cmdsafe"}], registered by Make of an add-in project
     "apiviewer_last": "",  # API Viewer: the file loaded last (View > Load Last File)
     "apiviewer_load_last": False,  # API Viewer: View > Load Last File (it is loaded when the viewer opens)
     "add_class_nodialog": False,  # Project > Add Class Module: "Don't show this dialog in the future"

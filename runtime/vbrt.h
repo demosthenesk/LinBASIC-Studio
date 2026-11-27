@@ -765,6 +765,7 @@ void vbf_mdi_register(vbobj *slot, const vb_class *cls); /* the MDIForm of the p
 void vbf_uctl_register(const char *progid, const vb_class *cls);   /* a user control: "project.name" */
 void vbf_uctl_event(vbobj uc, const char *event, vb_i32 argc, vbvar *argv);   /* RaiseEvent: to its form */
 void vb_fire_named(vbobj src, const char *event, vb_i32 argc, vbvar *argv);    /* RaiseEvent of a form (object.c) */
+void vb_addin_run(vbobj connect);              /* the host of an add-in (addin.c, phase 12.5) */
 vbvar vbf_uc_member(vbobj uc, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv);   /* UserControl.X */
 vbobj vbf_screen(void);                                  /* the Screen object */
 vbobj vbf_clipboard(void);                               /* the Clipboard object */

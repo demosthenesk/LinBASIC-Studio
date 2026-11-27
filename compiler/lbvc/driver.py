@@ -65,14 +65,15 @@ def load_module(path, encoding, consts=None):
 
 def load_designer(path, encoding, consts=None):
     """the modules of a designer (.dsr): a DataEnvironment becomes a class with a default instance"""
-    from .designers import designer_kind, dataenv_source, datareport_source
+    from .designers import designer_kind, dataenv_source, datareport_source, addin_source
     sf = load_source(path, encoding=encoding)
     kind = designer_kind(sf)
-    if kind not in ('DataEnvironment', 'DataReport'):
+    if kind not in ('DataEnvironment', 'DataReport', 'AddIn'):
         raise VBError(f"the designer {sf.root.type_name if sf.root else ''} ({kind or 'unknown'}) is not supported yet", 1, 1, path)
     hl = header_lines(path, encoding)
     out = []
-    mods = dataenv_source(sf) if kind == 'DataEnvironment' else datareport_source(sf, path)
+    mods = dataenv_source(sf) if kind == 'DataEnvironment' else addin_source(sf) if kind == 'AddIn' else \
+        datareport_source(sf, path)
     for name, (decls, user, procs), attrs in mods:
         if user:                                # the code of the .dsr keeps its line numbers
             if len(decls) > hl:
@@ -95,6 +96,7 @@ def load_designer(path, encoding, consts=None):
         ast.form_root = None
         ast.form_dir = os.path.dirname(os.path.abspath(path))
         ast.form_enc = encoding
+        ast.addin = kind == 'AddIn'             # the Connect of an add-in (phase 12.5)
         out.append((name, ast))
     return out
 
@@ -128,6 +130,7 @@ class CSource(str):
     units = ()
     infos = ()
     component = False
+    addin = False
 
 
 COMPONENT_TYPES = {'oledll': 'an ActiveX DLL', 'oleexe': 'an ActiveX EXE', 'control': 'an ActiveX Control'}
@@ -283,6 +286,10 @@ TYPELIB_GUIDS = {
     '{6b263850-900b-11d0-9484-00a0c91110ed}': 'stdformat',   # Microsoft Data Formatting Object Library
     '{420b2830-e718-11cf-893d-00a0c9054228}': 'scripting',   # Microsoft Scripting Runtime (its constants)
     '{ee008642-64a8-11ce-920f-08002b369a33}': 'rdo',      # Microsoft Remote Data Object 2.0
+    # an add-in (phase 12.5): the objects of the IDE through the host of the runtime (addin.c), late bound
+    '{ef404e00-eda6-101a-8daf-00dd010f7ebb}': 'vbide',    # Microsoft Visual Basic 6.0 Extensibility (VB6EXT.OLB)
+    '{2df8d04c-5bfa-101b-bde5-00aa0044de52}': 'office',   # Microsoft Office 8.0 Object Library (CommandBars)
+    '{ac0714f2-3d04-11d1-ae7d-00a0c90f26f4}': 'addindesignerobjects',   # Add-In Designer/Instance Control Library
 }
 
 
@@ -356,6 +363,7 @@ def compile_project(inputs, encoding='cp1252', debug=False, as_component=False, 
     missing = []
     _done = {} if _done is None else _done        # vbp -> (CompInfo, units) of components already compiled
     component = False
+    addin = []
     if len(inputs) == 1 and inputs[0].lower().endswith('.vbp'):
         pr = load_project(inputs[0], encoding)
         name = pr.name
@@ -401,6 +409,17 @@ def compile_project(inputs, encoding='cp1252', debug=False, as_component=False, 
                 missing.append(f"{inputs[0]}:0:0: warning: file not found: {rel} (the project is loaded without it)")
                 continue
             modules.append(load_module(path, encoding, consts))
+        # an add-in (the Connect designer, phase 12.5): made as a program, the host of the runtime talks with the IDE
+        addin = [m for m, a in modules if getattr(a, 'addin', False)]
+        if addin and not as_component:
+            from .designers import addin_host_source
+            hast = parse_module('\n'.join(addin_host_source(addin[0])), inputs[0], 'LbAddInHost')
+            hast.is_class = hast.is_form = hast.is_uctl = False
+            hast.vb_attrs, hast.multiuse, hast.form_root = {'vb_name': 'lbaddinhost'}, True, None
+            hast.form_dir, hast.form_enc = os.path.dirname(os.path.abspath(inputs[0])), encoding
+            modules.append(('LbAddInHost', hast))
+            component = False
+            startup = 'Sub Main'
         # the components it uses: each compiled as a C unit of its own (its names cannot clash)
         for cv in find_components(pr, inputs[0], encoding):
             key = os.path.abspath(cv)
@@ -459,6 +478,7 @@ def compile_project(inputs, encoding='cp1252', debug=False, as_component=False, 
     csrc.units = tuple(units)
     csrc.infos = tuple(comps)
     csrc.component = component
+    csrc.addin = bool(addin) and not as_component
     if component:
         files = {m.lower(): a.file for m, a in modules}
         exposed = {}
@@ -871,7 +891,8 @@ def main(argv=None):
         sys.stderr.write(f"lbvc: component {nm} registered ({registry_path()}); the programs that use it "
                          f"compile it into themselves\n")
         return 0
-    if a.inputs[0].lower().endswith('.vbp') and load_project(a.inputs[0], a.codepage).type.lower() in COMPONENT_TYPES:
+    if a.inputs[0].lower().endswith('.vbp') and not getattr(csrc, 'addin', False) and \
+            load_project(a.inputs[0], a.codepage).type.lower() in COMPONENT_TYPES:
         nm = register_component(a.inputs[0], a.codepage)    # an ActiveX EXE: a program, and a component
         sys.stderr.write(f"lbvc: component {nm} registered ({registry_path()})\n")
     out = a.output or os.path.join(os.path.dirname(os.path.abspath(a.inputs[0])), name)

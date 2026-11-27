@@ -57,6 +57,8 @@ LIBS = [  # (file in VB6-REA, TYPELIB resource index, output name)
     ("System32/msrdo20.dll", 1, "RDO"),          # phase 7.8: Microsoft Remote Data Object 2.0 (VB6 Enterprise)
     # Phase 9.2: the WebBrowser control (Microsoft Internet Controls) of the Application Wizard
     ("System32/ieframe.dll", 1, "SHDocVw"),
+    # Phase 12.5: the Add-In Designer of the add-ins (Connect: IDTExtensibility2, ext_ConnectMode ...)
+    ("CommonFiles/Designer/MSADDNDR.TLB", 1, "AddInDesignerObjects"),
 ]
 PFLAGS = {1: "in", 2: "out", 4: "lcid", 8: "retval", 0x10: "optional", 0x20: "hasdefault"}
 

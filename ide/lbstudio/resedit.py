@@ -269,8 +269,17 @@ class AddInManagerDialog(QDialog):
                       PPWIZ: [bool(main.ppwiz_loaded), bool(S["addin_ppwiz_startup"]), False],
                       DOWIZ: [bool(main.dowiz_loaded), bool(S["addin_dowiz_startup"]), False],
                       APIVIEW: [bool(main.apiviewer_loaded), bool(S["addin_apiviewer_startup"]), False]}
+        # the add-ins of the user (phase 12.5): registered by Make of an add-in project, among VB6's in the order of
+        # their names (VB6 oracle 12.5/addinmgr-1: "My Add-In" after "DTC Framework Registrar")
+        from . import addinhost as AH
+        self.user = {a["name"]: a for a in AH.user_addins(main)}
+        for n, a in self.user.items():
+            self.state[n] = [AH.loaded_host(main, a["progid"]) is not None, bool(a.get("startup")),
+                             bool(a.get("cmdline"))]
+        self.rows = sorted(ADDINS + [(n, a.get("description", "")) for n, a in self.user.items()],
+                           key=lambda r: r[0].lower())
         lay = QGridLayout(self)
-        self.list = QTableWidget(len(ADDINS), 2)
+        self.list = QTableWidget(len(self.rows), 2)
         self.list.setHorizontalHeaderLabels(["Available Add-Ins", "Load Behavior"])
         self.list.verticalHeader().hide()
         self.list.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -278,7 +287,7 @@ class AddInManagerDialog(QDialog):
         self.list.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.list.setShowGrid(False)
         self.list.horizontalHeader().setStretchLastSection(True)
-        for i, (n, _) in enumerate(ADDINS):
+        for i, (n, _) in enumerate(self.rows):
             self.list.setItem(i, 0, QTableWidgetItem(n))
             self.list.setItem(i, 1, QTableWidgetItem(""))
         self.list.resizeColumnToContents(0)
@@ -316,22 +325,18 @@ class AddInManagerDialog(QDialog):
         self.resize(560, 420)
 
     def _name(self, row):
-        return ADDINS[row][0] if 0 <= row < len(ADDINS) else None
+        return self.rows[row][0] if 0 <= row < len(self.rows) else None
 
     def _fill_behavior(self):
-        for i, (n, _) in enumerate(ADDINS):
+        from .addinhost import load_behavior_text
+        for i, (n, _) in enumerate(self.rows):
             st = self.state.get(n)
-            text = ""
-            if st and st[0]:
-                text = "Startup / Loaded" if st[1] else "Loaded"
-            elif st and st[1]:
-                text = "Startup"
-            self.list.item(i, 1).setText(text)
+            self.list.item(i, 1).setText(load_behavior_text(*st) if st else "")
 
     def _select(self, row):
         n = self._name(row)
         self._filling = True
-        self.desc.setPlainText(dict(ADDINS).get(n, "") if n else "")
+        self.desc.setPlainText(dict(self.rows).get(n, "") if n else "")
         st = self.state.get(n, [False, False, False])
         on = n in self.state                    # LinBASIC Studio: the Resource Editor, the Package Wizard, the App Wizard
         for c, v in zip((self.cb_loaded, self.cb_startup, self.cb_cmd), st):
@@ -375,8 +380,32 @@ class AddInManagerDialog(QDialog):
         loaded, startup, _ = self.state[APIVIEW]
         self.main.apiviewer_loaded = loaded
         self.main.S["addin_apiviewer_startup"] = startup
+        # the add-ins of the user: Load on Startup / Command Line kept; Loaded / Unloaded now (OnConnection with
+        # ext_cm_AfterStartup, OnDisconnection with ext_dm_UserClosed)
+        from . import addinhost as AH
+        lst = AH.user_addins(self.main)
+        for a in lst:
+            st = self.state.get(a["name"])
+            if st:
+                a["startup"], a["cmdline"] = st[1], st[2]
+        self.main.S["user_addins"] = lst
         self.main.S.save()
         self.accept()
+        for a in lst:
+            st = self.state.get(a["name"])
+            if not st:
+                continue
+            on = AH.loaded_host(self.main, a["progid"]) is not None
+            if st[0] and not on:
+                AH.load_addin(self.main, a["progid"], AH.CM_AFTERSTARTUP)
+            elif not st[0] and on:
+                AH.unload_addin(self.main, a["progid"], AH.DM_USERCLOSED)
+        # OK: OnAddInsUpdate of each add-in loaded, a change or not (VB6, oracle 12.5/evlog-vb6-gui)
+        for h in AH.hosts(self.main):
+            try:
+                h.call("update")
+            except AH.AddInError as e:
+                self.main.addin_error(h.info, f"{e.description} ({e.number})")
 
 
 class PropertiesDialog(QDialog):

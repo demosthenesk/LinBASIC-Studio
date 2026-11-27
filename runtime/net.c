@@ -184,6 +184,20 @@ int lbnet_poll(long long h, int *rd, int *wr, int *ex)
 #endif
     return 0;
 }
+/* waits up to ms milliseconds for data (or the end) on the socket (the host of an add-in, addin.c) */
+int lbnet_wait(long long h, int ms)
+{
+#ifdef _WIN32
+    fd_set r;
+    FD_ZERO(&r);
+    FD_SET(S(h), &r);
+    struct timeval tv = { ms / 1000, (ms % 1000) * 1000 };
+    return select(0, &r, 0, 0, &tv) > 0;
+#else
+    struct pollfd p = { S(h), POLLIN, 0 };
+    return poll(&p, 1, ms) > 0;
+#endif
+}
 /* the error of a connection that failed (0: none) */
 int lbnet_sockerr(long long h)
 {

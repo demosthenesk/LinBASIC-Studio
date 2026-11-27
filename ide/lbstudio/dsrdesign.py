@@ -1659,4 +1659,7 @@ def designer_for(main, module):
         return DataEnvDesigner(main, module)
     if k == "DataReport":
         return ReportDesigner(main, module)
+    if k == "AddInDesigner":                    # Connect of an add-in project (phase 12.5)
+        from .addindesign import AddInDesigner
+        return AddInDesigner(main, module)
     return None

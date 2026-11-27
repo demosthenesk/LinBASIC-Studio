@@ -1,0 +1,130 @@
+connect 1 VBE AddIn EvLog.Connect True
+vbe 6.00 Microsoft Visual Basic projects 0
+bar CommandBarButton EvLog Run 1 CommandBar Add-Ins
+addinsupdate
+PE renamed Host 
+CE added Form1 5
+PE added Host
+startupcomplete
+proj Host type 0 comps 1 refs 4 file Host.vbp
+ref VBA {000204EF-0000-0000-C000-000000000046} 6.0 type 0 builtin True broken False
+ref VBRUN {EA544A21-C82D-11D1-A3E4-00A0C90AEA82} 6.0 type 0 builtin True broken False
+ref VB {FCFB3D2E-A0FA-1068-A738-08002B3371B5} 6.0 type 0 builtin True broken False
+ref stdole {00020430-0000-0000-C000-000000000046} 2.0 type 0 builtin False broken False
+comp Form1 5 lines 5
+menubar &File;&Edit;&View;&Project;F&ormat; tools CommandBar
+-- add module
+CE selected Module1
+CE added Module1 1
+error -2147024809 Invalid procedure call or argument (0)
+code 8 decl 1 | Dim x As Integer||' about f|Sub f()|    x = 1|End Sub|Function g() As Long|End Function
+proc f start 2 body 4 count 5
+proc g start 7 body 7 count 2
+procofline 6 f 0
+find True 5 5 5 10
+edited 8 | ' inserted|Dim y As Long|' about f|Sub f()|    x = 1|End Sub|Function g() As Long|End Function
+-- rename
+CE renamed ModEv Module1
+renamed ModEv
+-- add form
+CE added Form2 5
+CE selected Form2
+form Form2 5 caption Form2 props True
+caption EvLog form
+designer VBForm controls 0
+error 13 Type mismatch (0)
+XE added Command1
+added control VBControl
+control VBControl Command1 VB.CommandButton caption Command1
+XE renamed cmdGo Command1 -1
+control cmdGo Go 240 count 1
+eventproc 1 | Private Sub cmdGo_Click()||End Sub
+XE removed cmdGo
+control removed 0
+-- references
+RE added Scripting
+addref Scripting 5
+RE removed Scripting
+removed ref 4
+-- remove
+FE dogetnew 0 Form2 Form2
+FE requestchange 0 Form2.frm Form2
+FE requestwrite Form2.frm False
+FE afterwrite 0 Form2.frm 0
+FE afterchange 0 Form2.frm Form2
+CE removed Form2
+CE selected ModEv
+FE afterremove 0 Form2.frm
+FE dogetnew 1 ModEv ModEv
+FE requestchange 1 ModEv.bas ModEv
+FE requestwrite ModEv.bas False
+FE afterwrite 1 ModEv.bas 0
+FE afterchange 1 ModEv.bas ModEv
+CE removed ModEv
+FE afterremove 1 ModEv.bas
+comps 1
+-- import
+CE added Module1 1
+FE afteradd 1 ModEv.bas
+imported Module1 1 ModEv.bas comps 2
+CE renamed ModEv Module1
+code 8 decl 2
+-- projects
+CE added Form1 5
+PE added Project1
+p2 Project1 1 projects 2 active Project1
+PE renamed Other Project1
+active Host
+done
+FE dogetnew 0 Form1 Form1
+FE requestchange 0 Form1.frm Form1
+FE requestwrite Form1.frm False
+FE afterwrite 0 Form1.frm 0
+FE afterchange 0 Form1.frm Form1
+FE dogetnew 3 Other Other
+FE requestchange 3 Other.vbp Other
+FE requestwrite Other.vbp False
+FE afterwrite 3 Other.vbp 0
+FE afterchange 3 Other.vbp Other
+PE removed Other
+RE removed stdole
+FE afterclose 0 Form1.frm False
+FE afterclose 3 Other.vbp False
+projects 1
+done2
+## gui click Form1
+CE selected Form1
+## gui add module
+CE selected Module1
+CE added Module1 1
+## gui add form
+CE added Form2 5
+CE selected Form2
+## gui save project (ctrl-s)
+FE dogetnew 0 Form2 Form2
+FE requestchange 0 Form2.frm Form2
+FE requestwrite Form2.frm False
+FE afterwrite 0 Form2.frm 0
+FE afterchange 0 Form2.frm Form2
+## gui add-in manager: load My Add-In
+addinsupdate
+## gui add-in manager: unload My Add-In
+addinsupdate
+## gui add-in manager: OK, no change
+addinsupdate
+## gui add-in manager: Cancel
+## gui project remove Module1
+CE selected Module1
+CE selected Form2
+CE removed Module1
+## gui remove Form2 (saved, clean)
+CE removed Form2
+FE afterremove 0 Form2.frm
+## gui close VB6 (No)
+beginshutdown
+PE removed Host
+RE removed stdole
+FE afterclose 1 ModEv.bas False
+FE afterclose 0 Form1.frm False
+FE afterclose 3 Host.vbp True
+disconnect 0

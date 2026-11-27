@@ -37,7 +37,8 @@ REFERENCES = {
 
 def kind_of(sf):
     g = (sf.root.type_name if sf is not None and sf.root is not None else "").upper()
-    return "DataEnvironment" if g == DE_GUID else "DataReport" if g == REPORT_GUID else None
+    return "DataEnvironment" if g == DE_GUID else "DataReport" if g == REPORT_GUID else \
+        "AddInDesigner" if g == "{AC0714F6-3D04-11D1-AE7D-00A0C90F26F4}" else None
 
 
 def _props(block):

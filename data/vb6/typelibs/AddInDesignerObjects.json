@@ -1,0 +1,297 @@
+{
+ "library": "AddInDesignerObjects",
+ "short": "AddInDesignerObjects",
+ "guid": "{AC0714F2-3D04-11D1-AE7D-00A0C90F26F4}",
+ "version": "1.0",
+ "lcid": 1033,
+ "helpfile": "",
+ "file": "MSADDNDR.TLB",
+ "types": [
+  {
+   "name": "ext_ConnectMode",
+   "kind": "enum",
+   "guid": "{289E9AF1-4973-11D1-AE81-00A0C90F26F4}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "ext_cm_AfterStartup",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "ext_cm_Startup",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    },
+    {
+     "name": "ext_cm_External",
+     "memid": 1073741826,
+     "kind": "const",
+     "type": "Long",
+     "value": 2
+    },
+    {
+     "name": "ext_cm_CommandLine",
+     "memid": 1073741827,
+     "kind": "const",
+     "type": "Long",
+     "value": 3
+    }
+   ]
+  },
+  {
+   "name": "ext_DisconnectMode",
+   "kind": "enum",
+   "guid": "{289E9AF2-4973-11D1-AE81-00A0C90F26F4}",
+   "flags": [],
+   "helpcontext": 0,
+   "members": [
+    {
+     "name": "ext_dm_HostShutdown",
+     "memid": 1073741824,
+     "kind": "const",
+     "type": "Long",
+     "value": 0
+    },
+    {
+     "name": "ext_dm_UserClosed",
+     "memid": 1073741825,
+     "kind": "const",
+     "type": "Long",
+     "value": 1
+    }
+   ]
+  },
+  {
+   "name": "IAddinDesigner",
+   "kind": "dispatch",
+   "guid": "{AC0714F3-3D04-11D1-AE7D-00A0C90F26F4}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "IAddinInstance",
+   "kind": "dispatch",
+   "guid": "{AC0714F4-3D04-11D1-AE7D-00A0C90F26F4}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ]
+  },
+  {
+   "name": "_IDTExtensibility2",
+   "kind": "dispatch",
+   "guid": "{B65AD801-ABAF-11D0-BB8B-00A0C90F2744}",
+   "flags": [
+    "hidden",
+    "dual",
+    "oleautomation",
+    "dispatchable"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "stdole.IDispatch",
+     "default": false,
+     "source": false
+    }
+   ],
+   "members": [
+    {
+     "name": "OnConnection",
+     "memid": 1,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "Application",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "ConnectMode",
+       "type": "ext_ConnectMode",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "AddInInst",
+       "type": "Object",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "custom",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnDisconnection",
+     "memid": 2,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "RemoveMode",
+       "type": "ext_DisconnectMode",
+       "byref": false,
+       "flags": [
+        "in"
+       ]
+      },
+      {
+       "name": "custom",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnAddInsUpdate",
+     "memid": 3,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "custom",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnStartupComplete",
+     "memid": 4,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "custom",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "OnBeginShutdown",
+     "memid": 5,
+     "kind": "func",
+     "invoke": "func",
+     "returns": "HRESULT",
+     "params": [
+      {
+       "name": "custom",
+       "type": "Variant()",
+       "byref": true,
+       "flags": [
+        "in"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "IDTExtensibility2",
+   "kind": "alias",
+   "guid": null,
+   "flags": [],
+   "helpcontext": 0,
+   "alias": "_IDTExtensibility2"
+  },
+  {
+   "name": "AddinDesigner",
+   "kind": "coclass",
+   "guid": "{AC0714F6-3D04-11D1-AE7D-00A0C90F26F4}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IAddinDesigner",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "_IDTExtensibility2",
+     "default": true,
+     "source": true
+    }
+   ]
+  },
+  {
+   "name": "AddinInstance",
+   "kind": "coclass",
+   "guid": "{AC0714F7-3D04-11D1-AE7D-00A0C90F26F4}",
+   "flags": [
+    "cancreate"
+   ],
+   "helpcontext": 0,
+   "implements": [
+    {
+     "name": "IAddinInstance",
+     "default": true,
+     "source": false
+    },
+    {
+     "name": "_IDTExtensibility2",
+     "default": true,
+     "source": true
+    }
+   ]
+  }
+ ]
+}

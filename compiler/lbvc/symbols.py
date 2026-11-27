@@ -105,7 +105,7 @@ def vba_constants():
     base = os.path.join(here, '..', '..', 'data', 'vb6', 'typelibs')
     out = {}
     for lib in ('VBA', 'VBRUN', 'MSComDlg', 'Scripting', 'MSComctlLib', 'MSComCtl2', 'MSFlexGridLib', 'TabDlg',
-                'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'SHDocVw', 'stdole'):   # MSComDlg: CommonDialog (cdl...); Scripting: ForReading ...
+                'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'SHDocVw', 'VBIDE', 'AddInDesignerObjects', 'stdole'):   # MSComDlg: CommonDialog (cdl...); Scripting: ForReading ...
         p = os.path.join(base, lib + '.json')
         if not os.path.exists(p):
             continue
@@ -126,8 +126,29 @@ def vba_constants():
                     out[m['name'].lower()] = (v, 'Double')
                 elif v is not None:
                     out[m['name'].lower()] = (v, 'Integer' if ty == 'Integer' else 'Long')
+    for k, v in OFFICE_CONSTS.items():           # the command bars of an add-in (Office; no type library here)
+        out.setdefault(k.lower(), (v, 'Long'))
     _VBA_CONSTS = out
     return out
+
+
+# the constants of the Microsoft Office Object Library an add-in uses with the command bars of the IDE (phase 12.5)
+OFFICE_CONSTS = {
+    'msoControlCustom': 0, 'msoControlButton': 1, 'msoControlEdit': 2, 'msoControlDropdown': 3,
+    'msoControlComboBox': 4, 'msoControlButtonDropdown': 5, 'msoControlSplitDropdown': 6,
+    'msoControlOCXDropdown': 7, 'msoControlGenericDropdown': 8, 'msoControlGraphicDropdown': 9,
+    'msoControlPopup': 10, 'msoControlGraphicPopup': 11, 'msoControlButtonPopup': 12, 'msoControlSplitButtonPopup': 13,
+    'msoControlSplitButtonMRUPopup': 14, 'msoControlLabel': 15, 'msoControlExpandingGrid': 16,
+    'msoControlSplitExpandingGrid': 17, 'msoControlGrid': 18, 'msoControlGauge': 19,
+    'msoControlGraphicCombo': 20,
+    'msoButtonAutomatic': 0, 'msoButtonIcon': 1, 'msoButtonCaption': 2, 'msoButtonIconAndCaption': 3,
+    'msoButtonUp': 0, 'msoButtonDown': -1, 'msoButtonMixed': 2,
+    'msoBarLeft': 0, 'msoBarTop': 1, 'msoBarRight': 2, 'msoBarBottom': 3, 'msoBarFloating': 4, 'msoBarPopup': 5,
+    'msoBarMenuBar': 6,
+    'msoBarTypeNormal': 0, 'msoBarTypeMenuBar': 1, 'msoBarTypePopup': 2,
+    'msoControlOLEUsageNeither': 0, 'msoControlOLEUsageServer': 1, 'msoControlOLEUsageClient': 2,
+    'msoControlOLEUsageBoth': 3,
+}
 
 
 def lib_const_names(lib):
@@ -155,7 +176,7 @@ def lib_enums():
     base = os.path.join(here, '..', '..', 'data', 'vb6', 'typelibs')
     out = set()
     for lib in ('VBA', 'VBRUN', 'VB', 'stdole', 'MSComDlg', 'Scripting', 'MSComctlLib', 'MSComCtl2', 'MSFlexGridLib',
-                'TabDlg', 'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'SHDocVw'):
+                'TabDlg', 'RichTextLib', 'MSChart20Lib', 'MCI', 'MSCommLib', 'PicClip', 'DAO', 'ADODB', 'MSBind', 'MSAdodcLib', 'MSDataGridLib', 'MSDataListLib', 'MSDataReportLib', 'MSWinsockLib', 'InetCtlsObjects', 'MSMask', 'MSDBGrid', 'MSDBCtls', 'StdFormat', 'ComCtl3', 'RDO', 'MSRDC', 'MSDataRepeaterLib', 'MSMAPI', 'SHDocVw', 'VBIDE', 'AddInDesignerObjects'):
         p = os.path.join(base, lib + '.json')
         if not os.path.exists(p):
             continue

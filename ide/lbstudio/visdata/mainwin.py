@@ -330,12 +330,18 @@ class VisDataWindow(QMainWindow):
         if self.dbwin is None:
             self.dbwin = DatabaseWindow(self)
             sw = self.add_window(self.dbwin, (0, 0, 255, 255))
-            sw.destroyed.connect(lambda *_: setattr(self, "dbwin", None))
+            sw.destroyed.connect(self._dbwin_gone)     # (a method: no call once this window is gone itself)
         if self.sqlwin is None:
             self.sqlwin = SQLWindow(self)
             sw = self.add_window(self.sqlwin, (258, 0, 357, 200))
-            sw.destroyed.connect(lambda *_: setattr(self, "sqlwin", None))
+            sw.destroyed.connect(self._sqlwin_gone)
         self.sqlwin.b_save.setVisible(access)
+
+    def _dbwin_gone(self, *_):
+        self.dbwin = None
+
+    def _sqlwin_gone(self, *_):
+        self.sqlwin = None
 
     def add_window(self, w, geom=None):
         sw = QMdiSubWindow()

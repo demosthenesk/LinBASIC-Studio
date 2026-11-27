@@ -378,5 +378,15 @@
   "helpfile": "",
   "types": 37,
   "members": 391
+ },
+ {
+  "short": "AddInDesignerObjects",
+  "library": "AddInDesignerObjects",
+  "guid": "{AC0714F2-3D04-11D1-AE7D-00A0C90F26F4}",
+  "version": "1.0",
+  "file": "MSADDNDR.TLB",
+  "helpfile": "",
+  "types": 8,
+  "members": 11
  }
 ]

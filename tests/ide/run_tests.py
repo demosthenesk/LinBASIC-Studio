@@ -51,6 +51,9 @@ checked in the files the IDE writes and in the program it runs.
                window; the .frm as the VB6 IDE wrote the same control (VB6 oracle f_drep3), the .vbp
 
     t_customize12 View > Toolbars > Customize... (phase 12.2): the commands, the bars and menus of the user
+    t_addin125 the add-ins of the user (phase 12.5): the Addin template, Make, the Add-In Manager, its command and form;
+               EvLog (VBIDE: projects, components, code modules, designers, references, command bars and their events)
+               with its log as VB6 wrote it (VB6 oracle DEV-12/evlog)
     t_ppages11 the property pages of the ActiveX controls (phase 11): (Custom), Shift+F4, the tabs and the layout of VB6
                (VB6 oracle DEV-11/ppcap), General / Color / Font set on Apply, the .frm
 
@@ -1191,7 +1194,8 @@ def t_appwiz92(d):
     w.show()
     w.S["appwiz_no_created"] = True             # no "Application Created" in the test
     npd = NewProjectDialog(w)
-    assert [npd.list.item(i).text() for i in range(npd.list.count())][-1] == "VB Application Wizard"
+    items = [npd.list.item(i).text() for i in range(npd.list.count())]
+    assert items[4:] == ["VB Application Wizard", "Addin"], items    # (VB6: after ActiveX Control; Addin after it)
     dlg = AppWizard(w)
     assert dlg.windowTitle() == "Application Wizard - Introduction" and not dlg.b_finish.isEnabled()
     dlg.go(1)
@@ -6818,7 +6822,145 @@ def t_querydesign12(d):
     assert [f[0] for f in cmd.fields] == ["Name", "City"], cmd.fields
 
 
-TESTS = {"t_visdata12": t_visdata12, "t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+def t_addin125(d):
+    """the add-ins of the user (phase 12.5): New Project > Addin (the template), Make (the add-in as a program), the
+    Add-In Manager ("My Add-In", Startup / Command Line, Loaded: "My AddIn" at the end of Add-Ins, its form; Unloaded: the
+    command gone); then EvLog (our add-in that writes the events and the objects of VBIDE: addin125/) Load on Startup with
+    host/Host.vbp, what it does through VBIDE and what the user does in the IDE: its log as VB6 wrote it (VB6 oracle
+    DEV-12/evlog, oracles/12.5/evlog-vb6-gui.txt)"""
+    import subprocess
+    from lbstudio import addinhost as AH
+    from lbstudio.resedit import AddInManagerDialog
+    w = MainWindow()
+    try:
+        w.new_project("Addin")
+        p = w.project
+        assert p.is_addin and [m.name for m in p.modules] == ["frmAddIn", "Connect"], [m.name for m in p.modules]
+        tpl = os.path.join(d, "tpl")
+        os.makedirs(tpl)
+        saves(os.path.join(tpl, "frmAddIn.frm"), os.path.join(tpl, "Connect.Dsr"), os.path.join(tpl, "MyAddIn.vbp"),
+              os.path.join(tpl, "MyAddIn.dll"))
+        w.make_exe()
+        wait(w, 600)
+        assert os.path.isfile(os.path.join(tpl, "MyAddIn.dll")), w.output.toPlainText() if hasattr(w.output, "toPlainText") else ""
+        reg = [a for a in AH.user_addins(w) if a["progid"] == "MyAddIn.Connect"]
+        assert reg and reg[0]["name"] == "My Add-In" and reg[0]["startup"] and reg[0]["cmdline"], reg
+        dlg = AddInManagerDialog(w)
+        row = [i for i, (n, _) in enumerate(dlg.rows) if n == "My Add-In"][0]
+        assert dlg.list.item(row, 1).text() == "Startup / Command Line", dlg.list.item(row, 1).text()
+        dlg.state["My Add-In"] = [True, False, False]
+        dlg._ok()
+        h = AH.loaded_host(w, "MyAddIn.Connect")
+        assert h is not None and not w.addin_errors, w.addin_errors
+        menu = [a for a in w.menuBar().actions() if a.text().replace("&", "") == "Add-Ins"][0].menu()
+        assert menu.actions()[-1].text() == "My AddIn", [a.text() for a in menu.actions()]
+        menu.actions()[-1].trigger()            # the form of the add-in, in its own program
+        t0 = time.time()
+        while time.time() - t0 < 1:
+            app.processEvents()
+            time.sleep(0.02)
+        assert h.running() and not w.addin_errors, w.addin_errors
+        assert AddInManagerDialog(w).list.item(row, 1).text() == "Loaded"
+        dlg = AddInManagerDialog(w)
+        dlg.state["My Add-In"][0] = False
+        dlg._ok()
+        assert AH.loaded_host(w, "MyAddIn.Connect") is None
+        assert "My AddIn" not in [a.text() for a in menu.actions()]
+        done(w)
+        # EvLog: compiled, Load on Startup, the IDE opened with host/Host.vbp
+        ev = os.path.join(d, "ev")
+        shutil.copytree(os.path.join(HERE, "addin125"), ev)
+        cp = subprocess.run([sys.executable, os.path.join(ROOT, "compiler", "lbvc.py"), os.path.join(ev, "EvLog.vbp"),
+                             "-o", os.path.join(ev, "EvLog.dll")], capture_output=True, text=True, timeout=900)
+        assert cp.returncode == 0, (cp.stdout[-3000:], cp.stderr[-3000:])
+        AH.register_addin(w, {"progid": "EvLog.Connect", "name": "EvLog", "description": "",
+                              "exe": os.path.join(ev, "EvLog.dll"), "vbp": os.path.join(ev, "EvLog.vbp"),
+                              "startup": True, "cmdline": False, "cmdsafe": False})
+        for a in AH.user_addins(w):             # (My Add-In: not on startup now)
+            if a["progid"] == "MyAddIn.Connect":
+                a["startup"] = a["cmdline"] = False
+        w.S.save()
+        cwd = os.getcwd()
+        os.chdir(ev)                            # (VB6 writes the files of a project never saved in the current folder)
+        try:
+            w = MainWindow()
+            w.open_project(os.path.join(ev, "host", "Host.vbp"))
+            w.close_all_code()                  # (VB6: no .vbw, no window open)
+            w.show()
+            log = os.path.join(ev, "evlog.txt")
+
+            def pump(sec=0.3):
+                t = time.time()
+                while time.time() - t < sec:
+                    app.processEvents()
+                    time.sleep(0.01)
+
+            def mark(text):
+                with open(log, "a", newline="") as f:
+                    f.write("## " + text + "\r\n")
+            pump(1.0)
+            assert not w.addin_errors, w.addin_errors
+            # what was done in VB6 by hand after the tests of the add-in
+            p = w.project
+            mark("gui click Form1")
+            w.select_in_tree(p.module("Form1"))
+            pump()
+            mark("gui add module")
+            w.add_module("Module")
+            pump()
+            mark("gui add form")
+            w.add_module("Form")
+            pump()
+            mark("gui save project (ctrl-s)")
+            saves(os.path.join(ev, "Form2.frm"))   # (Save File As: VB6 wrote it in the current folder)
+            w.save_file()
+            pump()
+            for text, on in (("load", True), ("unload", False)):
+                mark(f"gui add-in manager: {text} My Add-In")
+                dlg = AddInManagerDialog(w)
+                dlg.state["My Add-In"][0] = on
+                dlg._ok()
+                pump()
+            mark("gui add-in manager: OK, no change")
+            AddInManagerDialog(w)._ok()
+            pump()
+            mark("gui add-in manager: Cancel")
+            AddInManagerDialog(w).reject()
+            pump()
+            mark("gui project remove Module1")
+            w.select_in_tree(p.module("Module1"))
+            pump()
+            oq = QMessageBox.question
+            QMessageBox.question = lambda *a, **k: QMessageBox.StandardButton.No    # Save changes? No
+            try:
+                w.remove_module()
+            finally:
+                QMessageBox.question = oq
+            pump()
+            mark("gui remove Form2 (saved, clean)")
+            w.select_in_tree(p.module("Form2"))
+            pump()
+            w.remove_module()
+            pump()
+            mark("gui close VB6 (No)")
+            w.confirm_discard = lambda *a, **k: True
+            w.close()
+            pump()
+        finally:
+            os.chdir(cwd)
+        ours = open(log, "rb").read().decode("cp1252").replace("\r\n", "\n")
+        vb6 = open(os.path.join(HERE, "addin125", "evlog-vb6.txt"), "rb").read().decode("cp1252").replace("\r\n", "\n")
+        if ours != vb6:
+            import difflib
+            raise AssertionError("".join(difflib.unified_diff(vb6.splitlines(True), ours.splitlines(True), "vb6", "ours")))
+        # the files Remove wrote (a component never saved), as VB6 wrote them
+        assert os.path.isfile(os.path.join(ev, "host", "ModEv.bas")) and os.path.isfile(os.path.join(ev, "Other.vbp"))
+    finally:
+        w.S["user_addins"] = []                 # (the next tests: no add-in of the user)
+        w.S.save()
+
+
+TESTS = {"t_addin125": t_addin125, "t_visdata12": t_visdata12, "t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

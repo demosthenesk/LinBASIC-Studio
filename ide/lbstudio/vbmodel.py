@@ -17,6 +17,9 @@ from lbvc.project.frx import FrxStore, FrxData, FrxWriter  # noqa: E402
 
 KIND_OF_EXT = {".frm": "Form", ".bas": "Module", ".cls": "Class", ".ctl": "UserControl",
                ".pag": "PropertyPage", ".dob": "UserDocument", ".dsr": "Designer"}
+# the add-ins of the user (phase 12.5): FILE_HOOK("before" / "after", project, module or None, path) - their
+# FileControlEvents around the writing of a file (addinhost._file_hook)
+FILE_HOOK = None
 FOLDER_OF_KIND = {"Form": "Forms", "MDIForm": "Forms", "Module": "Modules", "Class": "Class Modules",
                   "UserControl": "User Controls", "PropertyPage": "Property Pages",
                   "UserDocument": "User Documents", "Designer": "Designers"}
@@ -35,6 +38,9 @@ def default_codepage():
         if key in table:
             return table[key]
     return "cp1252"
+
+
+ADDIN_GUID = "{AC0714F6-3D04-11D1-AE7D-00A0C90F26F4}"   # the Add-In designer of an add-in project (12.5)
 
 
 class Module:
@@ -149,9 +155,15 @@ class Module:
     def save(self, path=None):
         self.sync()
         target = path or self.path
+        if FILE_HOOK is not None and not FILE_HOOK("before", self.project, self, target):
+            return False                        # (an add-in cancelled it: RequestWriteFile)
         os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
         self.write_form(target, permanent=True)
         self.dirty = False
+        if FILE_HOOK is not None:
+            FILE_HOOK("after", self.project, self, target)
+        self.never_saved = False
+        return True
 
     # ------------------------------------------------------------ the .frx
     def frx_props(self, owners=None):
@@ -366,7 +378,19 @@ class VBProject:
 
     @property
     def is_component(self):
-        return self.ptype in ("OleExe", "OleDll", "Control")
+        return self.ptype in ("OleExe", "OleDll", "Control") and not self.is_addin
+
+    @property
+    def is_addin(self):
+        """an add-in project (phase 12.5): an ActiveX DLL with the Add-In designer (Connect); made as a program"""
+        return self.ptype == "OleDll" and self.addin_designer() is not None
+
+    def addin_designer(self):
+        for m in self.modules:
+            if m.kind == "Designer" and m.sf is not None and m.sf.root is not None and \
+                    (m.sf.root.type_name or "").upper() == ADDIN_GUID:
+                return m
+        return None
 
     def resolve(self, rel):
         base = os.path.dirname(self.path) if self.path else os.getcwd()
@@ -388,6 +412,8 @@ class VBProject:
         return self.dirty or any(m.dirty for m in self.modules)
 
     def save(self, path=None):
+        if self.path is None:
+            self.never_saved = True             # (the add-ins: DoGetNewFileName for the .vbp)
         if path:
             old_dir = os.path.dirname(self.path) if self.path else None
             self.path = os.path.abspath(path)
@@ -399,8 +425,13 @@ class VBProject:
         for m in self.modules:
             if m.dirty or not os.path.exists(m.path):
                 m.save()
+        if FILE_HOOK is not None and not FILE_HOOK("before", self, None, self.path):
+            return
         self.vbp.save(self.path)
         self.dirty = False
+        if FILE_HOOK is not None:
+            FILE_HOOK("after", self, None, self.path)
+        self.never_saved = False
 
     def _copy_res(self, old_dir, new_dir):
         """the resource file of the project (ResFile32=, for LoadResString ...) goes along"""
@@ -521,6 +552,7 @@ class VBProject:
         sf.encoding = self.encoding
         m = Module(self, kind, name, name + ext, sf)
         m.dirty = True
+        m.never_saved = True                    # (the add-ins: DoGetNewFileName when it is written first)
         self.modules.append(m)
         self._vbp_add(m)
         if kind == "Form" and not (self.vbp.get("Startup") or "").strip('"'):
@@ -766,6 +798,211 @@ def new_vbp_text(ptype, name="Project1"):
     if ptype in ("OleDll", "Control"):
         lines.insert(len(lines) - 1, "ThreadingModel=1")
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------- File > New Project > Addin (phase 12.5)
+# an add-in project as VB6's template makes it (oracles 12.5): MyAddIn, the form frmAddIn ("My Add In", OK / Cancel)
+# and the designer Connect; the code is our own, doing what the template does: a command "My AddIn" at the end of
+# the Add-Ins menu that shows the form, the form shown again on the next start when it was open
+ADDIN_REFERENCES = [
+    r"*\G{EF404E00-EDA6-101A-8DAF-00DD010F7EBB}#5.3#0#VB6EXT.OLB#Microsoft Visual Basic 6.0 Extensibility",
+    r"*\G{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}#2.0#0#MSO97RT.DLL#Microsoft Office 8.0 Object Library",
+    r"*\G{AC0714F2-3D04-11D1-AE7D-00A0C90F26F4}#1.0#0#MSADDNDR.TLB#Add-In Designer/Instance Control Library",
+]
+
+ADDIN_FORM = """VERSION 5.00
+Begin VB.Form frmAddIn
+   BorderStyle     =   3  'Fixed Dialog
+   Caption         =   "My Add In"
+   ClientHeight    =   3195
+   ClientLeft      =   2175
+   ClientTop       =   1935
+   ClientWidth     =   6030
+   LinkTopic       =   "Form1"
+   MaxButton       =   0   'False
+   MinButton       =   0   'False
+   ScaleHeight     =   3195
+   ScaleWidth      =   6030
+   ShowInTaskbar   =   0   'False
+   StartUpPosition =   2  'CenterScreen
+   Begin VB.CommandButton CancelButton
+      Caption         =   "Cancel"
+      Height          =   375
+      Left            =   4680
+      TabIndex        =   1
+      Top             =   600
+      Width           =   1215
+   End
+   Begin VB.CommandButton OKButton
+      Caption         =   "OK"
+      Height          =   375
+      Left            =   4680
+      TabIndex        =   0
+      Top             =   120
+      Width           =   1215
+   End
+End
+Attribute VB_Name = "frmAddIn"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+Public VBInstance As VBIDE.VBE
+Public Connect As Connect
+
+Option Explicit
+
+Private Sub CancelButton_Click()
+    Connect.Hide
+End Sub
+
+Private Sub OKButton_Click()
+    MsgBox "AddIn operation on: " & VBInstance.FullName
+End Sub
+"""
+
+ADDIN_CONNECT = """VERSION 5.00
+Begin {AC0714F6-3D04-11D1-AE7D-00A0C90F26F4} Connect
+   ClientHeight    =   9945
+   ClientLeft      =   1740
+   ClientTop       =   1545
+   ClientWidth     =   6585
+   _ExtentX        =   11615
+   _ExtentY        =   17542
+   _Version        =   393216
+   Description     =   "Add-In Project Template"
+   DisplayName     =   "My Add-In"
+   AppName         =   "Visual Basic"
+   AppVer          =   "Visual Basic 98 (ver 6.0)"
+   LoadName        =   "Command Line / Startup"
+   LoadBehavior    =   5
+   RegLocation     =   "HKEY_CURRENT_USER\\Software\\Microsoft\\Visual Basic\\6.0"
+   CmdLineSupport  =   -1  'True
+End
+Attribute VB_Name = "Connect"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = True
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = True
+Option Explicit
+
+Public FormDisplayed          As Boolean
+Public VBInstance             As VBIDE.VBE
+Dim mcbMenuCommandBar         As Office.CommandBarControl
+Dim mfrmAddIn                 As New frmAddIn
+Public WithEvents MenuHandler As CommandBarEvents          ' the Click of the command of the add-in
+
+Sub Hide()
+    On Error Resume Next
+    FormDisplayed = False
+    mfrmAddIn.Hide
+End Sub
+
+Sub Show()
+    On Error Resume Next
+    If mfrmAddIn Is Nothing Then
+        Set mfrmAddIn = New frmAddIn
+    End If
+    Set mfrmAddIn.VBInstance = VBInstance
+    Set mfrmAddIn.Connect = Me
+    FormDisplayed = True
+    mfrmAddIn.Show
+End Sub
+
+'------------------------------------------------------
+' the IDE loads the add-in
+'------------------------------------------------------
+Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal ConnectMode As AddInDesignerObjects.ext_ConnectMode, ByVal AddInInst As Object, custom() As Variant)
+    On Error GoTo error_handler
+    ' the IDE, for the whole time the add-in is loaded
+    Set VBInstance = Application
+    If ConnectMode = ext_cm_External Then
+        ' started from outside (a toolbar of wizards): the form at once
+        Me.Show
+    Else
+        Set mcbMenuCommandBar = AddToAddInCommandBar("My AddIn")
+        ' its clicks come to MenuHandler_Click
+        Set Me.MenuHandler = VBInstance.Events.CommandBarEvents(mcbMenuCommandBar)
+    End If
+    If ConnectMode = ext_cm_AfterStartup Then
+        If GetSetting(App.Title, "Settings", "DisplayOnConnect", "0") = "1" Then
+            ' the form was open when the add-in was unloaded
+            Me.Show
+        End If
+    End If
+    Exit Sub
+error_handler:
+    MsgBox Err.Description
+End Sub
+
+'------------------------------------------------------
+' the IDE unloads the add-in
+'------------------------------------------------------
+Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjects.ext_DisconnectMode, custom() As Variant)
+    On Error Resume Next
+    ' its command goes from the menu
+    mcbMenuCommandBar.Delete
+    ' remember whether the form was open
+    If FormDisplayed Then
+        SaveSetting App.Title, "Settings", "DisplayOnConnect", "1"
+        FormDisplayed = False
+    Else
+        SaveSetting App.Title, "Settings", "DisplayOnConnect", "0"
+    End If
+    Unload mfrmAddIn
+    Set mfrmAddIn = Nothing
+End Sub
+
+Private Sub IDTExtensibility_OnStartupComplete(custom() As Variant)
+    If GetSetting(App.Title, "Settings", "DisplayOnConnect", "0") = "1" Then
+        Me.Show
+    End If
+End Sub
+
+' a click on the command of the add-in in the IDE
+Private Sub MenuHandler_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+    Me.Show
+End Sub
+
+Function AddToAddInCommandBar(sCaption As String) As Office.CommandBarControl
+    Dim cbMenuCommandBar As Office.CommandBarControl
+    Dim cbMenu As Object
+    On Error GoTo AddToAddInCommandBarErr
+    ' the Add-Ins menu of the IDE
+    Set cbMenu = VBInstance.CommandBars("Add-Ins")
+    If cbMenu Is Nothing Then
+        Exit Function
+    End If
+    ' a command at its end, with the caption
+    Set cbMenuCommandBar = cbMenu.Controls.Add(1)
+    cbMenuCommandBar.Caption = sCaption
+    Set AddToAddInCommandBar = cbMenuCommandBar
+    Exit Function
+AddToAddInCommandBarErr:
+End Function
+"""
+
+
+def new_addin_project(encoding=None):
+    """File > New Project > Addin: MyAddIn with frmAddIn and Connect, the references of an add-in"""
+    p = VBProject()
+    p.encoding = encoding or p.encoding
+    text = new_vbp_text("OleDll", "MyAddIn").replace('Description="', 'Description="')
+    p.vbp = Project.parse(text, None, True, p.encoding)
+    p.vbp.encoding = p.encoding
+    p.vbp.set("Description", "Sample AddIn Project", quote=True)
+    p.add_references(ADDIN_REFERENCES)
+    for kind, name, rel, body in (("Form", "frmAddIn", "frmAddIn.frm", ADDIN_FORM),
+                                  ("Designer", "Connect", "Connect.Dsr", ADDIN_CONNECT)):
+        sf = parse_source(body.replace("\n", "\r\n"), None, kind, True, p.encoding)
+        sf.encoding = p.encoding
+        m = Module(p, kind, name, rel, sf)
+        p.modules.append(m)
+        p._vbp_add(m)
+    p.dirty = False
+    for m in p.modules:
+        m.dirty = False
+    return p
 
 
 class VBGroup:

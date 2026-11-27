@@ -9,6 +9,7 @@
 
 DE_GUID = '{C0E45035-5775-11D0-B388-00A0C9055D8E}'
 REPORT_GUID = '{78E93846-85FD-11D0-8487-00A0C90DC8A9}'
+ADDIN_GUID = '{AC0714F6-3D04-11D1-AE7D-00A0C90F26F4}'     # the Add-In designer (Connect of an add-in project)
 
 # AggFunction of the .dsr (3 COUNT: the VB98 sample DataRept)
 AGG_FUNCS = {0: '', 1: 'ANY', 2: 'AVG', 3: 'COUNT', 4: 'MAX', 5: 'MIN', 6: 'STDEV', 7: 'SUM'}
@@ -20,6 +21,8 @@ def designer_kind(sf):
         return 'DataEnvironment'
     if g == REPORT_GUID:
         return 'DataReport'
+    if g == ADDIN_GUID:
+        return 'AddIn'
     return None
 
 
@@ -482,3 +485,66 @@ def _vbstr_chunks(s):
         out.append(' & '.join(piece) if piece else '""')
         out.append('Chr$(10)')
     return out[:-1] if out else ['""']
+
+
+# ---------------------------------------------------------------- the Add-In designer (phase 12.5)
+# the events of AddinInstance (AddInDesignerObjects) and of IDTExtensibility (VBIDE), as the IDE calls them through
+# the add-in host (runtime/addin.c): (event, parameters of the wrapper, the arguments of the event procedure)
+ADDIN_EVENTS = [
+    ('OnConnection', 'ByVal Application As Object, ByVal ConnectMode As Long, ByVal AddInInst As Object',
+     'Application, ConnectMode, AddInInst, lb_custom'),
+    ('OnDisconnection', 'ByVal RemoveMode As Long', 'RemoveMode, lb_custom'),
+    ('OnStartupComplete', '', 'lb_custom'),
+    ('OnAddInsUpdate', '', 'lb_custom'),
+    ('OnBeginShutdown', '', 'lb_custom'),
+]
+
+
+def addin_info(sf):
+    """the properties of the designer: DisplayName, Description, LoadBehavior, CmdLineSupport ..."""
+    p = _props(sf.root) if sf.root is not None else {}
+    return {'displayname': str(p.get('displayname', sf.name) or sf.name), 'description': str(p.get('description', '') or ''),
+            'appname': str(p.get('appname', '') or ''), 'appver': str(p.get('appver', '') or ''),
+            'loadname': str(p.get('loadname', '') or ''), 'loadbehavior': int(p.get('loadbehavior', 0) or 0),
+            'cmdlinesupport': int(p.get('cmdlinesupport', 0) or 0) != 0}
+
+
+def addin_source(sf):
+    """the class of the Connect designer: its code, and a public procedure for each event the IDE raises
+    (lbaddin_onconnection ...) that calls AddinInstance_<event> and IDTExtensibility_<event> of the code.
+    Implements IDTExtensibility: the IDE calls those procedures itself (no interface of a library here)"""
+    import re
+    name = sf.name
+    user = list(sf.code)
+    opts = []
+    for i, ln in enumerate(user):              # Option ... first; the code keeps its line numbers
+        low = ln.strip().lower()
+        if low.startswith('option '):
+            opts.append(ln)
+            user[i] = ''
+        elif re.match(r'implements\s+(vbide\.)?idtextensibility2?\s*$', low):
+            user[i] = ''
+    lowcode = '\n'.join(user).lower()
+
+    def has(proc):
+        return re.search(r'(?m)^\s*(?:private\s+|public\s+|friend\s+)?sub\s+' + proc.lower() + r'\s*\(', lowcode) is not None
+
+    decls = list(opts) + ["' ---- made by LinBASIC Studio from the Add-In designer"]
+    procs = ['']
+    for ev, params, args in ADDIN_EVENTS:
+        procs.append(f'Public Sub lbaddin_{ev}({params})')
+        procs.append('    Dim lb_custom() As Variant')
+        for pre in ('AddinInstance', 'IDTExtensibility', 'IDTExtensibility2'):
+            if has(f'{pre}_{ev}'):
+                procs.append(f'    {pre}_{ev} {args}')
+        procs.append('End Sub')
+    attrs = [(n, v) for n, v, _ in sf.attributes]
+    return [(name, (decls, user, procs), attrs)]
+
+
+def addin_host_source(connect):
+    """the start of an add-in made as a program: the class of the designer, then the host of the runtime (addin.c),
+    which talks with the IDE until it unloads the add-in"""
+    return ['Attribute VB_Name = "LbAddInHost"', 'Option Explicit', 'Sub Main()',
+            f'    Dim lb_connect As {connect}', f'    Set lb_connect = New {connect}',
+            '    LbAddIn_HostRun lb_connect', 'End Sub']

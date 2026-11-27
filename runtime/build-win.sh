@@ -12,7 +12,7 @@ CC=$(command -v $T-gcc-posix || command -v $T-gcc) || { echo "$T-gcc not found (
 python3 mkerrors.py >/dev/null || exit 1
 OUT=$1
 mkdir -p "$OUT/obj"
-SRCS="core variant decimal intl array io lib object binfile dll varray format settings resource os scripting component mci mci_win serial net inet stdfmt lbmapi mapi debug dbgpipe_win"
+SRCS="core variant decimal intl array io lib object binfile dll varray format settings resource os scripting component mci mci_win serial net inet stdfmt lbmapi mapi addin debug dbgpipe_win"
 for f in $SRCS; do $CC -O2 -g0 -Wall -Wno-unused-result -Wno-unused-function -Wno-unused-variable -c $f.c -o "$OUT/obj/$f.o" || exit 1; done
 rm -f "$OUT/libvbrt.a" && ${CC%gcc*}ar rcs "$OUT/libvbrt.a" "$OUT"/obj/*.o 2>/dev/null || $T-ar rcs "$OUT/libvbrt.a" "$OUT"/obj/*.o
 rm -rf "$OUT/obj"

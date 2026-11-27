@@ -81,7 +81,8 @@ class Runner(QObject):
         self.make_target = make_target
         # Make of an ActiveX DLL or Control: no program; the registry names the project (its real .vbp)
         self.register = project.path if make_target and getattr(project, "is_component", False) else None
-        self.no_exe = make_target is not None and getattr(project, "ptype", "Exe") in ("OleDll", "Control")
+        self.no_exe = make_target is not None and getattr(project, "ptype", "Exe") in ("OleDll", "Control") and \
+            not getattr(project, "is_addin", False)       # (an add-in is made as a program, phase 12.5)
         self.stderr = ""
         p = QProcess(self)
         p.setProcessEnvironment(self._env(codepage))

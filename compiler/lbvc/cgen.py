@@ -71,7 +71,7 @@ class E:
     """a compiled expression: C code, VB type, and (for variables) the C pointer to it.
     arr: for an array inside a Type used without an index, the C pointer to its vbarr.
     prop: a public variable of an object (passed ByRef as a copy, like a property)."""
-    __slots__ = ('code', 't', 'ptr', 'const', 'arr', 'prop', 'wev', 'fix', 'ext', 'aref')
+    __slots__ = ('code', 't', 'ptr', 'const', 'arr', 'prop', 'wev', 'fix', 'ext', 'aref', 'late_call')
 
     def __init__(self, code, t, ptr=None, const=None, arr=None, prop=False, wev=None, fix=None, ext=False):
         self.code, self.t, self.ptr, self.const, self.arr, self.prop = code, t, ptr, const, arr, prop
@@ -79,6 +79,7 @@ class E:
         self.fix = fix                   # String * n: n
         self.wev = wev                   # WithEvents variable: (handler table, C code of the listener)
         self.aref = None                 # an element of an array: the C pointer to its vbarr (VarPtr)
+        self.late_call = False           # a late-bound call with its ByRef values back (late)
 
 
 # the .ocx libraries whose controls the forms runtime has (ocx.inc); their objects are late bound
@@ -96,6 +97,20 @@ OCX_TYPES = {'node', 'nodes', 'listitem', 'listitems', 'listsubitem', 'listsubit
              'selbookmarks', 'mmcontrol', 'mscomm', 'sysinfo', 'winsock', 'inet', 'maskedbox', 'dbgrid', 'dblist',
              'dbcombo', 'coolbar', 'band', 'bands', 'msrdc', 'datarepeater', 'repeaterbindings', 'repeaterbinding',
              'mapisession', 'mapimessages', 'mshflexgrid', 'webbrowser'}
+
+# the objects of the IDE an add-in uses (phase 12.5): VBIDE, Office (the command bars), AddInDesignerObjects; late
+# bound, their events by name (runtime/addin.c)
+ADDIN_LIBS = {'vbide', 'office', 'addindesignerobjects'}
+ADDIN_TYPES = {'application', 'vbe', 'filecontrol', 'menuitems', 'submenu', 'menuline', 'window', 'windows',
+               'linkedwindows', 'events', 'events2', 'vbprojectsevents', 'vbcomponentsevents', 'referencesevents',
+               'vbcontrolsevents', 'selectedvbcontrolsevents', 'commandbarevents', 'filecontrolevents',
+               'projecttemplate', 'vbproject', 'vbnewprojects', 'vbprojects', 'selectedcomponents', 'components',
+               'vbcomponents', 'component', 'vbcomponent', 'formtemplate', 'vbform', 'controltemplate', 'vbcontrol',
+               'property', 'properties', 'controltemplates', 'containedvbcontrols', 'vbcontrols',
+               'selectedcontroltemplates', 'selectedvbcontrols', 'addins', 'addin', 'idtextensibility', 'codemodule',
+               'codepanes', 'codepane', 'references', 'reference', 'members', 'member', 'vbbuildevents',
+               'commandbars', 'commandbar', 'commandbarcontrols', 'commandbarcontrol', 'commandbarbutton',
+               'commandbarpopup', 'commandbarcombobox', 'addindesigner', 'addininstance', 'idtextensibility2'}
 
 # the classes of the Data Formatting Object Library (runtime/stdfmt.c, MSSTDFMT.DLL), by their names in VB
 STDFMT_TYPES = {'stddataformat': 'stddataformat', 'stddataformat2': 'stddataformat', 'istddataformatdisp': 'stddataformat',
@@ -316,6 +331,10 @@ class Compiler:
                 self.err("invalid use of New keyword", node)
             return 'Object'
         if self.ext_class(low):                  # a class of a component the program uses: late bound
+            return 'Object'
+        if lib in ADDIN_LIBS or (not lib and short in ADDIN_TYPES and ADDIN_LIBS & set(self.typelibs)):
+            if new:                              # the objects of the IDE (an add-in): late bound
+                self.err("invalid use of New keyword", node)
             return 'Object'
         t = SCRIPTING_TYPES.get(low[10:] if low.startswith('scripting.') else low)
         if t:                                    # the Scripting runtime (scripting.c)
@@ -1062,7 +1081,8 @@ class Compiler:
                             tn = tn[3:] if tn.startswith('vb.') else tn
                             tlib, _, tshort = tn.rpartition('.')
                             if t == 'Object' and ((tn in VB_OBJECT_TYPES and tn not in ('control', 'stdpicture', 'picture'))
-                                                  or tlib in OCX_LIBS or (not tlib and tshort in OCX_TYPES)):
+                                                  or tlib in OCX_LIBS or (not tlib and tshort in OCX_TYPES)
+                                                  or tlib in ADDIN_LIBS or (not tlib and tshort in ADDIN_TYPES)):
                                 sym.wev_ctl = True       # WithEvents mText As TextBox / As Form / As TreeView: the events of
                                                          # a control or a form, by name (StdFont: none come)
                             elif t.startswith('O:') and t[2:] in self.classes and self.classes[t[2:]].is_form:
@@ -3347,25 +3367,39 @@ class ProcGen:
         if value is not None:
             vals.append(self.conv(value, 'Variant', node))
         argv = f"{len(vals)}, (vbvar[]){{ {', '.join(vals)} }}" if vals else "0, 0"
+        backs = []
         if back:
             self.ntmp += 1
             arr = f"t{self.ntmp}"
             self.decls.append(f"vbvar {arr}[{len(vals)}] = {{ {{ 0 }} }};")
             for i, v in enumerate(vals):
                 self.pre.append(f"vb_vset(&{arr}[{i}], {v});")
+            # the call before the statement, its values back right after it (VB6 goes from left to right:
+            # cm.Find(..., sl, ...) & sl reads the new sl; x = o.M(x) gets the value of the function last)
             for i, x, a in back:
                 if x.arr is not None:
                     et = x.t[2:] if is_arr(x.t) else x.t
-                    self.post.append(f"if (!vb_errpend && vb_isarray({arr}[{i}])) vb_v2arr({arr}[{i}], {x.arr}, {vt_of(et)});")
+                    backs.append(f"if (!vb_errpend && vb_isarray({arr}[{i}])) vb_v2arr({arr}[{i}], {x.arr}, {vt_of(et)});")
                     continue
-                self.post.append(f"if (!vb_errpend) {self.store_code(x, E(f'{arr}[{i}]', 'Variant'), a)}")
+                backs.append(f"if (!vb_errpend) {self.store_code(x, E(f'{arr}[{i}]', 'Variant'), a)}")
             for i in range(len(vals)):
-                self.post.append(f"vb_vfree(&{arr}[{i}]);")
+                backs.append(f"vb_vfree(&{arr}[{i}]);")
             argv = f"{len(vals)}, {arr}"
         lname = c_utf8(name)
         if is_obj(b.t):
-            return E(f"vb_late_o({b.code}, \"{lname}\", {kind}, {argv})", 'Variant')
-        return E(f"vb_late({b.code}, \"{lname}\", {kind}, {argv})", 'Variant')
+            call = f"vb_late_o({b.code}, \"{lname}\", {kind}, {argv})"
+        else:
+            call = f"vb_late({b.code}, \"{lname}\", {kind}, {argv})"
+        if backs:
+            self.ntmp += 1
+            r = f"t{self.ntmp}"
+            self.decls.append(f"vbvar {r};")
+            self.pre.append(f"{r} = {call};")
+            self.pre.extend(backs)
+            e = E(r, 'Variant')
+            e.late_call = True
+            return e
+        return E(call, 'Variant')
 
     # the interface of the objects whose members the type libraries describe
     LATE_IFACES = {'O:dao.recordset': 'recordset', 'O:dao.database': 'database', 'O:dao.workspace': 'workspace',
@@ -4286,7 +4320,7 @@ class ProcGen:
                 return
             if r.code is None:
                 self.err("can't assign to array", st)
-            if r.t == 'void' or (r.t == 'Variant' and r.ptr is None and r.code.startswith(('vb_late', 'vb_late_o', 'vbf_uc_member'))):
+            if r.t == 'void' or (r.t == 'Variant' and r.ptr is None and (r.code.startswith(('vb_late', 'vb_late_o', 'vbf_uc_member')) or getattr(r, 'late_call', False))):
                 self.emit(f"(void)({r.code});" if r.t != 'void' else r.code + ';')
                 return
             if r.ptr is None:
