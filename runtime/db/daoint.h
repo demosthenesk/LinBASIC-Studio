@@ -26,7 +26,8 @@ enum { dbOpenTable = 1, dbOpenDynaset = 2, dbOpenSnapshot = 4, dbOpenForwardOnly
 enum { dbDenyWrite = 1, dbDenyRead = 2, dbReadOnly = 4, dbAppendOnly = 8, dbInconsistent = 16, dbConsistent = 32,
        dbSQLPassThrough = 64, dbFailOnError = 128, dbForwardOnly = 256, dbSeeChanges = 512 };
 enum { dbEditNone = 0, dbEditInProgress = 1, dbEditAdd = 2 };
-enum { dbSystemObject = (int)0x80000002, dbHiddenObject = 1, dbAttachedTable = 0x40000000 };
+enum { dbSystemObject = (int)0x80000002, dbHiddenObject = 1, dbAttachedTable = 0x40000000, dbAttachedODBC = 0x20000000 };
+#define LB_REMOTE_COPY 0x10000          /* MSysLB_Tables.attrs: the copy of a table of an ODBC data source */
 enum { dbRelationUnique = 1, dbRelationDontEnforce = 2, dbRelationInherited = 4, dbRelationUpdateCascade = 256,
        dbRelationDeleteCascade = 4096, dbRelationLeft = 0x1000000, dbRelationRight = 0x2000000 };
 
@@ -39,6 +40,7 @@ typedef struct dcoll {
     vbobj owner;                        /* not counted: the owner holds the collection */
     vbobj *items; int n, cap;
     int loaded;
+    int extra;                          /* Properties of a Recordset: Jet's first Count is 2 more */
 } dcoll;
 dcoll *coll_new(int kind, vbobj owner);
 void coll_add(dcoll *c, vbobj item);    /* takes a reference */
@@ -57,6 +59,7 @@ typedef struct dws {
 } dws;
 
 struct drs;
+#define DAO_MAXEXT 24
 typedef struct ddb {
     vbobjh h;
     sqlite3 *db;
@@ -72,6 +75,10 @@ typedef struct ddb {
      * server first (op 1 insert, 2 update, 3 delete); -1 with the error raised stops it */
     int (*remote)(void *ctx, struct drs *r, int op);
     void *remote_ctx;
+    /* the other databases its SQL and its linked tables name: attached as "lbext1" ... */
+    struct { char *file; void *odbc; } ext[DAO_MAXEXT];   /* odbc: an ODBC data source (the copies of its tables) */
+    int next;
+    void *odbc;                         /* a database of an ODBC data source (daoodbc.inc): its copies are this file */
 } ddb;
 
 typedef struct dfld dfld;
@@ -85,7 +92,7 @@ typedef struct dtd {
     vb_date created, updated;
 } dtd;
 
-enum { FK_TABLE = 1, FK_INDEX, FK_REL, FK_RS };
+enum { FK_TABLE = 1, FK_INDEX, FK_REL, FK_RS, FK_QD };     /* FK_QD: a field of a QueryDef */
 struct dfld {
     vbobjh h;
     int fk;                             /* the kind of field */
@@ -94,6 +101,7 @@ struct dfld {
     int type, size, attrs, required, allowzero, ord, appended;
     char *defval, *vrule, *vtext, *foreign, *stable, *sfield;
     int col;                            /* FK_RS: the column */
+    int dataupd;                        /* FK_QD: DataUpdatable */
 };
 
 typedef struct dix {
@@ -102,6 +110,7 @@ typedef struct dix {
     char *name;
     dcoll *fields;
     int primary, unique, required, ignorenulls, foreign, clustered, appended;
+    int remote;                         /* an index of a table of an ODBC data source opened by Jet (3365) */
 } dix;
 
 typedef struct drel {
@@ -150,6 +159,7 @@ typedef struct drs {
     char *source;                       /* what was opened: a table, a query, Jet SQL */
     char *sqlite;                       /* the SQLite text of the rows */
     char *base;                         /* the table a change goes to, or 0 */
+    int bext;                           /* ... in the attached database "lbext<bext>" (0: the database's own) */
     int ncols; rcol *cols;
     rdata *d;
     int cur;                            /* -1 before the first (BOF), d->n after the last (EOF) */
@@ -175,7 +185,16 @@ typedef struct drs {
 
 typedef struct derr { vbobjh h; vb_i32 number; char *desc, *src; } derr;
 
-typedef struct dprop { vbobjh h; char *name; vbvar value; int type, inherited; } dprop;
+typedef struct dprop {                  /* a Property (daoprops.inc) */
+    vbobjh h;
+    char *name;
+    vbvar value;                        /* a property of the program */
+    int type, inherited;
+    vbobj owner;                        /* counted: the object whose property it is */
+    int err, how, user, appended;       /* built-in: Jet's error, how its value is read; user: CreateProperty */
+} dprop;
+vbvar dao_props_of(vbobj owner);        /* the Properties of a DAO object */
+vbvar dao_props_get(vbobj owner, vb_i32 kind, vb_i32 argc, vbvar *argv);   /* .Properties / .Properties(x) */
 
 /* ---------------------------------------------------------------- shared */
 #define DB(o) ((ddb *)vb_oid(o))
@@ -207,6 +226,30 @@ void schema_list_tables(ddb *d, dcoll *c);
 void schema_list_queries(ddb *d, dcoll *c);
 void schema_list_relations(ddb *d, dcoll *c);
 int schema_field_info(ddb *d, const char *table, const char *field, rcol *out);
+void schema_qualify(const char *schema);      /* the schema queries go to another database ("lbextN"), 0: back */
+const char *schema_qualifier(void);
+int schema_link(ddb *d, const char *name, char *real, int cap, char *src, int scap, char *connect, int ccap);
+dtd *schema_load_link(ddb *d, const char *name);
+int schema_create_link(ddb *d, dtd *t);
+/* another database (dao.c): attached, its schema number (0: the database itself), -1 with *err / msg */
+int dao_ext_schema(ddb *d, const char *path, const char *connect, int *err, char *msg, int cap);
+int dao_ext_link(ddb *d, const char *connect, int *err, char *msg, int cap);   /* the database of a Connect */
+int dao_ext_table(ddb *d, int n, const char *table);   /* an ODBC source: the copy of its table made (1) or none (0) */
+const char *dao_ext_connect(ddb *d, int n);             /* an ODBC source: its full Connect, or 0 */
+/* DAO over ODBC (daoodbc.inc) */
+vbobj dao_odbc_passthrough(ddb *d, const char *sql, int type, int options, vbobj qd, int *handled);
+void dao_odbc_table(ddb *d, const char *name);
+int dao_odbc_before_table(ddb *d, int ext, const char *name);
+int dao_odbc_before(ddb *d, jsql *j);
+void dao_odbc_sync(ddb *d);
+int dao_odbc_create_table(ddb *d, dtd *t);
+int dao_odbc_drop_table(ddb *d, const char *name);
+int dao_odbc_create_index(ddb *d, const char *table, dix *ix);
+int dao_odbc_drop_index(ddb *d, const char *table, const char *index);
+int dao_odbc_add_field(ddb *d, const char *table, dfld *f);
+int dao_odbc_drop_field(ddb *d, const char *table, const char *field);
+long dao_odbc_select_into(ddb *d, jsql *j, vbvar *vals);
+int dao_odbc_into(ddb *d, jsql *j);
 int schema_counter_next(ddb *d, const char *table, sqlite3_int64 *next);   /* 1 if the table has a counter */
 void schema_counter_bump(ddb *d, const char *table);
 int schema_save_query(ddb *d, dqd *q, int replace);
@@ -236,6 +279,7 @@ vbobj dao_memory_db(void);
 int dao_execute_qd(ddb *d, const char *sql, vbobj qd, long *affected);
 void dao_db_close(vbobj o);
 int dao_translate(ddb *d, const char *sql, jsql *j, const char *const *params);
+void dao_translate_hooks(ddb *d, int on);   /* other databases, linked tables (dao.c) */
 
 /* daors.c */
 vbobj rs_open(ddb *d, const char *source, int type, int options, int lockedits, vbobj qd, vbvar *pvals, int npvals);

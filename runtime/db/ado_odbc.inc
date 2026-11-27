@@ -282,6 +282,9 @@ static char *odbc_cs(const char *cs)
     return full_db_path(unix_paths(o.p));
 }
 
+char *lb_odbc_cs(const char *cs) { return odbc_cs(cs); }
+void lb_odbc_msg(const char *in, char *out, int n) { dm_text(in, out, (size_t)n); }
+
 /* ---------------------------------------------------------------- Open, Close */
 static int odbc_open(acn *c)
 {

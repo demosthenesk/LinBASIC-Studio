@@ -1577,9 +1577,7 @@ def t_api94(d):
     w.show()
     p = w.project
     assert not w.a_apiview.isVisible() and any(n == APIVIEW and desc for n, desc in ADDINS)
-    # (Add-Ins > Visual Data Manager...: not made - phase 9.3, decision 2026-11-26 - what to use instead)
-    from lbstudio.mainwindow import VISDATA_INFO
-    assert w.a_visdata.isEnabled() and w.visual_data_manager() == VISDATA_INFO and "SQLite" in VISDATA_INFO
+    assert w.a_visdata.isEnabled()          # (Add-Ins > Visual Data Manager...: phase 12.4, t_visdata12)
     am = AddInManagerDialog(w)
     am.state[APIVIEW] = [True, False, False]
     am._ok()
@@ -6396,6 +6394,188 @@ def t_dataview12(d):
     assert settings.S["data_links"] == [] and kids(t.topLevelItem(0)) == []
 
 
+
+def t_visdata12(d):
+    """the Visual Data Manager (phase 12.4, VB6 oracles Claude Enviroment/oracles/12.4, the runtime's DAO through
+    lbdbinfo -server): Add-Ins > Visual Data Manager..., its menus, a new database, Table Structure (Add Field / Add
+    Index / Build the Table, Remove Field), the Database Window (tables, fields, indexes, properties), the SQL
+    Statement window (an action query, a query that returns rows, Save), a record form (AddNew / Update / Find /
+    Delete), the Query Builder (the SQL as VISDATA builds it, Save), Global Replace, Copy Structure, Import/Export
+    (Access to Access with Jet SQL), Attachments (a linked table), Errors, transactions, the Data Form Designer (a
+    form of the project), the ISAMs (Jet's message), the security of Jet (a message)"""
+    from lbstudio.visdata import core as C
+    from lbstudio.visdata.tblstru import FieldSpec, IndexSpec
+    from lbstudio.visdata import querybld as QB
+    from lbstudio.visdata.dialogs import (GlobalReplaceDialog, CopyStructureDialog, ImportExportDialog,
+                                          AttachmentsWindow, ErrorsWindow)
+    from lbstudio.visdata.dfd import DataFormDesigner, form_text
+    w = MainWindow()
+    w.show()
+    vd = w.visual_data_manager()
+    assert vd is w.visual_data_manager() and vd.windowTitle() == "VisData"
+    vd.quiet = True
+    menus = [a.text() for a in vd.menuBar().actions()]
+    assert menus == ["&File", "&Utility", "&Window", "&Help"], menus
+    assert not vd.a_close.isEnabled() and not vd.m_util.menuAction().isEnabled()
+    # ---- File > New... > Microsoft Access > Version 7.0 MDB
+    db1 = os.path.join(d, "vd1.mdb")
+    vd.answers = [db1]
+    assert vd.new_mdb(70) and vd.s.db is not None and vd.windowTitle() == "VisData:" + db1
+    assert vd.a_close.isEnabled() and vd.dbwin is not None and vd.sqlwin is not None
+    # ---- Table Structure: a new table
+    ts = vd.dbwin.do_new_table()
+    assert ts.windowTitle() == "Table Structure" and ts.b_build.isVisibleTo(ts)
+    ts.name.setText("People")
+    for spec in (FieldSpec("ID", 4, 4, 1 | 16), FieldSpec("Name", 10, 30, 2, True), FieldSpec("Age", 3, 2, 1),
+                 FieldSpec("Born", 8, 8, 1), FieldSpec("Gone", 10, 5, 2)):
+        assert ts.add_field(spec)
+    vd.answers = [True]
+    ts.lst_fields.setCurrentRow(4)
+    ts.remove_field()
+    assert vd.messages[-1] == "Remove Field?" and [f.name for f in ts.fields] == ["ID", "Name", "Age", "Born"]
+    assert ts.add_index(IndexSpec("PrimaryKey", "+ID", True, True)) and ts.add_index(IndexSpec("idxName", "-Name"))
+    assert ts.build(), vd.messages
+    td = vd.s.db.get("TableDefs", "People")
+    assert [(f.get("Name"), f.get("Type"), f.get("Size")) for f in td.each("Fields")] == [
+        ("ID", 4, 4), ("Name", 10, 30), ("Age", 3, 2), ("Born", 8, 8)]
+    assert td.get("Fields", "ID").get("Attributes") & 16 and td.get("Fields", "Name").get("Required")
+    from lbstudio.visdata.dialogs import ix_fields
+    got = sorted((x.get("Name"), ix_fields(x), x.get("Primary")) for x in td.each("Indexes"))
+    assert got == [("PrimaryKey", "+ID", True), ("idxName", "-Name", False)], got
+    tops = [vd.dbwin.tree.topLevelItem(i).text(0) for i in range(vd.dbwin.tree.topLevelItemCount())]
+    assert tops == ["Properties", "People"], tops
+    # Design...: the structure of the table
+    from lbstudio.visdata.tblstru import TableStructure
+    ts2 = TableStructure(vd, "People")
+    assert [f.name for f in ts2.fields] == ["ID", "Name", "Age", "Born"] and ts2.b_print.isVisibleTo(ts2)
+    assert "PrimaryKey" in ts2.print_structure()
+    # ---- the SQL Statement window
+    vd.sqlwin.text.setPlainText("INSERT INTO People (Name, Age, Born) VALUES ('Ann', 31, #1993-02-03#)")
+    vd.answers = [False]                        # (not a pass-through query)
+    vd.sqlwin.execute()
+    for n, a in (("Bob", 45), ("Cid", 12)):
+        vd.s.db.call("Execute", f"INSERT INTO People (Name, Age) VALUES ('{n}', {a})")
+    vd.sqlwin.text.setPlainText("SELECT * FROM People ORDER BY ID")
+    vd.answers = [False]
+    f = vd.sqlwin.execute()
+    assert f is not None and f.windowTitle() == "SELECT * FROM People ORDER BY ID" and f.nrows == 3
+    # a record form: Add / Update, Find, Delete
+    f.add()
+    f.edits[1].setText("Dee"); f.dirty.add(1)
+    f.edits[2].setText("50"); f.dirty.add(2)
+    f.update()
+    assert vd.s.db.call("OpenRecordset", "SELECT Count(*) FROM People").get("Fields", 0).get("Value") == 4
+    vd.answers = [(1, "=", "Bob")]
+    f.find()
+    assert f.rs.get("Fields", "Name").get("Value") == "Bob"
+    vd.answers = [True]
+    f.delete()
+    assert vd.messages[-1] == "Delete Current Record?"
+    assert vd.s.db.call("OpenRecordset", "SELECT Count(*) FROM People WHERE Name = 'Bob'").get("Fields", 0).get("Value") == 0
+    f.close_form()
+    # Save: a QueryDef
+    vd.sqlwin.text.setPlainText("SELECT Name FROM People WHERE Age > 20")
+    vd.answers = ["Adults", False]
+    assert vd.sqlwin.save() == "Adults"
+    assert vd.s.db.get("QueryDefs", "Adults").get("SQL").startswith("SELECT Name")
+    # ---- the Query Builder: the SQL as VISDATA builds it
+    assert QB.build_where("a = 1\r\nAnd b = 2") == " Where (a = 1 ) And (b = 2 )"
+    qb = vd.query_builder()
+    qb.tables.item(0).setSelected(True)
+    qb.tables_changed()
+    assert qb.field.count() == 4 and qb.group.itemText(0) == "(none)"
+    qb.field.setCurrentText("People.Age")
+    qb.operator.setCurrentText(">")
+    qb.value.setEditText("20")
+    qb.into_criteria("And ")
+    assert qb.criteria.toPlainText() == "People.Age > 20"
+    qb.order.setCurrentText("People.Name")
+    sql = qb.run("show")
+    assert sql == "Select People.* From People Where (People.Age > 20 ) Order By People.Name", sql
+    vd.answers = ["OverTwenty"]
+    qb.run("save")
+    assert vd.s.db.get("QueryDefs", "OverTwenty").get("SQL").startswith("Select People.*")
+    qb.close_window()
+    # ---- Global Replace
+    gr = vd.global_replace()
+    gr.tables.setCurrentRow([gr.tables.item(i).text() for i in range(gr.tables.count())].index("People"))
+    gr.fields.setCurrentRow(2)
+    gr.replace.setText("99")
+    gr.criteria.setText("Name = 'Cid'")
+    assert gr.ok()
+    assert vd.s.db.call("OpenRecordset", "SELECT Age FROM People WHERE Name = 'Cid'").get("Fields", 0).get("Value") == 99
+    # ---- Copy Structure (with the data) within the database
+    cs = CopyStructureDialog(vd, "People")
+    cs.c_data.setChecked(True)
+    cs.c_indexes.setChecked(True)
+    vd.answers = ["People2"]
+    cs.ok()
+    assert "People: Copy of Structure was Successful!" in vd.messages
+    assert vd.s.db.call("OpenRecordset", "SELECT Count(*) FROM People2").get("Fields", 0).get("Value") == 3
+    # ---- Import/Export: Access to Access (Jet SQL: SELECT INTO [;database=...])
+    db2 = os.path.join(d, "vd2.mdb")
+    other = vd.s.dbe.call("CreateDatabase", db2, ";LANGID=0x0409;CP=1252;COUNTRY=0")
+    other.call("Close")
+    ie = ImportExportDialog(vd)
+    vd.answers = [0, db2, "Exported"]            # Access MDB, the file, the name there
+    ie.lst.item([ie.lst.item(i).text() for i in range(ie.lst.count())].index("People")).setSelected(True)
+    ie.export_tables()
+    assert "Successfully Exported: 'People'" in vd.messages, vd.messages[-3:]
+    o2 = vd.s.ws.call("OpenDatabase", db2)
+    assert o2.call("OpenRecordset", "SELECT Count(*) FROM Exported").get("Fields", 0).get("Value") == 3
+    assert [x.get("Name") for x in o2.get("TableDefs", "Exported").each("Indexes")] == ["idxName", "PrimaryKey"]
+    o2.call("Close")
+    vd.answers = [0, db2, "Exported"]            # Import: Access MDB, the file, the table
+    assert ie.import_()
+    assert "Successfully Imported:'Exported'." in vd.messages, vd.messages[-3:]
+    # ---- Attachments: a table of the other database linked
+    at = vd.attachments()
+    assert at.add_attachment("LinkedPeople", db2, "Access MDB", "Exported")
+    assert vd.s.db.get("TableDefs", "LinkedPeople").get("Attributes") & C.dbAttachedTable
+    assert at.lst.count() == 1 and at.lst.item(0).text().startswith("LinkedPeople")
+    assert at.refresh_link(at.lst.item(0).text())
+    vd.refresh_tables()
+    tops = [vd.dbwin.tree.topLevelItem(i).text(0) for i in range(vd.dbwin.tree.topLevelItemCount())]
+    assert "LinkedPeople" in tops and "Exported" in tops, tops
+    # ---- Errors: an error of Jet, the Errors collection offered
+    vd.sqlwin.text.setPlainText("SELECT * FROM NoTable")
+    vd.answers = [False, False]
+    vd.sqlwin.execute()
+    assert any("3078" in m for m in vd.messages[-2:]), vd.messages[-2:]
+    ew = vd.show_errors()
+    assert isinstance(ew, ErrorsWindow) and ew.lst.item(0).text().startswith("3078\tDAO.Database\t")
+    # ---- transactions
+    vd.begin_trans()
+    vd.s.db.call("Execute", "DELETE FROM People2")
+    vd.s.changed = True
+    vd.answers = [True]                          # Rollback? (Rollback all changes)
+    vd.rollback()
+    assert vd.s.db.call("OpenRecordset", "SELECT Count(*) FROM People2").get("Fields", 0).get("Value") == 3
+    # ---- the Data Form Designer: a form of the project
+    text = form_text("frmPeople", "People", [("ID", 4, 4), ("Name", 10, 30), ("Born", 8, 8)], db1, "", "People")
+    assert "Begin VB.Data Data1 " in text and 'DataField       =   "Name"' in text and "MaxLength       =   30" in text
+    # as VB6 saves it (oracle 12.4/dfd-frmPubs.frm): the controls with a window, the newest first, then the labels
+    assert text.index("cmdClose") < text.index("Data1 ") < text.index("txtFields") < text.index("lblLabels")
+    assert "DefaultType     =   2  'UseODBC" in text and "ClientWidth     =   5400" in text
+    assert "    Case vbDataActionBookmark" in text and "  Screen.MousePointer = vbHourglass" in text
+    dfd = vd.data_form_designer()
+    dfd.name.setText("People")
+    dfd.source.setEditText("People")
+    dfd.load_fields()
+    dfd.move_fields(1)
+    assert dfd.sel.count() == 4
+    assert dfd.build() is not None and w.project.module("frmPeople") is not None
+    # ---- the ISAMs: Jet's message (decision of 2026-11-27); the security of Jet: a message
+    n = len(vd.messages)
+    vd.answers = [d + "/x.dbf"]
+    assert not vd.open_local(C.DBASE4)
+    assert any("3170" in m and "Couldn't find installable ISAM." in m for m in vd.messages[n:]), vd.messages[n:]
+    vd.groups_users()
+    assert "not part of LinBASIC Studio" in vd.messages[-1]
+    # ---- Close
+    assert vd.close_db() and vd.s.db is None and not vd.a_close.isEnabled()
+    vd.close()
+
 def t_querydesign12(d):
     """the Query Designer (phase 12.3, VB6 oracles Claude Enviroment/oracles/12.3 sq*/sb*): the four panes, tables on
     the Diagram (a relation: the join), the checkboxes, the Grid (criteria, sort, Group By), the SQL as VB6 writes it
@@ -6599,7 +6779,7 @@ def t_querydesign12(d):
     assert [f[0] for f in cmd.fields] == ["Name", "City"], cmd.fields
 
 
-TESTS = {"t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+TESTS = {"t_visdata12": t_visdata12, "t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

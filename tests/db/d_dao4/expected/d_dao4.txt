@@ -1,0 +1,332 @@
+== DBEngine count=7
+  Version type=12 inh=False = S'3.6'
+  LoginTimeout type=3 inh=False = I20
+  IniPath type=12 inh=False = S''
+  DefaultUser type=12 inh=False err=3251
+  DefaultPassword type=12 inh=False err=3251
+  DefaultType type=4 inh=False = L2
+  SystemDB type=12 inh=False = S'system.mdb'
+== Workspace count=6
+  Name type=12 inh=False = S'#Default Workspace#'
+  UserName type=12 inh=False = S'admin'
+  IsolateODBCTrans type=1 inh=False = I0
+  LoginTimeout type=4 inh=False err=3251
+  DefaultCursorDriver type=4 inh=False err=3251
+  Type type=4 inh=False = L2
+== Database count=11
+  Name type=12 inh=False = S'<path>'
+  Connect type=12 inh=False = S''
+  Transactions type=1 inh=False = BT
+  Updatable type=1 inh=False = BT
+  CollatingOrder type=3 inh=False = L1033
+  QueryTimeout type=3 inh=False = I60
+  Version type=12 inh=False = S'4.0'
+  RecordsAffected type=4 inh=False = L1
+  ReplicaID type=15 inh=False = S''
+  DesignMasterID type=15 inh=False = S''
+  Connection type=0 inh=False err=3251
+== TableDef People count=12
+  Name type=12 inh=False = S'People'
+  Updatable type=1 inh=False = BT
+  DateCreated type=8 inh=False = D(date)
+  LastUpdated type=8 inh=False = D(date)
+  Connect type=12 inh=False = S''
+  Attributes type=4 inh=False = L0
+  SourceTableName type=12 inh=False = S''
+  RecordCount type=4 inh=False = L1
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  ConflictTable type=0 inh=False = S''
+  ReplicaFilter type=0 inh=False = Empty
+== Field People.ID count=20
+  Value type=4 inh=False err=3219
+  Attributes type=4 inh=False = L17
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I4
+  Name type=12 inh=False = S'ID'
+  OrdinalPosition type=3 inh=False = I0
+  Size type=4 inh=False = L4
+  SourceField type=12 inh=False = S'ID'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=4 inh=False err=3251
+  VisibleValue type=4 inh=False err=3251
+== Field People.Name count=20
+  Value type=10 inh=False err=3219
+  Attributes type=4 inh=False = L2
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I10
+  Name type=12 inh=False = S'Name'
+  OrdinalPosition type=3 inh=False = I1
+  Size type=4 inh=False = L30
+  SourceField type=12 inh=False = S'Name'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BT
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=10 inh=False err=3251
+  VisibleValue type=10 inh=False err=3251
+== Field People.Born count=20
+  Value type=8 inh=False err=3219
+  Attributes type=4 inh=False = L1
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I8
+  Name type=12 inh=False = S'Born'
+  OrdinalPosition type=3 inh=False = I2
+  Size type=4 inh=False = L8
+  SourceField type=12 inh=False = S'Born'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=8 inh=False err=3251
+  VisibleValue type=8 inh=False err=3251
+== Field People.Salary count=20
+  Value type=5 inh=False err=3219
+  Attributes type=4 inh=False = L1
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I5
+  Name type=12 inh=False = S'Salary'
+  OrdinalPosition type=3 inh=False = I3
+  Size type=4 inh=False = L8
+  SourceField type=12 inh=False = S'Salary'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=5 inh=False err=3251
+  VisibleValue type=5 inh=False err=3251
+== Field People.Notes count=20
+  Value type=12 inh=False err=3219
+  Attributes type=4 inh=False = L2
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I12
+  Name type=12 inh=False = S'Notes'
+  OrdinalPosition type=3 inh=False = I4
+  Size type=4 inh=False = L0
+  SourceField type=12 inh=False = S'Notes'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=12 inh=False err=3251
+  VisibleValue type=12 inh=False err=3251
+== Field People.Active count=20
+  Value type=1 inh=False err=3219
+  Attributes type=4 inh=False = L1
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I1
+  Name type=12 inh=False = S'Active'
+  OrdinalPosition type=3 inh=False = I5
+  Size type=4 inh=False = L1
+  SourceField type=12 inh=False = S'Active'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=1 inh=False err=3251
+  VisibleValue type=1 inh=False err=3251
+== Field People.Score count=20
+  Value type=7 inh=False err=3219
+  Attributes type=4 inh=False = L1
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I7
+  Name type=12 inh=False = S'Score'
+  OrdinalPosition type=3 inh=False = I6
+  Size type=4 inh=False = L8
+  SourceField type=12 inh=False = S'Score'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=7 inh=False err=3251
+  VisibleValue type=7 inh=False err=3251
+== Field People.Grade count=20
+  Value type=2 inh=False err=3219
+  Attributes type=4 inh=False = L1
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I2
+  Name type=12 inh=False = S'Grade'
+  OrdinalPosition type=3 inh=False = I7
+  Size type=4 inh=False = L1
+  SourceField type=12 inh=False = S'Grade'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BF
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BF
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=2 inh=False err=3251
+  VisibleValue type=2 inh=False err=3251
+== Index People.idxName count=8
+  Name type=12 inh=False = S'idxName'
+  Unique type=1 inh=False = BF
+  Clustered type=1 inh=False = BF
+  Primary type=1 inh=False = BF
+  Foreign type=1 inh=False = BF
+  Required type=1 inh=False = BF
+  IgnoreNulls type=1 inh=False = BF
+  DistinctCount type=4 inh=False = L1
+== Index People.PrimaryKey count=8
+  Name type=12 inh=False = S'PrimaryKey'
+  Unique type=1 inh=False = BT
+  Clustered type=1 inh=False = BF
+  Primary type=1 inh=False = BT
+  Foreign type=1 inh=False = BF
+  Required type=1 inh=False = BT
+  IgnoreNulls type=1 inh=False = BF
+  DistinctCount type=4 inh=False = L1
+== QueryDef Adults count=14
+  Name type=12 inh=False = S'Adults'
+  DateCreated type=8 inh=False = D(date)
+  LastUpdated type=8 inh=False = D(date)
+  Type type=3 inh=False = I0
+  SQL type=12 inh=False = S'SELECT Name, Born
+FROM People
+WHERE Born < #2000-01-01#;
+'
+  Updatable type=1 inh=False = BT
+  Connect type=12 inh=False = S''
+  ReturnsRecords type=1 inh=False = BT
+  ODBCTimeout type=3 inh=False = I60
+  RecordsAffected type=4 inh=False = L0
+  MaxRecords type=4 inh=False = L0
+  StillExecuting type=1 inh=False err=3251
+  CacheSize type=4 inh=False err=3251
+  Prepare type=1 inh=False err=3251
+== QueryDef Field Adults.Name count=20
+  Value type=10 inh=False err=3219
+  Attributes type=4 inh=False = L34
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I10
+  Name type=12 inh=False = S'Name'
+  OrdinalPosition type=3 inh=False = I0
+  Size type=4 inh=False = L30
+  SourceField type=12 inh=False = S'Name'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False err=3219
+  DataUpdatable type=1 inh=False = BT
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BT
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3267
+  OriginalValue type=10 inh=False err=3251
+  VisibleValue type=10 inh=False err=3251
+== Relation PeoplePets count=5
+  Name type=12 inh=False = S'PeoplePets'
+  Table type=12 inh=False = S'People'
+  ForeignTable type=12 inh=False = S'Pets'
+  Attributes type=4 inh=False = L256
+  PartialReplica type=0 inh=False = BF
+== Recordset People count=32
+  Name type=12 inh=False = S'People'
+  BOF type=1 inh=False = BF
+  BookMark type=12 inh=False = AByte()(0 To 3)
+  Bookmarkable type=1 inh=False = BT
+  DateCreated type=8 inh=False err=3251
+  EOF type=1 inh=False = BF
+  Filter type=12 inh=False = S''
+  Index type=12 inh=False err=3251
+  LastUpdated type=8 inh=False err=3251
+  LockEdits type=1 inh=False = BT
+  NoMatch type=1 inh=False = BF
+  RecordCount type=4 inh=False = L1
+  Sort type=12 inh=False = S''
+  Transactions type=1 inh=False = BT
+  Type type=3 inh=False = I2
+  Updatable type=1 inh=False = BT
+  Restartable type=1 inh=False = BT
+  CacheSize type=4 inh=False = L0
+  EditMode type=3 inh=False = I0
+  PercentPosition type=6 inh=False = Si0
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  AbsolutePosition type=4 inh=False = L0
+  StillExecuting type=1 inh=False err=3251
+  Connection type=0 inh=False err=3251
+  BatchCollisionCount type=4 inh=False err=3251
+  BatchCollisions type=0 inh=False err=3251
+  BatchSize type=4 inh=False err=3251
+  RecordStatus type=3 inh=False err=3251
+  UpdateOptions type=4 inh=False err=3251
+== Recordset Field People.Name count=20
+  Value type=10 inh=False = S'Ann'
+  Attributes type=4 inh=False = L34
+  CollatingOrder type=3 inh=False = L1033
+  Type type=3 inh=False = I10
+  Name type=12 inh=False = S'Name'
+  OrdinalPosition type=3 inh=False = I1
+  Size type=4 inh=False = L30
+  SourceField type=12 inh=False = S'Name'
+  SourceTable type=12 inh=False = S'People'
+  ValidateOnSet type=1 inh=False = BF
+  DataUpdatable type=1 inh=False = BT
+  ForeignName type=12 inh=False err=3219
+  DefaultValue type=12 inh=False = S''
+  ValidationRule type=12 inh=False = S''
+  ValidationText type=12 inh=False = S''
+  Required type=1 inh=False = BT
+  AllowZeroLength type=1 inh=False = BF
+  FieldSize type=4 inh=False err=3259
+  OriginalValue type=10 inh=False err=3251
+  VisibleValue type=10 inh=False err=3251
+== user properties
+td description=S'The people' count=13
+td description=S'Changed'
+field caption=S'Full Name'
+  ! append twice: 3367 Cannot append.  An object with that name already exists in the collection. [DAO.Property]
+  ! no such property: 3270 Property not found. [DAO.Properties]
+count after delete=12
+  ! delete built-in: 3384 Cannot delete a built-in property. [DAO.Properties]
+reopened caption=S'Full Name'

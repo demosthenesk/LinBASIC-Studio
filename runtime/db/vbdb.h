@@ -65,6 +65,11 @@ typedef struct jsql {
     jctype *ctypes; int nctypes;        /* the types of the computed columns (Expr1000, AS x) */
     char *base;                         /* a single-table SELECT: the table (updatable) */
     char *base_alias;
+    /* another database (IN 'file', [;database=file].t) or a linked table: the number of its SQLite schema
+     * ("lbextN", from jet_ext_fn), 0 = the database itself; *_src: the name of the table there */
+    int base_ext, into_ext, table_ext;
+    char *base_src, *table_src;
+    char **tabs; int *tabext; int ntabs;  /* the tables the statement names (in their databases) */
     int err; char errmsg[512];          /* a Jet error number and its text */
 } jsql;
 
@@ -83,6 +88,11 @@ void jet_register(sqlite3 *db);
 /* the DAO type of a column of a table (for the types of expressions), set by the caller */
 extern int (*jet_coltype_fn)(void *ctx, const char *qual, const char *col);
 extern void *jet_coltype_ctx;
+/* another database named in the SQL: the number N of its schema "lbextN" (attached), 0 for the database itself,
+ * -1 with *err / msg (Jet's error); a linked table: N and the name of the table there (0: not linked) */
+extern int (*jet_ext_fn)(void *ctx, const char *path, const char *connect, int *err, char *msg, int cap);
+extern int (*jet_link_fn)(void *ctx, const char *name, char *src, int cap, int *err, char *msg, int mcap);
+extern void *jet_ext_ctx;
 
 /* SQLite value <-> Variant (dtype: the DAO type it should have, 0 = by the value) */
 vbvar jet_value(sqlite3_value *v, int dtype);

@@ -62,6 +62,10 @@ def sqlite_odbc():
     except OSError:
         return False
     names = [l.strip().strip('[]').lower() for l in r.stdout.splitlines()]
+    if os.environ.get('LBVC_TARGET', 'linux') == 'win32':
+        # 32-bit Wine: its odbc32 needs the 32-bit unixODBC and SQLite ODBC driver (i386 libsqliteodbc)
+        if not glob.glob('/usr/lib/i386-linux-gnu/odbc/libsqlite3odbc*.so'):
+            return False
     if os.environ.get('LBVC_TARGET', 'linux') != 'linux':
         # Wine: its odbc32 goes to the unixODBC of the computer with the name of the Windows driver,
         # so unixODBC needs that name too (~/.odbcinst.ini: [SQLite3 ODBC Driver] Driver=libsqlite3odbc.so)
@@ -89,9 +93,10 @@ def main():
                     shutil.copy(p, work)
                 else:
                     missing = True
-        if 'sqlite3 odbc driver' in text.lower() and not sqlite_odbc():
+        if ('sqlite3 odbc driver' in text.lower() or os.path.exists(os.path.join(src, 'odbc.ini'))) and not sqlite_odbc():
             print(f"---- {n}: needs unixODBC and the SQLite ODBC driver (sudo apt install unixodbc libsqliteodbc)"
-                  + ("; in Wine registered as [SQLite3 ODBC Driver] too" if os.environ.get('LBVC_TARGET', 'linux') != 'linux' else ""))
+                  + ("; in Wine registered as [SQLite3 ODBC Driver] too" if os.environ.get('LBVC_TARGET', 'linux') != 'linux' else "")
+                  + ("; for win32 the 32-bit ones (libsqliteodbc:i386)" if os.environ.get('LBVC_TARGET') == 'win32' else ""))
             pending += 1
             continue
         if missing:
@@ -112,6 +117,8 @@ def main():
         target = os.environ.get('LBVC_TARGET', 'linux')   # win32 / win64: the .exe runs in Wine
         exe = build_exe(csrc, exe, rt, target=target) or exe
         env = oracle_env()
+        if os.path.exists(os.path.join(work, 'odbc.ini')):   # the data sources of ODBC the test names (user DSNs)
+            env['ODBCINI'] = os.path.join(work, 'odbc.ini')
         cmd = [exe]
         if target != 'linux':                             # Wine on a virtual X screen (Xvfb)
             cmd = ['xvfb-run', '-a', '-s', '-screen 0 1024x768x24', 'wine', exe]

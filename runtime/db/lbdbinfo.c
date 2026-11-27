@@ -12,6 +12,8 @@
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 #include "vbdb.h"
 #include <stdio.h>
+#include <ctype.h>
+#include <math.h>
 #include <string.h>
 #include <strings.h>
 #include <sys/stat.h>
@@ -221,8 +223,193 @@ static int ado_sql(int argc, char **argv, int exec)
     return ado_failed();
 }
 
+
+/* ---------------------------------------------------------------- the object server (phase 12.4)
+ * lbdbinfo -server: the objects of the runtime (DAO, ADO ...) for the IDE - the Visual Data Manager works with the
+ * databases through the same DAO as the programs. One request a line, one answer a line (fields by tabs, \t \n \r \\
+ * escaped):
+ *   N <progid>                         CreateObject                    -> OK o:<id>
+ *   C <id> <M|G|L|S> <member> <arg>... a member (Method, Get, Let, Set) -> OK <value>
+ *   R <id>                             the object is not needed any more -> OK e
+ *   T <id>                             TypeName                        -> OK s:<name>
+ * values: e (Empty), m (Missing), n (Null), s:<text>, h:<Integer>, i:<Long>, f:<Single>, d:<Double>, c:<Currency>,
+ * t:<Date as a Double>, b:<0|1>, y:<Byte>, o:<id> (o:0 Nothing), a:<bytes> (an array: its size only), x:<Decimal>
+ * an error: ER <number> <description> */
+#include <stdlib.h>
+static vbobj *srv_obj;
+static int srv_n, srv_cap;
+
+static int srv_put(vbobj o)
+{
+    if (!o) return 0;
+    for (int i = 1; i < srv_n; i++) if (srv_obj[i] == o) return i;      /* (the same object: the same id) */
+    if (srv_n == 0) srv_n = 1;
+    if (srv_n >= srv_cap) { srv_cap = srv_cap ? srv_cap * 2 : 64; srv_obj = realloc(srv_obj, sizeof(vbobj) * (size_t)srv_cap); }
+    vb_oaddref(o);
+    srv_obj[srv_n] = o;
+    return srv_n++;
+}
+
+static vbobj srv_get(const char *s) { long i = atol(s); return i > 0 && i < srv_n ? srv_obj[i] : 0; }
+
+static void srv_text(const char *s)
+{
+    for (; *s; s++) {
+        if (*s == '\t') fputs("\\t", stdout);
+        else if (*s == '\n') fputs("\\n", stdout);
+        else if (*s == '\r') fputs("\\r", stdout);
+        else if (*s == '\\') fputs("\\\\", stdout);
+        else putchar(*s);
+    }
+}
+
+static void srv_unescape(char *s)
+{
+    char *d = s;
+    for (; *s; s++) {
+        if (*s == '\\' && s[1]) {
+            s++;
+            *d++ = *s == 't' ? '\t' : *s == 'n' ? '\n' : *s == 'r' ? '\r' : *s;
+        } else *d++ = *s;
+    }
+    *d = 0;
+}
+
+static vbvar srv_arg(char *a)
+{
+    char k = a[0];
+    const char *v = a[0] && a[1] == ':' ? a + 2 : "";
+    switch (k) {
+    case 'm': return vb_v_missing();
+    case 'n': return vb_v_null();
+    case 's': return vb_v_s(vb_sfromutf8(v));
+    case 'h': return vb_v_i((vb_i16)atoi(v));
+    case 'i': return vb_v_l((vb_i32)atol(v));
+    case 'f': return vb_v_f((float)atof(v));
+    case 'd': return vb_v_d(atof(v));
+    case 'c': return vb_v_c((vb_cy)llround(atof(v) * 10000.0));
+    case 't': return vb_v_date(atof(v));
+    case 'b': return vb_v_bool(atoi(v) ? -1 : 0);
+    case 'y': return vb_v_byte((vb_u8)atoi(v));
+    case 'o': { vbobj o = srv_get(v); return vb_v_obj(o); }
+    case 'a': {                                     /* a Byte array: its bytes in hex */
+        vb_i32 n = (vb_i32)(strlen(v) / 2);
+        vbarr arr; memset(&arr, 0, sizeof arr);
+        if (n == 0) return vb_v_arr(&arr, VT_UI1);
+        vb_adim(&arr, 1, VBA_PLAIN, 0, 1, 0, n - 1);
+        for (vb_i32 i = 0; i < n; i++) { unsigned x = 0; sscanf(v + 2 * i, "%2x", &x); ((unsigned char *)arr.data)[i] = (unsigned char)x; }
+        vbvar r = vb_v_arr(&arr, VT_UI1);
+        vb_afree(&arr);
+        return r;
+    }
+    default: return vb_v_empty();
+    }
+}
+
+static void srv_value(vbvar v)
+{
+    char b[64];
+    switch (v.vt) {
+    case VT_EMPTY: fputs("e", stdout); break;
+    case VT_NULL: fputs("n", stdout); break;
+    case VT_I2: printf("h:%d", v.u.i); break;
+    case VT_I4: printf("i:%ld", (long)v.u.l); break;
+    case VT_R4: snprintf(b, sizeof b, "f:%.9g", v.u.f); fputs(b, stdout); break;
+    case VT_R8: snprintf(b, sizeof b, "d:%.17g", v.u.d); fputs(b, stdout); break;
+    case VT_CY: printf("c:%s", vb_stoutf8(vb_cstr_c(v.u.cy))); break;
+    case VT_DATE: snprintf(b, sizeof b, "t:%.17g", v.u.d); fputs(b, stdout); break;
+    case VT_BOOL: printf("b:%d", v.u.i ? 1 : 0); break;
+    case VT_UI1: printf("y:%d", v.u.b); break;
+    case VT_DISPATCH: printf("o:%d", srv_put(v.u.o)); break;
+    case VT_DECIMAL: printf("x:%s", vb_stoutf8(vb_v2s(v))); break;
+    case VT_BSTR: fputs("s:", stdout); srv_text(vb_stoutf8(v.u.s)); break;
+    default:
+        if (v.vt == (VT_ARRAY | VT_UI1)) {                           /* binary data: its bytes in hex */
+            vbarr *arr = v.u.a;
+            fputs("a:", stdout);
+            if (arr && arr->nd) for (vb_i32 i = 0; i < arr->n; i++) printf("%02x", ((unsigned char *)arr->data)[i]);
+            break;
+        }
+        if (v.vt & VT_ARRAY) { fputs("a", stdout); break; }         /* (other arrays: not shown) */
+        fputs("s:", stdout); srv_text(vb_stoutf8(vb_v2s(v)));
+        if (vb_errpend) vb_err_clear_pending();
+    }
+}
+
+static int srv_error(void)
+{
+    if (!vb_errpend) return 0;
+    vb_err_take(0);
+    printf("ER\t%ld\t", (long)vb_err_number());
+    srv_text(vb_stoutf8(vb_err_description()));
+    putchar('\n');
+    vb_err_clear();
+    return 1;
+}
+
+static int server(void)
+{
+    vb_db_init();
+    size_t cap = 4096;
+    char *line = malloc(cap);
+    for (;;) {                                  /* (a line of any length; no getline on Windows) */
+        size_t n = 0;
+        int c;
+        while ((c = getchar()) != EOF && c != '\n') {
+            if (n + 2 >= cap) { cap *= 2; line = realloc(line, cap); }
+            line[n++] = (char)c;
+        }
+        if (c == EOF && n == 0) break;
+        line[n] = 0;
+        while (n && line[n - 1] == '\r') line[--n] = 0;
+        char *f[64];
+        int nf = 0;
+        char *p = line;
+        f[nf++] = p;
+        for (; *p && nf < 64; p++) if (*p == '\t') { *p = 0; f[nf++] = p + 1; }
+        for (int i = 0; i < nf; i++) srv_unescape(f[i]);
+        vb_i32 m = vb_mark();
+        if (!strcmp(f[0], "N") && nf >= 2) {
+            vbobj o = vb_createobject(vb_sfromutf8(f[1]), vb_v_missing());
+            if (!srv_error()) printf("OK\to:%d\n", srv_put(o));
+        } else if (!strcmp(f[0], "C") && nf >= 4) {
+            vbobj o = srv_get(f[1]);
+            for (char *q = f[3]; *q; q++) *q = (char)tolower((unsigned char)*q);   /* (names as the compiler gives them) */
+            int kind = f[2][0] == 'M' ? VBM_METHOD : f[2][0] == 'L' ? VBM_LET : f[2][0] == 'S' ? VBM_SET : VBM_GET;
+            vbvar a[60];
+            int na = nf - 4;
+            for (int i = 0; i < na; i++) a[i] = srv_arg(f[4 + i]);
+            if (!o) { printf("ER\t91\tObject variable or With block variable not set\n"); }
+            else {
+                vbvar r = vb_late_o(o, f[3], kind, na, a);
+                if (!srv_error()) { fputs("OK\t", stdout); srv_value(r); putchar('\n'); }
+            }
+        } else if (!strcmp(f[0], "R") && nf >= 2) {
+            long i = atol(f[1]);
+            if (i > 0 && i < srv_n && srv_obj[i]) { vbobj o = srv_obj[i]; srv_obj[i] = 0; vb_orelease(o); }
+            printf("OK\te\n");
+        } else if (!strcmp(f[0], "T") && nf >= 2) {
+            vbobj o = srv_get(f[1]);
+            fputs("OK\ts:", stdout);
+            srv_text(o ? vb_stoutf8(vb_otypename(o)) : "Nothing");
+            putchar('\n');
+        } else if (!strcmp(f[0], "Q")) {
+            break;
+        } else printf("ER\t5\tInvalid procedure call or argument\n");
+        if (vb_errpend) vb_err_clear_pending();
+        vb_release(m);
+        fflush(stdout);
+    }
+    free(line);
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
+    if (argc >= 2 && !strcmp(argv[1], "-server")) {
+        vb_init(1, argv);
+        return server();
+    }
     if (argc >= 4 && (!strcmp(argv[1], "-ado-sql") || !strcmp(argv[1], "-ado-exec"))) {
         vb_init(1, argv);
         return ado_sql(argc, argv, !strcmp(argv[1], "-ado-exec"));

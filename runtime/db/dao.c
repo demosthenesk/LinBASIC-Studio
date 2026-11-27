@@ -81,7 +81,9 @@ int jet_sqlite_error(sqlite3 *db, int rc, char *msg, int cap)
         }
     }
     if (!strncmp(m, "no such table: ", 15)) {
-        snprintf(msg, (size_t)cap, "The Microsoft Jet database engine cannot find the input table or query '%s'.  Make sure it exists and that its name is spelled correctly.", m + 15);
+        const char *t = m + 15;
+        if (!strncmp(t, "lbext", 5)) { const char *dot = strchr(t, '.'); if (dot) t = dot + 1; }   /* another database's */
+        snprintf(msg, (size_t)cap, "The Microsoft Jet database engine cannot find the input table or query '%s'.  Make sure it exists and that its name is spelled correctly.", t);
         return 3078;
     }
     if (!strncmp(m, "no such column: ", 16)) {
@@ -202,6 +204,11 @@ int coll_find(dcoll *c, const char *name)
 }
 
 static void coll_load(dcoll *c);
+static int props_append(dcoll *c, vbobj it);     /* daoprops.inc */
+static int props_delete(dcoll *c, int i);
+static vbvar prop_create(vbobj owner, vb_i32 argc, vbvar *argv);
+static vbvar props_get(vbobj owner, vb_i32 kind, vb_i32 argc, vbvar *argv);
+static vbvar coll_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found);
 
 static void coll_clear(vbobj o)
 {
@@ -271,10 +278,22 @@ static vbvar coll_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vb
     ddb *d = coll_db(c);
     if (d && d->closed) { dao_raise(3420, coll_src(c), "Object invalid or no longer set."); return vb_v_empty(); }
     coll_load(c);
-    if (!strcmp(name, "count")) return vb_v_i((vb_i16)c->n);
+    if (!strcmp(name, "count")) { int n = c->n + c->extra; c->extra = 0; return vb_v_i((vb_i16)n); }
     if (!strcmp(name, "item") || !strcmp(name, "")) {
+        if (argc < 1 && !set && c->kind == C_IXFIELDS) {
+            /* the value of Index.Fields: "+A;-B" (VisData: idxTo.Fields = idxFrom.Fields) */
+            jbuf b = { 0 };
+            for (int i = 0; i < c->n; i++) {
+                dfld *f = (dfld *)c->items[i];
+                jb_s(&b, i ? ";" : ""); jb_s(&b, (f->attrs & dbDescending) ? "-" : "+"); jb_s(&b, f->name);
+            }
+            vbvar r = dao_vstr(b.p ? b.p : "");
+            jb_free(&b);
+            return r;
+        }
         if (argc < 1) { vb_raise(450); return vb_v_empty(); }
         int i = coll_index(c, argv[0]);
+        if (i < 0 && c->kind == C_PROPERTIES) { dao_raise(3270, coll_src(c), "Property not found."); return vb_v_empty(); }
         if (i < 0) { dao_raise(3265, coll_src(c), "Item not found in this collection."); return vb_v_empty(); }
         vbobj it = c->items[i];
         if (set || argc > 1) {                  /* Fields("x") = v, Parameters("p") = v: the default Value */
@@ -307,6 +326,10 @@ static vbvar coll_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vb
         vbobj it = vb_v2obj(argv[0]);
         if (!it) return vb_v_empty();
         it = vb_oid(it);
+        if (c->kind == C_PROPERTIES) {          /* (daoprops.inc) */
+            if (!props_append(c, it)) coll_add(c, it);
+            return vb_v_empty();
+        }
         if (coll_find(c, obj_name(it)) >= 0 && c->kind != C_ERRORS) {
             const char *cs = coll_src(c);
             if (c->kind == C_TABLEDEFS) dao_raise(3010, cs, "Table '%s' already exists.", obj_name(it));
@@ -352,10 +375,13 @@ static vbvar coll_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vb
         if (argc != 1) { vb_raise(450); return vb_v_empty(); }
         char *nm = dao_str(argv[0]);
         int i = coll_find(c, nm);
+        if (i < 0 && c->kind == C_PROPERTIES) { dao_raise(3270, coll_src(c), "Property not found."); return vb_v_empty(); }
         if (i < 0) { dao_raise(3265, coll_src(c), "Item not found in this collection."); return vb_v_empty(); }
         int r = 0;
         switch (c->kind) {
-        case C_TABLEDEFS: r = schema_drop_table((ddb *)c->owner, obj_name(c->items[i])); break;
+        case C_PROPERTIES: r = props_delete(c, i); break;
+        case C_TABLEDEFS: r = ((ddb *)c->owner)->odbc ? dao_odbc_drop_table((ddb *)c->owner, obj_name(c->items[i]))
+                                                       : schema_drop_table((ddb *)c->owner, obj_name(c->items[i])); break;
         case C_QUERYDEFS: r = schema_drop_query((ddb *)c->owner, obj_name(c->items[i])); break;
         case C_RELATIONS: {
             ddb *dd = (ddb *)c->owner;
@@ -366,11 +392,11 @@ static vbvar coll_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vb
             break; }
         case C_FIELDS: {
             dtd *t = (dtd *)c->owner;
-            if (t->appended) r = schema_drop_field(DB(t->db), t->name, obj_name(c->items[i]));
+            if (t->appended) r = DB(t->db)->odbc ? dao_odbc_drop_field(DB(t->db), t->name, obj_name(c->items[i])) : schema_drop_field(DB(t->db), t->name, obj_name(c->items[i]));
             break; }
         case C_INDEXES: {
             dtd *t = (dtd *)c->owner;
-            if (t->appended) r = schema_drop_index(DB(t->db), t->name, obj_name(c->items[i]));
+            if (t->appended) r = DB(t->db)->odbc ? dao_odbc_drop_index(DB(t->db), t->name, obj_name(c->items[i])) : schema_drop_index(DB(t->db), t->name, obj_name(c->items[i]));
             break; }
         case C_IXFIELDS: case C_RELFIELDS: break;
         default: dao_raise(3219, coll_src(c), "Invalid operation."); return vb_v_empty();
@@ -428,6 +454,7 @@ static vbvar engine_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
         int found2;
         return coll_member((vbobj)e->wss, "item", kind, argc, argv, &found2);
     }
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
     if (!strcmp(name, "errors")) {
         if (argc == 0) return dao_retobj((vbobj)e->errs);
         int found2;
@@ -437,6 +464,7 @@ static vbvar engine_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
     if (!strcmp(name, "inipath") || !strcmp(name, "systemdb") || !strcmp(name, "defaultuser") || !strcmp(name, "defaultpassword")) {
         char **p = name[0] == 'i' ? &e->inipath : name[0] == 's' ? &e->systemdb : name[7] == 'u' ? &e->defuser : &e->defpwd;
         if (set) { free(*p); *p = dao_strdup_v(argv[argc - 1]); return vb_v_empty(); }
+        if (p == &e->systemdb && (!*p || !**p)) return dao_vstr("system.mdb");   /* (Jet's, VB6 d_dao4) */
         return dao_vstr(*p);
     }
     if (!strcmp(name, "logintimeout")) { if (set) { e->logintimeout = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_i((vb_i16)e->logintimeout); }
@@ -495,6 +523,7 @@ static void db_close(ddb *d);
 static vbobj db_open(dws *w, const char *path, int exclusive, int ro, const char *connect);
 static vbobj db_create(dws *w, const char *path, const char *locale, int options);
 
+static void odbc_trans(ddb *d, int what);       /* daoodbc.inc */
 static int ws_trans(dws *w, int what)
 {
     /* 0 begin, 1 commit, 2 rollback: every open database of the workspace */
@@ -512,6 +541,7 @@ static int ws_trans(dws *w, int what)
         else if (what == 1) snprintf(sql, sizeof sql, "RELEASE %s", sp);
         else snprintf(sql, sizeof sql, "ROLLBACK TO %s; RELEASE %s", sp, sp);
         sqlite3_exec(d->db, sql, 0, 0, 0);
+        odbc_trans(d, what);                    /* and the data sources of ODBC it uses */
     }
     w->trans += what ? -1 : 1;
     return 0;
@@ -555,7 +585,8 @@ static vbvar ws_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
         while (w->dbs->n) db_close((ddb *)vb_oid(w->dbs->items[0]));
         return vb_v_empty();
     }
-    if (!strcmp(name, "users") || !strcmp(name, "groups") || !strcmp(name, "properties") || !strcmp(name, "connections")) {
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
+    if (!strcmp(name, "users") || !strcmp(name, "groups") || !strcmp(name, "connections")) {
         dcoll *c = coll_new(C_PROPERTIES, 0);
         c->loaded = 1;
         return dao_retobj((vbobj)c);
@@ -695,9 +726,212 @@ static char *jet_copy_path(const char *file)
     return p;
 }
 
+/* the SQLite copy of a Jet file, made again when the .mdb is newer (malloc), 0 if it cannot be read */
+static char *jet_sqlite_copy(const char *file)
+{
+    char *copy = jet_copy_path(file);
+    struct stat a, b;
+    int fresh = stat(copy, &b) == 0 && stat(file, &a) == 0 && b.st_mtime >= a.st_mtime;
+    if (!fresh) {
+        char err[512];
+        if (mdb_import(file, copy, err, sizeof err)) { free(copy); return 0; }
+    }
+    return copy;
+}
+
+#include "daoodbc.inc"
+
+/* ---------------------------------------------------------------- other databases (IN 'file', links) */
+/* the kind of a Connect: "" (Jet's own, Microsoft Access), "ODBC", or an installable ISAM (dBASE ...) */
+static void connect_kind(const char *c, char *kind, int cap)
+{
+    const char *e = c ? strchr(c, ';') : 0;
+    int n = c ? (e ? (int)(e - c) : (int)strlen(c)) : 0;
+    while (n > 0 && c[0] == ' ') { c++; n--; }
+    while (n > 0 && c[n - 1] == ' ') n--;
+    if (n > 0 && strchr(c, '=') && (!e || strchr(c, '=') < e)) n = 0;     /* "DATABASE=..." first: Jet's own */
+    snprintf(kind, (size_t)cap, "%.*s", n, c ? c : "");
+    if (!strcasecmp(kind, "MS Access") || !strcasecmp(kind, "Jet")) kind[0] = 0;
+}
+static char *connect_db(const char *c)
+{
+    const char *p = c;
+    while (p && *p) {
+        while (*p == ';' || *p == ' ') p++;
+        if (!strncasecmp(p, "database", 8)) {
+            const char *q = p + 8;
+            while (*q == ' ') q++;
+            if (*q == '=') {
+                q++;
+                const char *e = strchr(q, ';');
+                int n = e ? (int)(e - q) : (int)strlen(q);
+                char *r = malloc((size_t)n + 1);
+                memcpy(r, q, (size_t)n); r[n] = 0;
+                return r;
+            }
+        }
+        p = strchr(p, ';');
+    }
+    return strdup("");
+}
+static int full_path(const char *p, char out[4096])
+{
+#ifdef _WIN32
+    return _fullpath(out, p, 4096) != 0;
+#else
+    return realpath(p, out) != 0;
+#endif
+}
+static int same_file(const char *a, const char *b)
+{
+#ifdef _WIN32
+    return !strcasecmp(a, b);
+#else
+    return !strcmp(a, b);
+#endif
+}
+int dao_ext_schema(ddb *d, const char *path, const char *connect, int *err, char *msg, int cap)
+{
+    char kind[64];
+    connect_kind(connect, kind, sizeof kind);
+    if (!strcasecmp(kind, "ODBC")) {
+        /* a data source of ODBC: the file of the copies of its tables (daoodbc.inc) */
+        osrc *o = osrc_open(connect, "DAO.Database");
+        if (!o) {
+            *err = vb_err_number_pending();
+            snprintf(msg, (size_t)cap, "%s", vb_stoutf8(vb_err_description()));
+            vb_err_clear_pending();
+            if (!*err) *err = 3146;
+            return -1;
+        }
+        for (int i = 0; i < d->next; i++) if (d->ext[i].odbc == o) return i + 1;
+        if (d->next >= DAO_MAXEXT) { *err = 3048; snprintf(msg, (size_t)cap, "Can't open any more databases."); return -1; }
+        int n = d->next + 1;
+        char sql[64]; snprintf(sql, sizeof sql, "ATTACH DATABASE ?1 AS \"lbext%d\"", n);
+        sqlite3_stmt *st = 0;
+        int rc = sqlite3_prepare_v2(d->db, sql, -1, &st, 0);
+        if (rc == SQLITE_OK) { sqlite3_bind_text(st, 1, o->file, -1, SQLITE_STATIC); rc = sqlite3_step(st); sqlite3_finalize(st); }
+        if (rc != SQLITE_DONE && rc != SQLITE_OK) { *err = 3146; snprintf(msg, (size_t)cap, "ODBC--call failed."); return -1; }
+        snprintf(sql, sizeof sql, "PRAGMA \"lbext%d\".journal_mode = MEMORY", n);   /* (see daoodbc.inc) */
+        sqlite3_exec(d->db, sql, 0, 0, 0);
+        d->ext[d->next].file = strdup(o->file);
+        d->ext[d->next++].odbc = o;
+        if (!d->remote) { d->remote = odbc_remote; d->remote_ctx = d; }
+        return n;
+    }
+    if (*kind) {
+        /* dBASE, FoxPro, Paradox, Btrieve, Excel, Text, Lotus, HTML, Exchange: the installable ISAMs of Jet are not
+         * part of LinBASIC Studio (decision of 2026-11-27) */
+        *err = 3170; snprintf(msg, (size_t)cap, "Couldn't find installable ISAM.");
+        return -1;
+    }
+    if (!path || !*path) { *err = 3024; snprintf(msg, (size_t)cap, "Could not find file '%s'.", path ? path : ""); return -1; }
+    char *file = native_path(path);
+    if (!file_exists(file)) {
+        free(file);
+        *err = 3024; snprintf(msg, (size_t)cap, "Could not find file '%s'.", path);
+        return -1;
+    }
+    /* the database itself */
+    char *mine = native_path(d->name);
+    char ra[4096], rb[4096];
+    if (full_path(file, ra) && full_path(mine, rb) && same_file(ra, rb)) { free(file); free(mine); return 0; }
+    free(mine);
+    char *use = file;
+    if (mdb_is_jet(file)) {
+        use = jet_sqlite_copy(file);
+        if (!use) { free(file); *err = 3343; snprintf(msg, (size_t)cap, "Unrecognized database format '%s'.", path); return -1; }
+        free(file);
+    } else {
+        char head[16] = { 0 };
+        FILE *f = fopen(file, "rb");
+        if (f) { if (fread(head, 1, 16, f) < 16) head[0] = 0; fclose(f); }
+        if (memcmp(head, "SQLite format 3", 15)) {
+            free(file);
+            *err = 3343; snprintf(msg, (size_t)cap, "Unrecognized database format '%s'.", path);
+            return -1;
+        }
+    }
+    char real[4096];
+    if (!full_path(use, real)) snprintf(real, sizeof real, "%s", use);
+    for (int i = 0; i < d->next; i++)
+        if (same_file(d->ext[i].file, real)) { free(use); return i + 1; }
+    if (d->next >= DAO_MAXEXT) {
+        free(use);
+        *err = 3048; snprintf(msg, (size_t)cap, "Can't open any more databases.");
+        return -1;
+    }
+    int n = d->next + 1;
+    char sql[64]; snprintf(sql, sizeof sql, "ATTACH DATABASE ?1 AS \"lbext%d\"", n);
+    sqlite3_stmt *st = 0;
+    int rc = sqlite3_prepare_v2(d->db, sql, -1, &st, 0);
+    if (rc == SQLITE_OK) {
+        sqlite3_bind_text(st, 1, real, -1, SQLITE_STATIC);
+        rc = sqlite3_step(st);
+        sqlite3_finalize(st);
+    }
+    free(use);
+    if (rc != SQLITE_DONE && rc != SQLITE_OK) {
+        *err = 3051;
+        snprintf(msg, (size_t)cap, "The Microsoft Jet database engine cannot open the file '%s'.  It is already opened exclusively by another user, or you need permission to view its data.", path);
+        return -1;
+    }
+    d->ext[d->next++].file = strdup(real);
+    return n;
+}
+int dao_ext_link(ddb *d, const char *connect, int *err, char *msg, int cap)
+{
+    char kind[64];
+    connect_kind(connect, kind, sizeof kind);
+    if (*kind) return dao_ext_schema(d, "", connect, err, msg, cap);
+    char *path = connect_db(connect);
+    int n = dao_ext_schema(d, path, connect, err, msg, cap);
+    free(path);
+    return n;
+}
+int dao_ext_table(ddb *d, int n, const char *table)
+{
+    osrc *o = ext_osrc(d, n);
+    return o && n > 0 ? osrc_table(o, table) != 0 : 0;
+}
+const char *dao_ext_connect(ddb *d, int n)
+{
+    osrc *o = n > 0 ? ext_osrc(d, n) : 0;
+    return o ? o->connect : 0;
+}
+/* the callbacks of jet_translate */
+static int ext_cb(void *ctx, const char *path, const char *connect, int *err, char *msg, int cap)
+{
+    return dao_ext_schema((ddb *)ctx, path, connect, err, msg, cap);
+}
+static int link_cb(void *ctx, const char *name, char *src, int cap, int *err, char *msg, int mcap)
+{
+    ddb *d = ctx;
+    char con[1024];
+    if (!schema_link(d, name, 0, 0, src, cap, con, sizeof con)) return 0;
+    int n = dao_ext_link(d, con, err, msg, mcap);
+    if (n == 0) return 0;                       /* (a link to a table of the database itself) */
+    return n;
+}
+void dao_translate_hooks(ddb *d, int on)
+{
+    jet_ext_fn = on ? ext_cb : 0;
+    jet_link_fn = on ? link_cb : 0;
+    jet_ext_ctx = on ? d : 0;
+}
+
 static vbobj db_open(dws *w, const char *path, int exclusive, int ro, const char *connect)
 {
     (void)exclusive;
+    char kind[64];
+    connect_kind(connect, kind, sizeof kind);
+    if (!strcasecmp(kind, "ODBC")) return odbc_db_open(w, connect, ro);   /* a data source of ODBC (daoodbc.inc) */
+    if (*kind) {
+        /* dBASE, FoxPro, Paradox, Btrieve, Excel, Text ...: the installable ISAMs of Jet are not part of LinBASIC
+         * Studio (decision of 2026-11-27) */
+        dao_raise(3170, "DAO.Workspace", "Couldn't find installable ISAM.");
+        return 0;
+    }
     char *file = native_path(path);
     if (!file_exists(file)) {
         free(file);
@@ -713,17 +947,12 @@ static vbobj db_open(dws *w, const char *path, int exclusive, int ro, const char
     int jet = mdb_is_jet(file);
     if (jet) {
         /* a Jet file: read through its SQLite copy (made again when the .mdb is newer) */
-        char *copy = jet_copy_path(file);
-        struct stat a, b;
-        int fresh = stat(copy, &b) == 0 && stat(file, &a) == 0 && b.st_mtime >= a.st_mtime;
-        if (!fresh) {
-            char err[512];
-            if (mdb_import(file, copy, err, sizeof err)) {
-                free(copy); free(file);
-                vb_orelease((vbobj)d);
-                dao_raise(3343, "DAO.Workspace", "Unrecognized database format '%s'.", path);
-                return 0;
-            }
+        char *copy = jet_sqlite_copy(file);
+        if (!copy) {
+            free(file);
+            vb_orelease((vbobj)d);
+            dao_raise(3343, "DAO.Workspace", "Unrecognized database format '%s'.", path);
+            return 0;
         }
         use = copy;
         d->version = jet == 3 ? 30 : 40;
@@ -765,6 +994,8 @@ static void db_clear(vbobj o)
     ddb *d = (ddb *)o;
     if (!d->closed && d->db) { sqlite3_close_v2(d->db); d->db = 0; }
     free(d->name); free(d->file); free(d->connect);
+    for (int i = 0; i < d->next; i++) free(d->ext[i].file);
+    d->next = 0;
     if (d->tds) vb_orelease((vbobj)d->tds);
     if (d->qds) vb_orelease((vbobj)d->qds);
     if (d->rels) vb_orelease((vbobj)d->rels);
@@ -800,6 +1031,13 @@ static int insert_names_counter(ddb *d, const char *table, const char *sql)
 static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affected)
 {
     *affected = 0;
+    {   /* pass-through: the SQL to the data source of ODBC as it is (RecordsAffected 0, as Jet gives it) */
+        dqd *pq = qd ? (dqd *)vb_oid(qd) : 0;
+        osrc *po = 0;
+        if (pq && pq->connect && !strncasecmp(pq->connect, "ODBC", 4) && !(po = qd_osrc(qd))) return -1;
+        if (!po && (options & dbSQLPassThrough)) po = (osrc *)d->odbc;
+        if (po) return odbc_pt_exec(po, sql, "DAO.QueryDef");
+    }
     char real[256];
     const char *text = sql;
     char *saved = 0;
@@ -826,12 +1064,15 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
     }
     params[np] = 0;
     jsql j;
-    if (jet_translate(text, &j, np ? params : 0) < 0) {
+    if (dao_translate(d, text, &j, np ? params : 0) < 0) {
         dao_raise(j.err, "DAO.Database", "%s", j.errmsg);
         jsql_free(&j); free(saved);
         return -1;
     }
     free(saved);
+    if (odbc_before(d, &j)) { jsql_free(&j); return -1; }   /* the tables of ODBC it names: their rows again */
+    char extq[32] = "";
+    if (j.table_ext > 0 && !j.table_src) snprintf(extq, sizeof extq, "lbext%d", j.table_ext);
     int r = 0;
     if (j.kind >= J_CREATE_TABLE && j.kind <= J_DROP_CONSTRAINT) {
         if (d->ro) { dao_raise(3027, "DAO.Database", "Cannot update.  Database or object is read-only."); jsql_free(&j); return -1; }
@@ -846,8 +1087,14 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
     }
     if (d->ro) { dao_raise(3027, "DAO.Database", "Cannot update.  Database or object is read-only."); jsql_free(&j); return -1; }
     /* the table of an INSERT / UPDATE / DELETE must exist */
-    if (j.table && schema_has_table(d, j.table, real, sizeof real) != 1) {
-        if (j.kind == J_INSERT) dao_raise(3192, "DAO.Database", "Could not find output table '%s'.", j.table);
+    int has_table = 1;
+    if (j.table) {
+        schema_qualify(extq);                   /* a table of another database: there */
+        has_table = schema_has_table(d, j.table, real, sizeof real) == 1;
+        schema_qualify(0);
+    }
+    if (!has_table) {
+        if (j.kind == J_INSERT && !d->odbc) dao_raise(3192, "DAO.Database", "Could not find output table '%s'.", j.table);
         else dao_raise(3078, "DAO.Database", "The Microsoft Jet database engine cannot find the input table or query '%s'.  Make sure it exists and that its name is spelled correctly.", j.table);
         jsql_free(&j);
         return -1;
@@ -870,9 +1117,21 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
         return -1;
     }
     jbuf s = { 0 };
+    if (dao_odbc_into(d, &j)) {                 /* SELECT ... INTO a table of a data source of ODBC */
+        long n = dao_odbc_select_into(d, &j, vals);
+        free(vals); jsql_free(&j);
+        if (n < 0) return -1;
+        *affected = n;
+        return 0;
+    }
     if (j.into) {
         /* SELECT ... INTO t: the new table has the types of the columns */
-        if (schema_has_table(d, j.into, real, sizeof real)) {
+        char intoq[32] = "";
+        if (j.into_ext > 0) snprintf(intoq, sizeof intoq, "lbext%d", j.into_ext);
+        schema_qualify(intoq);
+        int exists = schema_has_table(d, j.into, real, sizeof real);
+        schema_qualify(0);
+        if (exists) {
             dao_raise(3010, "DAO.Database", "Table '%s' already exists.", j.into);
             free(vals); jsql_free(&j);
             return -1;
@@ -886,7 +1145,10 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
             int type = jet_decl_type(sqlite3_column_decltype(st, i), &size, &attrs);
             rcol c; memset(&c, 0, sizeof c);
             const char *tn = sqlite3_column_table_name(st, i), *on = sqlite3_column_origin_name(st, i);
+            const char *dn = sqlite3_column_database_name(st, i);
+            schema_qualify(dn && !strncmp(dn, "lbext", 5) ? dn : 0);
             if (tn && on && schema_field_info(d, tn, on, &c)) { type = c.type; size = c.size; }
+            schema_qualify(0);
             free(c.defval);
             if (!type) type = dbText, size = 255;
             dfld *f = field_new(FK_TABLE, (vbobj)t, sqlite3_column_name(st, i), type, size);
@@ -895,15 +1157,28 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
             coll_add(t->fields, (vbobj)f); vb_orelease((vbobj)f);
         }
         sqlite3_finalize(st);
-        r = schema_create_table(d, t);
+        if (j.into_ext > 0) {
+            /* the table in the other database: made there (its own connection), filled through this one */
+            ddb *x = db_new((dws *)d->ws, d->ext[j.into_ext - 1].file);
+            r = db_connect(x, d->ext[j.into_ext - 1].file, 0, 0) != SQLITE_OK;
+            if (r) dao_raise(3051, "DAO.Database", "The Microsoft Jet database engine cannot open the file '%s'.  It is already opened exclusively by another user, or you need permission to view its data.", d->ext[j.into_ext - 1].file);
+            else { schema_init(x); r = schema_create_table(x, t); }
+            if (x->db) sqlite3_close_v2(x->db);
+            x->db = 0; x->closed = 1;
+            vb_orelease((vbobj)x);
+        } else r = schema_create_table(d, t);
         vb_orelease((vbobj)t);
         if (r) { free(vals); jsql_free(&j); return -1; }
-        jb_s(&s, "INSERT INTO "); jb_qid(&s, j.into, -1); jb_s(&s, " "); jb_s(&s, j.sql);
+        jb_s(&s, "INSERT INTO ");
+        if (j.into_ext > 0) jb_f(&s, "\"lbext%d\".", j.into_ext);
+        jb_qid(&s, j.into, -1); jb_s(&s, " "); jb_s(&s, j.sql);
     } else jb_s(&s, j.sql);
+    ocap cap;
+    ocap_begin(d, &j, &cap);                    /* a table of ODBC: its changes logged, to go to the server */
     sqlite3_stmt *st = 0;
     int rc = sqlite3_prepare_v2(d->db, s.p, -1, &st, 0);
     jb_free(&s);
-    if (rc != SQLITE_OK) { dao_raise_sqlite(d, rc, "DAO.Database"); free(vals); jsql_free(&j); return -1; }
+    if (rc != SQLITE_OK) { ocap_end(d, &cap, 0, ""); dao_raise_sqlite(d, rc, "DAO.Database"); free(vals); jsql_free(&j); return -1; }
     for (int i = 0; i < j.nbinds; i++) jet_bind(st, i + 1, vals[i], 0);
     free(vals);
     rc = sqlite3_step(st);
@@ -911,8 +1186,9 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
     char emsg[1024]; int enr = 0;
     if (rc != SQLITE_DONE) enr = jet_sqlite_error(d->db, rc, emsg, sizeof emsg);
     sqlite3_finalize(st);
+    if (cap.on && ocap_end(d, &cap, rc == SQLITE_DONE, d->odbc && !j.table_src ? "???" : j.table)) { *affected = 0; jsql_free(&j); return -1; }
     if (rc != SQLITE_DONE) {
-        if (j.kind == J_INSERT && !insert_names_counter(d, real, j.sql))
+        if (j.kind == J_INSERT && !j.table_ext && !insert_names_counter(d, real, j.sql))
             schema_counter_bump(d, real);       /* Jet used up the counter value (not when the INSERT gave it) */
         int fail = (options & dbFailOnError) || !((rc & 0xff) == SQLITE_CONSTRAINT);
         if (fail) { dao_raise(enr, "DAO.Database", "%s", emsg); jsql_free(&j); return -1; }
@@ -966,8 +1242,9 @@ static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
         if (argc == 0) return dao_retobj((vbobj)d->rss);
         int f2; return coll_member((vbobj)d->rss, "item", kind, argc, argv, &f2);
     }
-    if (!strcmp(name, "containers") || !strcmp(name, "properties")) {
-        dcoll *c = coll_new(name[0] == 'c' ? C_CONTAINERS : C_PROPERTIES, 0);
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
+    if (!strcmp(name, "containers")) {
+        dcoll *c = coll_new(C_CONTAINERS, 0);
         c->loaded = 1;
         vbvar v = dao_retobj((vbobj)c);
         vb_orelease((vbobj)c);
@@ -1009,6 +1286,10 @@ static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
         const char *nm = dao_missing(argc, argv, 0) ? "" : dao_str(argv[0]);
         const char *sql = dao_missing(argc, argv, 1) ? "" : dao_str(argv[1]);
         int temp = !*nm;
+        if (!temp && d->odbc) {                 /* a database of ODBC keeps no queries */
+            dao_raise(3251, "DAO.QueryDefs", "Operation is not supported for this type of object.");
+            return vb_v_empty();
+        }
         if (!temp) {
             coll_load(d->qds);
             if (coll_find(d->qds, nm) >= 0 || schema_has_table(d, nm, 0, 0)) {
@@ -1030,7 +1311,7 @@ static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
             }
             jsql_free(&j);
         }
-        if (!temp && *sql) {
+        if (!temp) {                            /* (a QueryDef with a name is appended at once, its SQL or not) */
             if (schema_save_query(d, q, 0)) { vb_orelease((vbobj)q); return vb_v_empty(); }
             q->appended = 1;
             coll_load(d->qds);
@@ -1048,7 +1329,7 @@ static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
         vb_orelease((vbobj)r);
         return v;
     }
-    if (!strcmp(name, "createproperty")) { dao_raise(3251, "DAO.Database", "Operation is not supported for this type of object."); return vb_v_empty(); }
+    if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
     if (!strcmp(name, "newpassword") || !strcmp(name, "makereplica") || !strcmp(name, "synchronize") || !strcmp(name, "populatepartial")) return vb_v_empty();
     *found = 0;
     return vb_v_empty();
@@ -1059,6 +1340,8 @@ static int db_append_tabledef(ddb *d, dtd *t)
     if (dao_check_db(d, "DAO.TableDefs")) return -1;
     if (t->appended) { dao_raise(3367, "DAO.TableDefs", "Cannot append. An object with that name already exists in the collection."); return -1; }
     if (!t->db) { t->db = (vbobj)d; vb_oaddref((vbobj)d); }
+    if ((t->connect && *t->connect) || (t->srcname && *t->srcname)) return schema_create_link(d, t) ? -1 : 0;
+    if (d->odbc) return dao_odbc_create_table(d, t) ? -1 : 0;     /* a database of ODBC: on the server */
     return schema_create_table(d, t) ? -1 : 0;
 }
 static int db_append_querydef(ddb *d, dqd *q)
@@ -1094,7 +1377,7 @@ static int tabledef_append_field(dtd *t, dfld *f)
     if (!f->type) { dao_raise(3259, "DAO.Fields", "Invalid field data type."); return -1; }
     if (!*f->name) { dao_raise(3264, "DAO.Fields", "No field defined--cannot append TableDef or Index."); return -1; }
     if (t->appended) {
-        if (schema_add_field(DB(t->db), t->name, f)) return -1;
+        if (DB(t->db)->odbc ? dao_odbc_add_field(DB(t->db), t->name, f) : schema_add_field(DB(t->db), t->name, f)) return -1;
     }
     if (f->owner != (vbobj)t) { if (f->owner) vb_orelease(f->owner); f->owner = (vbobj)t; vb_oaddref((vbobj)t); }
     f->ord = t->fields->n;
@@ -1103,7 +1386,7 @@ static int tabledef_append_field(dtd *t, dfld *f)
 static int tabledef_append_index(dtd *t, dix *ix)
 {
     if (t->appended) {
-        if (schema_create_index(DB(t->db), t->name, ix)) return -1;
+        if (DB(t->db)->odbc ? dao_odbc_create_index(DB(t->db), t->name, ix) : schema_create_index(DB(t->db), t->name, ix)) return -1;
     }
     if (!ix->td) { ix->td = (vbobj)t; vb_oaddref((vbobj)t); }
     if (ix->primary) { ix->unique = 1; ix->required = 1; }
@@ -1147,9 +1430,9 @@ static vbvar tabledef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
         return dao_vstr(t->name);
     }
     if (!strcmp(name, "attributes")) { if (set) { t->attrs = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(t->attrs); }
-    if (!strcmp(name, "updatable")) return vb_v_bool(t->attrs & dbSystemObject ? 0 : -1);
+    if (!strcmp(name, "updatable")) return vb_v_bool(t->attrs & (dbSystemObject | dbAttachedTable | dbAttachedODBC) ? 0 : -1);
     if (!strcmp(name, "recordcount")) {
-        if (!t->appended || (t->attrs & dbSystemObject)) return vb_v_l(t->appended ? 0 : -1);
+        if (!t->appended || (t->attrs & (dbSystemObject | dbAttachedTable | dbAttachedODBC))) return vb_v_l(t->appended ? 0 : -1);
         ddb *d = DB(t->db);
         jbuf s = { 0 };
         jb_s(&s, "SELECT count(*) FROM "); jb_qid(&s, t->name, -1);
@@ -1186,8 +1469,24 @@ static vbvar tabledef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
         vbobj r = rs_open(DB(t->db), t->name, along(argc, argv, 0, 0), along(argc, argv, 1, 0), 0, 0, 0, 0);
         return r ? dao_retobj(r) : vb_v_empty();
     }
-    if (!strcmp(name, "refreshlink") || !strcmp(name, "createproperty")) return vb_v_empty();
-    if (!strcmp(name, "properties")) { dcoll *c = coll_new(C_PROPERTIES, 0); c->loaded = 1; vbvar v = dao_retobj((vbobj)c); vb_orelease((vbobj)c); return v; }
+    if (!strcmp(name, "refreshlink")) {
+        /* the database it links to again (another file perhaps: its Connect) */
+        if (!(t->attrs & (dbAttachedTable | dbAttachedODBC)) || !t->db) return vb_v_empty();
+        ddb *d = DB(t->db);
+        int err = 0; char msg[400];
+        if (dao_ext_link(d, t->connect, &err, msg, sizeof msg) < 0) { dao_raise(err, "DAO.TableDef", "%s", msg); return vb_v_empty(); }
+        sqlite3_stmt *st = 0;
+        if (sqlite3_prepare_v2(d->db, "UPDATE MSysLB_Tables SET connect = ?2, srcname = ?3 WHERE name = ?1", -1, &st, 0) == SQLITE_OK) {
+            sqlite3_bind_text(st, 1, t->name, -1, SQLITE_STATIC);
+            sqlite3_bind_text(st, 2, t->connect, -1, SQLITE_STATIC);
+            sqlite3_bind_text(st, 3, t->srcname, -1, SQLITE_STATIC);
+            sqlite3_step(st);
+            sqlite3_finalize(st);
+        }
+        return vb_v_empty();
+    }
+    if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
     *found = 0;
     return vb_v_empty();
 }
@@ -1250,7 +1549,7 @@ static vbvar field_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
             rs_field_let(r, f->col, nv);
             return vb_v_empty();
         }
-        if (!strcmp(name, "properties")) { dcoll *cc = coll_new(C_PROPERTIES, 0); cc->loaded = 1; vbvar v = dao_retobj((vbobj)cc); vb_orelease((vbobj)cc); return v; }
+        if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
         *found = 0;
         return vb_v_empty();
     }
@@ -1267,7 +1566,7 @@ static vbvar field_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
     }
     if (!strcmp(name, "size")) {
         if (set) { if (appended) { dao_raise(3219, "DAO.Field", "Invalid operation."); return vb_v_empty(); } f->size = vb_v2l(argv[argc - 1]); return vb_v_empty(); }
-        return vb_v_l(f->fk == FK_TABLE ? f->size : 0);
+        return vb_v_l(f->fk == FK_TABLE || f->fk == FK_QD ? f->size : 0);
     }
     if (!strcmp(name, "attributes")) {
         if (set) { f->attrs = vb_v2l(argv[argc - 1]); return vb_v_empty(); }
@@ -1281,13 +1580,18 @@ static vbvar field_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
         if (set) { free(*p); *p = dao_strdup_v(argv[argc - 1]); return vb_v_empty(); }
         return dao_vstr(*p);
     }
-    if (!strcmp(name, "sourcetable")) return dao_vstr(f->fk == FK_TABLE && f->owner ? ((dtd *)f->owner)->name : "");
+    if (f->fk == FK_QD && !strcmp(name, "sourcetable")) return dao_vstr(f->stable);
+    if (f->fk == FK_QD && !strcmp(name, "sourcefield")) return dao_vstr(f->sfield);
+    if (!strcmp(name, "sourcetable")) {
+        dtd *ot = f->fk == FK_TABLE && f->owner ? (dtd *)f->owner : 0;
+        return dao_vstr(!ot ? "" : (ot->attrs & (dbAttachedTable | dbAttachedODBC)) && ot->srcname && *ot->srcname ? ot->srcname : ot->name);
+    }
     if (!strcmp(name, "sourcefield")) return dao_vstr(f->fk == FK_TABLE ? f->name : "");
-    if (!strcmp(name, "dataupdatable")) return vb_v_bool(0);
+    if (!strcmp(name, "dataupdatable")) return vb_v_bool(f->fk == FK_QD && f->dataupd ? -1 : 0);
     if (!strcmp(name, "collatingorder")) return vb_v_l(1033);
     if (!strcmp(name, "value")) { dao_raise(3219, "DAO.Field", "Invalid operation."); return vb_v_empty(); }
-    if (!strcmp(name, "createproperty")) return vb_v_empty();
-    if (!strcmp(name, "properties")) { dcoll *cc = coll_new(C_PROPERTIES, 0); cc->loaded = 1; vbvar v = dao_retobj((vbobj)cc); vb_orelease((vbobj)cc); return v; }
+    if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
     *found = 0;
     return vb_v_empty();
 }
@@ -1300,6 +1604,28 @@ static void index_clear(vbobj o)
     if (ix->fields) vb_orelease((vbobj)ix->fields);
     if (ix->td) vb_orelease(ix->td);
 }
+/* DistinctCount: the different values of the index's fields in its table */
+static long index_distinct(dix *ix)
+{
+    if (!ix->appended || !ix->td) return 0;
+    dtd *t = (dtd *)vb_oid(ix->td);
+    if (!t->appended || !t->db || !ix->fields || !ix->fields->n) return 0;
+    ddb *d = DB(t->db);
+    jbuf s = { 0 };
+    jb_s(&s, "SELECT COUNT(*) FROM (SELECT DISTINCT ");
+    for (int i = 0; i < ix->fields->n; i++) {
+        if (i) jb_s(&s, ", ");
+        jb_qid(&s, obj_name(ix->fields->items[i]), -1);
+    }
+    jb_s(&s, " FROM "); jb_qid(&s, t->name, -1); jb_s(&s, ")");
+    long n = 0;
+    sqlite3_stmt *st = 0;
+    if (sqlite3_prepare_v2(d->db, s.p, -1, &st, 0) == SQLITE_OK && sqlite3_step(st) == SQLITE_ROW) n = sqlite3_column_int64(st, 0);
+    sqlite3_finalize(st);
+    jb_free(&s);
+    return n;
+}
+
 static vbvar index_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
     dix *ix = (dix *)vb_oid(o);
@@ -1327,6 +1653,10 @@ static vbvar index_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
         int f2; return coll_member((vbobj)ix->fields, "item", kind, argc, argv, &f2);
     }
     if (!strcmp(name, "name")) { if (set) { free(ix->name); ix->name = dao_strdup_v(argv[argc - 1]); return vb_v_empty(); } return dao_vstr(ix->name); }
+    if (!strcmp(name, "primary") && !set && ix->remote) {
+        dao_raise(3365, "DAO.Index", "Property value not valid for REMOTE objects.");
+        return vb_v_empty();
+    }
     int *flag = !strcmp(name, "primary") ? &ix->primary : !strcmp(name, "unique") ? &ix->unique : !strcmp(name, "required") ? &ix->required :
                 !strcmp(name, "ignorenulls") ? &ix->ignorenulls : !strcmp(name, "clustered") ? &ix->clustered : 0;
     if (flag) {
@@ -1339,15 +1669,15 @@ static vbvar index_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
         return vb_v_bool(*flag ? -1 : 0);
     }
     if (!strcmp(name, "foreign")) return vb_v_bool(ix->foreign ? -1 : 0);
-    if (!strcmp(name, "distinctcount")) return vb_v_l(0);
+    if (!strcmp(name, "distinctcount")) return vb_v_l(index_distinct(ix));
     if (!strcmp(name, "createfield")) {
         dfld *f = field_new(FK_INDEX, 0, dao_missing(argc, argv, 0) ? "" : dao_str(argv[0]), 0, 0);
         vbvar v = dao_retobj((vbobj)f);
         vb_orelease((vbobj)f);
         return v;
     }
-    if (!strcmp(name, "createproperty")) return vb_v_empty();
-    if (!strcmp(name, "properties")) { dcoll *cc = coll_new(C_PROPERTIES, 0); cc->loaded = 1; vbvar v = dao_retobj((vbobj)cc); vb_orelease((vbobj)cc); return v; }
+    if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
     *found = 0;
     return vb_v_empty();
 }
@@ -1366,6 +1696,7 @@ static vbvar relation_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
     int set = kind == VBM_LET || kind == VBM_SET;
     *found = 1;
     dao_src = "DAO.Relation";
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
     if (!strcmp(name, "fields")) {
         r->fields->loaded = 1;
         if (argc == 0) return dao_retobj((vbobj)r->fields);
@@ -1396,6 +1727,32 @@ static void querydef_clear(vbobj o)
     if (q->params) vb_orelease((vbobj)q->params);
     if (q->db) vb_orelease(q->db);
 }
+/* the fields of a QueryDef: the columns of its result, as Fields of a TableDef read them (Value: Invalid operation) */
+static void qd_fields(ddb *d, dqd *q, dcoll *c)
+{
+    vb_i32 save = vb_errpend;
+    vbobj r0 = rs_open(d, q->sql, dbOpenDynaset, 0, 0, 0, 0, 0);
+    if (!r0) { if (vb_errpend && !save) vb_err_clear_pending(); return; }
+    drs *r = (drs *)vb_oid(r0);
+    for (int i = 0; i < r->ncols; i++) {
+        rcol *rc = &r->cols[i];
+        dfld *f = field_new(FK_QD, 0, rc->name, rc->type, rc->size);
+        f->type = rc->type; f->size = rc->size;
+        int upd = rc->updatable && r->base;
+        f->attrs = rc->attrs | (upd ? dbUpdatableField : 0);
+        f->dataupd = upd;
+        f->required = rc->required; f->allowzero = rc->allowzero ? 1 : 0;
+        f->ord = i;
+        free(f->stable); f->stable = strdup(rc->stable ? rc->stable : "");
+        free(f->sfield); f->sfield = strdup(rc->sfield ? rc->sfield : "");
+        f->appended = 1;
+        coll_add(c, (vbobj)f);
+        vb_orelease((vbobj)f);
+    }
+    vb_late_o(r0, "close", VBM_METHOD, 0, 0);    /* (rs_open gives a temporary: the end of the statement frees it) */
+    if (vb_errpend && !save) vb_err_clear_pending();
+}
+
 static vbvar querydef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
     dqd *q = (dqd *)vb_oid(o);
@@ -1433,9 +1790,14 @@ static vbvar querydef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
     if (!strcmp(name, "maxrecords")) { if (set) { q->maxrecords = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_l(q->maxrecords); }
     if (!strcmp(name, "datecreated")) return vb_v_date(q->created);
     if (!strcmp(name, "lastupdated")) return vb_v_date(q->updated);
-    if (!strcmp(name, "fields")) {
+    if (!strcmp(name, "fields")) {                  /* the columns of its result (phase 12.4) */
         dcoll *c = coll_new(C_FIELDS, 0); c->loaded = 1;
-        vbvar v = dao_retobj((vbobj)c); vb_orelease((vbobj)c); return v;
+        if (d && q->sql && !q->params->n) qd_fields(d, q, c);
+        vbvar v;
+        if (argc > 0) { int f2; v = coll_member((vbobj)c, "item", kind, argc, argv, &f2); }
+        else v = dao_retobj((vbobj)c);
+        vb_orelease((vbobj)c);
+        return v;
     }
     if (!strcmp(name, "openrecordset")) {
         if (!d) { dao_raise(3219, "DAO.QueryDef", "Invalid operation."); return vb_v_empty(); }
@@ -1449,8 +1811,9 @@ static vbvar querydef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
         return vb_v_empty();
     }
     if (!strcmp(name, "close")) return vb_v_empty();
-    if (!strcmp(name, "createproperty") || !strcmp(name, "cancel")) return vb_v_empty();
-    if (!strcmp(name, "properties")) { dcoll *cc = coll_new(C_PROPERTIES, 0); cc->loaded = 1; vbvar v = dao_retobj((vbobj)cc); vb_orelease((vbobj)cc); return v; }
+    if (!strcmp(name, "cancel")) return vb_v_empty();
+    if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
+    if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);
     *found = 0;
     return vb_v_empty();
 }
@@ -1498,6 +1861,8 @@ static void engine_clear(vbobj o)
 
 static void rsclear(vbobj o) { rs_clear(o); }
 
+#include "daoprops.inc"
+
 /* ---------------------------------------------------------------- the classes */
 #define FB(f) 0, 0, 0, f
 const vb_class vb_cls_dao_dbengine = { "DBEngine", sizeof(deng), 0, 0, engine_clear, 0, 0, "workspaces", FB(engine_member) };
@@ -1512,7 +1877,9 @@ const vb_class vb_cls_dao_parameter = { "Parameter", sizeof(dpar), 0, 0, param_c
 const vb_class vb_cls_dao_recordset = { "Recordset", sizeof(drs), 0, 0, rsclear, 0, 0, "fields", FB(rs_member) };
 const vb_class vb_cls_dao_error = { "Error", sizeof(derr), 0, 0, error_clear, 0, 0, "description", FB(error_member) };
 const vb_class vb_cls_dao_coll = { "Collection", sizeof(dcoll), 0, 0, coll_clear, 0, 0, "item", coll_each_count, coll_each_item, 0, coll_member };
-const vb_class vb_cls_dao_property = { "Property", sizeof(dprop), 0, 0, 0, 0, 0, "value", FB(0) };
+const vb_class vb_cls_dao_property = { "Property", sizeof(dprop), 0, 0, prop_clear, 0, 0, "value", FB(prop_member) };
+vbvar dao_props_of(vbobj owner) { return props_of(owner); }
+vbvar dao_props_get(vbobj owner, vb_i32 kind, vb_i32 argc, vbvar *argv) { return props_get(owner, kind, argc, argv); }
 
 /* ---------------------------------------------------------------- the hooks of the rest of the runtime */
 static void rs_watch(vbobj o, void (*cb)(void *, int, int, int *), void *ctx)

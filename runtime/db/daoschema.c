@@ -26,11 +26,41 @@ static char *sdup(const char *s) { return s ? strdup(s) : 0; }
 static const char *col_text(sqlite3_stmt *st, int i) { const char *s = (const char *)sqlite3_column_text(st, i); return s ? s : ""; }
 
 /* ---------------------------------------------------------------- queries on the schema */
+/* the schema of another database the queries on the schema go to ("lbextN", attached), 0 = the database's own */
+static const char *g_q;
+void schema_qualify(const char *schema) { g_q = schema && *schema ? schema : 0; }
+const char *schema_qualifier(void) { return g_q; }
+/* the SQL with the schema tables of another database named with its schema */
+static char *qualified(const char *sql)
+{
+    static const char *const W[] = { "MSysLB_", "sqlite_master", "sqlite_sequence", 0 };
+    jbuf b = { 0 };
+    const char *p = sql;
+    while (*p) {
+        int hit = -1;
+        if (p == sql || !(isalnum((unsigned char)p[-1]) || p[-1] == '_' || p[-1] == '"' || p[-1] == '.'))
+            for (int i = 0; W[i]; i++) if (!strncmp(p, W[i], strlen(W[i]))) { hit = i; break; }
+        if (hit >= 0) { jb_f(&b, "\"%s\".", g_q); jb_s(&b, W[hit]); p += strlen(W[hit]); continue; }
+        jb_put(&b, p, 1);
+        p++;
+    }
+    jb_put(&b, "", 0);
+    return b.p;
+}
 static sqlite3_stmt *prep(ddb *d, const char *sql)
 {
     sqlite3_stmt *st = 0;
-    if (sqlite3_prepare_v2(d->db, sql, -1, &st, 0) != SQLITE_OK) return 0;
+    char *q = g_q ? qualified(sql) : 0;
+    int rc = sqlite3_prepare_v2(d->db, q ? q : sql, -1, &st, 0);
+    free(q);
+    if (rc != SQLITE_OK) return 0;
     return st;
+}
+/* a table name in SQL: with the schema of another database when the queries go there */
+static void put_tbl(jbuf *b, const char *table)
+{
+    if (g_q) jb_f(b, "\"%s\".", g_q);
+    jb_qid(b, table, -1);
 }
 static int sqlite_has(ddb *d, const char *type, const char *name, char *real, int cap)
 {
@@ -60,7 +90,24 @@ int schema_has_table(ddb *d, const char *name, char *real, int cap)
         if (r) return 2;
     }
     if (sqlite_has(d, "view", name, real, cap)) return 2;
+    if (!g_q && schema_link(d, name, real, cap, 0, 0, 0, 0)) return 1;     /* a linked table */
     return 0;
+}
+
+/* a linked table: its name (real), the table in the other database (src) and the Connect; 1 if name is one */
+int schema_link(ddb *d, const char *name, char *real, int cap, char *src, int scap, char *connect, int ccap)
+{
+    sqlite3_stmt *st = prep(d, "SELECT name, srcname, connect FROM MSysLB_Tables WHERE name = ?1 AND connect <> ''");
+    if (!st) return 0;
+    sqlite3_bind_text(st, 1, name, -1, SQLITE_STATIC);
+    int r = sqlite3_step(st) == SQLITE_ROW;
+    if (r) {
+        if (real) snprintf(real, (size_t)cap, "%s", col_text(st, 0));
+        if (src) snprintf(src, (size_t)scap, "%s", col_text(st, 1));
+        if (connect) snprintf(connect, (size_t)ccap, "%s", col_text(st, 2));
+    }
+    sqlite3_finalize(st);
+    return r;
 }
 
 static vb_date now_date(void) { return vb_now(); }
@@ -185,7 +232,9 @@ static int has_meta(ddb *d, const char *table)
 static void load_foreign_fields(ddb *d, dtd *t)
 {
     jbuf q = { 0 };
-    jb_s(&q, "PRAGMA table_info("); jb_qid(&q, t->name, -1); jb_s(&q, ")");
+    jb_s(&q, "PRAGMA ");
+    if (g_q) jb_f(&q, "\"%s\".", g_q);
+    jb_s(&q, "table_info("); jb_qid(&q, t->name, -1); jb_s(&q, ")");
     sqlite3_stmt *st = prep(d, q.p);
     jb_free(&q);
     if (!st) return;
@@ -212,11 +261,14 @@ dtd *schema_load_table(ddb *d, const char *name)
     t->db = (vbobj)d; vb_oaddref((vbobj)d);
     t->appended = 1;
     if (!has_meta(d, real)) { load_foreign_fields(d, t); return t; }
+    int remote = 0;
     sqlite3_stmt *st = prep(d, "SELECT attrs, created, updated, vrule, vtext, srcname, connect FROM MSysLB_Tables WHERE name = ?1");
     if (st) {
         sqlite3_bind_text(st, 1, real, -1, SQLITE_STATIC);
         if (sqlite3_step(st) == SQLITE_ROW) {
             t->attrs = sqlite3_column_int(st, 0);
+            remote = (t->attrs & LB_REMOTE_COPY) != 0;      /* the copy of a table of ODBC (daoodbc.inc) */
+            t->attrs &= ~LB_REMOTE_COPY;
             jet_text_date(col_text(st, 1), (int)strlen(col_text(st, 1)), &t->created);
             jet_text_date(col_text(st, 2), (int)strlen(col_text(st, 2)), &t->updated);
             free(t->vrule); t->vrule = strdup(col_text(st, 3));
@@ -237,8 +289,9 @@ dtd *schema_load_table(ddb *d, const char *name)
         }
         sqlite3_finalize(st);
     }
-    /* Jet lists the indexes of a table it reads by name */
-    st = prep(d, "SELECT name, fields, isprimary, isunique, required, ignorenulls, isforeign FROM MSysLB_Indexes WHERE tbl = ?1 ORDER BY name COLLATE NOCASE");
+    /* Jet lists the indexes of a table it reads by name (those of a data source of ODBC as it gives them) */
+    st = prep(d, remote ? "SELECT name, fields, isprimary, isunique, required, ignorenulls, isforeign FROM MSysLB_Indexes WHERE tbl = ?1 ORDER BY ord"
+                        : "SELECT name, fields, isprimary, isunique, required, ignorenulls, isforeign FROM MSysLB_Indexes WHERE tbl = ?1 ORDER BY name COLLATE NOCASE");
     if (st) {
         sqlite3_bind_text(st, 1, real, -1, SQLITE_STATIC);
         while (sqlite3_step(st) == SQLITE_ROW) {
@@ -249,6 +302,7 @@ dtd *schema_load_table(ddb *d, const char *name)
             ix->ignorenulls = sqlite3_column_int(st, 5);
             ix->foreign = sqlite3_column_int(st, 6);
             ix->appended = 1;
+            ix->remote = remote && !g_q;        /* (of the database of ODBC itself; not through a link) */
             /* fields: "+A;-B" */
             char *fl = strdup(col_text(st, 1)), *save = 0;
             for (char *p = strtok_r(fl, ";", &save); p; p = strtok_r(0, ";", &save)) {
@@ -267,6 +321,96 @@ dtd *schema_load_table(ddb *d, const char *name)
     return t;
 }
 
+/* a linked table: its TableDef with the fields and indexes of the table in the other database (none when that
+ * database cannot be reached: Jet still lists the link) */
+dtd *schema_load_link(ddb *d, const char *name)
+{
+    char real[256], src[256], con[1024];
+    if (!schema_link(d, name, real, sizeof real, src, sizeof src, con, sizeof con)) return 0;
+    int attrs = 0;
+    sqlite3_stmt *st = prep(d, "SELECT attrs FROM MSysLB_Tables WHERE name = ?1");
+    if (st) { sqlite3_bind_text(st, 1, real, -1, SQLITE_STATIC); if (sqlite3_step(st) == SQLITE_ROW) attrs = sqlite3_column_int(st, 0); sqlite3_finalize(st); }
+    int err = 0; char msg[400];
+    int n = dao_ext_link(d, con, &err, msg, sizeof msg);
+    dtd *t = 0;
+    if (n > 0 && dao_ext_connect(d, n)) dao_ext_table(d, n, src);   /* ODBC: the copy of its table */
+    if (n > 0) {
+        char q[32]; snprintf(q, sizeof q, "lbext%d", n);
+        schema_qualify(q);
+        t = schema_load_table(d, src);
+        schema_qualify(0);
+    }
+    if (!t) t = tabledef_new(real);
+    else {
+        if (t->db) vb_orelease(t->db);
+        free(t->name); t->name = strdup(real);
+    }
+    t->db = (vbobj)d; vb_oaddref((vbobj)d);
+    t->appended = 1;
+    t->attrs = (attrs & ~(dbAttachedTable | dbAttachedODBC | LB_REMOTE_COPY)) | (strncasecmp(con, "ODBC", 4) ? dbAttachedTable : dbAttachedODBC);
+    free(t->srcname); t->srcname = strdup(src);
+    free(t->connect); t->connect = strdup(con);
+    return t;
+}
+
+/* TableDefs.Append of a TableDef with a Connect and a SourceTableName: the link (no table of its own) */
+int schema_create_link(ddb *d, dtd *t)
+{
+    if (!t->name || !*t->name) { dao_raise(3264, "DAO.TableDefs", "No field defined--cannot append TableDef or Index."); return 3264; }
+    if (schema_has_table(d, t->name, 0, 0) || hidden_table(t->name)) {
+        dao_raise(3010, "DAO.TableDefs", "Table '%s' already exists.", t->name);
+        return 3010;
+    }
+    int err = 0; char msg[400];
+    int n = dao_ext_link(d, t->connect, &err, msg, sizeof msg);
+    if (n < 0) { dao_raise(err, "DAO.TableDef", "%s", msg); return err; }
+    const char *full = dao_ext_connect(d, n);   /* a data source of ODBC: the copy of its table, its whole Connect */
+    if (full) dao_ext_table(d, n, t->srcname);
+    char q[32]; snprintf(q, sizeof q, "lbext%d", n);
+    if (n > 0) schema_qualify(q);
+    char real[256];
+    int has = sqlite_has(d, "table", t->srcname, real, sizeof real) || sqlite_has(d, "view", t->srcname, real, sizeof real);
+    schema_qualify(0);
+    if (full) { free(t->connect); t->connect = strdup(full); }
+    if (!has) {
+        dao_raise(3011, "DAO.TableDefs", "The Microsoft Jet database engine could not find the object '%s'.  Make sure the object exists and that you spell its name and the path name correctly.", t->srcname);
+        return 3011;
+    }
+    sqlite3_stmt *st = prep(d, "INSERT INTO MSysLB_Tables (name, attrs, seq, created, updated, srcname, connect) VALUES (?1, ?2, 0, ?3, ?3, ?4, ?5)");
+    if (!st) return dao_raise_sqlite(d, sqlite3_errcode(d->db), "DAO.TableDefs");
+    char tm[24]; date_text(now_date(), tm);
+    sqlite3_bind_text(st, 1, t->name, -1, SQLITE_STATIC);
+    int kindbit = full ? dbAttachedODBC : dbAttachedTable;
+    sqlite3_bind_int(st, 2, (t->attrs & ~(dbAttachedTable | dbAttachedODBC)) | kindbit);
+    sqlite3_bind_text(st, 3, tm, -1, SQLITE_STATIC);
+    sqlite3_bind_text(st, 4, real, -1, SQLITE_STATIC);
+    sqlite3_bind_text(st, 5, t->connect, -1, SQLITE_STATIC);
+    int rc = sqlite3_step(st);
+    sqlite3_finalize(st);
+    if (rc != SQLITE_DONE) return dao_raise_sqlite(d, rc, "DAO.TableDefs");
+    t->appended = 1;
+    t->attrs = (t->attrs & ~(dbAttachedTable | dbAttachedODBC)) | kindbit;
+    /* its fields and indexes: those of the table it links to */
+    dtd *l = schema_load_link(d, t->name);
+    if (l) {
+        coll_clear_items(t->fields); coll_clear_items(t->indexes);
+        for (int i = 0; i < l->fields->n; i++) {
+            dfld *f = (dfld *)l->fields->items[i];
+            if (f->owner) vb_orelease(f->owner);
+            f->owner = (vbobj)t; vb_oaddref((vbobj)t);
+            coll_add(t->fields, (vbobj)f);
+        }
+        for (int i = 0; i < l->indexes->n; i++) {
+            dix *x = (dix *)l->indexes->items[i];
+            if (x->td) vb_orelease(x->td);
+            x->td = (vbobj)t; vb_oaddref((vbobj)t);
+            coll_add(t->indexes, (vbobj)x);
+        }
+        vb_orelease((vbobj)l);
+    }
+    return 0;
+}
+
 int schema_field_info(ddb *d, const char *table, const char *field, rcol *out)
 {
     sqlite3_stmt *st = prep(d, "SELECT name, ord, type, size, attrs, required, allowzero, defval FROM MSysLB_Fields WHERE tbl = ?1 AND name = ?2");
@@ -279,7 +423,7 @@ int schema_field_info(ddb *d, const char *table, const char *field, rcol *out)
         out->size = sqlite3_column_int(st, 3);
         out->attrs = sqlite3_column_int(st, 4);
         out->required = sqlite3_column_int(st, 5);
-        out->allowzero = sqlite3_column_int(st, 6) != 0;
+        out->allowzero = sqlite3_column_int(st, 6) == 1;      /* (2: SQL DDL, AllowZeroLength reads False) */
         free(out->defval);
         out->defval = strdup(col_text(st, 7));
         out->autoinc = (out->attrs & dbAutoIncrField) != 0;
@@ -688,6 +832,14 @@ int schema_drop_table(ddb *d, const char *name)
         dao_raise(3265, "DAO.TableDefs", "Item not found in this collection.");
         return 3265;
     }
+    if (!g_q && schema_link(d, real, 0, 0, 0, 0, 0, 0)) {   /* a link: the table it links to stays */
+        sqlite3_stmt *st = prep(d, "DELETE FROM MSysLB_Tables WHERE name = ?1");
+        if (!st) return dao_raise_sqlite(d, sqlite3_errcode(d->db), "DAO.TableDefs");
+        sqlite3_bind_text(st, 1, real, -1, SQLITE_STATIC);
+        int rc = sqlite3_step(st);
+        sqlite3_finalize(st);
+        return rc == SQLITE_DONE ? 0 : dao_raise_sqlite(d, rc, "DAO.TableDefs");
+    }
     int r = begin(d);
     if (r) return r;
     jbuf s = { 0 };
@@ -1045,8 +1197,9 @@ static int cmp_name(const void *a, const void *b)
 }
 void schema_list_tables(ddb *d, dcoll *c)
 {
+    dao_odbc_sync(d);                           /* a database of ODBC: a copy of each table of the data source */
     static const char *const SYS[] = { "MSysACEs", "MSysObjects", "MSysQueries", "MSysRelationships" };
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4 && !d->odbc; i++) {   /* (a database of ODBC has none) */
         dtd *t = tabledef_new(SYS[i]);
         t->db = (vbobj)d; vb_oaddref((vbobj)d);
         t->attrs = (int)0x80000000;
@@ -1060,6 +1213,14 @@ void schema_list_tables(ddb *d, dcoll *c)
             const char *n = col_text(st, 0);
             if (hidden_table(n)) continue;
             dtd *t = schema_load_table(d, n);
+            if (t) { coll_add(c, (vbobj)t); vb_orelease((vbobj)t); }
+        }
+        sqlite3_finalize(st);
+    }
+    st = prep(d, "SELECT name FROM MSysLB_Tables WHERE connect <> ''");     /* the linked tables */
+    if (st) {
+        while (sqlite3_step(st) == SQLITE_ROW) {
+            dtd *t = schema_load_link(d, col_text(st, 0));
             if (t) { coll_add(c, (vbobj)t); vb_orelease((vbobj)t); }
         }
         sqlite3_finalize(st);
@@ -1245,7 +1406,7 @@ int schema_counter_next(ddb *d, const char *table, sqlite3_int64 *next)
     if (!has) return 0;
     sqlite3_int64 n = seq_of(d, table), mx = 0;
     jbuf s = { 0 };
-    jb_s(&s, "SELECT coalesce(max(rowid), 0) FROM "); jb_qid(&s, table, -1);
+    jb_s(&s, "SELECT coalesce(max(rowid), 0) FROM "); put_tbl(&s, table);
     st = prep(d, s.p);
     jb_free(&s);
     if (st) { if (sqlite3_step(st) == SQLITE_ROW) mx = sqlite3_column_int64(st, 0); sqlite3_finalize(st); }

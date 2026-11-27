@@ -12,9 +12,11 @@ CC=$(command -v $T-gcc-posix || command -v $T-gcc) || { echo "$T-gcc not found (
 OUT=../$1/libvbdb.a
 OBJ=obj-$1
 mkdir -p $OBJ
-SQLITE_FLAGS="-DSQLITE_THREADSAFE=0 -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_DEFAULT_FOREIGN_KEYS=0 -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_DQS=0"
-if [ ! -f $OBJ/sqlite3.o ] || [ sqlite/sqlite3.c -nt $OBJ/sqlite3.o ]; then
+SQLITE_FLAGS="-DSQLITE_THREADSAFE=0 -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_DEFAULT_FOREIGN_KEYS=0 -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_DQS=0 -DSQLITE_MAX_ATTACHED=30"
+# (made again when the flags change: their copy in sqlite3.flags)
+if [ ! -f $OBJ/sqlite3.o ] || [ sqlite/sqlite3.c -nt $OBJ/sqlite3.o ] || [ "$(cat $OBJ/sqlite3.flags 2>/dev/null)" != "$SQLITE_FLAGS" ]; then
     $CC -O2 -w $SQLITE_FLAGS -c sqlite/sqlite3.c -o $OBJ/sqlite3.o || exit 1
+    echo "$SQLITE_FLAGS" > $OBJ/sqlite3.flags
 fi
 MDB_FLAGS="-DTLS=__thread -D_GNU_SOURCE -DHAVE_VASPRINTF=1"
 for f in mdb/*.c; do

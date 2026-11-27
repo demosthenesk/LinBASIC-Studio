@@ -47,6 +47,11 @@ void lbo_close_cursor(lbo_stmt *s);
 int lbo_tables(lbo_stmt *s, const char *cat, const char *sch, const char *tab, const char *types);
 int lbo_columns(lbo_stmt *s, const char *cat, const char *sch, const char *tab, const char *col);
 int lbo_primary_keys(lbo_stmt *s, const char *cat, const char *sch, const char *tab);
+int lbo_statistics(lbo_stmt *s, const char *cat, const char *sch, const char *tab, int unique_only);
+/* shared with DAO (ado_odbc.inc): the ODBC connection string of a connect string ("DSN=...;Database=..."), the text
+ * of a diagnostic as Windows gives it, a value of ODBC as a Variant */
+char *lb_odbc_cs(const char *cs);
+void lb_odbc_msg(const char *in, char *out, int n);
 
 /* SQL types (sql.h) the ADO layer needs without sql.h */
 enum { LBS_CHAR = 1, LBS_NUMERIC = 2, LBS_DECIMAL = 3, LBS_INTEGER = 4, LBS_SMALLINT = 5, LBS_FLOAT = 6, LBS_REAL = 7,

@@ -219,6 +219,21 @@ static int load_rows(drs *r, sqlite3_stmt *st, int ridcol)
 
 /* the types of the computed columns of the statement being opened (from jet_translate) */
 static jctype *pend_ct; static int pend_nct;
+static int pend_bext;                   /* the base table is in the attached database "lbext<n>" */
+
+/* the table a change goes to, in SQL */
+static void base_q(jbuf *s, drs *r)
+{
+    if (r->bext > 0) jb_f(s, "\"lbext%d\".", r->bext);
+    jb_qid(s, r->base, -1);
+}
+/* the queries on the schema of the base table go to its database */
+static void base_schema(drs *r, int on)
+{
+    char q[32];
+    snprintf(q, sizeof q, "lbext%d", r->bext);
+    schema_qualify(on && r->bext > 0 ? q : 0);
+}
 
 static int coltype(void *ctx, const char *qual, const char *col)
 {
@@ -242,7 +257,9 @@ static int coltype(void *ctx, const char *qual, const char *col)
 int dao_translate(ddb *d, const char *sql, jsql *j, const char *const *params)
 {
     jet_coltype_fn = coltype; jet_coltype_ctx = d;
+    dao_translate_hooks(d, 1);
     int r = jet_translate(sql, j, params);
+    dao_translate_hooks(d, 0);
     jet_coltype_fn = 0; jet_coltype_ctx = 0;
     return r;
 }
@@ -277,11 +294,15 @@ static void make_cols(drs *r, ddb *d, sqlite3_stmt *st, int ridcol)
                 }
         const char *tn = sqlite3_column_table_name(st, i), *on = sqlite3_column_origin_name(st, i);
         if (tn && on) {
+            const char *dn = sqlite3_column_database_name(st, i);
+            int ext = dn && !strncmp(dn, "lbext", 5) ? atoi(dn + 5) : 0;
             c->stable = sdup(tn); c->sfield = sdup(on);
+            schema_qualify(ext ? dn : 0);
             if (schema_field_info(d, tn, on, c)) {
                 if (c->autoinc) c->attrs |= dbAutoIncrField;
             }
-            c->updatable = r->base && !strcasecmp(r->base, tn);
+            schema_qualify(0);
+            c->updatable = r->base && !strcasecmp(r->base, tn) && ext == r->bext;
         }
     }
     /* SQLite names a second "ID" "ID:1": the name itself */
@@ -347,6 +368,7 @@ vbobj rs_open_sqlite(ddb *d, const char *sqlite_sql, const char *base, int type,
     r->type = type;
     r->source = sdup(source);
     r->base = sdup(base);
+    r->bext = base ? pend_bext : 0;
     r->sqlite = sdup(sqlite_sql);
     r->d = calloc(1, sizeof(rdata));
     r->d->refs = 1;
@@ -416,12 +438,43 @@ vbobj rs_open(ddb *d, const char *source, int type, int options, int lockedits, 
 {
     (void)pvals; (void)npvals;
     char real[256];
+    {   /* pass-through (dbSQLPassThrough, a QueryDef with an ODBC Connect): the rows of the data source */
+        int handled;
+        vbobj o = dao_odbc_passthrough(d, source, type, options, qd, &handled);
+        if (handled) return o;
+    }
+    if (d->odbc && !starts_sql(source)) dao_odbc_table(d, source);   /* a table of the data source: its copy */
     int what = starts_sql(source) ? 0 : schema_has_table(d, source, real, sizeof real);
     char *sql = 0;
     vbobj qd_used = qd;
     if (!starts_sql(source) && !what) {
         dao_raise(3078, "DAO.Database", "The Microsoft Jet database engine cannot find the input table or query '%s'.  Make sure it exists and that its name is spelled correctly.", source);
         return 0;
+    }
+    char lsrc[256], lcon[1024];
+    if (what == 1 && schema_link(d, real, 0, 0, lsrc, sizeof lsrc, lcon, sizeof lcon)) {
+        /* a linked table: a dynaset over the table of the other database (no table-type recordset) */
+        if (type == dbOpenTable) { dao_raise(3219, "DAO.Database", "Invalid operation."); return 0; }
+        if (!type) type = dbOpenDynaset;
+        int err = 0; char msg[400];
+        int n = dao_ext_link(d, lcon, &err, msg, sizeof msg);
+        if (n < 0) { dao_raise(err, "DAO.Database", "%s", msg); return 0; }
+        if (dao_odbc_before_table(d, n, lsrc)) return 0;     /* a table of ODBC: its rows again */
+        jbuf s = { 0 };
+        jb_s(&s, "SELECT rowid AS _lbrid, * FROM ");
+        if (n > 0) jb_f(&s, "\"lbext%d\".", n);
+        jb_qid(&s, lsrc, -1);
+        pend_bext = n;
+        vbobj o = rs_open_sqlite(d, s.p, d->ro || type == dbOpenSnapshot ? 0 : lsrc, type, real, 0, 0);
+        pend_bext = 0;
+        jb_free(&s);
+        if (o) { drs *r = (drs *)o; r->options = options; r->lockedits = lockedits; }
+        return o;
+    }
+    if (what == 1 && d->odbc) {                 /* a table of a database of ODBC: a dynaset of its copy */
+        if (type == dbOpenTable) { dao_raise(3001, "DAO.Database", "Invalid argument."); return 0; }
+        if (!type) type = dbOpenDynaset;
+        if (dao_odbc_before_table(d, 0, real)) return 0;
     }
     if (what == 1) {                            /* a table */
         if (!type) type = dbOpenTable;
@@ -484,6 +537,7 @@ vbobj rs_open(ddb *d, const char *source, int type, int options, int lockedits, 
         dao_raise(3219, "DAO.Database", "Invalid operation.");
         return 0;
     }
+    if (dao_odbc_before(d, &j)) { jsql_free(&j); free(sql); return 0; }   /* the tables of ODBC: their rows again */
     vbvar *vals;
     int missing = param_values(&j, qd_used, &vals);
     if (missing) {
@@ -491,9 +545,14 @@ vbobj rs_open(ddb *d, const char *source, int type, int options, int lockedits, 
         free(vals); jsql_free(&j); free(sql);
         return 0;
     }
-    const char *base = j.base;
+    const char *base = j.base_src ? j.base_src : j.base;
     char basebuf[256];
-    if (base && schema_has_table(d, base, basebuf, sizeof basebuf) != 1) base = 0;
+    if (base) {
+        char q[32]; snprintf(q, sizeof q, "lbext%d", j.base_ext);
+        schema_qualify(j.base_ext > 0 ? q : 0);
+        if (schema_has_table(d, base, basebuf, sizeof basebuf) != 1) base = 0;
+        schema_qualify(0);
+    }
     if (base) base = basebuf;
     jbuf s = { 0 };
     if (base && type != dbOpenSnapshot && !d->ro) {
@@ -506,9 +565,9 @@ vbobj rs_open(ddb *d, const char *source, int type, int options, int lockedits, 
         jb_s(&s, j.sql);
         base = 0;
     }
-    pend_ct = j.ctypes; pend_nct = j.nctypes;
+    pend_ct = j.ctypes; pend_nct = j.nctypes; pend_bext = j.base_ext;
     vbobj o = rs_open_sqlite(d, s.p, base, type, qd_used && what == 2 ? source : source, j.nbinds, vals);
-    pend_ct = 0; pend_nct = 0;
+    pend_ct = 0; pend_nct = 0; pend_bext = 0;
     jb_free(&s);
     if (o) {
         drs *r = (drs *)o;
@@ -612,7 +671,10 @@ static void defaults(drs *r)
         rcol *c = &r->cols[i];
         if (c->attrs & dbAutoIncrField) {
             sqlite3_int64 n;
-            if (schema_counter_next(d, r->base, &n)) { r->ebuf[i] = vb_v_l((vb_i32)n); r->new_counter = n; }
+            base_schema(r, 1);
+            int has = schema_counter_next(d, r->base, &n);
+            base_schema(r, 0);
+            if (has) { r->ebuf[i] = vb_v_l((vb_i32)n); r->new_counter = n; }
             continue;
         }
         if (c->type == dbBoolean && c->sfield) r->ebuf[i] = vb_v_bool(0);
@@ -650,7 +712,7 @@ static void reload_row(drs *r, int idx)
         jb_qid(&s, r->cols[i].sfield, -1);
     }
     if (!any) { jb_free(&s); return; }
-    jb_s(&s, " FROM "); jb_qid(&s, r->base, -1); jb_s(&s, " WHERE rowid = ?1");
+    jb_s(&s, " FROM "); base_q(&s, r); jb_s(&s, " WHERE rowid = ?1");
     sqlite3_stmt *st = 0;
     if (sqlite3_prepare_v2(d->db, s.p, -1, &st, 0) == SQLITE_OK) {
         sqlite3_bind_int64(st, 1, w->rid);
@@ -679,7 +741,7 @@ static int do_update(drs *r)
     int n = 0;
     int *map = calloc((size_t)(r->ncols ? r->ncols : 1), sizeof(int));
     if (r->editmode == dbEditAdd) {
-        jb_s(&s, "INSERT INTO "); jb_qid(&s, r->base, -1); jb_s(&s, " (");
+        jb_s(&s, "INSERT INTO "); base_q(&s, r); jb_s(&s, " (");
         for (int i = 0; i < r->ncols; i++) {
             rcol *c = &r->cols[i];
             if (!c->sfield || (!c->updatable && !(c->attrs & dbAutoIncrField))) continue;
@@ -694,9 +756,9 @@ static int do_update(drs *r)
             for (int k = 0; k < n; k++) jb_f(&s, "%s?%d", k ? ", " : "", k + 1);
             jb_s(&s, ")");
         }
-        if (!n) { s.n = 0; jb_s(&s, "INSERT INTO "); jb_qid(&s, r->base, -1); jb_s(&s, " DEFAULT VALUES"); }
+        if (!n) { s.n = 0; jb_s(&s, "INSERT INTO "); base_q(&s, r); jb_s(&s, " DEFAULT VALUES"); }
     } else {
-        jb_s(&s, "UPDATE "); jb_qid(&s, r->base, -1); jb_s(&s, " SET ");
+        jb_s(&s, "UPDATE "); base_q(&s, r); jb_s(&s, " SET ");
         for (int i = 0; i < r->ncols; i++) {
             if (!r->edirty[i]) continue;
             if (n) jb_s(&s, ", ");
@@ -752,7 +814,7 @@ static int do_delete(drs *r)
     ddb *d = DB(r->db);
     if (d->remote && d->remote(d->remote_ctx, r, 3)) return -1;
     jbuf s = { 0 };
-    jb_s(&s, "DELETE FROM "); jb_qid(&s, r->base, -1); jb_s(&s, " WHERE rowid = ?1");
+    jb_s(&s, "DELETE FROM "); base_q(&s, r); jb_s(&s, " WHERE rowid = ?1");
     sqlite3_stmt *st = 0;
     int rc = sqlite3_prepare_v2(d->db, s.p, -1, &st, 0);
     jb_free(&s);
@@ -1061,7 +1123,7 @@ static vbobj do_clone(drs *r)
     drs *c = (drs *)vb_onew(&vb_cls_dao_recordset);
     c->db = r->db; vb_oaddref(r->db);
     c->type = r->type; c->options = r->options; c->lockedits = r->lockedits;
-    c->source = sdup(r->source); c->sqlite = sdup(r->sqlite); c->base = sdup(r->base);
+    c->source = sdup(r->source); c->sqlite = sdup(r->sqlite); c->base = sdup(r->base); c->bext = r->bext;
     c->ncols = r->ncols;
     c->cols = calloc((size_t)(r->ncols ? r->ncols : 1), sizeof(rcol));
     for (int i = 0; i < r->ncols; i++) {
@@ -1108,7 +1170,7 @@ static int do_requery(drs *r)
         }
         params[np] = 0;
         jsql j;
-        if (jet_translate(q->sql, &j, np ? params : 0) == 0) { param_values(&j, r->parent_qd, &vals); nb = j.nbinds; }
+        if (dao_translate(DB(r->db), q->sql, &j, np ? params : 0) == 0) { param_values(&j, r->parent_qd, &vals); nb = j.nbinds; }
         jsql_free(&j);
     }
     int rc = fill(r, d, r->sqlite, nb, vals);
@@ -1192,13 +1254,15 @@ static vbobj do_openrs(drs *r, int type)
         }
         params[np] = 0;
         jsql j;
-        if (jet_translate(q->sql, &j, np ? params : 0) == 0) { param_values(&j, r->parent_qd, &vals); nb = j.nbinds; }
+        if (dao_translate(DB(r->db), q->sql, &j, np ? params : 0) == 0) { param_values(&j, r->parent_qd, &vals); nb = j.nbinds; }
         jsql_free(&j);
     }
     jctype *ct = calloc((size_t)(r->ncols ? r->ncols : 1), sizeof(jctype));
     for (int i = 0; i < r->ncols; i++) { snprintf(ct[i].name, sizeof ct[i].name, "%s", r->cols[i].name); ct[i].type = r->cols[i].type; }
     pend_ct = ct; pend_nct = r->ncols;
+    pend_bext = r->bext;
     vbobj o = rs_open_sqlite(d, s.p, type == dbOpenSnapshot ? 0 : r->base, type, r->source, nb, vals);
+    pend_bext = 0;
     pend_ct = 0; pend_nct = 0;
     free(ct);
     free(vals);
@@ -1313,7 +1377,11 @@ vbvar rs_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv
     if (name_is(name, "bookmarkable")) return vb_v_bool(-1);
     if (name_is(name, "transactions")) return vb_v_bool(r->type != dbOpenSnapshot ? -1 : 0);
     if (name_is(name, "restartable")) return vb_v_bool(-1);
-    if (name_is(name, "lockedits")) { if (set) { r->lockedits = vb_v2bool(argv[argc - 1]) != 0; return vb_v_empty(); } return vb_v_bool(r->lockedits ? -1 : 0); }
+    if (name_is(name, "lockedits")) {     /* True: pessimistic (Jet's default, VB6 d_dao4); the LockEdits argument of
+                                             OpenRecordset: dbPessimistic 2, dbOptimistic 3 ... */
+        if (set) { r->lockedits = vb_v2bool(argv[argc - 1]) != 0 ? 2 : 3; return vb_v_empty(); }
+        return vb_v_bool(r->lockedits == 0 || r->lockedits == 2 ? -1 : 0);
+    }
     if (name_is(name, "validationrule") || name_is(name, "validationtext")) return dao_vstr("");
     if (name_is(name, "cachesize")) return vb_v_l(0);
     if (name_is(name, "stillexecuting")) return vb_v_bool(0);
@@ -1338,7 +1406,7 @@ vbvar rs_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv
             return vb_v_empty();
         }
         int p = abs_pos(r);
-        return vb_v_f(p < 0 || n == 0 ? 0.0f : (float)((p + 1) * 100.0 / n));
+        return vb_v_f(p < 0 || n == 0 ? 0.0f : (float)(p * 100.0 / n));
     }
     if (name_is(name, "bookmark")) {
         if (set) {
@@ -1440,7 +1508,7 @@ vbvar rs_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv
     }
     if (name_is(name, "getrows")) return do_getrows(r, argc > 0 && !dao_missing(argc, argv, 0) ? vb_v2l(argv[0]) : 1);
     if (name_is(name, "fillcache") || name_is(name, "cancel")) return vb_v_empty();
-    if (name_is(name, "properties")) { dao_raise(3251, SRC, "Operation is not supported for this type of object."); return vb_v_empty(); }
+    if (name_is(name, "properties")) return dao_props_get(o, kind, argc, argv);
     *found = 0;
     return vb_v_empty();
 }

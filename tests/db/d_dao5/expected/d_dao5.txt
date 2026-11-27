@@ -1,0 +1,108 @@
+== IN 'file'
+-- SELECT * FROM Pets IN '<other>' ORDER BY PetID
+  cols: PetID/4 Owner/10 Kind/10 Legs/2
+  L1 S'Ann' S'Cat' B4
+  L2 S'Bob' S'Parrot' B2
+  L3 S'Ann' S'Dog' B4
+  rows 3
+-- SELECT Kind, Legs FROM Pets IN "<other>" WHERE Legs = 4 ORDER BY Kind
+  cols: Kind/10 Legs/2
+  S'Cat' B4
+  S'Dog' B4
+  rows 2
+-- SELECT Owner, Count(*) AS N FROM Pets IN '<other>' GROUP BY Owner
+  cols: Owner/10 N/4
+  S'Ann' L2
+  S'Bob' L1
+  rows 2
+-- SELECT * FROM Pets IN '' [;database=<other>] ORDER BY PetID DESC
+  cols: PetID/4 Owner/10 Kind/10 Legs/2
+  L3 S'Ann' S'Dog' B4
+  L2 S'Bob' S'Parrot' B2
+  L1 S'Ann' S'Cat' B4
+  rows 3
+== [;database=file].table
+-- SELECT * FROM [;database=<other>].Pets WHERE Owner = 'Ann'
+  cols: PetID/4 Owner/10 Kind/10 Legs/2
+  L1 S'Ann' S'Cat' B4
+  L3 S'Ann' S'Dog' B4
+  rows 2
+-- SELECT p.Name, x.Kind FROM People AS p INNER JOIN [;database=<other>].[Pets] AS x ON p.Name = x.Owner ORDER BY x.PetID
+  cols: Name/10 Kind/10
+  S'Ann' S'Cat'
+  S'Bob' S'Parrot'
+  S'Ann' S'Dog'
+  rows 3
+  ! open SELECT People.Name, Pets.Kind FROM People, Pets IN '<other>' WHERE People.Name = Pets.Owner ORDER BY Pets.Kind: 3078 The Microsoft Jet database engine cannot find the input table or query 'People'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+== SELECT INTO
+exec SELECT * INTO Copy1 IN '<other>' FROM People -> 3
+exec SELECT Name, Age INTO [;database=<other>].Copy2 FROM People WHERE Age > 20 -> 2
+  ! exec SELECT * INTO Copy1 IN '<other>' FROM People: 3010 Table 'Copy1' already exists. [DAO.Database]
+exec SELECT * INTO PetsHere FROM Pets IN '<other>' WHERE Kind <> 'Dog' -> 2
+-- SELECT * FROM PetsHere
+  cols: PetID/4 Owner/10 Kind/10 Legs/2
+  L1 S'Ann' S'Cat' B4
+  L2 S'Bob' S'Parrot' B2
+  rows 2
+Copy1: ID/4/4 Name/10/30 Age/4/4 Born/8/8
+Copy2: Name/10/30 Age/4/4
+Pets: PetID/4/4 Owner/10/30 Kind/10/10 Legs/2/1
+== INSERT INTO, UPDATE, DELETE
+  ! exec INSERT INTO Copy1 IN '<other>' (Name, Age) VALUES ('Dee', 50): 3134 Syntax error in INSERT INTO statement. [DAO.Database]
+exec INSERT INTO [;database=<other>].Copy2 SELECT Name, Age FROM People WHERE Age < 20 -> 1
+exec UPDATE [;database=<other>].Copy2 SET Age = Age + 1 WHERE Name = 'Cid' -> 1
+exec UPDATE Copy1 IN '<other>' SET Age = 0 WHERE Name = 'Dee' -> 0
+exec DELETE FROM Copy1 IN '<other>' WHERE Name = 'Bob' -> 1
+exec DELETE * FROM [;database=<other>].Copy2 WHERE Age > 40 -> 1
+-- SELECT * FROM Copy1 IN '<other>' ORDER BY Name
+  cols: ID/4 Name/10 Age/4 Born/8
+  L1 S'Ann' L31 D1993-02-03 00:00:00
+  L3 S'Cid' L12 D2012-06-01 00:00:00
+  rows 2
+-- SELECT * FROM [;database=<other>].Copy2 ORDER BY Name
+  cols: Name/10 Age/4
+  S'Ann' L31
+  S'Cid' L13
+  rows 2
+== errors
+  ! open SELECT * FROM Pets IN '<dir>\nosuch.mdb': 3024 Could not find file '<dir>\nosuch.mdb'. [DAO.Database]
+  ! open SELECT * FROM NoTable IN '<other>': 3078 The Microsoft Jet database engine cannot find the input table or query 'NoTable'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+  ! exec INSERT INTO NoTable IN '<other>' (A) VALUES (1): 3134 Syntax error in INSERT INTO statement. [DAO.Database]
+  ! open SELECT * FROM [;database=<dir>\nosuch.mdb].Pets: 3024 Could not find file '<dir>\nosuch.mdb'. [DAO.Database]
+== linked table
+attrs=40000000 connect=;DATABASE=<other> source=Pets updatable=False
+fields: PetID/4/4/Pets/PetID Owner/10/30/Pets/Owner Kind/10/10/Pets/Kind Legs/2/1/Pets/Legs
+indexes: idxOwner(+Owner)False PetKey(+PetID)True
+count=0
+-- SELECT * FROM LinkPets ORDER BY PetID
+  cols: PetID/4 Owner/10 Kind/10 Legs/2
+  L1 S'Ann' S'Cat' B4
+  L2 S'Bob' S'Parrot' B2
+  L3 S'Ann' S'Dog' B4
+  rows 3
+-- SELECT p.Name, l.Kind FROM People p INNER JOIN LinkPets l ON p.Name = l.Owner ORDER BY l.Kind
+  cols: Name/10 Kind/10
+  S'Ann' S'Cat'
+  S'Ann' S'Dog'
+  S'Bob' S'Parrot'
+  rows 3
+default type=2
+  ! link open table: 3219 Invalid operation. [DAO.Database]
+exec UPDATE LinkPets SET Kind = UCase(Kind) WHERE Legs = 4 -> 1
+exec DELETE FROM LinkPets WHERE Kind = 'PARROT' -> 1
+-- SELECT * FROM Pets IN '<other>' ORDER BY PetID
+  cols: PetID/4 Owner/10 Kind/10 Legs/2
+  L1 S'Ann' S'Cat' B3
+  L3 S'Ann' S'DOG' B4
+  L4 S'Cid' S'Fish' B0
+  rows 3
+== a link that breaks
+  ! append bad link: 3024 Could not find file '<dir>\nosuch.mdb'. [DAO.TableDef]
+  ! append bad table: 3011 The Microsoft Jet database engine could not find the object 'NoTable'.  Make sure the object exists and that you spell its name and the path name correctly. [DAO.TableDefs]
+-- SELECT Count(*) AS N FROM Pets IN '<other>'
+  cols: N/4
+  L3
+  rows 1
+reopened tables:
+  People 0
+  PetsHere 0

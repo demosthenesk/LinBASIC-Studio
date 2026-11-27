@@ -90,6 +90,7 @@ typedef struct ps {
     int exprno;                         /* Expr1000, Expr1001 ... */
     int ansi_like;                      /* ADO: % and _ */
     int nqmark;                         /* the ?s so far */
+    int from_ext;                       /* the FROM being parsed has IN 'file': its schema number */
 } ps;
 
 static int from_tables;                 /* the tables of the FROM being parsed (for DISTINCTROW) */
@@ -210,6 +211,9 @@ typedef struct ex { jbuf b; int boolean; int simple_col; int type; } ex;
 /* the type of a column in an expression: the caller's catalog (dao.c) */
 int (*jet_coltype_fn)(void *ctx, const char *qual, const char *col);
 void *jet_coltype_ctx;
+int (*jet_ext_fn)(void *ctx, const char *path, const char *connect, int *err, char *msg, int cap);
+int (*jet_link_fn)(void *ctx, const char *name, char *src, int cap, int *err, char *msg, int mcap);
+void *jet_ext_ctx;
 
 /* Jet's type of an arithmetic result */
 static int rank(int t)
@@ -740,6 +744,130 @@ static int parse_expr(ps *p, int minbp, ex *out)
     return 0;
 }
 
+
+/* ---------------------------------------------------------------- other databases, linked tables */
+/* the text of a string token without its quotes */
+static char *str_text(tok *k)
+{
+    char q = k->s[0];
+    char *o = malloc((size_t)k->n + 1);
+    int n = 0;
+    for (int i = 1; i < k->n - 1; i++) {
+        if (k->s[i] == q && k->s[i + 1] == q) i++;
+        o[n++] = k->s[i];
+    }
+    o[n] = 0;
+    return o;
+}
+/* a connect string: "[kind];database=path;..." -> path (malloc, "" if none) */
+static char *connect_database(const char *c)
+{
+    const char *p = c;
+    while (p && *p) {
+        while (*p == ';' || *p == ' ') p++;
+        if (!strncasecmp(p, "database", 8)) {
+            const char *q = p + 8;
+            while (*q == ' ') q++;
+            if (*q == '=') {
+                q++;
+                while (*q == ' ') q++;
+                const char *e = strchr(q, ';');
+                int n = e ? (int)(e - q) : (int)strlen(q);
+                while (n > 0 && q[n - 1] == ' ') n--;
+                return dupn(q, n);
+            }
+        }
+        p = strchr(p, ';');
+    }
+    return strdup("");
+}
+/* the schema of another database: its number (0: this database) or -1 with the error */
+static int ext_schema(ps *p, const char *path, const char *connect)
+{
+    if (!jet_ext_fn) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
+    int err = 0; char msg[400] = "";
+    int n = jet_ext_fn(jet_ext_ctx, path, connect, &err, msg, sizeof msg);
+    if (n < 0) { fail(p, err ? err : 3044, "%s", msg); return -1; }
+    return n;
+}
+/* "[connect]." before a table name: its schema; 0 when the name is not one (-1: error) */
+static int parse_connect_prefix(ps *p, int *ext)
+{
+    tok *k = cur(p);
+    *ext = 0;
+    if (k->k != T_QID || !memchr(k->s, ';', (size_t)k->n) || p->i + 1 >= p->nt) return 0;
+    tok *d = &p->t[p->i + 1];
+    if (!(d->k == T_OP && d->n == 1 && d->s[0] == '.')) return 0;
+    char *c = dupn(k->s, k->n), *path = connect_database(c);
+    p->i += 2;
+    int n = ext_schema(p, path, c);
+    free(c); free(path);
+    if (n < 0) return -1;
+    *ext = n;
+    return 1;
+}
+/* IN 'path' ['connect' | [connect]] after a table name: its schema (-1: error) */
+static int parse_in_db(ps *p)
+{
+    tok *k = cur(p);
+    if (k->k != T_STR) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
+    char *path = str_text(k), *c = 0;
+    p->i++;
+    k = cur(p);
+    if (k->k == T_STR) { c = str_text(k); p->i++; }
+    else if (k->k == T_QID) { c = dupn(k->s, k->n); p->i++; }
+    if (!*path && c) { free(path); path = connect_database(c); }
+    int n = ext_schema(p, path, c ? c : "");
+    free(path); free(c);
+    return n;
+}
+/* a table of this database that is linked to one of another: its schema, the name there (0: not linked) */
+static int link_schema(ps *p, const char *name, int len, char **src)
+{
+    *src = 0;
+    if (!jet_link_fn) return 0;
+    char nm[256], s[256] = "", msg[400] = "";
+    int err = 0;
+    snprintf(nm, sizeof nm, "%.*s", len, name);
+    int n = jet_link_fn(jet_ext_ctx, nm, s, sizeof s, &err, msg, sizeof msg);
+    if (n < 0) { fail(p, err ? err : 3044, "%s", msg); return -1; }
+    if (n > 0) *src = strdup(s);
+    return n;
+}
+static void add_tab(ps *p, const char *name, int n, int ext)
+{
+    jsql *q = p->q;
+    q->tabs = realloc(q->tabs, sizeof(char *) * (size_t)(q->ntabs + 1));
+    q->tabext = realloc(q->tabext, sizeof(int) * (size_t)(q->ntabs + 1));
+    q->tabs[q->ntabs] = n < 0 ? strdup(name) : dupn(name, n);
+    q->tabext[q->ntabs++] = ext;
+}
+static void put_table(jbuf *b, int ext, const char *name, int n)
+{
+    if (ext > 0) jb_f(b, "\"lbext%d\".", ext);
+    jb_qid(b, name, n);
+}
+/* the IN 'file' of a FROM clause (it names the database of all its tables): looked for ahead, its schema */
+static int from_in_ahead(ps *p)
+{
+    int depth = 0;
+    for (int i = p->i; i < p->nt && p->t[i].k != T_END; i++) {
+        tok *k = &p->t[i];
+        if (k->k == T_OP && k->n == 1 && k->s[0] == '(') depth++;
+        else if (k->k == T_OP && k->n == 1 && k->s[0] == ')') { if (--depth < 0) break; }
+        else if (depth == 0 && (kw(k, "where") || kw(k, "group") || kw(k, "order") || kw(k, "having") || kw(k, "union") || kw(k, "on")))
+            break;
+        else if (depth == 0 && kw(k, "in") && i + 1 < p->nt && p->t[i + 1].k == T_STR) {
+            int save = p->i;
+            p->i = i + 1;
+            int n = parse_in_db(p);
+            p->i = save;
+            return n;
+        }
+    }
+    return 0;
+}
+
 /* ---------------------------------------------------------------- SELECT */
 static int parse_name(ps *p, char **name)
 {
@@ -750,14 +878,14 @@ static int parse_name(ps *p, char **name)
     return 0;
 }
 
-static int parse_from_item(ps *p, jbuf *b, int *simple, char **table, char **alias);
+static int parse_from_item(ps *p, jbuf *b, int *simple, char **table, char **alias, int *text, char **tsrc);
 
-static int parse_from_primary(ps *p, jbuf *b, int *simple, char **table, char **alias)
+static int parse_from_primary(ps *p, jbuf *b, int *simple, char **table, char **alias, int *text, char **tsrc)
 {
     if (isop(p, "{") && p->i + 1 < p->nt && kw(&p->t[p->i + 1], "oj")) {
         /* ODBC's outer join escape, as the Query Designer of VB6 writes it: { oj A LEFT OUTER JOIN B ON ... } */
         p->i += 2;
-        if (parse_from_item(p, b, simple, table, alias) < 0) return -1;
+        if (parse_from_item(p, b, simple, table, alias, text, tsrc) < 0) return -1;
         *simple = 0;
         if (!acceptop(p, "}")) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
         return 0;
@@ -772,21 +900,35 @@ static int parse_from_primary(ps *p, jbuf *b, int *simple, char **table, char **
         } else {
             *simple = 0;
             jb_s(b, "(");
-            if (parse_from_item(p, b, simple, table, alias) < 0) return -1;
+            if (parse_from_item(p, b, simple, table, alias, text, tsrc) < 0) return -1;
             *simple = 0;
             if (!acceptop(p, ")")) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
             jb_s(b, ")");
         }
     } else {
+        int ext = 0;
+        int pre = parse_connect_prefix(p, &ext);  /* [;database=other.mdb].table */
+        if (pre < 0) return -1;
         tok *k = cur(p);
         if ((k->k != T_ID && k->k != T_QID) || (k->k == T_ID && reserved(k))) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
         p->i++;
+        char *src = 0;
+        if (!pre) ext = p->from_ext;             /* the IN 'file' of the FROM clause */
+        if (!pre && !ext) {                      /* a linked table */
+            ext = link_schema(p, k->s, k->n, &src);
+            if (ext < 0) return -1;
+        }
         /* owner.table is not Jet; a name only */
-        if (*table == 0) *table = dupn(k->s, k->n); else *simple = 0;
+        if (*table == 0) { *table = dupn(k->s, k->n); *text = ext; *tsrc = src ? strdup(src) : 0; } else *simple = 0;
         from_tables++;
-        jb_qid(b, k->s, k->n);
-        if (accept(p, "in")) {                  /* IN 'other.mdb': not supported */
-            fail(p, 3131, "Syntax error in FROM clause."); return -1;
+        if (src) add_tab(p, src, -1, ext); else add_tab(p, k->s, k->n, ext);
+        if (src) {
+            put_table(b, ext, src, -1);
+            if (!(iskw(p, "as") || (cur(p)->k == T_ID && !reserved(cur(p))) || cur(p)->k == T_QID)) { jb_s(b, " AS "); jb_qid(b, k->s, k->n); }
+            free(src);
+        } else put_table(b, ext, k->s, k->n);
+        if (accept(p, "in")) {                  /* IN 'other.mdb': its schema was found ahead */
+            if (pre || parse_in_db(p) < 0) { if (!p->err) fail(p, 3131, "Syntax error in FROM clause."); return -1; }
         }
     }
     int has_as = accept(p, "as");
@@ -798,9 +940,9 @@ static int parse_from_primary(ps *p, jbuf *b, int *simple, char **table, char **
     } else if (has_as) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
     return 0;
 }
-static int parse_from_item(ps *p, jbuf *b, int *simple, char **table, char **alias)
+static int parse_from_item(ps *p, jbuf *b, int *simple, char **table, char **alias, int *text, char **tsrc)
 {
-    if (parse_from_primary(p, b, simple, table, alias) < 0) return -1;
+    if (parse_from_primary(p, b, simple, table, alias, text, tsrc) < 0) return -1;
     for (;;) {
         const char *j = 0;
         if (iskw(p, "inner") && iskw2(p, "join")) { p->i += 2; j = " INNER JOIN "; }
@@ -810,7 +952,7 @@ static int parse_from_item(ps *p, jbuf *b, int *simple, char **table, char **ali
         if (!j) return 0;
         *simple = 0;
         jb_s(b, j);
-        if (parse_from_primary(p, b, simple, table, alias) < 0) return -1;
+        if (parse_from_primary(p, b, simple, table, alias, text, tsrc) < 0) return -1;
         if (!accept(p, "on")) { fail(p, 3131, "Syntax error in JOIN operation."); return -1; }
         ex c; memset(&c, 0, sizeof c);
         if (parse_expr(p, 0, &c) < 0) { ex_free(&c); if (!p->err) fail(p, 3131, "Syntax error in JOIN operation."); return -1; }
@@ -877,22 +1019,35 @@ static int parse_select_core(ps *p, jbuf *b, int top, int *topn, int *pct, int *
     }
     if (top && accept(p, "into")) {
         char *t;
+        int ext = 0, pre = parse_connect_prefix(p, &ext);   /* INTO [;database=other.mdb].t */
+        if (pre < 0) { jb_free(&list); return -1; }
         if (parse_name(p, &t) < 0) { jb_free(&list); fail(p, 3141, "The SELECT statement includes a reserved word or an argument name that is misspelled or missing, or the punctuation is incorrect."); return -1; }
+        if (!pre && accept(p, "in")) {           /* INTO t IN 'other.mdb' */
+            ext = parse_in_db(p);
+            if (ext < 0) { free(t); jb_free(&list); return -1; }
+        }
         free(p->q->into);
         p->q->into = t;
+        p->q->into_ext = ext;
+        add_tab(p, t, -1, ext);
     }
-    char *table = 0, *alias = 0;
+    char *table = 0, *alias = 0, *tsrc = 0;
+    int text = 0;
+    int saved_from_ext = p->from_ext;
     jb_put(b, list.p ? list.p : "", list.n);
     jb_free(&list);
     if (accept(p, "from")) {
         from_tables = 0;
+        p->from_ext = from_in_ahead(p);
+        if (p->from_ext < 0) { p->from_ext = saved_from_ext; return -1; }
         jb_s(b, " FROM ");
         for (int n = 0;; n++) {
             if (n) { jb_s(b, ", "); simple = 0; }
-            if (parse_from_item(p, b, &simple, &table, &alias) < 0) { free(table); free(alias); return -1; }
+            if (parse_from_item(p, b, &simple, &table, &alias, &text, &tsrc) < 0) { free(table); free(alias); free(tsrc); p->from_ext = saved_from_ext; return -1; }
             if (!acceptop(p, ",")) break;
         }
     } else simple = 0;
+    p->from_ext = saved_from_ext;
     /* DISTINCTROW: the rows of the tables are distinct; over a join, the rows of the output are */
     if (distinctrow && table && !(simple_from_one(p))) {
         jbuf t = { 0 };
@@ -902,7 +1057,7 @@ static int parse_select_core(ps *p, jbuf *b, int top, int *topn, int *pct, int *
     if (accept(p, "where")) {
         int from = p->i;
         ex c; memset(&c, 0, sizeof c);
-        if (parse_expr(p, 0, &c) < 0) { ex_free(&c); free(table); free(alias); if (!p->err) fail_expr(p, from); return -1; }
+        if (parse_expr(p, 0, &c) < 0) { ex_free(&c); free(table); free(alias); free(tsrc); if (!p->err) fail_expr(p, from); return -1; }
         jb_s(b, " WHERE "); ex_cond(&c, b);
         ex_free(&c);
     }
@@ -913,7 +1068,7 @@ static int parse_select_core(ps *p, jbuf *b, int top, int *topn, int *pct, int *
         for (int n = 0;; n++) {
             int from = p->i;
             ex c; memset(&c, 0, sizeof c);
-            if (parse_expr(p, 0, &c) < 0) { ex_free(&c); free(table); free(alias); if (!p->err) fail_expr(p, from); return -1; }
+            if (parse_expr(p, 0, &c) < 0) { ex_free(&c); free(table); free(alias); free(tsrc); if (!p->err) fail_expr(p, from); return -1; }
             if (n) jb_s(b, ", ");
             ex_value(&c, b);
             ex_free(&c);
@@ -923,14 +1078,15 @@ static int parse_select_core(ps *p, jbuf *b, int top, int *topn, int *pct, int *
     if (accept(p, "having")) {
         int from = p->i;
         ex c; memset(&c, 0, sizeof c);
-        if (parse_expr(p, 0, &c) < 0) { ex_free(&c); free(table); free(alias); if (!p->err) fail_expr(p, from); return -1; }
+        if (parse_expr(p, 0, &c) < 0) { ex_free(&c); free(table); free(alias); free(tsrc); if (!p->err) fail_expr(p, from); return -1; }
         jb_s(b, " HAVING "); ex_cond(&c, b);
         ex_free(&c);
     }
     if (simple && table && top) {
-        free(p->q->base); free(p->q->base_alias);
+        free(p->q->base); free(p->q->base_alias); free(p->q->base_src);
         p->q->base = table; p->q->base_alias = alias;
-    } else { free(table); free(alias); }
+        p->q->base_ext = text; p->q->base_src = tsrc;
+    } else { free(table); free(alias); free(tsrc); }
     *simple_out = simple;
     return 0;
 }
@@ -972,7 +1128,7 @@ static int parse_select(ps *p, jbuf *out, int top)
             char *t; if (parse_name(p, &t) < 0) { jb_free(&b); fail(p, 3141, "union"); return -1; }
             jb_s(&b, "SELECT * FROM "); jb_qid(&b, t, -1); free(t);
         } else { jb_free(&b); fail(p, 3141, "The SELECT statement includes a reserved word or an argument name that is misspelled or missing, or the punctuation is incorrect."); return -1; }
-        if (top) { free(p->q->base); p->q->base = 0; free(p->q->base_alias); p->q->base_alias = 0; }
+        if (top) { free(p->q->base); p->q->base = 0; free(p->q->base_alias); p->q->base_alias = 0; free(p->q->base_src); p->q->base_src = 0; p->q->base_ext = 0; }
     }
     jbuf order = { 0 };
     if (parse_order(p, &order) < 0) { jb_free(&b); jb_free(&order); return -1; }
@@ -1266,8 +1422,18 @@ static int parse_statement(ps *p, jsql *q)
         return -1;
     } else if (accept(p, "insert")) {
         q->kind = J_INSERT;
-        if (!accept(p, "into") || parse_name(p, &q->table) < 0) goto bad_insert;
-        jb_s(&b, "INSERT INTO "); jb_qid(&b, q->table, -1);
+        if (!accept(p, "into")) goto bad_insert;
+        int ext = 0, pre = parse_connect_prefix(p, &ext), viain = 0;
+        if (pre < 0) { jb_free(&b); return -1; }
+        if (parse_name(p, &q->table) < 0) goto bad_insert;
+        if (!pre && accept(p, "in")) {
+            if ((ext = parse_in_db(p)) < 0) { jb_free(&b); return -1; }
+            viain = 1;
+        }
+        if (!pre && !viain && (ext = link_schema(p, q->table, -1, &q->table_src)) < 0) { jb_free(&b); return -1; }
+        q->table_ext = ext;
+        add_tab(p, q->table_src ? q->table_src : q->table, -1, ext);
+        jb_s(&b, "INSERT INTO "); put_table(&b, ext, q->table_src ? q->table_src : q->table, -1);
         if (isop(p, "(") && !iskw2(p, "select")) {
             char **names; int n;
             if (parse_name_list(p, &names, 0, &n) < 0) goto bad_insert;
@@ -1277,6 +1443,7 @@ static int parse_statement(ps *p, jsql *q)
             free(names);
         }
         if (accept(p, "values")) {
+            if (viain) goto bad_insert;           /* (Jet: INSERT INTO t IN 'file' ... VALUES is a syntax error) */
             if (!acceptop(p, "(")) goto bad_insert;
             jb_s(&b, " VALUES (");
             for (int n = 0;; n++) {
@@ -1306,8 +1473,15 @@ static int parse_statement(ps *p, jsql *q)
         return -1;
     } else if (accept(p, "update")) {
         q->kind = J_UPDATE;
+        int ext = 0, pre = parse_connect_prefix(p, &ext);
+        if (pre < 0) { jb_free(&b); return -1; }
         if (parse_name(p, &q->table) < 0) goto bad_update;
-        jb_s(&b, "UPDATE "); jb_qid(&b, q->table, -1);
+        if (!pre && accept(p, "in")) { if ((ext = parse_in_db(p)) < 0) { jb_free(&b); return -1; } }
+        else if (!pre && (ext = link_schema(p, q->table, -1, &q->table_src)) < 0) { jb_free(&b); return -1; }
+        q->table_ext = ext;
+        add_tab(p, q->table_src ? q->table_src : q->table, -1, ext);
+        jb_s(&b, "UPDATE "); put_table(&b, ext, q->table_src ? q->table_src : q->table, -1);
+        if (q->table_src) { jb_s(&b, " AS "); jb_qid(&b, q->table, -1); }
         if (iskw(p, "as") || (cur(p)->k == T_ID && !iskw(p, "set"))) goto bad_update;
         if (!accept(p, "set")) goto bad_update;
         jb_s(&b, " SET ");
@@ -1345,12 +1519,19 @@ static int parse_statement(ps *p, jsql *q)
         if (!iskw(p, "from")) {
             while (cur(p)->k != T_END && !iskw(p, "from")) p->i++;
         }
-        if (!accept(p, "from") || parse_name(p, &q->table) < 0) {
+        int ext = 0, pre = 0, hasfrom = accept(p, "from");
+        if (hasfrom && (pre = parse_connect_prefix(p, &ext)) < 0) { jb_free(&b); return -1; }
+        if (!hasfrom || parse_name(p, &q->table) < 0) {
             jb_free(&b);
             fail(p, 3128, "Specify the table containing the records you want to delete.");
             return -1;
         }
-        jb_s(&b, "DELETE FROM "); jb_qid(&b, q->table, -1);
+        if (!pre && accept(p, "in")) { if ((ext = parse_in_db(p)) < 0) { jb_free(&b); return -1; } }
+        else if (!pre && (ext = link_schema(p, q->table, -1, &q->table_src)) < 0) { jb_free(&b); return -1; }
+        q->table_ext = ext;
+        add_tab(p, q->table_src ? q->table_src : q->table, -1, ext);
+        jb_s(&b, "DELETE FROM "); put_table(&b, ext, q->table_src ? q->table_src : q->table, -1);
+        if (q->table_src) { jb_s(&b, " AS "); jb_qid(&b, q->table, -1); }
         if (accept(p, "where")) {
             int from = p->i;
             ex c; memset(&c, 0, sizeof c);
@@ -1428,7 +1609,9 @@ int jet_expr(const char *jet, jbuf *out, int boolean, char *errmsg, int errcap)
 
 void jsql_free(jsql *q)
 {
-    free(q->sql); free(q->into); free(q->table); free(q->index); free(q->base); free(q->base_alias);
+    free(q->sql); free(q->into); free(q->table); free(q->index); free(q->base); free(q->base_alias); free(q->base_src); free(q->table_src);
+    for (int i = 0; i < q->ntabs; i++) free(q->tabs[i]);
+    free(q->tabs); free(q->tabext); q->tabs = 0; q->tabext = 0; q->ntabs = 0;
     for (int i = 0; i < q->ncols; i++) { free(q->cols[i].name); free(q->cols[i].cname); free(q->cols[i].ref_table); free(q->cols[i].ref_col); }
     free(q->cols);
     for (int i = 0; i < q->ncons; i++) {

@@ -51,6 +51,7 @@ static struct {
     SQLRETURN (SQL_API *TablesW)(SQLHSTMT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT);
     SQLRETURN (SQL_API *ColumnsW)(SQLHSTMT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT);
     SQLRETURN (SQL_API *PrimaryKeysW)(SQLHSTMT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT);
+    SQLRETURN (SQL_API *StatisticsW)(SQLHSTMT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLUSMALLINT, SQLUSMALLINT);
     SQLRETURN (SQL_API *DriversW)(SQLHENV, SQLUSMALLINT, SQLWCHAR *, SQLSMALLINT, SQLSMALLINT *, SQLWCHAR *, SQLSMALLINT, SQLSMALLINT *);
     SQLHENV env;
 } O;
@@ -88,7 +89,7 @@ int lbo_available(void)
     S(DescribeColW, "SQLDescribeColW") S(ColAttributeW, "SQLColAttributeW") S(RowCount, "SQLRowCount")
     S(Fetch, "SQLFetch") S(GetData, "SQLGetData") S(MoreResults, "SQLMoreResults") S(CloseCursor, "SQLCloseCursor")
     S(GetDiagRecW, "SQLGetDiagRecW") S(TablesW, "SQLTablesW") S(ColumnsW, "SQLColumnsW")
-    S(PrimaryKeysW, "SQLPrimaryKeysW") S(DriversW, "SQLDriversW")
+    S(PrimaryKeysW, "SQLPrimaryKeysW") S(DriversW, "SQLDriversW") S(StatisticsW, "SQLStatisticsW")
 #undef S
     if (!SQL_SUCCEEDED(O.AllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &O.env))) return 0;
     /* ODBC 2, as MSDASQL (VB6 oracle d_odbc1: the states are S1000 ...) */
@@ -504,6 +505,15 @@ int lbo_primary_keys(lbo_stmt *s, const char *cat, const char *sch, const char *
 {
     SQLWCHAR *a = wn(cat), *b = wn(sch), *c = wn(tab);
     SQLRETURN r = O.PrimaryKeysW(s->st, a, a ? SQL_NTS : 0, b, b ? SQL_NTS : 0, c, c ? SQL_NTS : 0);
+    free(a); free(b); free(c);
+    return check(s, r);
+}
+/* the indexes of a table (SQLStatistics; unique_only: SQL_INDEX_UNIQUE) */
+int lbo_statistics(lbo_stmt *s, const char *cat, const char *sch, const char *tab, int unique_only)
+{
+    SQLWCHAR *a = wn(cat), *b = wn(sch), *c = wn(tab);
+    SQLRETURN r = O.StatisticsW(s->st, a, a ? SQL_NTS : 0, b, b ? SQL_NTS : 0, c, c ? SQL_NTS : 0,
+                                (SQLUSMALLINT)(unique_only ? 0 : 1), (SQLUSMALLINT)1);   /* SQL_INDEX_UNIQUE / ALL, SQL_ENSURE */
     free(a); free(b); free(c);
     return check(s, r);
 }

@@ -1,0 +1,187 @@
+== open
+name=<db> connect=ODBC;DSN=LBDAO6;Database=<db>; updatable=True tabledefs=0
+exec CREATE TABLE People (ID INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(20) NOT NULL, Age SMALLINT, Born DATE, Salary NUMERIC(10,2), Active BIT, Notes TEXT, UNIQUE(Name)) -> 0
+exec CREATE TABLE Pets (PetID INTEGER PRIMARY KEY, Owner VARCHAR(20), Kind VARCHAR(10)) -> 0
+exec CREATE INDEX idxOwner ON Pets (Owner) -> 0
+exec INSERT INTO People (Name, Age, Born, Salary, Active, Notes) VALUES ('Anna', 31, '1993-04-05', 1234.5, 1, 'first') -> 0
+exec INSERT INTO People (Name, Age, Active) VALUES ('Bill', 25, 0) -> 0
+exec INSERT INTO Pets (PetID, Owner, Kind) VALUES (1, 'Anna', 'Cat') -> 0
+table People attrs=0 src= upd=True connect=
+  field ID
+  field Name
+  field Age
+  field Born
+  field Salary
+  field Active
+  field Notes
+  index (+ID)
+    name=sqlite_autoindex_0
+  ! index primary: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    err 0: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    unique=True
+  index (+Name)
+    name=sqlite_autoindex_People_1
+  ! index primary: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    err 0: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    unique=True
+table Pets attrs=0 src= upd=True connect=
+  field PetID
+  field Owner
+  field Kind
+  index (+PetID)
+    name=sqlite_autoindex_0
+  ! index primary: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    err 0: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    unique=True
+  index (+Owner)
+    name=idxOwner
+  ! index primary: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    err 0: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    unique=False
+tables=2
+== Jet SQL
+exec INSERT INTO People (Name, Age, Active) VALUES ('Cleo', 42, True) -> 1
+exec UPDATE People SET Age = Age + 1 WHERE Name Like 'B*' -> 1
+exec DELETE FROM People WHERE Name = 'Nobody' -> 0
+-- SELECT * FROM People ORDER BY ID type=4 upd=False
+  cols: ID/4 Name/10 Age/3 Born/8 Salary/7 Active/1 Notes/12
+  L1 S'Anna' I31 D1993-04-05 00:00:00 Do1234.5 BT S'first'
+  L2 S'Bill' I26 Null Null BF Null
+  L3 S'Cleo' I42 Null Null BT Null
+  rows 3
+-- SELECT Name, Age FROM People WHERE Age > 30 ORDER BY Name type=2 upd=True
+  cols: Name/10 Age/3
+  S'Anna' I31
+  S'Cleo' I42
+  rows 2
+-- SELECT People.Name, Pets.Kind FROM People INNER JOIN Pets ON People.Name = Pets.Owner type=4 upd=False
+  cols: Name/10 Kind/10
+  S'Anna' S'Cat'
+  rows 1
+-- SELECT Count(*) AS N, Max(Age) AS M FROM People type=4 upd=False
+  cols: N/4 M/3
+  L3 I42
+  rows 1
+== pass-through
+-- SELECT Name, Age * 2 AS Twice FROM People ORDER BY Name type=4 upd=False
+  cols: Name/10 Twice/4
+  S'Anna' L62
+  S'Bill' L52
+  S'Cleo' L84
+  rows 3
+-- SELECT Name FROM People type=2 upd=False
+  cols: Name/10
+  S'Anna'
+  S'Bill'
+  S'Cleo'
+  rows 3
+exec UPDATE People SET Notes = 'x' WHERE Notes IS NULL -> 0
+== table recordsets
+default type=2 upd=True
+count=3
+  ! open table: 3001 Invalid argument. [DAO.Database]
+    err 0: 3001 Invalid argument. [DAO.Database]
+nomatch=False
+name=Cleo
+  ! edit anna: 3197 The Microsoft Jet database engine stopped the process because you and another user are attempting to change the same data at the same time. [DAO.Recordset]
+    err 0: 3197 The Microsoft Jet database engine stopped the process because you and another user are attempting to change the same data at the same time. [DAO.Recordset]
+-- SELECT ID, Name, Age, Active FROM People ORDER BY ID type=4 upd=False
+  cols: ID/4 Name/10 Age/3 Active/1
+  L1 S'Anna' I31 BT
+  L3 S'Cleo' I50 BT
+  L4 S'Dino' I37 BF
+  rows 3
+== QueryDefs
+temp qd=L3
+pt qd first=S'Dino'
+  ! saved qd: 3251 Operation is not supported for this type of object. [DAO.QueryDefs]
+    err 0: 3251 Operation is not supported for this type of object. [DAO.QueryDefs]
+== transactions
+exec DELETE FROM People -> 3
+-- SELECT Count(*) AS N FROM People type=4 upd=False
+  cols: N/4
+  L3
+  rows 1
+exec UPDATE People SET Age = 1 WHERE Name = 'Cleo' -> 1
+-- SELECT Name, Age FROM People WHERE Name = 'Cleo' type=4 upd=False
+  cols: Name/10 Age/3
+  S'Cleo' I1
+  rows 1
+== errors
+  ! exec INSERT INTO People (Name) VALUES ('Anna'): 3155 ODBC--insert on a linked table '???' failed. [DAO.Database]
+    err 0: 19 UNIQUE constraint failed: People.Name (19) [ODBC.Database]
+    err 1: 3155 ODBC--insert on a linked table '???' failed. [DAO.Database]
+  ! exec INSERT INTO NoTable (A) VALUES (1): 3078 The Microsoft Jet database engine cannot find the input table or query 'NoTable'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+    err 0: 3078 The Microsoft Jet database engine cannot find the input table or query 'NoTable'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+  ! exec SELEC * FROM People: 3146 ODBC--call failed. [DAO.QueryDef]
+    err 0: 1 near "SELEC": syntax error (1) [ODBC.QueryDef]
+    err 1: 3146 ODBC--call failed. [DAO.QueryDef]
+  ! open SELECT * FROM NoTable: 3078 The Microsoft Jet database engine cannot find the input table or query 'NoTable'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+    err 0: 3078 The Microsoft Jet database engine cannot find the input table or query 'NoTable'.  Make sure it exists and that its name is spelled correctly. [DAO.Database]
+  ! bad driver: 3146 ODBC--call failed. [DAO.Workspace]
+    err 0: 0 [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified [ODBC.Workspace]
+    err 1: 3146 ODBC--call failed. [DAO.Workspace]
+== linked ODBC table
+table LinkPeople attrs=20000000 src=People upd=False connect=ODBC;DSN=LBDAO6;Database=<db>;
+  field ID type=4 size=4 attrs=1 req=False ord=1
+  field Name type=10 size=20 attrs=2 req=True ord=2
+  field Age type=3 size=2 attrs=1 req=False ord=3
+  field Born type=8 size=8 attrs=1 req=False ord=4
+  field Salary type=7 size=8 attrs=1 req=False ord=5
+  field Active type=1 size=1 attrs=1 req=False ord=6
+  field Notes type=12 size=0 attrs=2 req=False ord=7
+  index (+ID)
+    name=sqlite_autoindex_0
+    primary=True
+    unique=True
+  index (+Name)
+    name=sqlite_autoindex_People_1
+    primary=False
+    unique=True
+-- SELECT Name, Age FROM LinkPeople ORDER BY Name type=4 upd=False
+  cols: Name/10 Age/3
+  S'Anna' I31
+  S'Cleo' I1
+  S'Dino' I37
+  rows 3
+link type=2 upd=True
+exec UPDATE LinkPeople SET Age = Age + 100 WHERE Name = 'Emma' -> 1
+-- SELECT Name, Age FROM LinkPeople WHERE Name = 'Emma' type=4 upd=False
+  cols: Name/10 Age/3
+  S'Emma' I122
+  rows 1
+== DDL of DAO and SELECT INTO over ODBC
+table Things attrs=0 src= upd=True connect=
+  field TID
+  field Label
+  index (+Label)
+    name=idxLabel
+  ! index primary: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    err 0: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    unique=False
+exec INSERT INTO Things (TID, Label) VALUES (1, 'one') -> 1
+-- SELECT * FROM Things type=4 upd=False
+  cols: TID/4 Label/10
+  L1 S'one'
+  rows 1
+table Things attrs=0 src= upd=True connect=
+  field TID
+  field Label
+  field Extra
+  index (+Label)
+    name=idxLabel
+  ! index primary: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    err 0: 3365 Property value not valid for REMOTE objects. [DAO.Index]
+    unique=False
+things there=0
+exec SELECT * INTO [ODBC;DSN=LBDAO6;Database=<db>].Copied FROM Local -> 2
+-- SELECT A, B FROM Copied ORDER BY A type=4 upd=False
+  cols: A/4 B/10
+  L1 S'x'
+  L2 S'y'
+  rows 2
+exec SELECT * INTO Back FROM [ODBC;DSN=LBDAO6;Database=<db>].Copied WHERE A > 1 -> 1
+-- SELECT * FROM Back type=4 upd=False
+  cols: A/4 B/10 C/8
+  L2 S'y' Null
+  rows 1
