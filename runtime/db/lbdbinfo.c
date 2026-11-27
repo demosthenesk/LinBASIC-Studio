@@ -129,10 +129,10 @@ static int ado_info(int argc, char **argv)
             while (!vb_v2l(vb_late_o(rs, "eof", VBM_GET, 0, 0))) {
                 vbvar k[1] = { S("TABLE_TYPE") }, n[1] = { S("TABLE_NAME") };
                 char *type = vb_stoutf8(vb_v2s(vb_late_o(vb_v2obj(vb_late_o(rs, "fields", VBM_GET, 1, k)), "value", VBM_GET, 0, 0)));
-                int view = !strcasecmp(type, "VIEW");
-                if ((!strcasecmp(type, "TABLE") && !pass) || (view && pass)) {
+                int view = !strcasecmp(type, "VIEW"), sys = !strcasecmp(type, "SYSTEM TABLE");
+                if (((!strcasecmp(type, "TABLE") || sys) && !pass) || (view && pass)) {
                     char *name = vb_stoutf8(vb_v2s(vb_late_o(vb_v2obj(vb_late_o(rs, "fields", VBM_GET, 1, n)), "value", VBM_GET, 0, 0)));
-                    printf("%s\t%s\n", view ? "Q" : "T", name);
+                    printf("%s\t%s\n", view ? "Q" : sys ? "S" : "T", name);   /* S: a system table (the Data View) */
                 }
                 vb_late_o(rs, "movenext", VBM_METHOD, 0, 0);
                 if (ado_failed()) return 1;
@@ -156,8 +156,77 @@ static int ado_info(int argc, char **argv)
     return ado_failed();
 }
 
+/* the Data View and the Query Designer of the IDE (phase 12.3): a query through ADO, its columns and rows
+ *   lbdbinfo -ado-sql CONNECT SQL [MAX]   C<tab>name<tab>ADO type ...  then R<tab>value ... (\N: Null; \t \n \\)
+ *   lbdbinfo -ado-exec CONNECT SQL        the statement run (an action query), "OK<tab>records affected" */
+static void put_value(vbvar v)
+{
+    if (v.vt == VT_NULL) { fputs("\\N", stdout); return; }
+    vb_i32 m = vb_mark();
+    const char *s = vb_stoutf8(vb_v2s(v));
+    if (vb_errpend) { vb_err_clear_pending(); s = "#Error"; }
+    for (; *s; s++) {
+        if (*s == '\t') fputs("\\t", stdout);
+        else if (*s == '\n') fputs("\\n", stdout);
+        else if (*s == '\r') fputs("\\r", stdout);
+        else if (*s == '\\') fputs("\\\\", stdout);
+        else putchar(*s);
+    }
+    vb_release(m);
+}
+
+static int ado_sql(int argc, char **argv, int exec)
+{
+    vb_db_init();
+    vbobj cn = ado_createobject("adodb.connection");
+    vbvar a[1] = { S(argv[2]) };
+    vb_late_o(cn, "open", VBM_METHOD, 1, a);
+    if (ado_failed()) return 1;
+    if (exec) {
+        vbvar e[2] = { S(argv[3]), vb_v_l(0) };       /* RecordsAffected */
+        vb_late_o(cn, "execute", VBM_METHOD, 2, e);
+        if (ado_failed()) return 1;
+        printf("OK\t%ld\n", (long)vb_v2l(e[1]));
+        return 0;
+    }
+    long max = argc > 4 ? atol(argv[4]) : 1000;
+    vbobj rs = ado_createobject("adodb.recordset");
+    vbvar o[4] = { S(argv[3]), vb_v_obj(cn), vb_v_l(3), vb_v_l(1) };     /* adOpenStatic, adLockReadOnly */
+    vb_late_o(rs, "open", VBM_METHOD, 4, o);
+    if (ado_failed()) return 1;
+    vbobj flds = vb_v2obj(vb_late_o(rs, "fields", VBM_GET, 0, 0));
+    int n = vb_v2l(vb_late_o(flds, "count", VBM_GET, 0, 0));
+    vbobj f[256];
+    if (n > 256) n = 256;
+    for (int i = 0; i < n; i++) {
+        vbvar ix[1] = { vb_v_l(i) };
+        f[i] = vb_v2obj(vb_late_o(flds, "item", VBM_GET, 1, ix));
+        printf("C\t%s\t%d\n", vb_stoutf8(vb_v2s(vb_late_o(f[i], "name", VBM_GET, 0, 0))),
+               (int)vb_v2l(vb_late_o(f[i], "type", VBM_GET, 0, 0)));
+    }
+    long rows = 0;
+    while (!vb_v2l(vb_late_o(rs, "eof", VBM_GET, 0, 0)) && (max <= 0 || rows < max)) {
+        putchar('R');
+        for (int i = 0; i < n; i++) {
+            putchar('\t');
+            put_value(vb_late_o(f[i], "value", VBM_GET, 0, 0));
+        }
+        putchar('\n');
+        rows++;
+        vb_late_o(rs, "movenext", VBM_METHOD, 0, 0);
+        if (ado_failed()) return 1;
+    }
+    if (!vb_v2l(vb_late_o(rs, "eof", VBM_GET, 0, 0)))
+        printf("M\tmore\n");                   /* more rows than MAX */
+    return ado_failed();
+}
+
 int main(int argc, char **argv)
 {
+    if (argc >= 4 && (!strcmp(argv[1], "-ado-sql") || !strcmp(argv[1], "-ado-exec"))) {
+        vb_init(1, argv);
+        return ado_sql(argc, argv, !strcmp(argv[1], "-ado-exec"));
+    }
     if (argc >= 3 && !strcmp(argv[1], "-ado")) {
         vb_init(1, argv);
         return ado_info(argc, argv);

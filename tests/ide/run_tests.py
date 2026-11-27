@@ -4153,8 +4153,8 @@ def t_menus87(d):
     assert (w.tb_pos.text(), w.tb_size.text()) == ("0, 0", "4800 x 3600")   # at once, for the first form
     mb = w.menuBar()
     tops = [a.text() for a in mb.actions()]
-    assert tops == ["&File", "&Edit", "&View", "&Project", "F&ormat", "&Debug", "&Run", "&Tools", "&Add-Ins",
-                    "&Window", "&Help"], tops
+    assert tops == ["&File", "&Edit", "&View", "&Project", "F&ormat", "&Debug", "&Run", "&Query", "D&iagram",
+                    "&Tools", "&Add-Ins", "&Window", "&Help"], tops          # (Query, Diagram: phase 12.3)
     for a in mb.actions():
         a.menu().aboutToShow.emit()
     for title, want in VB6_MENUS.items():
@@ -6080,8 +6080,8 @@ def t_customize12(d):
     # ---- the commands
     assert reg.cats["File"][:2] == ["File/New Project", "File/Open Project..."], reg.cats["File"][:3]
     assert reg.action("File/New Project") is w.a_new and reg.action("File/Save <File Name>") is w.a_save_file
-    assert reg.action("Edit/Undo") is w.a_undo and "Query/Run" in reg.placeholders
-    assert not reg.action("Query/Run").isEnabled()
+    assert reg.action("Edit/Undo") is w.a_undo and reg.action("Query/Run") is w.query_menus.q["run"]   # (12.3)
+    assert not reg.action("Query/Run").isEnabled()       # (no Query Designer in front)
     assert reg.name("File/Save <File Name>") == "Save <File Name>" and reg.name("menu:Edit") == "Edit"
     assert reg.cats["Built-in Menus"][0] == "menu:File"
     fmt = reg.cats["Format"]
@@ -6241,7 +6241,332 @@ def t_customize12(d):
     settings.S["cmdbars"] = {}
     w2.close()
 
-TESTS = {"t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+MAKE_QD = """Sub MakeQd()
+    Dim e As Object, db As Object, p As String, rel As Object, f As Object
+    p = App.Path & "\\qd.mdb"
+    If Dir(p) <> "" Then Exit Sub
+    Set e = CreateObject("DAO.DBEngine.36")
+    Set db = e.CreateDatabase(p, ";LANGID=0x0409;CP=1252;COUNTRY=0", 64)
+    db.Execute "CREATE TABLE Customers (CustID TEXT(5) CONSTRAINT PrimaryKey PRIMARY KEY, Name TEXT(30), City TEXT(15))"
+    db.Execute "INSERT INTO Customers VALUES ('ALFKI', 'Alfreds', 'Berlin')"
+    db.Execute "INSERT INTO Customers VALUES ('AROUT', 'Around the Horn', 'London')"
+    db.Execute "INSERT INTO Customers VALUES ('BSBEV', 'Bs Beverages', 'London')"
+    db.Execute "CREATE TABLE Orders (OrderID LONG CONSTRAINT PrimaryKey PRIMARY KEY, CustID TEXT(5), Freight CURRENCY)"
+    db.Execute "INSERT INTO Orders VALUES (10, 'ALFKI', 100.5)"
+    db.Execute "INSERT INTO Orders VALUES (11, 'AROUT', 20)"
+    db.Execute "INSERT INTO Orders VALUES (12, 'AROUT', 7.25)"
+    Set rel = db.CreateRelation("CustomersOrders", "Customers", "Orders")
+    Set f = rel.CreateField("CustID")
+    f.ForeignName = "CustID"
+    rel.Fields.Append f
+    db.Relations.Append rel
+    db.CreateQueryDef "CustNames", "SELECT Name FROM Customers"
+    db.CreateQueryDef "ByCity", "PARAMETERS [Which] Text; SELECT * FROM Customers WHERE City = [Which]"
+    db.Close
+End Sub
+"""
+
+
+def _qd_db(w, d):
+    """a project whose Sub Main makes qd.mdb (Customers, Orders, a relation, a view and a parameter query)"""
+    p = w.project
+    w.add_module("Module")
+    code(w, p.module("Module1"), MAKE_QD + "\nSub Main()\n    MakeQd\nEnd Sub\n")
+    p.vbp.set("Startup", "Sub Main", quote=True)
+    saves(os.path.join(d, "Form1.frm"), os.path.join(d, "Module1.bas"), os.path.join(d, "Qd.vbp"))
+    assert w.save_project_as()
+    w.run_start()
+    wait(w)
+    db = os.path.join(d, "qd.mdb")
+    assert os.path.isfile(db), "qd.mdb"
+    return db
+
+
+def t_dataview12(d):
+    """the Data View (phase 12.3, VB6 oracles Claude Enviroment/oracles/12.3 dv*): View > Data View Window, a Data
+    Link (Data Link Properties), its Tables / Views / Stored Procedures and the columns, Show System Objects, the
+    context menus, Open -> Run Table (rows changed and added), Rename / Remove, the connections of a DataEnvironment"""
+    from lbstudio import dbinfo, dataview as DV
+    from lbstudio.datalink import DataLinkDialog, parse, PROVIDERS
+    from lbstudio.querydesign import QueryDesigner
+    settings.S["data_links"] = []
+    w = MainWindow()
+    w.show()
+    db = _qd_db(w, d)
+    cs = f"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={db};Persist Security Info=False"
+    # ---- Data Link Properties
+    dl = DataLinkDialog(w, cs, d)
+    dl.quiet = True
+    assert [dl.tabs.tabText(i) for i in range(dl.tabs.count())] == ["Provider", "Connection", "Advanced", "All"]
+    assert dl.provider() == "Microsoft.Jet.OLEDB.4.0" and dl.db.text() == db and dl.user.text() == "Admin"
+    assert dl.connect_string() == cs, dl.connect_string()
+    assert dl.test() and dl.last_test == (True, "Test connection succeeded.")
+    dl.db.setText(os.path.join(d, "none.mdb"))
+    assert not dl.test() and dl.last_test[1].startswith("Test connection failed")
+    dl.db.setText(db)
+    dl.tabs.setCurrentIndex(3)
+    assert [dl.all.item(r, 0).text() for r in range(dl.all.rowCount())] == ["Provider", "Data Source",
+                                                                            "Persist Security Info"]
+    dl.providers.setCurrentRow(1 + [k for k, _ in PROVIDERS].index("MSDASQL.1"))
+    assert dl.conn.currentIndex() == 1
+    dl.rb_cs.setChecked(True)
+    dl.cs.setText("DSN=Nowhere")
+    assert parse(dl.connect_string())[:3] == [("Provider", "MSDASQL.1"), ("Persist Security Info", "False"),
+                                              ("Extended Properties", "DSN=Nowhere")], dl.connect_string()
+    # ---- View > Data View Window (on the Standard toolbar too)
+    assert w.a_data_view is w.a_view_dataview and w.a_data_view.isEnabled()
+    dv = w.show_data_view()
+    dv.quiet = True
+    assert w.dock_dataview.isVisible() and w.dock_dataview.windowTitle() == "Data View"
+    assert [a.text() for a in dv.toolbar.actions()] == ["Refresh", "Add a Data Link", "Add a Data Environment"]
+    t = dv.tree
+    assert [t.topLevelItem(i).text(0) for i in range(2)] == ["Data Links", "Data Environment Connections"]
+    assert dv.add_link(answer=cs) == "DataLink1" and settings.S["data_links"] == [{"name": "DataLink1", "connect": cs}]
+    link = dv.find(DV.KIND_LINK, "DataLink1")
+    link.setExpanded(True)
+    assert [link.child(i).text(0) for i in range(link.childCount())] == ["Tables", "Views", "Stored Procedures"]
+    tables, views, procs = (link.child(i) for i in range(3))
+    for f in (tables, views, procs):
+        f.setExpanded(True)
+    kids = lambda it: [it.child(i).text(0) for i in range(it.childCount())]
+    assert kids(tables) == ["Customers", "Orders"], kids(tables)
+    assert kids(views) == ["CustNames"] and kids(procs) == ["ByCity"], (kids(views), kids(procs))
+    cust = tables.child(0)
+    cust.setExpanded(True)
+    assert kids(cust) == ["CustID", "Name", "City"], kids(cust)
+    # ---- the context menus (VB6 dv*)
+    def texts(it):
+        m = dv.context_menu(t.visualItemRect(it).center() if it is not None else t.rect().bottomLeft())
+        return [a.text().replace("&", "") for a in m.actions() if not a.isSeparator()]
+    assert texts(link) == ["Rename", "Remove", "Modify...", "Refresh", "Dockable", "Hide", "Add a Data Link...",
+                           "Show System Objects", "Properties..."], texts(link)
+    assert texts(tables) == ["Refresh", "Dockable", "Hide", "Show System Objects"]
+    assert texts(cust) == ["Open", "Refresh", "Dockable", "Hide", "Properties..."]
+    assert texts(t.topLevelItem(0)) == ["Refresh", "Dockable", "Hide", "Add a Data Link..."]
+    dv.toggle_system(tables)
+    assert "MSysObjects" in kids(tables) and "Customers" in kids(tables), kids(tables)
+    dv.toggle_system(tables)
+    assert kids(tables) == ["Customers", "Orders"]
+    cust = tables.child(0)                      # (the folder was read again)
+    dv.properties(cust)
+    assert dv.last_dialog.windowTitle() == "Customers Properties"
+    # ---- Open: Run Table
+    q = dv.open_item(cust)
+    assert isinstance(q, QueryDesigner) and w.current_query() is q
+    assert w.mdi.activeSubWindow().windowTitle() == "Run Table: Customers"
+    assert [k for k in ("diagram", "grid", "sql", "results") if q.pane_shown(k)] == ["results"]
+    assert q.sql.toPlainText() == "SELECT *\nFROM Customers", q.sql.toPlainText()
+    r = q.results
+    assert [r.horizontalHeaderItem(j).text() for j in range(r.columnCount())] == ["CustID", "Name", "City"]
+    assert r.rowCount() == 4 and r.item(1, 1).text() == "Around the Horn"     # (3 rows and the new one)
+    assert q.result_table == "Customers" and q.result_keys == ["CustID"]
+    q.quiet = True
+    r.setCurrentCell(1, 2)
+    r.item(1, 2).setText("Paris")               # a value changed: UPDATE ... WHERE CustID = 'AROUT'
+    _c, rows, _m = dbinfo.ado_query(cs, "SELECT City FROM Customers WHERE CustID = 'AROUT'")
+    assert rows == [["Paris"]], rows
+    r.setCurrentCell(3, 0)                      # the new row
+    r.item(3, 0).setText("WOLZA")
+    r.item(3, 1).setText("Wolski")
+    r.setCurrentCell(0, 0)                      # (left: INSERT)
+    _c, rows, _m = dbinfo.ado_query(cs, "SELECT Name, City FROM Customers WHERE CustID = 'WOLZA'")
+    assert rows == [["Wolski", None]], rows
+    assert r.rowCount() == 5
+    # (the Query menu acts on the window in front)
+    w.query_menus.update()
+    assert w.query_menus.q["run"].isEnabled() and w.query_menus.v["zoom"].isVisible()
+    w.mdi.activeSubWindow().close()
+    w.query_menus.update()
+    assert not w.query_menus.q["run"].isEnabled()
+    # ---- Rename, Remove
+    link.setText(0, "Northwind")
+    assert settings.S["data_links"][0]["name"] == "Northwind"
+    # ---- the connections of a DataEnvironment
+    w.add_module("DataEnvironment")
+    de = w.design_windows[w.project.module("DataEnvironment1")].widget()
+    de.cpage.show_conn(de.model.conns[0])
+    de.cpage.cs.setText(cs)
+    de.cpage.apply()
+    dv.refresh()
+    des = t.topLevelItem(1)
+    assert kids(des) == ["Connection1"], kids(des)
+    des.child(0).setExpanded(True)
+    assert kids(des.child(0)) == ["Tables", "Views", "Stored Procedures"]
+    dv.remove(dv.find(DV.KIND_LINK, "Northwind"))
+    assert settings.S["data_links"] == [] and kids(t.topLevelItem(0)) == []
+
+
+def t_querydesign12(d):
+    """the Query Designer (phase 12.3, VB6 oracles Claude Enviroment/oracles/12.3 sq*/sb*): the four panes, tables on
+    the Diagram (a relation: the join), the checkboxes, the Grid (criteria, sort, Group By), the SQL as VB6 writes it
+    for Jet, the SQL typed back, Run, the types of query, Select All Rows From, the menus, the SQL Builder of a
+    DataEnvironment command and its SQL back in the command"""
+    from lbstudio import dbinfo
+    from lbstudio.querydesign import QueryDesigner, TableBox
+    from lbstudio import querymodel as QM
+    # ---- the SQL read back as VB6 shows it (oracle 12.3/q7, q8: SELECT * of no table, the sort before the criteria,
+    # the parentheses of the SQL kept), and made again the same
+    nw = {"Customers": ["CustomerID", "CompanyName", "City", "Country"], "Orders": ["OrderID", "CustomerID"]}
+    m = QM.QueryModel()
+    t = "SELECT *\nFROM Customers\nWHERE Country = 'Germany'\nORDER BY CustID DESC"
+    assert m.parse(t, nw.get) and m.sql() == t, m.sql()
+    assert [(r.column, r.table, r.output, r.sort, r.criteria) for r in m.rows] == [
+        ("*", "", True, "", ""), ("CustID", "", False, "Descending", ""), ("Country", "Customers", False, "",
+                                                                             "= 'Germany'")]
+    t = ("SELECT Customers.CompanyName, Customers.City\nFROM Customers, Orders\nWHERE Customers.CustomerID = "
+         "Orders.CustomerID\nGROUP BY Customers.CompanyName, Customers.City\nHAVING (Customers.City = 'London')\n"
+         "ORDER BY Customers.CompanyName")                     # (oracle 12.3/sq19)
+    assert m.parse(t, nw.get) and m.sql() == t and m.group_by and len(m.joins) == 1, m.sql()
+    m = QM.QueryModel()
+    assert not m.parse("SELECT TOP 5 City FROM Customers", nw.get) and m.sql() == "SELECT TOP 5 City FROM Customers"
+    settings.S["data_links"] = []
+    w = MainWindow()
+    w.show()
+    db = _qd_db(w, d)
+    cs = f"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={db}"
+    # ---- the menus of the IDE: Query and Diagram between Run and Tools (VB6)
+    tops = [a.text().replace("&", "") for a in w.menuBar().actions()]
+    assert tops[tops.index("Run") + 1:tops.index("Run") + 4] == ["Query", "Diagram", "Tools"], tops
+    qm = w.query_menus
+    assert not qm.q["run"].isEnabled() and not qm.v["table"].isVisible()
+    # ---- the SQL Builder of a command
+    w.add_module("DataEnvironment")
+    dem = w.project.module("DataEnvironment1")
+    de = w.design_windows[dem].widget()
+    de.cpage.show_conn(de.model.conns[0])
+    de.cpage.cs.setText(cs)
+    de.cpage.apply()
+    de.add_command(False)
+    cmd = de.model.cmds[0]
+    de.mpage.show_cmd(cmd)
+    assert de.mpage.b_builder.text() == "SQL &Builder..."
+    q = de.sql_builder(cmd)
+    q.quiet = True
+    assert w.mdi.activeSubWindow().windowTitle() == "Design: Command1" and w.current_query() is q
+    assert all(q.pane_shown(k) for k in ("diagram", "grid", "sql", "results"))
+    # a table on the Diagram (dropped from the Data View): * (All Columns) and the columns in alphabetical order
+    q.add_table("Customers", 60, 40)
+    box = q.boxes[0]
+    assert isinstance(box, TableBox) and box.title() == "Customers"
+    names = [box.list.item(i).text() for i in range(box.list.count())]
+    assert names == ["* (All Columns)", "City", "CustID", "Name"], names
+    def check(b, col, on=True):
+        for i in range(b.list.count()):
+            if b.list.item(i).data(Qt.ItemDataRole.UserRole) == col:
+                b.list.item(i).setCheckState(Qt.CheckState.Checked if on else Qt.CheckState.Unchecked)
+                return
+        raise AssertionError(col)
+    check(box, "Name")
+    check(box, "City")
+    assert q.sql.toPlainText() == "SELECT Name, City\nFROM Customers", q.sql.toPlainText()
+    g = q.grid
+    heads = [g.horizontalHeaderItem(j).text() for j in range(g.columnCount())]
+    assert heads == ["Column", "Alias", "Table", "Output", "Sort Type", "Sort Order", "Criteria", "Or...", "Or...",
+                     "Or..."], heads
+    assert [g.item(r, 0).text() for r in range(2)] == ["Name", "City"] and g.item(0, 2).text() == "Customers"
+    # a second table: the join of the relation, the names with their table (VB6 sq*)
+    q.add_table("Orders", 420, 30)
+    assert len(q.model.joins) == 1 and len(q.lines) == 1 and q.lines[0].isVisible()
+    assert q.sql.toPlainText() == ("SELECT Customers.Name, Customers.City\nFROM Customers, Orders\n"
+                                   "WHERE Customers.CustID = Orders.CustID"), q.sql.toPlainText()
+    # Criteria in the grid
+    ci = q.grid_keys.index("criteria")
+    g.item(1, ci).setText("= 'London'")
+    assert q.sql.toPlainText().endswith("WHERE Customers.CustID = Orders.CustID AND\n    (Customers.City = 'London')")
+    assert box.list.item(1).data(Qt.ItemDataRole.UserRole + 1) == "▽"   # (City: its filter sign)
+    # Sort Type: Sort Order 1
+    g.item(0, q.grid_keys.index("sort")).setText("Ascending")
+    assert g.item(0, q.grid_keys.index("order")).text() == "1"
+    assert q.sql.toPlainText().endswith("ORDER BY Customers.Name")
+    # Run: the rows; the results grey when the query changes
+    assert q.run() == 2
+    assert [q.results.item(i, 0).text() for i in range(2)] == ["Around the Horn", "Around the Horn"]
+    # Group By: its column after Sort Order, HAVING
+    q.set_group_by(True)
+    assert q.stale and q.results.item(0, 0).foreground().color().name() == "#808080"
+    heads = [g.horizontalHeaderItem(j).text() for j in range(g.columnCount())]
+    assert heads[6] == "Group By" and g.item(0, 6).text() == "Group By"
+    assert q.sql.toPlainText() == ("SELECT Customers.Name, Customers.City\nFROM Customers, Orders\n"
+                                   "WHERE Customers.CustID = Orders.CustID\nGROUP BY Customers.Name, Customers.City\n"
+                                   "HAVING (Customers.City = 'London')\nORDER BY Customers.Name"), q.sql.toPlainText()
+    assert q.run() == 1
+    q.set_group_by(False)
+    # Select All Rows From Customers: an outer join
+    q.all_rows_from(q.model.joins[0], "Customers", True)
+    assert "FROM Customers LEFT OUTER JOIN Orders ON Customers.CustID = Orders.CustID" in q.sql.toPlainText()
+    q.all_rows_from(q.model.joins[0], "Customers", False)
+    # the SQL typed: the panes follow; SQL they cannot show: grey
+    q.sql.setFocus()
+    q.sql.setPlainText("SELECT CustID, Freight FROM Orders WHERE Freight > 10 ORDER BY Freight DESC")
+    q.apply_sql()
+    assert [t.name for t in q.model.tables] == ["Orders"] and len(q.boxes) == 1 and q.grid.isEnabled()
+    assert q.grid.item(1, 0).text() == "Freight" and q.grid.item(1, q.grid_keys.index("sort")).text() == "Descending"
+    assert q.run() == 2
+    q.sql.setPlainText("SELECT TOP 1 CustID FROM Orders")
+    q.apply_sql()
+    assert not q.model.parsed and not q.grid.isEnabled() and not q.diagram.isEnabled()
+    assert q.run() == 1                          # (the SQL as it is)
+    q.set_sql("SELECT Name, City\nFROM Customers")
+    assert q.model.parsed and q.grid.isEnabled()
+    # the types of query
+    q.change_type("Update")
+    g.item(1, q.grid_keys.index("value")).setText("'Madrid'")
+    g.item(0, q.grid_keys.index("criteria")).setText("= 'Bs Beverages'")
+    assert q.sql.toPlainText() == ("UPDATE Customers\nSET City = 'Madrid'\nWHERE (Name = 'Bs Beverages')"), \
+        q.sql.toPlainText()
+    assert q.run() == "1 row(s) affected by last query.", q.last_message
+    _c, rows, _m = dbinfo.ado_query(cs, "SELECT City FROM Customers WHERE CustID = 'BSBEV'")
+    assert rows == [["Madrid"]]
+    q.change_type("Delete")
+    assert q.sql.toPlainText() == "DELETE FROM Customers\nWHERE (Name = 'Bs Beverages')", q.sql.toPlainText()
+    q.answers = ["London2"]
+    q.change_type("Make Table")
+    assert q.sql.toPlainText().split("\n")[:2] == ["SELECT Name, City", "INTO London2"], q.sql.toPlainText()
+    q.change_type("Select")
+    assert q.sql.toPlainText().startswith("SELECT Name, City\nFROM Customers")
+    # Verify SQL Syntax
+    assert q.verify() and q.last_message == "The SQL syntax has been verified against the data source."
+    # the menus of the IDE now act on this window
+    qm.update()
+    assert qm.q["run"].isEnabled() and qm.v["table"].isVisible() and qm.q["type:Select"].isChecked()
+    assert [a.text().replace("&", "") for a in qm.q["type"].menu().actions()] == QM.QUERY_TYPES
+    qm.v["table:Name Only"].trigger()
+    assert q.table_view == "Name Only" and not q.boxes[0].proxy.isVisible()
+    qm.v["table:Column Names"].trigger()
+    qm.v["zoom:50"].trigger()
+    assert q.zoom == 50 and abs(q.diagram.transform().m11() - 0.5) < 1e-6
+    qm.v["pane:results"].trigger()
+    assert not q.pane_shown("results")
+    qm.v["pane:results"].trigger()
+    n = len(q.notes)
+    qm.d["note"].trigger()
+    assert len(q.notes) == n + 1
+    # the context menus of the panes (VB6 sq*)
+    names = lambda m: [a.text().replace("&", "") for a in m.actions() if not a.isSeparator()]
+    assert names(q.pane_menu("diagram", None)) == ["Run", "Group By", "Select Query", "Insert Query",
+                                                   "Insert Values Query", "Update Query", "Delete Query",
+                                                   "Make Table Query", "Hide Pane", "Properties"]
+    assert names(q.pane_menu("results", None)) == ["Run", "Clear Results", "First", "Last", "Next", "Previous",
+                                                   "Row...", "New", "Cut", "Copy", "Paste", "Hide Pane", "Properties"]
+    assert names(q.table_menu(q.boxes[0], None)) == ["Column Names", "Name Only", "Select All Columns", "Remove",
+                                                     "Properties"]
+    q.properties()
+    assert q.last_dialog.windowTitle() == "Properties"
+    # closed: the SQL goes back to the command
+    q.set_sql("SELECT Name, City\nFROM Customers")
+    asked, oq = [], QMessageBox.question
+    QMessageBox.question = lambda *a, **k: (asked.append(a[1:3]), QMessageBox.StandardButton.Yes)[1]
+    try:
+        w.mdi.activeSubWindow().close()
+    finally:
+        QMessageBox.question = oq
+    assert asked == [("LinBASIC Studio", "Save changes to query 'Command1'?")], asked     # (VB6 12.3/q9)
+    # (the SQL on one line in the command, as VB6 keeps it: oracle 12.3 deTest-after-sqlbuilder.Dsr)
+    assert cmd.ctype == 1 and cmd.text == "SELECT Name, City FROM Customers", (cmd.ctype, cmd.text)
+    assert [f[0] for f in cmd.fields] == ["Name", "City"], cmd.fields
+
+
+TESTS = {"t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

@@ -21,6 +21,7 @@ DEFAULTS = {
     "grid_height": 120,
     "align_grid": True,                # Align Controls to Grid
     "layout_guides": True,             # Form Layout: Resolution Guides (VB6: on, DEV-8/fd1 stage 20)
+    "data_links": [],                  # the Data Links of the Data View: [{"name", "connect"}] (phase 12.3)
     "dockable": {},                     # Tools > Options > Docking: {"immediate": True, ... "objbrowser": False}
     "layout_dockable": True,           # Form Layout: Dockable (off: a window among the code and form windows)
     "addin_reseditor_startup": False,  # Add-In Manager: VB 6 Resource Editor, Load on Startup

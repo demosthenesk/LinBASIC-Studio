@@ -123,10 +123,11 @@ class ConnectionPage(QWidget):
         self.cs.setText(c.source)
 
     def build(self):
-        path, _ = QFileDialog.getOpenFileName(self, "Data Link Properties - Database", self.d.project_dir(),
-                                              "Access Databases (*.mdb *.MDB);;All Files (*)")
-        if path:
-            self.cs.setText(f"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={path};Persist Security Info=False")
+        """Build...: Data Link Properties (phase 12.3)"""
+        from .datalink import DataLinkDialog
+        dlg = DataLinkDialog(self, self.cs.text(), self.d.project_dir())
+        if dlg.exec():
+            self.cs.setText(dlg.connect_string())
 
     def test(self):
         try:
@@ -186,6 +187,9 @@ class CommandPage(QWidget):
         self.sql = QPlainTextEdit()
         self.sql.setMaximumHeight(90)
         f.addRow(self.rb_sql, self.sql)
+        self.b_builder = QPushButton("SQL &Builder...")     # the Query Designer (phase 12.3)
+        self.b_builder.clicked.connect(lambda: self.d.sql_builder(self.cmd))
+        f.addRow("", self.b_builder)
         self.rb_obj.toggled.connect(self._source_kind)
         self.objtype.currentIndexChanged.connect(lambda _: self._fill_objects())
         self.conn.currentIndexChanged.connect(lambda _: self._fill_objects())
@@ -318,6 +322,7 @@ class CommandPage(QWidget):
         self.objtype.setEnabled(obj)
         self.objname.setEnabled(obj)
         self.sql.setEnabled(not obj)
+        self.b_builder.setEnabled(not obj)
 
     def _relate_toggled(self, on):
         for w in (self.parent, self.pfield, self.cfield, self.rels):
@@ -726,6 +731,7 @@ class DataEnvDesigner(_Base):
         menu.addAction("Add C&ommand", lambda: self.add_command(False))
         if isinstance(self.selected(), M.DeCommand):
             menu.addAction("Add Child Co&mmand", lambda: self.add_command(True))
+            menu.addAction("Desi&gn...", lambda: self.sql_builder(self.selected()))
         if self.selected() is not None:
             menu.addAction("&Delete", self.delete)
         menu.addAction("&Refresh", self.refresh)
@@ -768,6 +774,28 @@ class DataEnvDesigner(_Base):
             return
         self.changed()
         self.fill_tree()
+
+    def sql_builder(self, c):
+        """SQL Builder... / Design of a command: its SQL in the Query Designer ("Design: Command1"); closed, the SQL
+        goes back to the command (phase 12.3)"""
+        from .querydesign import QueryDesigner
+        if c is None:
+            return None
+        conn = next((x for x in self.model.conns if x.name.lower() == (c.conn or "").lower()), None)
+        if conn is None or not conn.source:
+            self.say(f"{c.name}: no connection")
+            return None
+        sql = c.text if c.ctype == 1 else (f"SELECT *\nFROM {c.text}" if c.text and c.ctype == 2 else "")
+
+        def save(text, c=c):
+            c.ctype = 1                         # (VB6 keeps the SQL on one line: oracle 12.3 deTest-after-sqlbuilder)
+            c.text = " ".join(x.strip() for x in text.splitlines() if x.strip())
+            self.retrieve(c)
+            self.changed()
+            self.fill_tree(c)
+        w = QueryDesigner(self.main, conn.source, sql, title=f"Design: {c.name}", on_save=save,
+                          base_dir=self.project_dir(), conn_name=conn.name, query_name=c.name)
+        return self.main.add_query_window(w)
 
     def retrieve(self, c):
         """the fields of a command, as ADO gives them (the designer lists them, the reports bind them)"""

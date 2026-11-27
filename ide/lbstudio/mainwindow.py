@@ -44,6 +44,21 @@ class CodeSubWindow(QMdiSubWindow):
         super().closeEvent(e)
 
 
+class QuerySubWindow(QMdiSubWindow):
+    """a window of the Query Designer: the SQL of a command goes back to it when it closes (it asks)"""
+
+    def __init__(self, main):
+        super().__init__()
+        self.main = main
+
+    def closeEvent(self, e):
+        w = self.widget()
+        if w is not None and hasattr(w, "can_close") and not w.can_close():
+            e.ignore()
+            return
+        super().closeEvent(e)
+
+
 class DesignSubWindow(QMdiSubWindow):
     def __init__(self, main):
         super().__init__()
@@ -271,6 +286,11 @@ class MainWindow(QMainWindow):
                                        Qt.DockWidgetArea.TopDockWidgetArea)
         self.dock_palette.setFloating(True)
         self.dock_palette.hide()
+        # the Data View (phase 12.3; View > Data View Window): at the bottom, hidden at first
+        from .dataview import DataView
+        self.dataview = DataView(self)
+        self.dock_dataview = self._dock("DataView", "Data View", self.dataview, Qt.DockWidgetArea.BottomDockWidgetArea)
+        self.dock_dataview.hide()
 
         # the bottom: Output, Immediate, Locals, Watches in tabs
         from .debugwin import OutputWindow, ImmediateEdit, LocalsWindow, WatchWindow
@@ -455,8 +475,10 @@ class MainWindow(QMainWindow):
                                       "F4")
         self.a_view_layout = self._act(m, "&Form Layout Window", self.show_layout)
         self.a_view_ppages = self._act(m, "Property Pa&ges", self.property_pages, "Shift+F4")
-        m.addSeparator()
+        self.sep_view_tools = m.addSeparator()   # (Table, Zoom, Show Panes of the Query Designer before it)
         self.a_view_toolbox = self._act(m, "Toolbo&x", lambda: self._show_dock(self.dock_toolbox, self.toolbox))
+        self.a_view_dataview = self._act(m, "Data Vie&w Window", self.show_data_view,
+                                         icon=edicons.icon("data_view"))
         self.a_view_palette = self._act(m, "Color Pa&lette", self.show_palette)
         m.addSeparator()
         # View > Zoom: the zoom of the code windows without Ctrl+Mouse Wheel (a laptop touchpad), not in VB6
@@ -574,6 +596,12 @@ class MainWindow(QMainWindow):
         self.a_end = self._act(m, "&End", self.run_end, icon=SP.SP_MediaStop)
         self.a_end.setEnabled(False)
         self.a_restart = self._act(m, "&Restart", self.run_restart, "Shift+F5")
+
+        # the Query and Diagram menus of the Query Designer (phase 12.3): grey without one in front (VB6)
+        qm = mb.addMenu("&Query")
+        dm = mb.addMenu("D&iagram")
+        from .querydesign import IdeMenus
+        self.query_menus = IdeMenus(self, qm, dm, self.view_menu, self.sep_view_tools)
 
         m = mb.addMenu("&Tools")
         self.a_add_proc = self._act(m, "Add &Procedure...", self.add_procedure)
@@ -694,8 +722,7 @@ class MainWindow(QMainWindow):
         for a in (self.a_view_project, self.a_view_props, self.a_view_layout, self.a_objbrowser,
                   self.a_view_toolbox):
             tb.addAction(a)
-        self.a_data_view = QAction(edicons.icon("data_view"), "Data View Window", self)      # phase 12.3
-        self.a_data_view.setEnabled(False)
+        self.a_data_view = self.a_view_dataview                                              # phase 12.3
         self.a_vcm = QAction(edicons.icon("component_manager"), "Visual Component Manager", self)   # Enterprise:
         self.a_vcm.setEnabled(False)                                                         # not made
         tb.addAction(self.a_data_view)
@@ -874,6 +901,7 @@ class MainWindow(QMainWindow):
 
     def _tool_dock(self, key):
         return {"project": getattr(self, "dock_project", None), "props": getattr(self, "dock_props", None),
+                "dataview": getattr(self, "dock_dataview", None),
                 "toolbox": getattr(self, "dock_toolbox", None), "palette": getattr(self, "dock_palette", None)}.get(key)
 
     def _tool_widget(self, key):
@@ -1630,6 +1658,32 @@ class MainWindow(QMainWindow):
             self.open_designer(m)
 
     # ================================================================ form designers
+    def current_query(self):
+        """the Query Designer in front (the Query and Diagram menus act on it)"""
+        sw = self.current_sub()
+        from .querydesign import QueryDesigner
+        return sw.widget() if sw is not None and isinstance(sw.widget(), QueryDesigner) else None
+
+    def add_query_window(self, w):
+        """a window of the Query Designer among the code and form windows ("Design: Command1", "Run Table: ...")"""
+        sw = QuerySubWindow(self)
+        sw.setWidget(w)
+        sw.setWindowTitle(w.title)
+        self.mdi.addSubWindow(sw)
+        sw.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        sw.resize(860, 600)
+        sw.show()
+        self.mdi.setActiveSubWindow(sw)
+        self.query_menus.update()
+        return w
+
+    def show_data_view(self):
+        """View > Data View Window"""
+        if not self.dock_dataview.isVisible():
+            self.dataview.fill()
+        self._show_dock(self.dock_dataview, self.dataview.tree)
+        return self.dataview
+
     def current_designer(self):
         sw = self.current_sub()
         return sw.widget() if sw is not None and isinstance(sw.widget(), FormDesigner) else None
@@ -1677,6 +1731,8 @@ class MainWindow(QMainWindow):
 
     def _sub_activated(self, sw):
         self.update_status()
+        if getattr(self, "query_menus", None) is not None:
+            self.query_menus.update()
         if getattr(self, "palette_win", None) is not None:
             self.palette_win.show_for()
         self.update_format_menu()               # the Form Editor toolbar follows the window in front
