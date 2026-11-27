@@ -6417,6 +6417,14 @@ def t_querydesign12(d):
          "Orders.CustomerID\nGROUP BY Customers.CompanyName, Customers.City\nHAVING (Customers.City = 'London')\n"
          "ORDER BY Customers.CompanyName")                     # (oracle 12.3/sq19)
     assert m.parse(t, nw.get) and m.sql() == t and m.group_by and len(m.joins) == 1, m.sql()
+    m.group_by = False
+    m.rows = [r for r in m.rows if r.output]
+    for r in m.rows:
+        r.sort, r.criteria = "", ""
+    m.joins[0].set_all_from("Customers", True)
+    m.joins[0].set_all_from("Orders", True)        # (both: FULL, oracle 12.3/q32)
+    assert m.sql() == ("SELECT Customers.CompanyName, Customers.City\nFROM { oj Customers FULL OUTER JOIN\n"
+                       "    Orders ON Customers.CustomerID = Orders.CustomerID }"), m.sql()
     m = QM.QueryModel()
     assert not m.parse("SELECT TOP 5 City FROM Customers", nw.get) and m.sql() == "SELECT TOP 5 City FROM Customers"
     settings.S["data_links"] = []

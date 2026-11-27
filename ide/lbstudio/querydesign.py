@@ -390,10 +390,13 @@ GRID_COLUMNS = {   # the columns of the Grid pane for each type of query
     "Update": ["column", "table", "value", "criteria", "or1", "or2", "or3"],
     "Delete": ["column", "table", "criteria", "or1", "or2", "or3"],
 }                  # (VB6 12.3/q18, q19, q21, q24, q26)
-ONE_TABLE = {      # Change Type with more tables: the table of the query (VB6 12.3/q17 "Update Table")
-    "Update": ("Update Table", "An UPDATE query updates rows in only one table."),
-    "Delete": ("Delete Table", "A DELETE query deletes rows from only one table."),
-    "Insert Values": ("Insert Values Table", "An INSERT VALUES query inserts a row into only one table."),
+ONE_TABLE = {      # Change Type with more tables: the table of the query (VB6 12.3/q17, q33, q34)
+    "Update": ("Update Table", "An UPDATE query updates rows in only one table.\n\nSelect a table from the list and "
+               "click OK. Or press Cancel to return to your original query."),
+    "Delete": ("Delete Table", "A DELETE query deletes rows from only one table.\n\nSelect a table from the list and "
+               "click OK. Or click Cancel to return to your original query."),
+    "Insert Values": ("Insert Values", "An INSERT query inserts a row in only one table.\n\nSelect a table from the "
+                      "list and click OK. Or press Cancel to return to your original query."),
 }
 GRID_TITLES = {"column": "Column", "alias": "Alias", "table": "Table", "output": "Output", "sort": "Sort Type",
                "order": "Sort Order", "group": "Group By", "criteria": "Criteria", "or1": "Or...", "or2": "Or...",
@@ -934,8 +937,7 @@ class QueryDesigner(QWidget):
         if qtype in ONE_TABLE:
             if len(m.tables) > 1:
                 title, text = ONE_TABLE[qtype]
-                name = self.ask_item(title, text + "\n\nSelect a table from the list and click OK. Or press Cancel "
-                                     "to return to your original query.", [t.ref for t in m.tables], editable=False)
+                name = self.choose_table(title, text, [t.ref for t in m.tables])
                 keep = m.table(name) if name else None
                 if keep is None:
                     return
@@ -971,6 +973,34 @@ class QueryDesigner(QWidget):
             return self.answers.pop(0)
         v, ok = QInputDialog.getText(self, title, label, text=text)
         return v.strip() if ok else ""
+
+    def choose_table(self, title, text, items):
+        """the table of an Update / Delete / Insert Values query: a list, OK, Cancel, Help (VB6 12.3/q17)"""
+        if getattr(self, "answers", None):
+            return self.answers.pop(0)
+        d = QDialog(self)
+        d.setWindowTitle(title)
+        h = QHBoxLayout(d)
+        v = QVBoxLayout()
+        lab = QLabel(text)
+        lab.setWordWrap(True)
+        v.addWidget(lab)
+        lst = QListWidget()
+        lst.addItems(items)
+        lst.setCurrentRow(0)
+        lst.itemDoubleClicked.connect(lambda _it: d.accept())
+        v.addWidget(lst)
+        h.addLayout(v, 1)
+        bb = QDialogButtonBox(Qt.Orientation.Vertical)
+        bb.addButton(QDialogButtonBox.StandardButton.Ok)
+        bb.addButton(QDialogButtonBox.StandardButton.Cancel)
+        bb.addButton(QDialogButtonBox.StandardButton.Help)
+        bb.accepted.connect(d.accept)
+        bb.rejected.connect(d.reject)
+        h.addWidget(bb, 0, Qt.AlignmentFlag.AlignTop)
+        if not d.exec() or lst.currentItem() is None:
+            return ""
+        return lst.currentItem().text()
 
     def ask_item(self, title, label, items, editable=True):
         if getattr(self, "answers", None):
