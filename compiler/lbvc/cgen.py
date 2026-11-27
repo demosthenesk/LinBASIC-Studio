@@ -3204,9 +3204,8 @@ class ProcGen:
                 and self.c.classes[self.cls].is_uctl:
             sy = self.lookup(m.base.name, m.base)
             if sy is not None and sy.kind == 'me':   # UserControl.Enabled: the built-in member, not the class's own
-                r = self.late(E('vb_self', 'Object'), m.name.lower(), args, node, kind, value)
-                r.code = r.code.replace('vb_late_o(', 'vbf_uc_member(', 1)
-                return r
+                return self.late(E('vb_self', 'Object'), m.name.lower(), args, node, kind, value,
+                                 callfn='vbf_uc_member')
         if m.base.kind == 'name' and m.base.name.lower() == 'error' and not m.base.suffix \
                 and self.lookup(m.base.name, m.base) is None and self.comp_global(m.name, m.base.name) is None:
             # Error.Number: Error() gives a Variant (a String), so VB6 makes the program and the member is
@@ -3332,19 +3331,22 @@ class ProcGen:
             return self.c.udts[t[2:]].name
         return t[2:] if t.startswith('O:') else t
 
-    def late(self, b, name, args, node, kind, value=None):
+    def late(self, b, name, args, node, kind, value=None, callfn=None):
         """late-bound call (Object, Variant, Collection)"""
         vals = []
         args = list(args or [])
         if any(a is not None and a.kind == 'named' for a in args):
             args = self.order_named(b.t, name, args, node)
         back = []                                # ByRef: plain variables get the callee's value back
-        for i, a in enumerate(args):
+        owned = False                            # an object among the arguments: the callee may write a ByRef
+        for i, a in enumerate(args):             # value over it (Solve(Text1)), so the arguments are copies
             if a is None:
                 vals.append('vb_v_missing()')
                 continue
             x = self.expr(a)
             vals.append(self.conv(x, 'Variant', a))
+            if is_obj(x.t):
+                owned = True
             if a.kind == 'name' and x.ptr is not None and not x.prop and not x.fix and x.t != 'Variant' \
                     and not is_udt(x.t) and x.arr is None:
                 sy = self.lookup(a.name, a)
@@ -3368,7 +3370,7 @@ class ProcGen:
             vals.append(self.conv(value, 'Variant', node))
         argv = f"{len(vals)}, (vbvar[]){{ {', '.join(vals)} }}" if vals else "0, 0"
         backs = []
-        if back:
+        if back or owned:
             self.ntmp += 1
             arr = f"t{self.ntmp}"
             self.decls.append(f"vbvar {arr}[{len(vals)}] = {{ {{ 0 }} }};")
@@ -3386,7 +3388,9 @@ class ProcGen:
                 backs.append(f"vb_vfree(&{arr}[{i}]);")
             argv = f"{len(vals)}, {arr}"
         lname = c_utf8(name)
-        if is_obj(b.t):
+        if callfn:                               # (UserControl.TextHeight: the built-in member, not the class's own)
+            call = f"{callfn}({b.code}, \"{lname}\", {kind}, {argv})"
+        elif is_obj(b.t):
             call = f"vb_late_o({b.code}, \"{lname}\", {kind}, {argv})"
         else:
             call = f"vb_late({b.code}, \"{lname}\", {kind}, {argv})"

@@ -935,7 +935,10 @@ vbvar OcxFlexGrid::member(const std::string &n, vb_i32 kind, bool set, vbvar val
         QStringList parts = t.split('\t');
         for (int cc = 0; cc < cols; cc++) cell(at, cc)->setText(cc < parts.size() ? parts[cc] : QString());
         inside = false;
-        paint_sel();
+        /* a row after the selection (AddItem at the end, the usual loop): its own cells only - all of them each
+         * time made 8000 rows take minutes (robot: FastFillFlexGrid; VB6 under a second) */
+        if (at > std::max(row, rowsel) && !mergecells) { if (tw && redraw) for (int cc = 0; cc < cols; cc++) style(at, cc); }
+        else paint_sel();
         return vb_v_empty();
     }
     if (n == "removeitem") {

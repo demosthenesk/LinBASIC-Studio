@@ -1140,7 +1140,11 @@ static void apply_look(Ctl *c)
     if (c->kind == K_SHAPE || c->kind == K_LINE) { c->w->update(); return; }
     if (c->kind == K_USER) return;              /* a user control: its look is its own (ReadProperties) */
     QWidget *w = c->w;
-    w->setFont(qfont(c->font));
+    /* the font again only when it changed: each setFont on a shown widget looks the font up (robot: FontSelector
+     * sets ForeColor on 2400 labels, each in a font of its own - a minute) */
+    QFont nf = qfont(c->font);
+    bool newfont = !c->look_done || !(w->font() == nf) || w->font().pointSizeF() != nf.pointSizeF();
+    if (newfont) w->setFont(nf);
     QPalette pal = w->palette();
     QColor b = qcolor(c->back), f = fore_on(c->fore, c->back);
     switch (c->kind) {
@@ -1159,8 +1163,8 @@ static void apply_look(Ctl *c)
         w->setAutoFillBackground(!(c->kind == K_LABEL && c->backstyle == 0));   /* BackStyle 0: transparent */
         break;
     }
-    w->setPalette(pal);
-    if (c->look_done) label_fit(c);             /* a new font; at load the size of the .frm stands */
+    if (!(pal == w->palette())) w->setPalette(pal);
+    if (c->look_done && newfont) label_fit(c);  /* a new font; at load the size of the .frm stands */
     c->look_done = true;
 }
 
@@ -2756,7 +2760,7 @@ static void ctl_clear(vbobj o)
     delete c->timer;
     if (c->uc) uctl_release(c);
     if (c->bag) vb_orelease(c->bag);
-    if (c->w) c->w->deleteLater();
+    if (c->w) { c->w->hide(); c->w->setParent(nullptr); c->w->deleteLater(); }   /* (no event of it after c->g goes) */
     if (c->picture) vb_orelease(c->picture);
     delete c->g;
     bound_release(c);
@@ -4818,7 +4822,9 @@ extern "C" void vbf_unload(vbobj o)
     if (st->focus == o) st->focus = nullptr;
     if (c->timer) c->timer->stop();
     if (c->uc) uctl_release(c);                 /* Hide (if it was shown), Terminate */
-    if (c->w) { c->w->deleteLater(); c->w = nullptr; }
+    /* hidden and out of the form at once: the form shown before the deletion would size it, its picture gone
+     * (robot: Extract Icons unloads an element in Form_Load) */
+    if (c->w) { c->w->hide(); c->w->setParent(nullptr); c->w->deleteLater(); c->w = nullptr; }
     c->form = nullptr;
     auto ci = std::find(st->ctls.begin(), st->ctls.end(), o);
     if (ci != st->ctls.end()) { st->ctls.erase(ci); vb_orelease(o); }
