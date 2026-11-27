@@ -1,0 +1,7 @@
+Type=Exe
+Form=Form1.frm
+Form=Form2.frm
+Form=Form3.frm
+Startup="Form1"
+ExeName32="Menus.exe"
+Name="Menus"

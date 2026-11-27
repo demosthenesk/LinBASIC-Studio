@@ -61,6 +61,33 @@ def swatch(v, size=12):
     return QIcon(pm)
 
 
+
+def font_dialog(parent, qf):
+    """the Font dialog of the Properties window: any size typed, 7.5 or 8.25 too, as the Font dialog of Windows
+    that VB6 shows (Qt's takes whole numbers only: GitHub issue #4); None when cancelled"""
+    from PyQt6.QtGui import QDoubleValidator
+    from PyQt6.QtCore import QLocale
+    d = QFontDialog(qf, parent)
+    d.setWindowTitle("Font")
+    opts = getattr(QFontDialog, "FontDialogOption", QFontDialog)
+    d.setOption(opts.DontUseNativeDialog)
+    size = next((le for le in d.findChildren(QLineEdit) if le.validator() is not None), None)
+    if size is not None:
+        v = QDoubleValidator(1.0, 2048.0, 2, size)
+        v.setLocale(QLocale.c())                # (8.25, whatever the language of the system)
+        size.setValidator(v)
+    if not d.exec():
+        return None
+    f = d.selectedFont()
+    if size is not None:
+        try:
+            pt = float(size.text().replace(",", "."))
+        except ValueError:
+            pt = 0
+        if pt > 0:
+            f.setPointSizeF(pt)
+    return f
+
 class ColorPopup(QFrame):
     """the drop-down of a color property: Palette and System tabs"""
     chosen = pyqtSignal(int)
@@ -809,7 +836,8 @@ class PropertiesWindow(QWidget):
         qf.setItalic(bool(f["Italic"]))
         qf.setUnderline(bool(f["Underline"]))
         qf.setStrikeOut(bool(f["Strikethrough"]))
-        nf, ok = QFontDialog.getFont(qf, self, "Font")
+        nf = font_dialog(self, qf)
+        ok = nf is not None
         if ok:
             self.commit(p, {"Name": nf.family(), "Size": nf.pointSizeF(), "Charset": None,
                             "Weight": 700 if nf.bold() else 400, "Underline": nf.underline(),

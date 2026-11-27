@@ -583,7 +583,7 @@ class OcxLook(QWidget):
                 mci_glyph(p, b, QColor("#808080"))
                 p.restore()
         elif k in ("Adodc", "MSRDC"):           # the ADO Data control, the RemoteData control: as the Data control
-            DataLook.paint_on(p, self.rect(), str(c.get("Caption", c.name)), white, QColor("#000000"))
+            DataLook.paint_on(p, self.rect(), str(c.get("Caption", "")), white, QColor("#000000"))
         elif k == "DataRepeater":               # the caption, the row indicators, the rows of the repeated control
             sunken(r)
             top = 2
@@ -592,7 +592,7 @@ class OcxLook(QWidget):
                 p.fillRect(QRect(2, 2, r.width() - 3, hh), face)
                 p.setPen(QColor("#000000"))
                 p.drawText(QRect(6, 2, r.width() - 10, hh), Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft,
-                           str(c.get("Caption", c.name)))
+                           str(c.get("Caption", "")))
                 top += hh
             if str(c.get("RowIndicator", -1)) not in ("0", "False"):
                 p.fillRect(QRect(2, top, 14, r.height() - top - 1), face)
@@ -641,6 +641,34 @@ class OcxLook(QWidget):
             p.setPen(dark); p.drawRect(r)
             p.drawText(r, Qt.AlignmentFlag.AlignCenter, k)
         p.end()
+
+
+class GraphicButton(QPushButton):
+    """a CommandButton; Style 1 - Graphical with a Picture as VB6 draws it: the picture centred, the caption under
+    it, the two together centred up and down, a half pixel downwards (VB6 oracle DEV-13/btn1, GitHub issue #3)"""
+
+    pic = None
+
+    def paintEvent(self, e):
+        if self.pic is None or self.pic.isNull():
+            return super().paintEvent(e)
+        from PyQt6.QtWidgets import QStylePainter, QStyleOptionButton, QStyle
+        p = QStylePainter(self)
+        o = QStyleOptionButton()
+        self.initStyleOption(o)
+        o.text = ""
+        from PyQt6.QtGui import QIcon
+        o.icon = QIcon()
+        p.drawControl(QStyle.ControlElement.CE_PushButtonBevel, o)
+        t = self.text()
+        th = self.fontMetrics().height() if t else 0
+        pw, ph = self.pic.width(), self.pic.height()
+        y = (self.height() - ph - th + 1) // 2
+        p.drawPixmap((self.width() - pw) // 2, y, self.pic)
+        if th:
+            p.setPen(self.palette().color(QPalette.ColorRole.ButtonText))
+            p.drawText(QRect(0, y + ph, self.width(), th),
+                       Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop, t)
 
 
 class DataLook(QWidget):
@@ -798,10 +826,12 @@ class DesignItem(QWidget):
             self.visual = None
         c, t = self.ctl, self.type
         val = self.val
-        cap = str(val("Caption", c.name))
+        cap = str(val("Caption", ""))           # no Caption in the .frm: none (VB6 DEV-13/btn1; a new control gets its name)
         w = None
         if t == "CommandButton":
-            w = QPushButton(strip_amp(cap))
+            w = GraphicButton(strip_amp(cap))
+            if geti(c, "Style") == 1:
+                w.pic = self.pixmap("Picture")          # (its picture, as VB6's designer shows it: issue #3)
         elif t == "Label":
             w = QLabel(strip_amp(cap))
             al = geti(c, "Alignment")
@@ -1306,11 +1336,11 @@ class FormFrame(QWidget):
     def frame(self):
         if self.d.root.type_name in ("UserControl", "PropertyPage"):   # its client area only
             return 0, 0, 0
-        bs = geti(self.d.root, "BorderStyle", 2)
+        bs = V.border_style_drawn(self.d.root)          # (0 - None with menus: a caption bar, as VB6)
         if bs == 0:
             return 0, 0, 0
         border, top = V.FRAMES.get(bs, V.FRAMES[2])[:2]
-        menu = 20 if self.d.menus() else 0
+        menu = 20 if V.menu_bar_shown(self.d.root) else 0
         return border, top - border, menu
 
     def layout_frame(self):
@@ -1334,12 +1364,14 @@ class FormFrame(QWidget):
             f.setPixelSize(12)
             p.setFont(f)
             title = str(self.d.root.get("Caption", self.d.root.name))
-            p.drawText(QRect(b + 22, b, r.width() - 2 * b - 100, cap), Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft, title)
+            sysmenu = bool(geti(self.d.root, "ControlBox", -1))    # no ControlBox: no icon either (VB6 DEV-13/menu1)
+            p.drawText(QRect(b + (22 if sysmenu else 4), b, r.width() - 2 * b - 100, cap),
+                       Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft, title)
             # the icon and the buttons of the caption bar
-            icon = self.d.form_pixmap("Icon")
+            icon = self.d.form_pixmap("Icon") if sysmenu else None
             if icon is not None:
                 p.drawPixmap(QRect(b + 2, b + 3, 16, 16), icon)
-            else:
+            elif sysmenu:
                 p.fillRect(QRect(b + 2, b + 3, 16, 16), QColor("#5A7FB0"))
             x = r.width() - b - 2
             btns = []

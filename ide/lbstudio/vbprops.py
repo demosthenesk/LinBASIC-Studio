@@ -1496,12 +1496,27 @@ def value_of(ctl, p, form_root=None):
     return v
 
 
+def menu_bar_shown(form):
+    """the designer of VB6 draws the menu bar when a top-level menu is visible (oracle DEV-13/menu2, menu3:
+    menus that are all Visible = False give no menu bar)"""
+    return any(c.type_name == "Menu" and _num(c.get("Visible", -1)) != 0 for c in form.children)
+
+
+def border_style_drawn(form):
+    """the BorderStyle of the frame the designer of VB6 draws: 0 - None with menus (visible or not) is drawn as
+    1 - Fixed Single, with its caption bar (oracle DEV-13/menu1, menu2: SteamyDock's menuForm, issue #1)"""
+    bs = _num(form.get("BorderStyle", 2))
+    if bs == 0 and any(c.type_name == "Menu" for c in form.children):
+        return 1
+    return bs
+
+
 def frame_of(form, has_menu=None):
     """(left, top, right, bottom) of the frame of a form in twips"""
-    bs = _num(form.get("BorderStyle", 2))
+    bs = border_style_drawn(form)
     l, t, r, b = FRAMES.get(bs, FRAMES[2])
     if has_menu is None:
-        has_menu = any(c.type_name == "Menu" for c in form.children)
+        has_menu = menu_bar_shown(form)
     if has_menu and bs != 0:
         t += 20
     return l * 15, t * 15, r * 15, b * 15

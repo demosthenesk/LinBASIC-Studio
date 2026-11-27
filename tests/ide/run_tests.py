@@ -6960,7 +6960,95 @@ def t_addin125(d):
         w.S.save()
 
 
-TESTS = {"t_addin125": t_addin125, "t_visdata12": t_visdata12, "t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+def t_fontsize13(d):
+    """GitHub issue #4: the Font dialog of the Properties window takes a size typed by hand, 7.5 too (Qt's takes
+    whole numbers only), as the Font dialog of Windows that VB6 shows"""
+    from PyQt6.QtWidgets import QFontDialog, QLineEdit
+    from PyQt6.QtGui import QFont
+    from PyQt6.QtTest import QTest
+    from PyQt6.QtCore import QTimer as _QT
+    from lbstudio import propwin
+    seen = {}
+
+    def answer(size):
+        def go():
+            dlg = next(x for x in app.topLevelWidgets() if isinstance(x, QFontDialog) and x.isVisible())
+            le = next(x for x in dlg.findChildren(QLineEdit) if x.validator() is not None)
+            le.selectAll()
+            QTest.keyClicks(le, size)
+            seen["text"] = le.text()
+            dlg.accept()
+        return go
+    for typed, want in (("7.5", 7.5), ("8.25", 8.25), ("12", 12.0)):
+        _QT.singleShot(200, answer(typed))
+        f = propwin.font_dialog(None, QFont("Sans Serif", 8))
+        assert seen["text"] == typed and f is not None and abs(f.pointSizeF() - want) < 0.01, (typed, seen, f and f.pointSizeF())
+    # through the Properties window: the Font of a Label is written with the size typed
+    w = MainWindow()
+    w.show()
+    fd = w.open_designer(w.project.module("Form1"))
+    c = fd.place_new("Label", QRect(10, 10, 100, 20), None)
+    fd.select([fd.items[c]])
+    app.processEvents()
+    pw = w.props
+    p = V.prop_def("Label", "Font")
+    _QT.singleShot(200, answer("7.5"))
+    pw._font_dialog(p)
+    assert abs(float(pw.value(p)["Size"]) - 7.5) < 0.01, pw.value(p)
+    w.project.dirty = False
+    for m in w.project.modules:
+        m.dirty = False
+
+
+def t_gbutton13(d):
+    """GitHub issue #3: a graphical CommandButton (Style 1) shows its Picture in the designer as VB6 draws it
+    (oracle DEV-13/btn1): the picture centred, the caption under it; no Caption in the .frm: no text"""
+    import shutil
+    from lbstudio.designer import GraphicButton
+    for f in os.listdir(os.path.join(HERE, "btn13")):
+        shutil.copy(os.path.join(HERE, "btn13", f), d)
+    w = MainWindow()
+    w.show()
+    w.open_project(os.path.join(d, "Btn1.vbp"))
+    f = w.open_designer(w.project.module("Form1"))
+    app.processEvents()
+    vis = {c.name: f.items[c].visual for c in f.all_controls()}
+    for n, text in (("Command1", "Go"), ("Command2", ""), ("Command3", "A wide button text")):
+        b = vis[n]
+        assert isinstance(b, GraphicButton) and b.pic is not None and (b.pic.width(), b.pic.height()) == (32, 32), n
+        assert b.text() == text, (n, b.text())
+    img = vis["Command2"].grab().toImage()       # the picture in the middle of the button (64 x 64: at 16, 16)
+    assert img.pixelColor(16 + 16, 16 + 16).blue() > 150 and img.pixelColor(16 + 3, 16 + 3).red() > 150
+    w.project.dirty = False
+    for m in w.project.modules:
+        m.dirty = False
+
+
+def t_menuframe13(d):
+    """GitHub issue #1: the frame of a form with menus as the designer of VB6 draws it (oracle DEV-13/menu1-3):
+    BorderStyle 0 with menus gets a caption bar (Fixed Single); the menu bar only with a visible top-level menu"""
+    import shutil
+    from lbstudio import vbprops as V
+    for f in os.listdir(os.path.join(HERE, "menu13")):
+        shutil.copy(os.path.join(HERE, "menu13", f), d)
+    w = MainWindow()
+    w.show()
+    w.open_project(os.path.join(d, "Menus.vbp"))
+    # Form1: BorderStyle 0, a visible menu; Form2: BorderStyle 0, menus all hidden; Form3: Sizable, menus all hidden
+    for name, size, frame in (("Form1", (4590, 3720), (3, 22, 20)), ("Form2", (4590, 3420), (3, 22, 0)),
+                              ("Form3", (4740, 3570), (8, 22, 0))):
+        f = w.open_designer(w.project.module(name))
+        app.processEvents()
+        assert V.outer_rect(f.root)[2:] == size, (name, V.outer_rect(f.root))
+        assert f.frame_w.frame() == frame, (name, f.frame_w.frame())
+        rects = f.frame_w.menu_rects()
+        assert [m.name for m, r in rects] == (["mnuMain"] if name == "Form1" else []), (name, rects)
+    w.project.dirty = False
+    for m in w.project.modules:
+        m.dirty = False
+
+
+TESTS = {"t_fontsize13": t_fontsize13, "t_gbutton13": t_gbutton13, "t_menuframe13": t_menuframe13, "t_addin125": t_addin125, "t_visdata12": t_visdata12, "t_dataview12": t_dataview12, "t_querydesign12": t_querydesign12, "t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

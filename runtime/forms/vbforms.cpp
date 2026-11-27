@@ -84,6 +84,9 @@ extern "C" {
 #include <QHBoxLayout>
 #include <QToolTip>
 #include <QStyleOptionSlider>
+#include <QStylePainter>
+#include <QStyleOptionButton>
+#include <QStyleOptionFocusRect>
 #include <QHelpEvent>
 #include <QTreeWidget>
 #include <QHeaderView>
@@ -1296,6 +1299,40 @@ static int frx_pictype(const char *const *props, const char *name)
 }
 
 /* ---------------------------------------------------------------- Shape, Line */
+/* a graphical CommandButton (Style 1) as VB6 draws it: the picture centred, the caption under it, the two
+ * together centred up and down, a half pixel downwards (VB6 oracle DEV-13/btn1, GitHub issue #3) */
+class VbButton : public QPushButton {
+public:
+    using QPushButton::QPushButton;
+    QPixmap pic;
+protected:
+    void paintEvent(QPaintEvent *e) override
+    {
+        if (pic.isNull()) { QPushButton::paintEvent(e); return; }
+        QStylePainter p(this);
+        QStyleOptionButton o;
+        initStyleOption(&o);
+        o.text.clear();
+        o.icon = QIcon();
+        p.drawControl(QStyle::CE_PushButtonBevel, o);
+        QString t = text();
+        int th = t.isEmpty() ? 0 : fontMetrics().height(), pw = pic.width(), ph = pic.height();
+        int d = isDown() ? 1 : 0;
+        int y = (height() - ph - th + 1) / 2 + d;
+        p.drawPixmap((width() - pw) / 2 + d, y, pic);
+        if (th) {
+            p.setPen(palette().color(isEnabled() ? QPalette::Active : QPalette::Disabled, QPalette::ButtonText));
+            p.drawText(QRect(d, y + ph, width(), th), Qt::AlignHCenter | Qt::AlignTop | Qt::TextShowMnemonic, t);
+        }
+        if (hasFocus()) {
+            QStyleOptionFocusRect f;
+            f.initFrom(this);
+            f.rect = rect().adjusted(4, 4, -4, -4);
+            p.drawPrimitive(QStyle::PE_FrameFocusRect, f);
+        }
+    }
+};
+
 class ShapeWidget : public QWidget {
 public:
     vbobj self;
@@ -1490,7 +1527,7 @@ static void make_widget(Ctl *c, QWidget *parent)
     vbobj self = c->self;
     switch (c->kind) {
     case K_COMMAND: {
-        auto *b = new QPushButton(c->caption, parent);
+        auto *b = new VbButton(c->caption, parent);
         b->setAutoDefault(false);
         QObject::connect(b, &QPushButton::clicked, [self]() { fire_ctl(C(self), "click"); });
         w = b; break;
@@ -2611,7 +2648,13 @@ static void button_icon(Ctl *c)
     if (!b) return;
     vbobj p = c->btnpic[c->enabled || !c->btnpic[2] ? 0 : 2];
     Pic *pp = p ? pic_of(p) : nullptr;
-    if (c->def && propn(c->def->props, "Style", 0) == 1 && pp && !pp->img.isNull()) {
+    bool on = c->def && propn(c->def->props, "Style", 0) == 1 && pp && !pp->img.isNull();
+    if (auto *vb = dynamic_cast<VbButton *>(b)) {           /* a CommandButton: the layout of VB6 */
+        vb->pic = on ? QPixmap::fromImage(pp->img) : QPixmap();
+        vb->update();
+        return;
+    }
+    if (on) {
         QPixmap px = QPixmap::fromImage(pp->img);
         b->setIcon(QIcon(px));
         b->setIconSize(px.size());
