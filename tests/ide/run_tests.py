@@ -4726,6 +4726,10 @@ def t_help87(d):
             assert w.set_help_folder() and w.S["msdn_path"] == folder
         finally:
             QFileDialog.getExistingDirectory = get_dir
+        vbf = lib.file("vb98.chm")             # keywords of the Index (in a .CHM: $WWKeywordLinks)
+        vbf.load()
+        for kw in ("alerts", "MsgBox function"):
+            vbf.keywords[kw.lower()] = (kw, [("MsgBox Function", "html/vafctMsgBox.htm")])
         hw = HelpWindow(w, lib)
         assert [hw.tabs.tabText(i) for i in range(3)] == ["&Contents", "I&ndex", "&Search"]
         tools = [a.text() for a in hw.findChildren(QToolBar)[0].actions()]
@@ -4772,6 +4776,18 @@ def t_help87(d):
         finally:
             _mw.QApplication.focusWidget = focus
         assert hw.current[0].name == "vb98" and hw.current[1] == "html/vafctMsgBox.htm", hw.current
+        # the Contents and the Index follow the page shown, the tab in front stays (offline issue O1: the user's
+        # decision 2026-11-27; VB6's MSDN only with Locate): its place in the Contents, its keyword in the Index
+        assert hw.tabs.currentIndex() == 1
+        assert hw.tree.currentItem().text(0) == "MsgBox Function", hw.tree.currentItem().text(0)
+        assert hw.tree.currentItem().parent().text(0) == "Language Reference"
+        assert hw.find.text() == "MsgBox function" and hw.index.currentItem().text() == "MsgBox function", hw.find.text()
+        hw.show_page(*lib.resolve(vbdoc.children[1].children[0]))   # a page of no keyword: the Contents follow
+        assert hw.tree.currentItem().text(0) == "Programmer's Guide" and hw.find.text() == "MsgBox function"
+        hw.go_back()
+        assert hw.tree.currentItem().text(0) == "MsgBox Function"
+        hw.show_page(lib.file("xtra.chm"), "html/x.htm")        # (in the Contents under its own book)
+        assert hw.tree.currentItem().text(0) == "Extra Control"
         assert w.help_context_number(1008978, "VBA") and not w.help_context_number(4242, "VBA")
         hw.show_page(lib.file("xtra.chm"), "html/x.htm")         # charset=iso8859-1 is read as cp1252 (’)
         assert "We\u2019ve nothing here." in hw.view.toPlainText(), hw.view.toPlainText()

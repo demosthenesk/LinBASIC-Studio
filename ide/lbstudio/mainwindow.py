@@ -4520,7 +4520,7 @@ class MainWindow(QMainWindow):
             return
         topics = hw.lib.by_keyword(word, main_only=True) or hw.lib.by_keyword(word)
         if topics:
-            hw.show_topics(topics)
+            hw.show_topics(topics, keyword=word)
         else:
             hw.show_index(word)
 

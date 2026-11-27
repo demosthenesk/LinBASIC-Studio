@@ -234,30 +234,38 @@ class HelpWindow(QMainWindow):
         self.raise_()
         self.activateWindow()
 
+    @staticmethod
+    def _page_key(chm, local):
+        return chm.name, local.split("#")[0].lower().lstrip("/")
+
     def _toc_path(self, chm, local):
-        """the nodes from the root to the page (for Locate)"""
-        want = (chm.name, local.split("#")[0].lower().lstrip("/"))
+        """the nodes from the root to the page (Locate, and the Contents that follow the page): the first place
+        of each page in the Contents, found in one walk of the tree and kept"""
+        if getattr(self, "_toc_paths", None) is None:
+            self._toc_paths = {}
 
-        def walk(nodes, path):
-            for n in nodes:
-                page = self.lib.resolve(n)
-                if page is not None and (page[0].name, page[1].split("#")[0].lower().lstrip("/")) == want:
-                    return path + [n]
-                got = walk(n.children, path + [n])
-                if got:
-                    return got
-            return None
-        return walk(self.lib.contents(), [])
+            def walk(nodes, path):
+                for n in nodes:
+                    page = self.lib.resolve(n)
+                    if page is not None:
+                        self._toc_paths.setdefault(self._page_key(*page), path + [n])
+                    walk(n.children, path + [n])
+            walk(self.lib.contents(), [])
+        return self._toc_paths.get(self._page_key(chm, local))
 
-    def locate(self):
-        """Locate: the page in the Contents tab"""
+    def locate(self, switch=True):
+        """Locate: the page in the Contents tab (switch False: the Contents follow the page shown, the tab in
+        front stays - the user's decision 2026-11-27, VB6's MSDN does it only with Locate)"""
         if self.current is None:
             return
         path = self._toc_path(*self.current)
         if not path:
+            if not switch:
+                self.tree.setCurrentItem(None)
             return
         self._fill_toc()
-        self.tabs.setCurrentIndex(self.TAB_CONTENTS)
+        if switch:
+            self.tabs.setCurrentIndex(self.TAB_CONTENTS)
         parent = None
         for node in path:
             items = [parent.child(i) for i in range(parent.childCount())] if parent is not None else \
@@ -380,6 +388,49 @@ class HelpWindow(QMainWindow):
         if it is not None:
             self.show_topics(self.lib.by_keyword(it.text()) or [], exact=it.text())
 
+    def _page_keyword(self, chm, local):
+        """the keyword of the Index that leads to the page: the one with the title of the page, or else the
+        shortest (the reverse of the keywords of its .CHM, made once for each file)"""
+        cache = getattr(self, "_kw_of_page", None)
+        if cache is None:
+            cache = self._kw_of_page = {}
+        if chm.name not in cache:
+            rev = {}
+            chm.load()
+            for low, (kw, items) in chm.keywords.items():
+                for title, loc in items:
+                    rev.setdefault(self._page_key(chm, loc), []).append((kw, title))
+            cache[chm.name] = rev
+        hits = cache[chm.name].get(self._page_key(chm, local))
+        if not hits:
+            return None
+        title = (self.windowTitle().split(" - MSDN Library")[0] or "").strip().lower()
+        kws = [kw for kw, _ in hits]
+        first = title.split(" ")[0] if title else ""
+        for pick in ([k for k in kws if k.lower() == title],                    # "MsgBox function"
+                     [k for k in kws if title.startswith(k.lower() + " ")],     # "Form" of "Form Object"
+                     [k for k in kws if first and k.lower().split(" ")[0].rstrip(",") == first]):
+            if pick:
+                return min(pick, key=lambda k: (len(k), k.lower()))
+        return min(kws, key=lambda k: (len(k), k.lower()))
+
+    def _sync_index(self, word=None):
+        """the Index follows the page shown: its keyword in the box and selected in the list"""
+        if self.current is None:
+            return
+        word = word or self._page_keyword(*self.current)
+        if not word:
+            return
+        self._ensure_index()
+        self.find.setText(word)
+        low = word.lower()
+        row = next((i for i, kw in enumerate(self._keywords) if kw.lower() == low), None)
+        if row is None:
+            self._filter(word)
+            return
+        self.index.setCurrentRow(row)
+        self.index.scrollToItem(self.index.item(row), QListWidget.ScrollHint.PositionAtTop)
+
     def show_index(self, word=""):
         self._ensure_index()
         self.tabs.setCurrentIndex(self.TAB_INDEX)
@@ -390,8 +441,8 @@ class HelpWindow(QMainWindow):
         self.activateWindow()
 
     # ------------------------------------------------------------ pages
-    def show_topics(self, topics, exact=None):
-        """one page: shown; more: the Topics Found dialog"""
+    def show_topics(self, topics, exact=None, keyword=None):
+        """one page: shown; more: the Topics Found dialog (keyword: the word of F1, for the Index)"""
         if exact:
             ex = [t for t in topics if t[0].lower() == exact.lower()]
             topics = ex or topics
@@ -405,7 +456,11 @@ class HelpWindow(QMainWindow):
             t = dlg.chosen()
         else:
             t = topics[0]
-        return self.show_page(t[1], t[2])
+        self._f1_keyword = keyword or exact
+        try:
+            return self.show_page(t[1], t[2])
+        finally:
+            self._f1_keyword = None
 
     def show_page(self, chm, local, record=True):
         path = chm.page(local)
@@ -435,6 +490,11 @@ class HelpWindow(QMainWindow):
         t = re.search(r"<title>(.*?)</title>", html, re.I | re.S)
         self.setWindowTitle((t.group(1).strip() + " - " if t else "") + "MSDN Library - Visual Basic 6")
         self._update_actions()
+        try:                                    # the Contents and the Index follow the page (user's decision)
+            self.locate(switch=False)
+            self._sync_index(getattr(self, "_f1_keyword", None))
+        except Exception:                       # noqa: BLE001 - the page is shown all the same
+            pass
         self.show()
         self.raise_()
         self.activateWindow()
