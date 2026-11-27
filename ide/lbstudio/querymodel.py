@@ -236,19 +236,19 @@ class QueryModel:
             s = f"DELETE FROM {_q(self.target or (self.tables[0].name if self.tables else ''))}"
             w = self.where_parts(False)
             return s + (f"\nWHERE {w}" if w else "")
-        if self.qtype == "Update":
-            sets = [f"{_q(r.column)} = {r.value}" for r in self.rows if r.value.strip() and not r.is_expr()]
+        if self.qtype == "Update":              # (VB6 12.3/q18, q29: the checked columns, "SET CompanyName =")
+            sets = [f"{_q(r.column)} = {r.value}".rstrip() for r in self.rows if r.output and not r.is_expr()]
             s = f"UPDATE {_q(self.target or (self.tables[0].name if self.tables else ''))}\nSET {', '.join(sets)}"
             w = self.where_parts(False)
             return s + (f"\nWHERE {w}" if w else "")
-        if self.qtype == "Insert Values":
-            rows = [r for r in self.rows if not r.is_expr()]
+        if self.qtype == "Insert Values":       # (VB6 12.3/q24: the checked columns, "VALUES ()")
+            rows = [r for r in self.rows if r.output and not r.is_expr()]
             return (f"INSERT INTO {_q(self.target or (self.tables[0].name if self.tables else ''))}\n"
-                    f"    ({', '.join(_q(r.column) for r in rows)})\nVALUES ({', '.join(r.value or 'NULL' for r in rows)})")
-        if self.qtype == "Insert":
-            rows = [r for r in self.rows if r.output]
-            cols = ", ".join(_q(r.append or r.column) for r in rows)
-            return f"INSERT INTO {_q(self.target)}\n    ({cols})\n" + self.select_sql()
+                    f"    ({', '.join(_q(r.column) for r in rows)})\nVALUES ({', '.join(r.value for r in rows)})")
+        if self.qtype == "Insert":              # (VB6 12.3/q21-q23: the column list only with Append)
+            rows = [r for r in self.rows if r.output and r.append.strip()]
+            cols = f"    ({', '.join(_q(r.append) for r in rows)})\n" if rows else ""
+            return f"INSERT INTO {_q(self.target)}\n{cols}" + self.select_sql()
         if self.qtype == "Make Table":
             s = self.select_sql()
             lines = s.split("\n")
@@ -310,17 +310,17 @@ class QueryModel:
             if new_ref == j.left and kind in ("left", "right"):   # the table comes first in the join
                 kind = "right" if kind == "left" else "left"
             word = {"": "INNER JOIN", "left": "LEFT OUTER JOIN", "right": "RIGHT OUTER JOIN",
-                    "full": "FULL OUTER JOIN"}[kind]
+                    "full": "FULL OUTER JOIN"}[kind]          # (VB6 12.3/q15: { oj A LEFT OUTER JOIN\n    B ON ... })
             ons = [j] + [k for k in self.joins if k is not j and k not in used and
                          {k.left.lower(), k.right.lower()} == {j.left.lower(), j.right.lower()}]
             if n:
                 expr = f"({expr})"
-            expr += f" {word} {tname(self.table(new_ref))} ON " + " AND ".join(k.cond() for k in ons)
+            expr += f" {word}\n    {tname(self.table(new_ref))} ON " + " AND ".join(k.cond() for k in ons)
             used += ons
             inside.add(new_ref.lower())
             n += 1
         rest = [tname(t) for t in self.tables if t.ref.lower() not in inside]
-        return ", ".join([expr] + rest), used
+        return ", ".join([f"{{ oj {expr} }}"] + rest), used
 
     # ---------------------------------------------------------------- the SQL read back
     def parse(self, text, columns_of=None):
@@ -406,6 +406,13 @@ class QueryModel:
             if not self._criteria(cond, split_name, True):
                 self.parsed = False
                 return False
+        # the order of the Grid pane as VB6 shows read SQL (12.3/q7, q13): what is no column of a table (*,
+        # expressions) first, then the columns only of the criteria, then the others
+        n_sel = len(m["select"])
+        expr = [r for r in self.rows if r.is_expr()]
+        crit = [r for i, r in enumerate(self.rows) if not r.is_expr() and i >= n_sel and not r.output and
+                (r.criteria or any(r.ors)) and not r.sort]
+        self.rows = expr + crit + [r for r in self.rows if r not in expr and r not in crit]
         self.parsed = True
         return True
 
@@ -451,7 +458,7 @@ class QueryModel:
 # ---------------------------------------------------------------- the SQL text
 def _q(name):
     """a name in brackets when it needs them (Order Details -> [Order Details])"""
-    if not name or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*|\*", name):
+    if not name or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*|\*|`[^`]+`|\[[^\]]+\]", name):
         return name
     return f"[{name}]"
 
@@ -591,7 +598,8 @@ def _parse_select(text):
         m = re.fullmatch(r"(?is)(.+?)\s+AS\s+(\[[^\]]+\]|\w+)", it)
         items.append((m.group(1).strip(), _uq(m.group(2))) if m else (it, ""))
     frm, joins, kinds = [], [], {}
-    for it in _split_commas(c["FROM"]):
+    ftext = re.sub(r"\{\s*oj\s+(.*?)\s*\}", r"\1", c["FROM"], flags=re.IGNORECASE | re.DOTALL)   # (ODBC's outer join)
+    for it in _split_commas(ftext):
         if re.search(r"(?i)\bJOIN\b", it):        # A INNER JOIN B ON A.x = B.y ...: the tables and the conditions
             pieces = re.split(r"(?i)\s+(INNER|LEFT(?:\s+OUTER)?|RIGHT(?:\s+OUTER)?|FULL(?:\s+OUTER)?)?\s*JOIN\s+",
                               " " + it.strip())

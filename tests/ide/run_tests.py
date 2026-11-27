@@ -6491,9 +6491,11 @@ def t_querydesign12(d):
                                    "HAVING (Customers.City = 'London')\nORDER BY Customers.Name"), q.sql.toPlainText()
     assert q.run() == 1
     q.set_group_by(False)
-    # Select All Rows From Customers: an outer join
+    # Select All Rows from Customers: an outer join, in ODBC's escape as VB6 writes it (12.3/q15), run by the runtime
     q.all_rows_from(q.model.joins[0], "Customers", True)
-    assert "FROM Customers LEFT OUTER JOIN Orders ON Customers.CustID = Orders.CustID" in q.sql.toPlainText()
+    assert ("FROM { oj Customers LEFT OUTER JOIN\n    Orders ON Customers.CustID = Orders.CustID }\n"
+            "WHERE (Customers.City = 'London')") in q.sql.toPlainText(), q.sql.toPlainText()
+    assert q.run() == 3                         # (Bs Beverages without orders too)
     q.all_rows_from(q.model.joins[0], "Customers", False)
     # the SQL typed: the panes follow; SQL they cannot show: grey
     q.sql.setFocus()
@@ -6508,22 +6510,45 @@ def t_querydesign12(d):
     assert q.run() == 1                          # (the SQL as it is)
     q.set_sql("SELECT Name, City\nFROM Customers")
     assert q.model.parsed and q.grid.isEnabled()
-    # the types of query
+    # the types of query (VB6 12.3/q16-q29)
+    q.change_type("Insert Values")
+    assert [g.horizontalHeaderItem(j).text() for j in range(g.columnCount())] == ["Column", "New Value"]
+    assert q.sql.toPlainText() == "INSERT INTO Customers\n    (Name, City)\nVALUES (, )", q.sql.toPlainText()
+    q.answers = ["Orders"]
+    q.change_type("Insert")
+    assert [g.horizontalHeaderItem(j).text() for j in range(g.columnCount())] == [
+        "Column", "Alias", "Table", "Output", "Append", "Criteria", "Or...", "Or...", "Or..."]
+    assert q.sql.toPlainText() == "INSERT INTO `Orders`\nSELECT Name, City\nFROM Customers", q.sql.toPlainText()
+    g.item(1, q.grid_keys.index("append")).setText("CustID")
+    assert q.sql.toPlainText().startswith("INSERT INTO `Orders`\n    (CustID)\nSELECT Name, City"), q.sql.toPlainText()
     q.change_type("Update")
+    assert [g.horizontalHeaderItem(j).text() for j in range(g.columnCount())] == [
+        "Column", "Table", "New Value", "Criteria", "Or...", "Or...", "Or..."]
+    assert q.sql.toPlainText() == "UPDATE Customers\nSET Name =, City =", q.sql.toPlainText()
     g.item(1, q.grid_keys.index("value")).setText("'Madrid'")
     g.item(0, q.grid_keys.index("criteria")).setText("= 'Bs Beverages'")
+    q.toggle_column("Customers", "Name", False)          # (the pencil of the diagram: not SET)
     assert q.sql.toPlainText() == ("UPDATE Customers\nSET City = 'Madrid'\nWHERE (Name = 'Bs Beverages')"), \
         q.sql.toPlainText()
-    assert q.run() == "1 row(s) affected by last query.", q.last_message
+    assert q.run() == "Query has executed successfully", q.last_message
     _c, rows, _m = dbinfo.ado_query(cs, "SELECT City FROM Customers WHERE CustID = 'BSBEV'")
     assert rows == [["Madrid"]]
-    q.change_type("Delete")
+    q.change_type("Delete")                     # (the rows of the criteria only)
+    assert [g.horizontalHeaderItem(j).text() for j in range(g.columnCount())] == [
+        "Column", "Table", "Criteria", "Or...", "Or...", "Or..."]
     assert q.sql.toPlainText() == "DELETE FROM Customers\nWHERE (Name = 'Bs Beverages')", q.sql.toPlainText()
     q.answers = ["London2"]
     q.change_type("Make Table")
-    assert q.sql.toPlainText().split("\n")[:2] == ["SELECT Name, City", "INTO London2"], q.sql.toPlainText()
+    assert q.sql.toPlainText().split("\n")[:3] == ["SELECT", "INTO London2", "FROM Customers"], q.sql.toPlainText()
     q.change_type("Select")
-    assert q.sql.toPlainText().startswith("SELECT Name, City\nFROM Customers")
+    q.toggle_column("Customers", "City", True)
+    assert q.sql.toPlainText() == "SELECT City\nFROM Customers\nWHERE (Name = 'Bs Beverages')", q.sql.toPlainText()
+    # two tables, Update: the table is asked, the other goes (VB6 12.3/q17, q18)
+    q.add_table("Orders")
+    q.answers = ["Customers"]
+    q.change_type("Update")
+    assert [t.name for t in q.model.tables] == ["Customers"] and not q.model.joins
+    q.change_type("Select")
     # Verify SQL Syntax
     assert q.verify() and q.last_message == "The SQL syntax has been verified against the data source."
     # the menus of the IDE now act on this window

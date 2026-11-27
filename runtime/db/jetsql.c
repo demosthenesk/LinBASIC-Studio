@@ -754,6 +754,14 @@ static int parse_from_item(ps *p, jbuf *b, int *simple, char **table, char **ali
 
 static int parse_from_primary(ps *p, jbuf *b, int *simple, char **table, char **alias)
 {
+    if (isop(p, "{") && p->i + 1 < p->nt && kw(&p->t[p->i + 1], "oj")) {
+        /* ODBC's outer join escape, as the Query Designer of VB6 writes it: { oj A LEFT OUTER JOIN B ON ... } */
+        p->i += 2;
+        if (parse_from_item(p, b, simple, table, alias) < 0) return -1;
+        *simple = 0;
+        if (!acceptop(p, "}")) { fail(p, 3131, "Syntax error in FROM clause."); return -1; }
+        return 0;
+    }
     if (acceptop(p, "(")) {
         if (iskw(p, "select")) {
             *simple = 0;

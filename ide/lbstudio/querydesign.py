@@ -385,10 +385,15 @@ class GridDelegate(QStyledItemDelegate):
 GRID_COLUMNS = {   # the columns of the Grid pane for each type of query
     "Select": ["column", "alias", "table", "output", "sort", "order", "group", "criteria", "or1", "or2", "or3"],
     "Make Table": ["column", "alias", "table", "output", "sort", "order", "group", "criteria", "or1", "or2", "or3"],
-    "Insert": ["column", "alias", "table", "append", "sort", "order", "group", "criteria", "or1", "or2", "or3"],
+    "Insert": ["column", "alias", "table", "output", "append", "group", "criteria", "or1", "or2", "or3"],
     "Insert Values": ["column", "value"],
-    "Update": ["column", "alias", "table", "value", "criteria", "or1", "or2", "or3"],
-    "Delete": ["column", "alias", "table", "criteria", "or1", "or2", "or3"],
+    "Update": ["column", "table", "value", "criteria", "or1", "or2", "or3"],
+    "Delete": ["column", "table", "criteria", "or1", "or2", "or3"],
+}                  # (VB6 12.3/q18, q19, q21, q24, q26)
+ONE_TABLE = {      # Change Type with more tables: the table of the query (VB6 12.3/q17 "Update Table")
+    "Update": ("Update Table", "An UPDATE query updates rows in only one table."),
+    "Delete": ("Delete Table", "A DELETE query deletes rows from only one table."),
+    "Insert Values": ("Insert Values Table", "An INSERT VALUES query inserts a row into only one table."),
 }
 GRID_TITLES = {"column": "Column", "alias": "Alias", "table": "Table", "output": "Output", "sort": "Sort Type",
                "order": "Sort Order", "group": "Group By", "criteria": "Criteria", "or1": "Or...", "or2": "Or...",
@@ -507,6 +512,9 @@ class QueryDesigner(QWidget):
 
     # ---------------------------------------------------------------- the model to the panes
     def changed(self, from_sql=False):
+        if not from_sql:                        # changed in the panes: the criteria in parentheses (VB6 12.3/q15)
+            for r in self.model.rows:
+                r.bare.clear()
         self.dirty = True
         self.mark_stale()
         self.refresh(keep_sql=from_sql)
@@ -758,10 +766,10 @@ class QueryDesigner(QWidget):
                 cols, rows, more = dbinfo.ado_query(self.cs, sql, 0)
                 self.fill_results(cols, rows)
                 return len(rows)
-            n = dbinfo.ado_exec(self.cs, sql)
+            dbinfo.ado_exec(self.cs, sql)
             self._cols.clear()
             self._fields.clear()
-            text = f"{n} row(s) affected by last query." if n is not None else "The query was run."
+            text = "Query has executed successfully"          # (VB6 12.3/q29)
             self.say(text)
             return text
         except dbinfo.AdoError as e:
@@ -772,7 +780,8 @@ class QueryDesigner(QWidget):
         if getattr(self, "quiet", False):
             self.last_message = text
             return
-        (QMessageBox.warning if error else QMessageBox.information)(self, "Query Designer", text)
+        from . import APP_NAME
+        (QMessageBox.warning if error else QMessageBox.information)(self, APP_NAME, text)
 
     def fill_results(self, cols, rows):
         self._filling = True
@@ -916,22 +925,44 @@ class QueryDesigner(QWidget):
         self.changed()
 
     def change_type(self, qtype):
+        """Query > Change Type (VB6 12.3/q16-q26): Update, Delete and Insert Values keep one table (it is asked when
+        there are more) and its rows; Delete keeps the rows of the criteria; Insert asks the table to append to
+        ("Insert Into Table", the name in `quotes`), Make Table the new table ("Make Table")"""
         m = self.model
-        if qtype in ("Insert", "Insert Values", "Make Table") and qtype != m.qtype:
-            if qtype == "Make Table":
-                name = self.ask_text("Make Table", "Make New Table Name:", m.target if m.qtype == "Make Table" else "")
-            else:
-                choices = [t.name for t in m.tables]
-                try:
-                    choices = [n for k, n in dbinfo.ado_objects(self.cs) if k == "T"]
-                except dbinfo.AdoError:
-                    pass
-                name = self.ask_item("Insert Into", "Table name:", choices)
+        if qtype == m.qtype:
+            return
+        if qtype in ONE_TABLE:
+            if len(m.tables) > 1:
+                title, text = ONE_TABLE[qtype]
+                name = self.ask_item(title, text + "\n\nSelect a table from the list and click OK. Or press Cancel "
+                                     "to return to your original query.", [t.ref for t in m.tables], editable=False)
+                keep = m.table(name) if name else None
+                if keep is None:
+                    return
+                for t in list(m.tables):
+                    if t is not keep:
+                        m.remove_table(t.ref)
+            m.target = m.tables[0].name if m.tables else m.target
+            m.group_by = False
+            if qtype == "Delete":
+                m.rows = [r for r in m.rows if r.criteria.strip() or any(o.strip() for o in r.ors)]
+                for r in m.rows:
+                    r.output = False
+        elif qtype == "Insert":
+            choices = []
+            try:
+                choices = [n for k, n in dbinfo.ado_objects(self.cs) if k == "T"]
+            except dbinfo.AdoError:
+                pass
+            name = self.ask_item("Insert Into Table", "Append to\nTable name:", choices)
+            if not name:
+                return
+            m.target = name if name[0] in "`[" else f"`{name}`"
+        elif qtype == "Make Table":
+            name = self.ask_text("Make Table", "Make\nTable name:", m.target)
             if not name:
                 return
             m.target = name
-        elif qtype in ("Update", "Delete") and m.tables:
-            m.target = m.tables[0].name
         m.qtype = qtype
         self.changed()
 
@@ -941,10 +972,10 @@ class QueryDesigner(QWidget):
         v, ok = QInputDialog.getText(self, title, label, text=text)
         return v.strip() if ok else ""
 
-    def ask_item(self, title, label, items):
+    def ask_item(self, title, label, items, editable=True):
         if getattr(self, "answers", None):
             return self.answers.pop(0)
-        v, ok = QInputDialog.getItem(self, title, label, items, 0, True)
+        v, ok = QInputDialog.getItem(self, title, label, items, 0, editable)
         return v.strip() if ok else ""
 
     def grid_row(self):
@@ -1245,7 +1276,7 @@ class QueryDesigner(QWidget):
         j = line.join
         m = QMenu(self)
         for ref in (j.left, j.right):
-            a = m.addAction(f"&Select All Rows From {ref}", lambda r=ref: self.all_rows_from(j, r, not j.all_from(r)))
+            a = m.addAction(f"&Select All Rows from {ref}", lambda r=ref: self.all_rows_from(j, r, not j.all_from(r)))
             a.setCheckable(True)
             a.setChecked(j.all_from(ref))
         m.addSeparator()
@@ -1364,8 +1395,8 @@ class IdeMenus:
         act(m, self.q, "group", "&Group By", lambda d: d.set_group_by(), True)
         ct = m.addMenu("Change &Type")
         self.q["type"] = ct.menuAction()
-        names = {"Select": "Se&lect", "Insert": "&Insert", "Insert Values": "Insert &Values", "Update": "&Update",
-                 "Delete": "&Delete", "Make Table": "&Make Table"}
+        names = {"Select": "&Select", "Insert": "&Insert", "Insert Values": "Insert &Values", "Update": "&Update",
+                 "Delete": "&Delete", "Make Table": "&Make Table"}          # (VB6 12.3/q16)
         for t in QM.QUERY_TYPES:
             act(ct, self.q, "type:" + t, names[t], lambda d, tt=t: d.change_type(tt), True)
         m.addSeparator()
@@ -1463,7 +1494,7 @@ class IdeMenus:
             q[k].setEnabled(j is not None)
             if j is not None:
                 ref = getattr(j, side)
-                q[k].setText(("&Select" if side == "left" else "S&elect") + f" All Rows From {ref}")
+                q[k].setText(("&Select" if side == "left" else "S&elect") + f" All Rows from {ref}")   # (12.3/q14)
                 q[k].setChecked(j.all_from(ref))
         g = self.d
         g["font"].setEnabled(bool(d.notes))
