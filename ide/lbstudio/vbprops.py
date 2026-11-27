@@ -920,12 +920,25 @@ def grid_columns(ctl):
             c["Locked"] = bool(_num(lay.get("Locked", 0)))
             vis = lay.get("Object.Visible", lay.get("Visible"))
             c["Visible"] = True if vis is None else bool(_num(vis))
-            for k, d in (("AllowSizing", True), ("WrapText", False), ("Button", False)):
+            for k, d in (("WrapText", False), ("Button", False)):
                 v = lay.get(k)
                 c[k] = d if v is None else bool(_num(v))
+            v = lay.get("ColumnAllowSizing", lay.get("AllowSizing"))   # (AllowSizing: the .frm of an IDE before)
+            c["AllowSizing"] = None if v is None else bool(_num(v))     # None: never set, not written (shown True)
             c["DividerStyle"] = int(_num(lay.get("DividerStyle", 2)))
         out.append(c)
     return out
+
+
+def grid_col_twips(tw):
+    """the ColumnWidth the VB6 IDE writes for a width in twips: whole pixels, kept in HIMETRIC, given back as a Single
+    (oracle DEV-12/est1: 1000 -> 1005.165, 1200 -> 1200.189; the runtime: grid_width, grid_twips)"""
+    import math
+    import struct
+    him = math.floor(math.floor(tw / 15.0 + 0.5) * 2540.0 / 96.0 + 0.5)   # (lround of the runtime)
+    k = struct.unpack("f", struct.pack("f", 1440.0 / 2540.0))[0]
+    r = struct.unpack("f", struct.pack("f", him * k))[0]
+    return float("%.7g" % r)
 
 
 def set_grid_columns(ctl, cols):
@@ -958,33 +971,33 @@ def set_grid_columns(ctl, cols):
     sp = PropertyBlock("Split0")
     sp.items = keep
     for i, c in enumerate(cols):
-        cb = PropertyBlock(f"Column{i:02d}")   # the order of the corpus of PSC (tools/blockorder.py)
+        cb = PropertyBlock(f"Column{i:02d}")   # the order of the VB6 IDE (oracle DEV-12/est1, Form1-ide4.frm)
         if int(c.get("Alignment", 0) or 0):
             cb.items.append(Property("Alignment", int(c["Alignment"])))
         if int(c.get("DividerStyle", 2)) != 2:
             cb.items.append(Property("DividerStyle", int(c["DividerStyle"])))
-        if not c.get("AllowSizing", True):
-            cb.items.append(Property("AllowSizing", False))
+        if c.get("AllowSizing") is not None:     # once set, written with both values (VB6)
+            cb.items.append(Property("ColumnAllowSizing", bool(c["AllowSizing"])))
         if c.get("Button"):
             cb.items.append(Property("Button", True))
         if c.get("Locked"):
             cb.items.append(Property("Locked", True))
-        if c.get("WrapText"):
-            cb.items.append(Property("WrapText", True))
         if not c.get("Visible", True):
             cb.items.append(Property("Object.Visible", False))
+        if c.get("WrapText"):
+            cb.items.append(Property("WrapText", True))
         if c.get("Width") is not None:
-            w = float(c["Width"])
+            w = grid_col_twips(float(c["Width"]))
             cb.items.append(Property("ColumnWidth", int(w) if w == int(w) else w))
         sp.items.append(cb)
     _append(ctl, sp)
 
 
 # the properties of Split0 of a DataGrid (its Splits page; AllowRowSizing and RecordSelectors of the Properties window
-# too: the corpus of PSC has them in Split0, never on the grid), in the order of the corpus, with their defaults
-SPLIT_PROPS = [("Locked", False), ("MarqueeStyle", 6), ("ScrollBars", 4), ("ScrollGroup", 1), ("AllowFocus", True),
-               ("AllowRowSizing", True), ("AllowSizing", False), ("RecordSelectors", True), ("Size", 1),
-               ("SizeMode", 0)]
+# too: the corpus of PSC has them in Split0, never on the grid), in the order the VB6 IDE writes them (oracle
+# DEV-12/est1, Form1-ide4.frm), with their defaults
+SPLIT_PROPS = [("MarqueeStyle", 6), ("ScrollBars", 4), ("SizeMode", 0), ("AllowFocus", True), ("AllowRowSizing", True),
+               ("AllowSizing", True), ("Locked", False), ("RecordSelectors", True), ("ScrollGroup", 1), ("Size", 1)]
 SPLIT_TOP = {("DataGrid", "AllowRowSizing"), ("DataGrid", "RecordSelectors")}
 
 

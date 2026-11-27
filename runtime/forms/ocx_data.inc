@@ -56,6 +56,7 @@ struct OcxDataGrid;
 static QString bindings_for(const QByteArray &b, int dispid);    /* ocx_dbgrid.inc */
 struct GridColumn {
     int col; QString caption, field; int him = -1; bool visible = true, locked = false; int align = 0;
+    bool sizing = true, wrap = false, button = false; int divider = 2;   /* Split0.ColumnNN of the .frm */
     vbobj fmt = nullptr;                        /* DataFormat (counted), or none yet */
     vbobj obj = nullptr;
 };
@@ -89,6 +90,13 @@ static vb_i32 gcols_count(vbobj o);
 static vbvar gcols_item(vbobj o, vb_i32 i);
 static const vb_class CLS_GCOL = { "Column", (vb_i32)sizeof(vbobjh), nullptr, nullptr, nullptr, nullptr, 0, "text", nullptr, nullptr, nullptr, gcol_fallback, nullptr };
 static const vb_class CLS_GCOLS = { "Columns", (vb_i32)sizeof(vbobjh), nullptr, nullptr, nullptr, nullptr, 0, "item", gcols_count, gcols_item, nullptr, gcols_fallback, nullptr };
+/* Splits (one split, Split0) and the Split (VB6 oracle DEV-12/est-rt) */
+static vbvar gsplits_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found);
+static vb_i32 gsplits_count(vbobj o);
+static vbvar gsplits_item(vbobj o, vb_i32 i);
+static vbvar gsplit_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found);
+static const vb_class CLS_GSPLIT = { "Split", (vb_i32)sizeof(vbobjh), nullptr, nullptr, nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr, gsplit_fallback, nullptr };
+static const vb_class CLS_GSPLITS = { "Splits", (vb_i32)sizeof(vbobjh), nullptr, nullptr, nullptr, nullptr, 0, "item", gsplits_count, gsplits_item, nullptr, gsplits_fallback, nullptr };
 
 struct OcxDataGrid : Ocx {
     vbobj src = nullptr;                        /* DataSource (counted) */
@@ -101,8 +109,10 @@ struct OcxDataGrid : Ocx {
     int headlines = 1, curcol = 0, lastrow = -1, lastcol = -1;
     double rowheight = 0;
     /* Split0 (its Splits page; VB6 keeps AllowRowSizing, RecordSelectors ... of the grid there) */
-    int marquee = 6, scrollbars = 4;
-    bool allowrowsizing = true, splitlocked = false;
+    int marquee = 6, scrollbars = 4, scrollgroup = 1, sizemode = 0;
+    bool allowrowsizing = true, splitlocked = false, splitsizing = true, allowfocus = true;
+    double splitsize = 1;
+    vbobj splitsobj = nullptr, splitobj = nullptr;
     bool building = false;
     ~OcxDataGrid() override
     {
@@ -111,6 +121,8 @@ struct OcxDataGrid : Ocx {
         if (src) vb_orelease(src);
         for (auto &g : cols) gcol_free(g);
         if (colsobj) { colsobj->ext = nullptr; vb_orelease(colsobj); }
+        if (splitsobj) { splitsobj->ext = nullptr; vb_orelease(splitsobj); }
+        if (splitobj) { splitobj->ext = nullptr; vb_orelease(splitobj); }
     }
     bool held = false;                          /* HoldFields: the columns stay when the grid binds again */
     QString errtext;
@@ -159,8 +171,12 @@ struct OcxDataGrid : Ocx {
             prop(p, (pre + "DataField").toUtf8().constData(), &g.field);
             prop(p, (pre + "Caption").toUtf8().constData(), &g.caption);
             g.fmt = dfmt_props(p, pre);
+            g.divider = (int)propn(p, (sp + "DividerStyle").toUtf8().constData(), 2);
             double w = propn(p, (sp + "ColumnWidth").toUtf8().constData(), -1);
-            g.him = w >= 0 ? grid_width(w) : grid_px(101);
+            g.him = w >= 0 ? grid_width(w) : grid_px(g.divider == 0 ? 100 : 101);   /* no divider: a pixel less */
+            g.sizing = propn(p, (sp + "ColumnAllowSizing").toUtf8().constData(), -1) != 0;
+            g.wrap = propn(p, (sp + "WrapText").toUtf8().constData(), 0) != 0;
+            g.button = propn(p, (sp + "Button").toUtf8().constData(), 0) != 0;
             g.align = (int)propn(p, (sp + "Alignment").toUtf8().constData(), 0);
             g.locked = propn(p, (sp + "Locked").toUtf8().constData(), 0) != 0;
             g.visible = propn(p, (sp + "Object.Visible").toUtf8().constData(), propn(p, (sp + "Visible").toUtf8().constData(), -1)) != 0;
@@ -173,13 +189,10 @@ struct OcxDataGrid : Ocx {
         rowheight = propn(p, "RowHeight", 0) * 15;
         marquee = (int)propn(p, "Split0.MarqueeStyle", 6); scrollbars = (int)propn(p, "Split0.ScrollBars", 4);
         allowrowsizing = propn(p, "Split0.AllowRowSizing", -1) != 0; splitlocked = propn(p, "Split0.Locked", 0) != 0;
-        if (tw) {
-            tw->setSelectionBehavior(marquee == 3 || marquee == 4 ? QAbstractItemView::SelectRows : QAbstractItemView::SelectItems);
-            tw->verticalHeader()->setSectionResizeMode(allowrowsizing ? QHeaderView::Interactive : QHeaderView::Fixed);
-            Qt::ScrollBarPolicy pol[] = { Qt::ScrollBarAlwaysOff, Qt::ScrollBarAlwaysOn, Qt::ScrollBarAsNeeded };
-            int h = scrollbars == 4 ? 2 : (scrollbars & 1) ? 1 : 0, v = scrollbars == 4 ? 2 : (scrollbars & 2) ? 1 : 0;
-            tw->setHorizontalScrollBarPolicy(pol[h]); tw->setVerticalScrollBarPolicy(pol[v]);
-        }   /* the .frm: pixels (VB6: 15 is RowHeight 225 twips) */
+        splitsizing = propn(p, "Split0.AllowSizing", -1) != 0; allowfocus = propn(p, "Split0.AllowFocus", -1) != 0;
+        scrollgroup = (int)propn(p, "Split0.ScrollGroup", 1); sizemode = (int)propn(p, "Split0.SizeMode", 0);
+        splitsize = propn(p, "Split0.Size", 1);
+        apply_split();   /* the .frm: RowHeight in pixels (VB6: 15 is RowHeight 225 twips) */
         recsel = propn(p, "Split0.RecordSelectors", propn(p, "RecordSelectors", -1)) != 0;   /* VB6: in Split0 */
     }
     static void grid_listen(void *ctx, vbobj, const char *ev, int, vbvar *)
@@ -266,7 +279,14 @@ struct OcxDataGrid : Ocx {
             for (int k = 0; k < (int)cols.size(); k++)
                 tw->setItem(rows, k, new QTableWidgetItem(cols[k].col < 0 ? QString() : shown(cols[k], rsx_cell(rs, -1, cols[k].col))));
         vb_release(m);
-        for (int k = 0; k < (int)cols.size(); k++) tw->setColumnHidden(k, !cols[k].visible);
+        bool wrap = false;
+        for (int k = 0; k < (int)cols.size(); k++) {
+            tw->setColumnHidden(k, !cols[k].visible);
+            if (cols[k].him >= 0) tw->setColumnWidth(k, (int)std::lround(cols[k].him * 96.0 / 2540.0));
+            tw->horizontalHeader()->setSectionResizeMode(k, cols[k].sizing ? QHeaderView::Interactive : QHeaderView::Fixed);
+            wrap = wrap || cols[k].wrap;
+        }
+        tw->setWordWrap(wrap);
         tw->verticalHeader()->setVisible(recsel);
         if (rowheight > 0) {                    /* RowHeight (twips): the height of the rows */
             tw->verticalHeader()->setMinimumSectionSize(1);
@@ -346,6 +366,46 @@ struct OcxDataGrid : Ocx {
         if (!colsobj) { colsobj = vb_onew(&CLS_GCOLS); colsobj->ext = this; vb_oaddref(colsobj); }
         return colsobj;
     }
+    vbobj splits()
+    {
+        if (!splitsobj) { splitsobj = vb_onew(&CLS_GSPLITS); splitsobj->ext = this; vb_oaddref(splitsobj); }
+        return splitsobj;
+    }
+    vbobj split()
+    {
+        if (!splitobj) { splitobj = vb_onew(&CLS_GSPLIT); splitobj->ext = this; vb_oaddref(splitobj); }
+        return splitobj;
+    }
+    void apply_split()
+    {
+        if (!tw) return;
+        tw->setSelectionBehavior(marquee == 3 || marquee == 4 ? QAbstractItemView::SelectRows : QAbstractItemView::SelectItems);
+        tw->verticalHeader()->setSectionResizeMode(allowrowsizing ? QHeaderView::Interactive : QHeaderView::Fixed);
+        Qt::ScrollBarPolicy pol[] = { Qt::ScrollBarAlwaysOff, Qt::ScrollBarAlwaysOn, Qt::ScrollBarAsNeeded };
+        int h = scrollbars == 4 ? 2 : (scrollbars & 1) ? 1 : 0, v = scrollbars == 4 ? 2 : (scrollbars & 2) ? 1 : 0;
+        tw->setHorizontalScrollBarPolicy(pol[h]); tw->setVerticalScrollBarPolicy(pol[v]);
+        tw->setFocusPolicy(allowfocus ? Qt::StrongFocus : Qt::NoFocus);
+    }
+    /* the properties of Split0, of the Split and (some) of the grid */
+    vbvar split_member(const std::string &n, bool set, vbvar val, int *found)
+    {
+        *found = 1;
+        bool *bp = n == "allowrowsizing" ? &allowrowsizing : n == "locked" ? &splitlocked : n == "allowsizing" ? &splitsizing :
+                   n == "allowfocus" ? &allowfocus : n == "recordselectors" ? &recsel : nullptr;
+        if (bp) { if (set) { *bp = vb_v2bool(val) != 0; apply_split(); rebuild(); return vb_v_empty(); } return vbool(*bp); }
+        int *ip = n == "marqueestyle" ? &marquee : n == "scrollbars" ? &scrollbars : n == "scrollgroup" ? &scrollgroup :
+                  n == "sizemode" ? &sizemode : nullptr;
+        if (ip) { if (set) { *ip = vb_v2l(val); apply_split(); return vb_v_empty(); } return vb_v_l(*ip); }
+        if (n == "size") {
+            if (set) { splitsize = vb_v2d(val); return vb_v_empty(); }
+            if (sizemode == 1)                  /* exact: the one split is the whole grid (twips, VB6: 4500 -> 4500,284) */
+                return vb_v_f(grid_twips(grid_px(tw ? tw->width() : (int)std::lround(splitsize / 15.0))));
+            return vb_v_d(splitsize);
+        }
+        if (n == "columns") return retobj(columns());
+        *found = 0;
+        return vb_v_empty();
+    }
     vbobj column(int k)
     {
         GridColumn &g = cols[k];
@@ -411,8 +471,12 @@ struct OcxDataGrid : Ocx {
         if (n == "visiblerows") return vb_v_l(tw ? std::max(0, tw->viewport()->height() / 18) : 0);
         if (n == "visiblecols") return vb_v_l((vb_i32)cols.size());
         if (n == "caption") { if (set) { caption = data_qs(val); return vb_v_empty(); } return vstr(caption); }
-        bool *bp = n == "allowaddnew" ? &allowadd : n == "allowdelete" ? &allowdelete : n == "allowupdate" ? &allowupdate :
-                   n == "recordselectors" ? &recsel : nullptr;
+        if (n == "allowrowsizing" || n == "recordselectors" || n == "marqueestyle" || n == "scrollbars" || n == "scrollgroup") {
+            int f = 0;                          /* those of Split0 (VB6: the grid gives its current split's) */
+            vbvar r = split_member(n, set, val, &f);
+            if (f) return r;
+        }
+        bool *bp = n == "allowaddnew" ? &allowadd : n == "allowdelete" ? &allowdelete : n == "allowupdate" ? &allowupdate : nullptr;
         if (bp) { if (set) { *bp = vb_v2bool(val) != 0; rebuild(); return vb_v_empty(); } return vbool(*bp); }
         if (n == "headlines") { if (set) { headlines = vb_v2l(val); return vb_v_empty(); } return vb_v_f((float)headlines); }
         if (n == "rowheight") { if (set) { rowheight = vb_v2d(val); return vb_v_empty(); } return vb_v_f((float)(rowheight ? rowheight : 225)); }
@@ -441,7 +505,13 @@ struct OcxDataGrid : Ocx {
         if (n == "getbookmark") { int cur = current_row(); return cur < 0 ? vb_v_null() : vb_v_d(cur + 1 + arg_l(argc, argv, 0, 0)); }
         if (n == "rowbookmark") return vb_v_d(arg_l(argc, argv, 0, 0) + 1);
         if (n == "editactive" || n == "currentcellmodified" || n == "datachanged") return vbool(false);
-        if (n == "selbookmarks" || n == "splits") return retobj(columns());
+        if (n == "splits") {
+            if (argc == 0 || set) return retobj(splits());
+            if (vb_v2l(argv[0]) != 0) { vb_raise(9); return vb_v_empty(); }
+            return retobj(split());
+        }
+        if (n == "split") return vb_v_i(0);
+        if (n == "selbookmarks") return retobj(columns());
         *found = 0;
         return vb_v_empty();
     }
@@ -449,6 +519,39 @@ struct OcxDataGrid : Ocx {
 static OcxDataGrid *grid_of_obj(vbobj o) { o = vb_oid(o); return o ? (OcxDataGrid *)o->ext : nullptr; }
 static vb_i32 gcols_count(vbobj o) { auto *g = grid_of_obj(o); return g ? (vb_i32)g->cols.size() : 0; }
 static vbvar gcols_item(vbobj o, vb_i32 i) { auto *g = grid_of_obj(o); return g && i >= 0 && i < (vb_i32)g->cols.size() ? retobj(g->column(i)) : vb_v_empty(); }
+static vb_i32 gsplits_count(vbobj o) { return grid_of_obj(o) ? 1 : 0; }
+static vbvar gsplits_item(vbobj o, vb_i32 i) { auto *g = grid_of_obj(o); return g && i == 0 ? retobj(g->split()) : vb_v_empty(); }
+static vbvar gsplits_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
+{
+    (void)kind;
+    auto *g = grid_of_obj(o);
+    std::string n = lower(name);
+    *found = 1;
+    if (!g) { vb_raise(91); return vb_v_empty(); }
+    if (n == "count") return vb_v_l(1);
+    if (n == "item" || n.empty()) {
+        if (argc < 1) { vb_raise(450); return vb_v_empty(); }
+        if (vb_v2l(argv[0]) != 0) { vb_raise(9); return vb_v_empty(); }
+        return retobj(g->split());
+    }
+    *found = 0;
+    return vb_v_empty();
+}
+static vbvar gsplit_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
+{
+    auto *g = grid_of_obj(o);
+    bool set = kind == VBM_LET || kind == VBM_SET;
+    vbvar val = set && argc ? argv[argc - 1] : vb_v_empty();
+    if (!g) { *found = 1; vb_raise(91); return vb_v_empty(); }
+    std::string n = lower(name);
+    if (n == "columns" && !set && argc > 0) {   /* Split.Columns(i) */
+        *found = 1;
+        int k = g->find_col(argv[0]);
+        if (k < 0) { vb_raise_full(6147, vs(QString("DataGrid")), vs(QString("Column not found"))); return vb_v_empty(); }
+        return retobj(g->column(k));
+    }
+    return g->split_member(n, set, val, found);
+}
 static vbvar gcols_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
     (void)kind;
@@ -541,8 +644,10 @@ static vbvar gcol_fallback(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
         vbvar v = rsx_cell(g->rs, row, c.col);
         return n == "celltext" ? vstr(g->shown(c, v)) : v;
     }
-    if (n == "datachanged" || n == "button" || n == "wraptext" || n == "allowsizing") return vbool(false);
-    if (n == "dividerstyle") return vb_v_l(2);
+    bool *bp = n == "allowsizing" ? &c.sizing : n == "wraptext" ? &c.wrap : n == "button" ? &c.button : nullptr;
+    if (bp) { if (set) { *bp = vb_v2bool(val) != 0; g->rebuild(); return vb_v_empty(); } return vbool(*bp); }
+    if (n == "dividerstyle") { if (set) { c.divider = vb_v2l(val); return vb_v_empty(); } return vb_v_l(c.divider); }
+    if (n == "datachanged") return vbool(false);
     if (n == "left" || n == "top") return vb_v_f(0);
     *found = 0;
     return vb_v_empty();

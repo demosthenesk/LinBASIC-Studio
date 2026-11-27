@@ -843,7 +843,7 @@ def t_dgcols(d):
     w.props.commit(pc, cols)
     assert V.display(pc, w.props.value(pc)) == "(3 columns)"
     back = w.props.value(pc)
-    assert back[2]["DataFormat"]["Format"] == "000" and back[2]["Width"] == 1200 and not back[0]["Visible"], back
+    assert back[2]["DataFormat"]["Format"] == "000" and back[2]["Width"] == 1200.189 and not back[0]["Visible"], back
     w.props.show_object(f.module, f, lst)
     w.props.commit(V.prop_def("DataList", "DataFormat"), {"Type": 1, "Format": "0.0", "HaveTrueFalseNull": 0,
                                                           "LCID": 1033, "SubFormatType": 1})
@@ -862,7 +862,7 @@ def t_dgcols(d):
     grid = grid[:grid.index("\n   End")]
     assert "ColumnCount     =   3" in grid and 'Caption         =   "Years"' in grid and \
         "BeginProperty DataFormat {6D835690-900B-11D0-9484-00A0C91110ED}" in grid and 'Format          =   "000"' in grid and \
-        "SplitCount      =   1" in grid and "ColumnWidth     =   1200" in grid and "Alignment       =   2" in grid and \
+        "SplitCount      =   1" in grid and "ColumnWidth     =   1200.189" in grid and "Alignment       =   2" in grid and \
         "Object.Visible         =   0" in grid and "Bindings" in grid and "DataSource" not in grid, grid
     lblock = frm[frm.index("Begin MSDataListLib.DataList DataList1"):]
     lblock = lblock[:lblock.index("\n   End")]
@@ -5868,6 +5868,8 @@ def t_ppages11(d):
     assert by_id(m, 3027).isChecked() and not by_id(m, 3025).isChecked()
     by_id(m, 3025).setChecked(True)            # Locked
     by_id(m, 3028).setChecked(True)            # WrapText
+    assert by_id(m, 3026).isChecked()          # AllowSizing: never set, shown True
+    by_id(m, 3026).setChecked(False)           # -> ColumnAllowSizing (VB6 oracle DEV-12/est1)
     pick(by_id(m, 3030), 3)                    # DividerStyle dbgRaised
     edit(by_id(m, 3032), "2000")
     m = made(dl, "Splits")
@@ -5882,10 +5884,16 @@ def t_ppages11(d):
     dl.ok()
     cols = V.grid_columns(dg)
     assert cols[0]["Caption"] == "Name" and cols[0]["DataField"] == "FName" and cols[0]["Locked"] and \
-        cols[0]["WrapText"] and cols[0]["DividerStyle"] == 3 and cols[0]["Width"] == 2000, cols[0]
+        cols[0]["WrapText"] and cols[0]["DividerStyle"] == 3 and cols[0]["AllowSizing"] is False and \
+        cols[0]["Width"] == V.grid_col_twips(2000) == 1995.024, cols[0]
+    assert cols[1]["AllowSizing"] is None, cols[1]
     assert cols[1]["DataFormat"]["Format"] == "0.00" and cols[1]["DataFormat"]["SubFormatType"] == 1, cols[1]
     sp = V.grid_split(dg)
-    assert sp["RecordSelectors"] is False and sp["MarqueeStyle"] == 3, sp
+    assert sp["RecordSelectors"] is False and sp["MarqueeStyle"] == 3 and sp["AllowSizing"] is True, sp
+    blk = dg.block("Split0")                   # the order of the VB6 IDE (DEV-12/est1, Form1-ide4.frm)
+    assert [x.name for x in blk.items] == ["MarqueeStyle", "RecordSelectors", "Column00", "Column01"], blk.items
+    assert [x.name for x in blk.items[2].items] == ["DividerStyle", "ColumnAllowSizing", "Locked", "WrapText",
+                                                    "ColumnWidth"], blk.items[2].items
     assert V.value_of(dg, V.prop_def("DataGrid", "RecordSelectors")) is False
     gb, dl = pages("MSDBGrid.DBGrid", QRect(260, 200, 240, 120))           # the OleObjectBlob
     m = made(dl, "Columns")
@@ -6029,8 +6037,9 @@ def t_ppages11(d):
                                           'Caption3        =   "Third"']
     want[f"MSDataGridLib.DataGrid {dg.name}"] = [
         "ColumnCount     =   2", 'Caption         =   "Name"', "SplitCount      =   1", "MarqueeStyle    =   3",
-        "RecordSelectors =   0   'False", "DividerStyle    =   3", "Locked          =   -1  'True",
-        "WrapText        =   -1  'True", "ColumnWidth     =   2000", 'Format          =   "0.00"']
+        "RecordSelectors =   0   'False", "DividerStyle    =   3", "ColumnAllowSizing=   0   'False",
+        "Locked          =   -1  'True", "WrapText        =   -1  'True", "ColumnWidth     =   1995.024",
+        'Format          =   "0.00"']
     want[f"MSHierarchicalFlexGridLib.MSHFlexGrid {hf.name}"] = [
         "_NumberOfBands  =   1", "_Band(0).Cols   =   2", "_Band(0).GridLinesBand=   1", "_Band(0).TextStyleBand=   2",
         "_Band(0).TextStyleHeader=   0"]

@@ -1,0 +1,16 @@
+DataGrid1: AllowRowSizing=False RecordSelectors=False MarqueeStyle=3 ScrollBars=2 Splits.Count=!438
+  splits=1 err=0
+  split0: AllowSizing=False Locked=True MarqueeStyle=3 ScrollBars=2 ScrollGroup=2 Size=4500,284 SizeMode=1 AllowFocus=False AllowRowSizing=False RecordSelectors=False
+  col0: AllowSizing=False WrapText=True Button=True DividerStyle=0 Locked=True Visible=False Alignment=1 Width=1005,165
+  col1: AllowSizing=True WrapText=False Button=False DividerStyle=2 Locked=False Visible=True Alignment=0 Width=1514,835
+  split0 cols: AllowSizing=False/Locked=True AllowSizing=True/Locked=False
+DataGrid2: AllowRowSizing=True RecordSelectors=True MarqueeStyle=3 ScrollBars=4 Splits.Count=!438
+  splits=1 err=0
+  split0: AllowSizing=False Locked=False MarqueeStyle=3 ScrollBars=4 ScrollGroup=1 Size=1 SizeMode=0 AllowFocus=True AllowRowSizing=True RecordSelectors=True
+  col0: AllowSizing=False WrapText=False Button=False DividerStyle=2 Locked=False Visible=True Alignment=2 Width=1514,835
+  col1: AllowSizing=False WrapText=False Button=False DividerStyle=0 Locked=False Visible=True Alignment=0 Width=1500,095
+  split0 cols: AllowSizing=False/Locked=False AllowSizing=False/Locked=False
+set col1 AllowSizing False: err=0 AllowSizing=False
+set split AllowSizing True: err=0 AllowSizing=True col0 AllowSizing=False col1 AllowSizing=False
+set col1 wrap/button/div: err=0 WrapText=True Button=True DividerStyle=3
+end

@@ -203,7 +203,8 @@ def layout_page(dlg, key, w, made):
             wd.setEnabled(c is not None)
         if c is not None:
             for k, cb in checks.items():
-                cb.setChecked(bool(c.get(k, k in ("AllowSizing", "Visible"))))
+                v = c.get(k)                    # (AllowSizing of a DataGrid column: None, never set, shows True)
+                cb.setChecked(k in ("AllowSizing", "Visible") if v is None else bool(v))
             _pick(div, c.get("DividerStyle", 2))
             al = c.get("Alignment", 3 if db else 0)
             _pick(align, 0 if db and al == 3 and c.get("AlignFlag") else al)      # (s_dbgal: 0 - Left)
