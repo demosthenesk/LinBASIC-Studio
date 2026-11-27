@@ -2,11 +2,10 @@
 
 **A Visual Basic 6 compatible development environment for Linux and Windows.**
 
-> The latest release is **0.8.0-beta1**, a beta. The code here is newer: the IDE of Phase 8 and the
-> wizards, add-ins and portable packages of Phase 9 are finished (see [Add-Ins and wizards](#add-ins-and-wizards)),
-> and of Phase 10 the help of the programs (`.chm` and `.hlp`: F1, What's This, see [Forms and controls](#forms-and-controls))
-> and AsyncRead / Hyperlink in user controls.
-> Please report what does not work as in VB6.
+> **1.0.0** is the first stable release. Since 0.8.0-beta1 it has the wizards and add-ins of VB6,
+> portable packages, the help of the programs (`.chm` and `.hlp`), the property pages of the ActiveX
+> controls, View → Toolbars → Customize, the Data View and the Query Designer, the Visual Data Manager
+> and add-ins written in BASIC. Please report what does not work as in VB6.
 
 LinBASIC Studio opens, edits, runs and compiles projects written in Visual Basic 6:
 `.vbp`, `.vbg`, `.frm`, `.frx`, `.bas`, `.cls`, `.ctl`, `.pag` and `.dsr` files. Programs are built
@@ -36,6 +35,10 @@ they did on Windows: the same events in the same order, the same numbers and dat
   * the wizards and add-ins of VB6: Application, Data Form, Data Object, ActiveX Control Interface and
     Property Page Wizards, the Class Builder, the API Viewer, and the Package and Deployment Wizard for
     portable packages (an AppImage, a folder or an archive)
+  * View → Toolbars → Customize: toolbars, menus and shortcut menus of your own, as in VB6
+  * the Data View and the Query Designer (SQL Builder), and the Visual Data Manager
+  * add-ins written in BASIC, as in VB6: the Addin project, its Connect designer and the VBIDE objects
+    (without COM: the add-in is a program of its own that talks to the IDE)
   * F1 help from your own MSDN Library (see [Help](#help): how to copy its files and connect them)
 
 ## Contents
@@ -94,6 +97,22 @@ File → Make builds the executable of the project for Linux, Windows 32-bit or 
 
 ![The Make dialog](docs/screenshots/ide-make.png)
 
+### The Query Designer and the Data View
+
+The Data View lists the tables, views and columns of a database. The Query Designer (the SQL Builder of
+a Data Environment command) has the four panes of VB6: tables and their joins, the grid of columns and
+criteria, the SQL as VB6 writes it for Jet, and the results.
+
+![The Query Designer with two tables, a join, criteria and the SQL](docs/screenshots/ide-querydesigner.png)
+
+### The Visual Data Manager
+
+Add-Ins → Visual Data Manager opens the VisData of VB6 for the databases of LinBASIC Studio and ODBC:
+the Database Window, SQL statements, the record forms, table structures, the Query Builder and the
+Data Form Designer.
+
+![The Visual Data Manager with the Database Window and a Dynaset form](docs/screenshots/ide-visdata.png)
+
 ### Programs made with LinBASIC Studio
 
 Each program below is one of the [examples](#examples), compiled with `lbvc` and running on Linux.
@@ -142,10 +161,10 @@ Each zip also has `README.md`, `LICENSE` and `licenses/`, the licenses of the th
 it carries. The AppImage runs on Ubuntu 24.04 and other current x86-64 Linux distributions:
 
 ```sh
-unzip LinBASIC-Studio-0.8.0-beta1-linux-x86_64.zip
-cd LinBASIC-Studio-0.8.0-beta1-linux-x86_64
-chmod +x LinBASIC-Studio-0.8.0-beta1-x86_64.AppImage
-./LinBASIC-Studio-0.8.0-beta1-x86_64.AppImage
+unzip LinBASIC-Studio-1.0.0-linux-x86_64.zip
+cd LinBASIC-Studio-1.0.0-linux-x86_64
+chmod +x LinBASIC-Studio-1.0.0-x86_64.AppImage
+./LinBASIC-Studio-1.0.0-x86_64.AppImage
 ```
 
 ## Quick start
@@ -162,9 +181,9 @@ chmod +x LinBASIC-Studio-0.8.0-beta1-x86_64.AppImage
 **On the command line**
 
 ```sh
-./LinBASIC-Studio-0.8.0-beta1-x86_64.AppImage --lbvc examples/Hello/Hello.vbp -o hello                        # Linux
+./LinBASIC-Studio-1.0.0-x86_64.AppImage --lbvc examples/Hello/Hello.vbp -o hello                        # Linux
 ./hello
-./LinBASIC-Studio-0.8.0-beta1-x86_64.AppImage --lbvc examples/Notepad/Notepad.vbp --target win64 -o out/Notepad.exe   # Windows
+./LinBASIC-Studio-1.0.0-x86_64.AppImage --lbvc examples/Notepad/Notepad.vbp --target win64 -o out/Notepad.exe   # Windows
 ```
 
 A program with forms gets `libvbforms.so` next to it and uses the Qt 6 of the computer when it runs on
@@ -177,7 +196,7 @@ Documents folder or a USB stick (not *Program Files*), and start `LinBASIC Studi
 installed, and the settings stay in the `settings` folder next to it.
 
 ```
-LinBASIC-Studio-0.8.0-beta1-win64\
+LinBASIC-Studio-1.0.0-win64\
   LinBASIC Studio.exe   the IDE
   lbvc.cmd              the compiler:  lbvc MyProject.vbp -o MyProject.exe
   python\               Python 3.8 with PyQt5 and QScintilla (the IDE)
@@ -310,6 +329,16 @@ VB6 writes, so the projects go on working in VB6.
 * **The window layout of VB6:** the menus and toolbars (Standard, Edit, Debug, Form Editor) of VB6;
   each tool window has its context menu with Dockable and Hide, and Tools → Options → Docking says
   which ones dock.
+* **View → Toolbars → Customize:** the Toolbars, Commands and Options tabs of VB6. New toolbars, commands
+  dragged onto the toolbars and menus (Ctrl+drag copies, dragging off removes), Modify Selection, Change
+  Button Image and the Button Editor, the Shortcut Menus of the IDE, Reset; what you change is kept.
+* **The Data View (View → Data View Window):** Data Links (the Data Link Properties of Jet and ODBC) and
+  the connections of the Data Environments, with their tables, views, stored procedures and columns. Open
+  shows the rows of a table, which can be changed.
+* **The Query Designer:** Design of a Data Environment command, or its SQL Builder. The Diagram, Grid,
+  SQL and Results panes, joins from the relations, Sort, Group By, the Select, Insert, Insert Values,
+  Update, Delete and Make Table queries, Verify SQL Syntax and Run, with the Query, Diagram and View menus
+  of VB6. The SQL goes back to the command.
 
 ## Add-Ins and wizards
 
@@ -329,6 +358,13 @@ pictures are LinBASIC Studio's own.
   (properties, methods, events mapped to its controls) and its property pages.
 * **Data Object Wizard:** classes that are a source of data from the commands of a Data Environment,
   and user controls bound to them (single record, ListBox, ComboBox, DataGrid).
+* **Visual Data Manager:** the VisData of VB6 (Add-Ins → Visual Data Manager): Access databases (the
+  SQLite files of LinBASIC Studio) and ODBC sources; the Database Window with properties, tables, indexes
+  and queries; the SQL Statement window; record forms (Table, Dynaset, Snapshot; with or without a Data
+  control, or a grid) with Find and Seek; Table Structure (Add Field, Add Index, Print Structure); Copy
+  Structure, Query Builder, Data Form Designer (a form added to the project), Global Replace,
+  Attachments, Import / Export, transactions, Compact and Repair. The ISAM formats (dBASE, FoxPro,
+  Paradox, Btrieve, Excel, Text) and workgroup security are in the menus and give the messages of Jet.
 * **Package and Deployment Wizard** (and `lbvc --package`): a portable package of the program with
   everything it needs: on Linux an AppImage, a folder or a `.tar.gz`; for Windows a folder or a `.zip`
   (no setup program).
@@ -338,8 +374,16 @@ pictures are LinBASIC Studio's own.
   status bar tells which procedures the runtime carries out itself on Linux. It also runs on its own:
   `python3 -m lbstudio.apiviewer`.
 
-Not included: the Visual Data Manager (see [Databases](#databases)), the SQL Builder and Data View of
-the Visual Database Tools, and add-ins written in VB (VBIDE).
+### Add-ins of your own
+
+File → New Project → Addin makes an add-in project as VB6 does: the Connect designer (General and Advanced
+tabs: display name, description, Initial Load Behavior, command-line safe) and a form. The add-in is written
+in BASIC with the objects of VBIDE: VBE, VBProjects, VBComponents, CodeModule, CodePanes, Windows,
+CommandBars, References, and the events of the projects, components, references, files and controls
+(`AddinInstance_OnConnection`, `OnDisconnection`, `OnStartupComplete`, `OnAddInsUpdate`,
+`OnBeginShutdown`). File → Make registers it, and the Add-In Manager loads it (Loaded, Load on Startup,
+Command Line). There is no COM: the add-in is a program of its own (Linux or Windows) that talks to the
+IDE, and it gets the events and values of VB6 in the same order.
 
 ## The language
 
@@ -477,10 +521,12 @@ The whole VB6 language is compiled:
   sections. A report can be previewed, printed to PDF, and exported to HTML or text.
 * **The database files:** the databases of LinBASIC Studio are SQLite files, also when their name ends
   in `.mdb`; what Jet knows and SQLite does not (the DAO field types, Required, AllowZeroLength,
-  validation rules, indexes, relations, queries) is kept in the `MSysLB_*` tables. There is no Visual
-  Data Manager: any SQLite tool (for example DB Browser for SQLite) shows and changes the records and
-  runs SQL; make the tables with DAO (`CreateTableDef`, `CreateField`, `CreateIndex`) or Jet SQL
+  validation rules, indexes, relations, queries) is kept in the `MSysLB_*` tables. Make and change
+  them with the Visual Data Manager, DAO (`CreateTableDef`, `CreateField`, `CreateIndex`) or Jet SQL
   (`CREATE TABLE`, `CREATE INDEX` through `Database.Execute`), so that they have the rules of Jet.
+* **DAO over ODBC and other databases:** `OpenDatabase` of an ODBC source, linked tables (Access and
+  ODBC), pass-through queries, `RegisterDatabase`, and other databases in Jet SQL (`[;database=path].t`,
+  `IN 'path'`). The ISAM formats of Jet (dBASE, FoxPro, Paradox, Excel, Text) give error 3170.
 
 ## Windows API
 
@@ -644,9 +690,12 @@ network and no access to your desktop session or your screen.
 ## Known differences
 
 * **Not available:**
-  * the OLE container control, Excel / Word automation and MSMQ
-  * DirectX, the Winsock control, the Script control and DDE (the Link properties do nothing)
-  * a bridge to the real COM objects of Windows
+  * OLE and COM: the OLE container control, Excel / Word automation, MSMQ, a bridge to the real COM
+    objects of Windows, and `.ocx` controls of other companies
+  * DirectX 7 / 8, the Script control, MSXML, ADOX and Microsoft Agent (libraries of Microsoft that are
+    not part of VB6), and DDE (the Link properties do nothing)
+  * setup programs: the Package and Deployment Wizard makes portable packages (an AppImage, a folder or
+    an archive)
 * **Win32 API:** a window of another program cannot be found or changed on Linux. `FindWindow`
   finds the program's own forms.
 * **Help:** on Linux the `.hlp` files are shown by the reader of the runtime: the files of WinHelp 3.0
@@ -655,14 +704,11 @@ network and no access to your desktop session or your screen.
   which cannot).
   On Linux the **?** of the title bar (WhatsThisButton) is there only if the window manager draws it;
   Shift+F1 and WhatsThisMode do the same.
-* **Decimal:** there is no Decimal Variant: `CDec` and the `adNumeric` fields of ADO give a Double.
-* **The byte functions** (`MidB`, `InStrB`…) work on whole characters (two bytes each).
-* **MSChart** starts with its default settings: VB6 keeps a chart's settings in a binary block of
-  the `.frx`, which is not read. The program sets the chart up.
 * **Reports** follow the fonts of the computer, so an exported report has the text of VB6's but
   not always its page breaks.
-* **Not supported by the database runtime:** the crosstab queries (`TRANSFORM … PIVOT`) and DBGrid /
-  DBList / DBCombo (the DAO controls of VB5).
+* **Not supported by the database runtime:** the crosstab queries (`TRANSFORM … PIVOT`), the ISAM
+  formats of Jet and its workgroup security (`SYSTEM.MDW`, Groups / Users).
+* **The IDE is in English only.**
 
 ## Building from source
 
