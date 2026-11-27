@@ -950,6 +950,9 @@ class ObjectBrowser(QWidget):
     def _menu(self, w, pos):
         m = self.menu_actions()
         self._last_menu = m
+        hook = getattr(self.main, "shortcut_menu", None) if hasattr(self, "main") else None
+        if hook is not None:
+            hook("Object Browser", m)
         m.exec(w.mapToGlobal(pos))
 
     def set_show_hidden(self, on):

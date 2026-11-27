@@ -2928,6 +2928,9 @@ class Toolbox(QWidget):
         menu.addAction("Move &Up", lambda: self.move_tab(t, -1)).setEnabled(user and i > 0)
         menu.addAction("Move Do&wn", lambda: self.move_tab(t, 1)).setEnabled(user and i < len(self.tabs) - 1)
         self._last_menu = menu
+        hook = getattr(getattr(self, "main", None), "shortcut_menu", None)
+        if hook is not None:
+            hook("Toolbox Group", menu)
         if gpos is not None:
             menu.exec(gpos)
         return menu

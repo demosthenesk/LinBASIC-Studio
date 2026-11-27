@@ -50,6 +50,7 @@ checked in the files the IDE writes and in the program it runs.
     t_drep     a DataRepeater (phase 7.5): its properties, RepeatedControlName and RepeaterBindings set in the Properties
                window; the .frm as the VB6 IDE wrote the same control (VB6 oracle f_drep3), the .vbp
 
+    t_customize12 View > Toolbars > Customize... (phase 12.2): the commands, the bars and menus of the user
     t_ppages11 the property pages of the ActiveX controls (phase 11): (Custom), Shift+F4, the tabs and the layout of VB6
                (VB6 oracle DEV-11/ppcap), General / Color / Font set on Apply, the .frm
 
@@ -6060,7 +6061,187 @@ def t_ppages11(d):
     done(w)
 
 
-TESTS = {"t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
+
+def t_customize12(d):
+    """View > Toolbars > Customize... (phase 12.2, VB6 oracles Claude Enviroment/oracles/12.2): the commands of VB6 by
+    category, the Standard toolbar of VB6, the menu of the right button on the bars, the three tabs, a toolbar of the
+    user (New, a command dropped on it, Modify Selection, Rename, Delete), Reset, a menu changed, the options, the
+    Shortcut Menus, the Button Editor, the pictures of Change Button Image, what is kept"""
+    import json
+    from lbstudio import cmdbars as C
+    from PyQt6.QtCore import QMimeData, QPointF, QEvent, QSize
+    from PyQt6.QtGui import QDropEvent, QIcon
+    from PyQt6.QtWidgets import QMenu, QToolButton
+    settings.S["cmdbars"] = {}
+    w = MainWindow()
+    w.show()
+    cb = w.cmdbars
+    reg = cb.reg
+    # ---- the commands
+    assert reg.cats["File"][:2] == ["File/New Project", "File/Open Project..."], reg.cats["File"][:3]
+    assert reg.action("File/New Project") is w.a_new and reg.action("File/Save <File Name>") is w.a_save_file
+    assert reg.action("Edit/Undo") is w.a_undo and "Query/Run" in reg.placeholders
+    assert not reg.action("Query/Run").isEnabled()
+    assert reg.name("File/Save <File Name>") == "Save <File Name>" and reg.name("menu:Edit") == "Edit"
+    assert reg.cats["Built-in Menus"][0] == "menu:File"
+    fmt = reg.cats["Format"]
+    assert fmt.index("Format/Make Equal|H") < fmt.index("Format/Make Equal|V"), fmt
+    assert reg.action("Edit/Comment Block") is not None and not reg.action("Edit/Cut").icon().isNull()
+    # ---- the Standard toolbar of VB6 (oracle d4)
+    acts = w.tb_standard.actions()
+    order = [a for a in (w.a_menu_editor, w.a_open, w.a_save_proj, w.a_cut, w.a_copy, w.a_paste, w.a_find, w.a_undo,
+                         w.a_redo, w.a_start, w.a_break, w.a_end, w.a_view_project, w.a_view_props, w.a_view_layout,
+                         w.a_objbrowser, w.a_view_toolbox, w.a_data_view, w.a_vcm)]
+    assert [acts.index(a) for a in order] == sorted(acts.index(a) for a in order)
+    assert [a.text() for a in w.tb_add_form.menu().actions()][:2] == ["Add Form", "Add MDI Form"]
+    assert w.tb_add_project.toolTip() == "Add Standard EXE Project"
+    # ---- the right button on the bars
+    pm = w.createPopupMenu()
+    assert [a.text() for a in pm.actions()] == ["Debug", "Edit", "Form Editor", "Standard", "", "&Customize..."]
+    assert w.a_customize.text() == "&Customize..." and w.a_customize in w.m_toolbars.actions()
+    # ---- the dialog
+    dlg = cb.customize()
+    dlg.answers = []
+    assert [dlg.tabs.tabText(i) for i in range(3)] == ["Tool&bars", "&Commands", "&Options"]
+    assert [dlg.bar_list.item(i).text() for i in range(dlg.bar_list.count())] == \
+        ["Menu Bar", "Standard", "Edit", "Debug", "Form Editor", "Shortcut Menus"]
+    assert dlg.bar_list.item(0).checkState() == Qt.CheckState.Checked
+    dlg.bar_list.setCurrentRow(1)
+    assert not dlg.b_rename.isEnabled() and not dlg.b_delete.isEnabled() and dlg.b_reset.isEnabled()
+    # New...: "Custom 1"
+    dlg.answer = None
+    assert cb.unique_name() == "Custom 1"
+    dlg.answer = "Custom 1"
+    dlg.new_bar()
+    tb = cb.toolbar("Custom 1")
+    assert tb is not None and tb.isVisible() and dlg.current_bar() == "Custom 1"
+    assert dlg.b_rename.isEnabled() and dlg.b_delete.isEnabled() and not dlg.b_reset.isEnabled()
+    # a command of the Commands list dropped on it (as the mouse would)
+    md = QMimeData()
+    md.setData(C.MIME, json.dumps({"item": C.item("File/Open Project...")}).encode())
+    ev = QDropEvent(QPointF(4, 4), Qt.DropAction.CopyAction, md, Qt.MouseButton.LeftButton,
+                    Qt.KeyboardModifier.NoModifier, QEvent.Type.Drop)
+    assert cb.filter.eventFilter(tb, ev)        # (Qt gives a drop only during a drag of the mouse)
+    assert [it["id"] for it in cb.items("Custom 1")] == ["File/Open Project..."]
+    assert w.a_open in tb.actions()
+    cb.insert("Custom 1", "bar", 1, C.item("Edit/Cut"))
+    # Modify Selection: the name, Text Only (Always), Begin a Group
+    cb.select((tb, 1))
+    m = dlg.modify_selection()
+    texts = [a.text() for a in m.actions() if not a.isSeparator() and a.text()]
+    assert texts[:2] == ["&Reset", "&Delete"] and "Change &Button Image" in texts and texts[-1] == "Begin a &Group"
+    m.cmdbars_name.setText("Snip")
+    m.cmdbars_name.returnPressed.emit()
+    cb.modify("Custom 1", "bar", 1, s=1, g=True)
+    it = cb.items("Custom 1")[1]
+    assert it == {"id": "Edit/Cut", "n": "Snip", "s": 1, "g": True}, it
+    p = tb.actions()[-1]
+    assert p.text() == "Snip" and p.icon().isNull() and tb.actions()[-2].isSeparator()
+    assert tb.widgetForAction(p).toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonTextOnly
+    cb.reset_item("Custom 1", "bar", 1)
+    assert cb.items("Custom 1")[1] == {"id": "Edit/Cut", "g": True}
+    # Change Button Image (our 42 pictures), Copy / Paste Button Image
+    m = C.modify_menu(cb, tb, "Custom 1", "bar", 0)
+    faces = next(a.menu() for a in m.actions() if a.menu() is not None)
+    buttons = faces.cmdbars_faces.findChildren(QToolButton)
+    assert len(buttons) == 42 == len(C.DATA["faces"])
+    buttons[0].click()
+    assert cb.items("Custom 1")[0].get("i")
+    # Rename..., the move of an item to an other bar (Ctrl: a copy), off the bars: deleted
+    dlg.answer = "Mine"
+    dlg.rename_bar()
+    assert cb.toolbar("Mine") is tb and "Custom 1" not in cb.bar_names() and dlg.current_bar() == "Mine"
+    n_std = len(cb.items("Standard"))
+    cb.move(("Mine", "bar", 0), ("Standard", "bar", 0), copy_it=True)
+    assert len(cb.items("Standard")) == n_std + 1 and len(cb.items("Mine")) == 2
+    cb.move(("Mine", "bar", 1), ("Mine", "bar", 0))
+    assert [i["id"] for i in cb.items("Mine")] == ["Edit/Cut", "File/Open Project..."]
+    cb.remove("Mine", "bar", 0)
+    assert [i["id"] for i in cb.items("Mine")] == ["File/Open Project..."]
+    # Reset... of the Standard toolbar (the message of VB6)
+    dlg.bar_list.setCurrentRow(1)
+    dlg.answers = [True]
+    dlg.reset_bar()
+    assert dlg.last_message == "Are you sure you want to reset the changes made to the 'Standard' toolbar?"
+    assert len(cb.items("Standard")) == n_std and "Standard" not in cb.state()["bars"]
+    # a menu changed: Open Project first in File; its Reset (Menu Bar)
+    cb.move(("menu:File", "menu", 1), ("menu:File", "menu", 0))
+    w.file_menu_test = next(a.menu() for a in w.menuBar().actions() if a.text() == "&File")
+    w.file_menu_test.aboutToShow.emit()
+    first = [a for a in w.file_menu_test.actions() if not a.isSeparator()][:2]
+    assert first == [w.a_open, w.a_new], [a.text() for a in first]
+    dlg.bar_list.setCurrentRow(0)
+    dlg.answers = [True]
+    dlg.reset_bar()
+    first = [a for a in w.file_menu_test.actions() if not a.isSeparator()][:2]
+    assert first == [w.a_new, w.a_open], [a.text() for a in first]
+    # the Commands tab: the categories, the commands with their pictures, Description
+    dlg.tabs.setCurrentIndex(1)
+    assert [dlg.cat_list.item(i).text() for i in range(dlg.cat_list.count())] == C.DATA["categories"]
+    dlg.cat_list.setCurrentRow(1)
+    names = [dlg.cmd_list.item(i).text() for i in range(dlg.cmd_list.count())]
+    assert names[:5] == ["Undo", "Redo", "Cut", "Copy", "Paste"], names[:6]
+    dlg.cmd_list.setCurrentRow(2)
+    assert dlg.description()
+    # the Options tab
+    assert not dlg.c_large.isChecked() and dlg.c_tips.isChecked() and not dlg.c_keys.isChecked()
+    assert dlg.anim.currentText() == "(None)" and [dlg.anim.itemText(i) for i in range(4)] == \
+        ["(None)", "Random", "Unfold", "Slide"]
+    dlg.c_large.setChecked(True)
+    assert w.tb_standard.iconSize() == QSize(32, 32)
+    dlg.c_large.setChecked(False)
+    dlg.c_keys.setChecked(True)
+    assert cb.tip_text(w.a_open) == "Open Project (Ctrl+O)", cb.tip_text(w.a_open)
+    dlg.c_tips.setChecked(False)
+    assert cb.tip_text(w.a_open) is None and not dlg.c_keys.isEnabled()
+    dlg.c_tips.setChecked(True)
+    dlg.c_keys.setChecked(False)
+    # the Shortcut Menus toolbar: Forms, Code Windows, Misc (customize mode only)
+    sb = cb.shortcut_bar
+    assert [b.text() for b in sb.findChildren(QToolButton) if b.text()] == ["Forms", "Code Windows", "Misc"]
+    cm = cb.short_menus["short:Controls"]
+    assert [a.text() for a in cm.actions() if not a.isSeparator()][:4] == ["Cut", "Copy", "Paste", "Delete"]
+    cb.remove("short:Controls", "menu", 2)              # Paste taken away: the menu of a control has none
+    menu = QMenu()
+    for t in ("Cu&t", "&Copy", "&Paste", "&Delete"):
+        menu.addAction(t)
+    cb.shortcut("Controls", menu)
+    assert [a.text() for a in menu.actions() if not a.isSeparator()] == ["Cu&t", "&Copy", "&Delete"]
+    # Delete (the message of VB6), the dialog closed: the Shortcut Menus toolbar goes
+    dlg.tabs.setCurrentIndex(0)
+    dlg.bar_list.setCurrentRow(dlg.bar_list.count() - 1)
+    assert dlg.current_bar() == "Mine"
+    dlg.answers = [True]
+    dlg.delete_bar()
+    assert dlg.last_message == "Are you sure you want to delete the 'Mine' toolbar?" and "Mine" not in cb.bar_names()
+    dlg.answer = "Kept"
+    dlg.new_bar()
+    cb.insert("Kept", "bar", 0, C.item("Edit/Copy"))
+    dlg.close()
+    app.processEvents()
+    assert cb.customizing is None and not sb.isVisible()
+    # the Button Editor
+    be = C.ButtonEditor(w, QIcon())
+    assert not be.moves["up"].isEnabled()
+    be.set_pixel(3, 3, "#FF0000")
+    assert be.moves["up"].isEnabled() and be.moves["left"].isEnabled()
+    be.shift(-1, 0)
+    assert be.pixels[3][2] == "#FF0000" and be.pixels[3][3] is None
+    ic = C.icon64(C.png64(be.icon()))
+    assert ic.pixmap(16, 16).toImage().pixelColor(2, 3).red() == 255
+    be.clear()
+    assert be.bounds() is None
+    # kept: a new IDE has the toolbar of the user, its command, the shortcut menu changed
+    w.close()
+    w2 = MainWindow()
+    cb2 = w2.cmdbars
+    assert "Kept" in cb2.bar_names() and [i["id"] for i in cb2.items("Kept")] == ["Edit/Copy"]
+    assert w2.a_copy in cb2.toolbar("Kept").actions()
+    assert "short:Controls" in cb2.state()["shortcut"]
+    settings.S["cmdbars"] = {}
+    w2.close()
+
+TESTS = {"t_customize12": t_customize12, "t_ppages11": t_ppages11, "t_api94": t_api94, "t_dowiz92": t_dowiz92, "t_ppwiz92": t_ppwiz92, "t_axwiz92": t_axwiz92, "t_classbuilder92": t_classbuilder92, "t_cwbreak92": t_cwbreak92, "t_dfwiz92": t_dfwiz92, "t_appwiz92": t_appwiz92, "t_appwizgen92": t_appwizgen92, "t_web92": t_web92, "t_pdw95": t_pdw95, "t_formname9": t_formname9, "t_ctlarray87": t_ctlarray87, "t_ctxmenu87": t_ctxmenu87, "t_zoom87": t_zoom87, "t_tb87": t_tb87, "t_pe87": t_pe87, "t_menus87": t_menus87, "t_help87": t_help87, "t_dock87": t_dock87, "t_theme": t_theme, "t_resedit86": t_resedit86, "t_formdesign84": t_formdesign84, "t_projprops85": t_projprops85, "t_print83": t_print83, "t_procattr83": t_procattr83, "t_editor83": t_editor83, "t_debug82": t_debug82, "t_objbrowser": t_objbrowser, "t_mapi": t_mapi, "t_drep": t_drep, "t_rdc": t_rdc, "t_coolbar": t_coolbar, "t_dgcols": t_dgcols, "t_dfmt": t_dfmt, "t_dbgrid": t_dbgrid, "t_ondemand": t_ondemand, "t_resize": t_resize, "t_refactor": t_refactor, "t_types": t_types, "t_uctl": t_uctl, "t_group": t_group, "t_dsr": t_dsr,
          "t_dsr2": t_dsr2}
 
 

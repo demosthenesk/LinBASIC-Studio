@@ -12,7 +12,7 @@ from PyQt6.Qsci import QsciScintilla as S
 from . import APP_NAME, VERSION, paths, settings, styles as stl
 from .codewin import CodeWindow
 from . import refactorui as RF
-from . import codeops, edicons
+from . import codeops, edicons, vbmodel
 from .designer import FormDesigner, Toolbox
 from .propwin import PropertiesWindow
 from .dialogs import FindDialog, OptionsDialog, ProjectPropertiesDialog
@@ -157,6 +157,11 @@ class ResSubWindow(QMdiSubWindow):
 INSERT_FILE_FILTER = "Text Files (*.txt);;Basic Files (*.bas);;Class Files (*.cls);;All Files (*)"
 
 
+
+def norm_text(text):
+    """the text of a menu command without its & and its keys"""
+    return text.split("\t")[0].replace("&&", "\0").replace("&", "").replace("\0", "&").strip()
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -188,6 +193,8 @@ class MainWindow(QMainWindow):
         self.resize(1200, 800)
         self._build_ui()
         self._build_menus()
+        from .cmdbars import CommandBars        # View > Toolbars > Customize... (phase 12.2)
+        self.cmdbars = CommandBars(self)
         self.apply_addins()
         self.apply_theme()
         hints = QApplication.instance().styleHints()
@@ -460,6 +467,7 @@ class MainWindow(QMainWindow):
         self.a_zoom_reset = self._act(zm, "Zoom &Reset", lambda: self.code_zoom_step(0), "Ctrl+0")
 
         m = mb.addMenu("&Project")             # VB6's Project menu (DEV-8/me1, picture 10)
+        self.project_menu = m
         self._act(m, "Add &Form", lambda: self.add_module("Form"))
         self.a_add_mdi = self._act(m, "Add MD&I Form", self.add_mdi_form)
         self._act(m, "Add &Module", lambda: self.add_module("Module"))
@@ -657,16 +665,41 @@ class MainWindow(QMainWindow):
         for a in self.never_actions:
             a.setEnabled(False)
 
-        # Standard toolbar
+        # Standard toolbar, as VB6's (phase 12.2, oracle d4): Add Standard EXE Project and Add Form (each a button
+        # and its list; the button does the command chosen last), Menu Editor | Open Project, Save Project | Cut,
+        # Copy, Paste, Find | Undo, Redo | Start, Break, End | Project Explorer, Properties Window, Form Layout
+        # Window, Object Browser, Toolbox, Data View Window, Visual Component Manager | the position, the size
         tb = self.addToolBar("Standard")
         tb.setObjectName("Standard")
-        for a in (self.a_new, self.a_open, self.a_save_proj):
+        self.tb_add_project = self._list_button(tb, "add_project", [
+            (f"Add {text} Project", lambda k=key: self.add_project(k)) for key, text in vbmodel.PROJECT_TYPES])
+        self.tb_add_form = self._list_button(tb, "form", [
+            (norm_text(a.text()), a) for a in self.project_menu.actions()
+            if not a.isSeparator() and a.menu() is None and norm_text(a.text()).startswith("Add ")
+            and norm_text(a.text()) != "Add File..."])
+        tb.addAction(self.a_menu_editor)
+        tb.addSeparator()
+        for a in (self.a_open, self.a_save_proj):
+            tb.addAction(a)
+        tb.addSeparator()
+        for a in (self.a_cut, self.a_copy, self.a_paste, self.a_find):
+            tb.addAction(a)
+        tb.addSeparator()
+        for a in (self.a_undo, self.a_redo):
             tb.addAction(a)
         tb.addSeparator()
         for a in (self.a_start, self.a_break, self.a_end):
             tb.addAction(a)
         tb.addSeparator()
-        tb.addAction(self.a_objbrowser)
+        for a in (self.a_view_project, self.a_view_props, self.a_view_layout, self.a_objbrowser,
+                  self.a_view_toolbox):
+            tb.addAction(a)
+        self.a_data_view = QAction(edicons.icon("data_view"), "Data View Window", self)      # phase 12.3
+        self.a_data_view.setEnabled(False)
+        self.a_vcm = QAction(edicons.icon("component_manager"), "Visual Component Manager", self)   # Enterprise:
+        self.a_vcm.setEnabled(False)                                                         # not made
+        tb.addAction(self.a_data_view)
+        tb.addAction(self.a_vcm)
         tb.addAction(self.a_res_editor)         # the button of the VB 6 Resource Editor (when loaded)
         # VB6: where the selected control is and its size ("1680, 1320"  "1215 x 495"); "Ln 2, Col 1" with a
         # code window in front (DEV-8/fd1, me1 stage 2, me2 picture 10)
@@ -757,7 +790,34 @@ class MainWindow(QMainWindow):
             a = t.toggleViewAction()
             a.setText(names[t.windowTitle()])
             tm.addAction(a)
+        tm.addSeparator()
+        self.a_customize = tm.addAction("&Customize...", lambda: self.cmdbars.customize())
         self.m_toolbars = tm
+
+    def _list_button(self, tb, icon, entries):
+        """a button of the Standard toolbar with its list (VB6: Add Standard EXE Project, Add Form): the button does
+        the command chosen last from the list, and shows it"""
+        from PyQt6.QtWidgets import QMenu
+        b = QToolButton(tb)
+        b.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
+        menu = QMenu(b)
+        for text, target in entries:
+            a = menu.addAction(text)
+            if isinstance(target, QAction):
+                a.setIcon(target.icon())
+                a.triggered.connect(lambda _c=False, t=target: t.trigger())
+                target.changed.connect(lambda a=a, t=target: a.setEnabled(t.isEnabled()))
+            else:
+                a.triggered.connect(lambda _c=False, f=target: f())
+            a.triggered.connect(lambda _c=False, a=a, b=b: (b.setToolTip(a.text()), setattr(b, "last", a)))
+        b.setMenu(menu)
+        b.setIcon(edicons.icon(icon))
+        first = menu.actions()[0] if menu.actions() else None
+        b.last = first
+        b.setToolTip(first.text() if first else "")
+        b.clicked.connect(lambda: b.last.trigger() if b.last is not None else None)
+        tb.addWidget(b)
+        return b
 
     def _show_dock(self, dock, widget):
         holder = widget.parentWidget()         # Immediate / Locals / Watches out of the bottom dock: their own
@@ -912,8 +972,26 @@ class MainWindow(QMainWindow):
             a.setChecked(self.is_dockable(key))
             menu.addAction("&Hide", lambda: self.hide_tool(key, widget))
             self._last_tool_menu = menu
+            self.shortcut_menu(self.TOOL_SHORTCUTS.get(key), menu)
             menu.exec(widget.mapToGlobal(pos))
         widget.customContextMenuRequested.connect(show)
+
+    # the names of the context menus on the Shortcut Menus toolbar of Customize (phase 12.2)
+    TOOL_SHORTCUTS = {"props": "Property Browser", "immediate": "Immediate Window", "locals": "Locals Window",
+                      "watch": "Watch Window", "toolbox": "Toolbox", "palette": "Color Palette",
+                      "layout": "Form Layout Window", "objbrowser": "Object Browser", "project": "Project Window"}
+
+    def shortcut_menu(self, name, menu):
+        """a context menu as the user changed it in Customize (its name on the Shortcut Menus toolbar)"""
+        cb = getattr(self, "cmdbars", None)
+        if cb is not None and name:
+            cb.shortcut(name, menu)
+        return menu
+
+    def createPopupMenu(self):
+        """the right button on the toolbars and the menu bar: the toolbars, Customize... (VB6)"""
+        cb = getattr(self, "cmdbars", None)
+        return cb.popup_menu() if cb is not None else super().createPopupMenu()
 
     def hide_tool(self, key, widget):
         holder = widget
@@ -1025,6 +1103,7 @@ class MainWindow(QMainWindow):
                 a.setCheckable(True)
                 a.setChecked(checked)
         self._last_designer_menu = menu
+        self.shortcut_menu("Forms" if item is None else "Controls", menu)
         menu.exec(gpos)
 
     def show_properties(self):
@@ -1386,6 +1465,7 @@ class MainWindow(QMainWindow):
         menu.addAction("List Properties/&Methods\tCtrl+J", lambda: self._assist("list_members"))
         menu.addSeparator()
         menu.addMenu(self.toggle_menu(menu))
+        self.shortcut_menu("Code Window (Break)" if self.runner.state == "break" else "Code Window", menu)
         menu.exec(pos)
 
     def toggle_menu(self, parent):
@@ -1897,7 +1977,23 @@ class MainWindow(QMainWindow):
             self.tree.setCurrentItem(it)
         self.pe_menu(menu, it)
         self._last_tree_menu = menu
+        self.shortcut_menu(self.tree_shortcut(it), menu)
         menu.exec(self.tree.viewport().mapToGlobal(pos))
+
+    def tree_shortcut(self, it):
+        """the name of the menu of an item of the Project Explorer on the Shortcut Menus toolbar"""
+        if it is None:
+            return "Project Window (Break)" if self.runner.state == "break" else "Project Window"
+        t = it.text(0).lower()
+        if it.parent() is None:
+            return "Project Window Project"
+        if it.childCount():
+            if "form" in t or "control" in t or "page" in t or "document" in t or "designer" in t:
+                return "Project Window Form Folder"
+            if "module" in t or "class" in t:
+                return "Project Window Module/Class Folder"
+            return "Project Window Related Documents Folder"
+        return "Project Window"
 
     def pe_menu(self, menu, it):
         """the menu of an item of the Project Explorer (and of its empty space: Dockable, Hide)"""

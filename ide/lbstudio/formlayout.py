@@ -208,4 +208,8 @@ class FormLayoutView(QWidget):
         self.update()
 
     def contextMenuEvent(self, e):
-        self.context_menu(e.pos()).exec(e.globalPos())
+        m = self.context_menu(e.pos())
+        hook = getattr(self.main, "shortcut_menu", None)
+        if hook is not None:
+            hook("Form Layout Window", m)
+        m.exec(e.globalPos())
