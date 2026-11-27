@@ -512,6 +512,9 @@ class CommandBars(QObject):
                                          else Qt.ToolButtonStyle.ToolButtonTextBesideIcon if st == 3
                                          else Qt.ToolButtonStyle.ToolButtonIconOnly)
             tb.cmdbars_items.append((obj, it))
+        if self.customizing is not None:        # the new buttons are customized too
+            for b in tb.findChildren(QToolButton):
+                b.installEventFilter(self.filter)
         self.apply_options()
 
     def rebuild_menubar(self):
@@ -1046,10 +1049,9 @@ class CustomizeFilter(QObject):
             pos = obj.mapTo(w, pos)
         if t == QEvent.Type.MouseButtonPress:
             i = self.index_at(w, pos)
-            if ev.button() == Qt.MouseButton.RightButton:
+            if ev.button() == Qt.MouseButton.RightButton:     # (the menu: on the ContextMenu event after it)
                 if i >= 0:
                     self.cb.select((w, i))
-                    self.modify_menu(w, key, kind, i).exec(ev.globalPosition().toPoint())
                 return True
             if i < 0:
                 return False
@@ -1091,6 +1093,7 @@ class CustomizeFilter(QObject):
         if not ic.isNull():
             drag.setPixmap(ic.pixmap(16, 16))
         res = drag.exec(Qt.DropAction.MoveAction | Qt.DropAction.CopyAction, Qt.DropAction.MoveAction)
+        self.close_panel()
         if res == Qt.DropAction.IgnoreAction:   # dropped off the bars: deleted (VB6)
             self.cb.remove(key, kind, i)
             self.cb.select(None)
@@ -1098,11 +1101,11 @@ class CustomizeFilter(QObject):
 
     def drag_event(self, w, key, kind, obj, ev):
         t = ev.type()
+        if t == QEvent.Type.DragLeave:          # (it has no data)
+            self.hide_marker()
+            return False
         if not ev.mimeData().hasFormat(MIME):
             return False
-        if t == QEvent.Type.DragLeave:
-            self.hide_marker()
-            return True
         pos = ev.position().toPoint()
         if obj is not w:
             pos = obj.mapTo(w, pos)
@@ -1112,10 +1115,13 @@ class CustomizeFilter(QObject):
             ev.setDropAction(Qt.DropAction.CopyAction if ctrl else Qt.DropAction.MoveAction)
             ev.accept()
             self.show_marker(w, rect)
-            if isinstance(w, QMenuBar):          # over a menu of the menu bar: it opens, to drop into it
-                a = w.actionAt(pos)
-                if a is not None and a.menu() is not None and not a.menu().isVisible():
-                    w.setActiveAction(a)
+            if isinstance(w, QMenuBar):          # over a menu of the menu bar: it opens, to drop into it (a
+                a = w.actionAt(pos)              # popup menu cannot open while the mouse drags: its items in a
+                if a is not None and a.menu() is not None:      # panel of their own, as VB6 shows them)
+                    mid = self.cb.reg.menu_paths.get(id(a.menu())) or \
+                        next((k for k, v in self.cb.user_menus().items() if v is a.menu()), None)
+                    if mid is not None:
+                        self.open_panel(mid, w.mapToGlobal(w.actionGeometry(a).bottomLeft()))
             return True
         # the drop
         self.hide_marker()
@@ -1136,6 +1142,26 @@ class CustomizeFilter(QObject):
         ev.accept()
         self.cb.select(None)
         return True
+
+    # ---- a menu while dragging
+    def open_panel(self, mid, gpos):
+        p = getattr(self, "panel", None)
+        if p is not None and p.mid == mid and p.isVisible():
+            return p
+        if p is not None:
+            p.hide()
+            p.deleteLater()
+        self.panel = MenuPanel(self.cb, mid)
+        self.panel.move(gpos)
+        self.panel.show()
+        return self.panel
+
+    def close_panel(self):
+        p = getattr(self, "panel", None)
+        if p is not None:
+            p.hide()
+            p.deleteLater()
+            self.panel = None
 
     # ---- Modify Selection
     def modify_menu(self, w, key, kind, i):
@@ -1624,6 +1650,70 @@ def edit_image(cb, key, kind, i):
 
 
 # ================================================================ the dialog
+class MenuPanel(QFrame):
+    """the items of a menu, open while a command is dragged over its name on the menu bar: the place where the
+    command is dropped into the menu"""
+
+    def __init__(self, cb, mid):
+        super().__init__(None, Qt.WindowType.ToolTip | Qt.WindowType.FramelessWindowHint)
+        self.cb, self.mid = cb, mid
+        self.setFrameShape(QFrame.Shape.Box)
+        self.setAcceptDrops(True)
+        self.rows = []
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(2, 2, 2, 2)
+        lay.setSpacing(0)
+        for it in cb.menu_items(mid):
+            if it.get("g") and self.rows:
+                ln = QFrame()
+                ln.setFrameShape(QFrame.Shape.HLine)
+                lay.addWidget(ln)
+            row = QLabel("   " + norm(cb.item_name(it)) + ("  \u25b8" if it["id"].startswith(("menu:", "user:")) else ""))
+            row.setMinimumWidth(160)
+            row.setFixedHeight(20)
+            lay.addWidget(row)
+            self.rows.append(row)
+        self.mark = QFrame(self)
+        self.mark.setStyleSheet("background: black")
+        self.mark.hide()
+        self.adjustSize()
+
+    def index_at(self, y):
+        for i, r in enumerate(self.rows):
+            g = r.geometry()
+            if y < g.center().y():
+                return i, g.top()
+        return len(self.rows), (self.rows[-1].geometry().bottom() if self.rows else 2)
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasFormat(MIME):
+            e.acceptProposedAction()
+
+    def dragMoveEvent(self, e):
+        if not e.mimeData().hasFormat(MIME):
+            return
+        _i, y = self.index_at(e.position().toPoint().y())
+        self.mark.setGeometry(2, y - 1, self.width() - 4, 2)
+        self.mark.show()
+        ctrl = bool(e.modifiers() & Qt.KeyboardModifier.ControlModifier)
+        e.setDropAction(Qt.DropAction.CopyAction if ctrl else Qt.DropAction.MoveAction)
+        e.accept()
+
+    def dropEvent(self, e):
+        data = json.loads(bytes(e.mimeData().data(MIME)).decode())
+        idx, _y = self.index_at(e.position().toPoint().y())
+        src = data.get("src")
+        ctrl = bool(e.modifiers() & Qt.KeyboardModifier.ControlModifier)
+        if src is None:
+            self.cb.insert(self.mid, "menu", idx, data["item"])
+            e.setDropAction(Qt.DropAction.CopyAction)
+        else:
+            self.cb.move(tuple(src), (self.mid, "menu", idx), copy_it=ctrl)
+            e.setDropAction(Qt.DropAction.CopyAction if ctrl else Qt.DropAction.MoveAction)
+        e.accept()
+        QTimer.singleShot(0, self.cb.filter.close_panel)
+
+
 class CommandList(QListWidget):
     """the Commands of a category: dragged onto a bar or into a menu"""
 
@@ -1646,6 +1736,7 @@ class CommandList(QListWidget):
         if not it.icon().isNull():
             drag.setPixmap(it.icon().pixmap(16, 16))
         drag.exec(Qt.DropAction.CopyAction)
+        self.cb.filter.close_panel()
 
 
 class CustomizeDialog(QDialog):
