@@ -1,0 +1,15 @@
+== register
+open: database=dao7.db
+row 7 seven
+file=True file2=False
+== again, another database
+open: database=dao7b.db
+row 7 seven
+file2=True
+== a driver that is not there
+  ! register unknown: 3146 ODBC--call failed. [DAO.DbEngine]
+    err 0: 3146 ODBC--call failed. [DAO.DbEngine]
+== no name
+  ! register empty: 3146 ODBC--call failed. [DAO.DbEngine]
+    err 0: 3146 ODBC--call failed. [DAO.DbEngine]
+== end

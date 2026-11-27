@@ -7,6 +7,8 @@
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 #include "daoint.h"
 #include "../vbos.h"
+#include "odbc.h"                              /* (RegisterDatabase; daoodbc.inc) */
+static void odbc_forget_dsn(const char *dsn);   /* daoodbc.inc */
 #include <ctype.h>
 #include <sys/stat.h>
 #ifndef _WIN32
@@ -474,7 +476,17 @@ static vbvar engine_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
         dws *w = ws_new(n, u);
         return dao_retobj((vbobj)w);
     }
-    if (!strcmp(name, "idle") || !strcmp(name, "setoption") || !strcmp(name, "registerdatabase")) return vb_v_empty();
+    if (!strcmp(name, "idle") || !strcmp(name, "setoption")) return vb_v_empty();
+    if (!strcmp(name, "registerdatabase")) {
+        /* RegisterDatabase Dsn, Driver, Silent, Attributes: a data source of the user (odbc.c) */
+        char *dsn = strdup(argc > 0 ? dao_str(argv[0]) : ""), *drv = strdup(argc > 1 ? dao_str(argv[1]) : "");
+        char *attr = strdup(argc > 3 ? dao_str(argv[3]) : "");
+        int ok = !vb_errpend && lbo_register(dsn, drv, attr);
+        if (ok) odbc_forget_dsn(dsn);
+        free(dsn); free(drv); free(attr);
+        if (!vb_errpend && !ok) dao_raise(3146, "DAO.DbEngine", "ODBC--call failed.");   /* (as VB6 writes it) */
+        return vb_v_empty();
+    }
     if (!strcmp(name, "compactdatabase") || !strcmp(name, "repairdatabase")) {
         /* a SQLite file: VACUUM INTO the new name, or nothing */
         char *src = argc > 0 ? dao_str(argv[0]) : "";

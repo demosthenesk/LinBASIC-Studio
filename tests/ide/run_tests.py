@@ -6409,6 +6409,8 @@ def t_visdata12(d):
     from lbstudio.visdata.dialogs import (GlobalReplaceDialog, CopyStructureDialog, ImportExportDialog,
                                           AttachmentsWindow, ErrorsWindow)
     from lbstudio.visdata.dfd import DataFormDesigner, form_text
+    old_ini = os.environ.get("ODBCINI")
+    os.environ["ODBCINI"] = os.path.join(d, "odbc.ini")    # (Register: the data sources of the user, here)
     w = MainWindow()
     w.show()
     vd = w.visual_data_manager()
@@ -6499,7 +6501,9 @@ def t_visdata12(d):
     # ---- Global Replace
     gr = vd.global_replace()
     gr.tables.setCurrentRow([gr.tables.item(i).text() for i in range(gr.tables.count())].index("People"))
-    gr.fields.setCurrentRow(2)
+    names = [gr.fields.item(i).text() for i in range(gr.fields.count())]
+    assert names == ["Age", "Born", "ID", "Name"], names   # (sorted, as REPLACE.FRM: vb_repl.png)
+    gr.fields.setCurrentRow(names.index("Age"))
     gr.replace.setText("99")
     gr.criteria.setText("Name = 'Cid'")
     assert gr.ok()
@@ -6565,6 +6569,37 @@ def t_visdata12(d):
     dfd.move_fields(1)
     assert dfd.sel.count() == 4
     assert dfd.build() is not None and w.project.module("frmPeople") is not None
+    # ---- the windows as VB6 lays them out (oracles 12.4/vb_*.png): a Table form, Find, Seek, Add Index
+    from lbstudio.visdata import dbwindow
+    from lbstudio.visdata.recforms import FindDialog, SeekDialog
+    from lbstudio.visdata.tblstru import AddIndexDialog
+    vd.prefs["rstype"], vd.prefs["formtype"] = C.RS_TABLE, C.FORM_NODATACTL
+    tf = dbwindow.open_table(vd, "People")
+    items = [tf.indexes.itemText(i) for i in range(tf.indexes.count())]
+    assert "PrimaryKey:+ID:Unique:Primary" in items and "idxName:-Name:Non-Unique" in items, items
+    tf.close_form()
+    vd.prefs["rstype"] = C.RS_DYNASET
+    fd = FindDialog(vd, ["ID", "Name"])
+    assert fd.windowTitle() == "Find Record" and not fd.b_ok.isEnabled()
+    fd.expr.setText("x")
+    fd.how[2].setChecked(True)
+    assert fd.b_ok.isEnabled() and fd.values() == (0, "=", "x", "FindPrevious")
+    sd = SeekDialog(vd)
+    assert sd.windowTitle() == "Seek Parameters" and sd.values() == ("=", "") and not sd.b_ok.isEnabled()
+    ts3 = TableStructure(vd, "People")
+    assert ts3.f_name.isReadOnly() and not ts3.f_type.isEnabled() and not ts3.i_primary.isEnabled()
+    ai = AddIndexDialog(ts3, vd, [f.name for f in ts3.fields])
+    assert ai.windowTitle() == "Add Index to People"
+    ai.pick(ai.avail.item(0))
+    ai.pick(ai.avail.item(1))
+    assert ai.indexed.toPlainText() == "Age;Born"                 # (sorted, no +: ADDINDEX.FRM)
+    # ---- ODBC Logon > Register: DBEngine.RegisterDatabase (VB6 d_dao7)
+    assert not vd.register_dsn("", "SQLite3 ODBC Driver") and vd.messages[-1] == "Please enter a DSN!"
+    assert not vd.register_dsn("LBVD12", "") and vd.messages[-1] == "Please select a Driver!"
+    from lbstudio.ocxpages import odbc_drivers
+    if "SQLite3 ODBC Driver" in odbc_drivers():
+        assert vd.register_dsn("LBVD12", "SQLite3 ODBC Driver")
+        assert "[LBVD12]" in open(os.environ["ODBCINI"]).read()
     # ---- the ISAMs: Jet's message (decision of 2026-11-27); the security of Jet: a message
     n = len(vd.messages)
     vd.answers = [d + "/x.dbf"]
@@ -6575,6 +6610,10 @@ def t_visdata12(d):
     # ---- Close
     assert vd.close_db() and vd.s.db is None and not vd.a_close.isEnabled()
     vd.close()
+    if old_ini is None:
+        os.environ.pop("ODBCINI", None)
+    else:
+        os.environ["ODBCINI"] = old_ini
 
 def t_querydesign12(d):
     """the Query Designer (phase 12.3, VB6 oracles Claude Enviroment/oracles/12.3 sq*/sb*): the four panes, tables on

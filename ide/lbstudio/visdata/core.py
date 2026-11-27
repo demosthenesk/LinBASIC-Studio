@@ -122,3 +122,63 @@ def text_of(v):
     if isinstance(v, (bytes, bytearray)):
         return "(Binary)"
     return str(v)
+
+
+class Place:
+    """a window of VisData laid out as VB6 lays it out (the VB6 12.4 oracles vb_*.png): positions and sizes in the
+    pixels of VB6 (twips / 15, the forms in MS Sans Serif 8: 13-pixel lines), scaled to the font of the IDE so that
+    its texts fit (kx from the width of a text, ky from the height of a line)"""
+
+    def __init__(self, form, cw, ch, fixed=True):
+        from PyQt6.QtCore import QSize
+        fm = form.fontMetrics()
+        self.kx = max(1.0, fm.horizontalAdvance("ValidationText: ") / 75.0)
+        self.ky = max(1.0, fm.height() / 13.0)
+        self.form = form
+        size = QSize(self.x(cw), self.y(ch))
+        if fixed:
+            form.setFixedSize(size)
+        else:
+            form.resize(size)
+        form.vb_size = size                     # (the size of the window in VB6, for its MDI window)
+
+    def x(self, v):
+        return round(v * self.kx)
+
+    def y(self, v):
+        return round(v * self.ky)
+
+    def put(self, w, x, y, cw, ch, parent=None):
+        """w at (x, y), cw x ch pixels of VB6 in the form (or in a container of it)"""
+        w.setParent(parent if parent is not None else self.form)
+        w.setGeometry(self.x(x), self.y(y), self.x(cw), self.y(ch))
+        return w
+
+    def label(self, text, x, y, cw, ch=13, buddy=None, parent=None, center=False):
+        """a Label: its & marks the key of the control after it (buddy)"""
+        from PyQt6.QtWidgets import QLabel
+        from PyQt6.QtCore import Qt
+        lb = QLabel(text)
+        if buddy is not None:
+            lb.setBuddy(buddy)
+        elif "&" in text:
+            lb.setText(text.replace("&&", "\0").replace("&", "").replace("\0", "&"))
+        if center:
+            lb.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
+        else:
+            lb.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        # the text of VB6 begins at the top of the label: as tall as a line of the font, at least
+        self.put(lb, x, y, cw, max(ch, 13), parent)
+        lb.setMinimumWidth(lb.sizeHint().width())
+        if lb.width() < lb.sizeHint().width():
+            lb.resize(lb.sizeHint().width(), lb.height())
+        return lb
+
+    def line(self, x1, y, x2, width=3, parent=None):
+        """a Line (BorderWidth 3, black) across the form"""
+        from PyQt6.QtWidgets import QFrame
+        ln = QFrame()
+        ln.setStyleSheet("background: black; border: none;")
+        ln.setParent(parent if parent is not None else self.form)
+        ln.setGeometry(self.x(x1), self.y(y) - width // 2, self.x(x2) - self.x(x1), width)
+        return ln

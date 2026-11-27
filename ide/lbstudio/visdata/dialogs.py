@@ -3,8 +3,8 @@ REPLACE.FRM, VBIMEX.FRM, DATATYPE.FRM, IMPTBLS.FRM, EXPNAME.FRM): Errors, Attach
 Copy Structure, Global Replace, Import/Export with Data Type, Import Tables and Export."""
 import os
 
-from PyQt6.QtWidgets import (QDialog, QWidget, QGridLayout, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QListWidget,
-                             QPushButton, QComboBox, QCheckBox, QPlainTextEdit, QAbstractItemView, QFileDialog)
+from PyQt6.QtWidgets import (QDialog, QWidget, QLineEdit, QListWidget, QPushButton, QComboBox,
+                             QCheckBox, QPlainTextEdit, QAbstractItemView, QFileDialog)
 
 from ..rtobj import RtError
 from . import core as C
@@ -118,16 +118,6 @@ def ix_fields(x):
     return ";".join(("-" if f.get("Attributes") & 1 else "+") + f.get("Name") for f in x.each("Fields"))
 
 
-def _buttons(*specs):
-    row = QHBoxLayout()
-    out = []
-    for text in specs:
-        b = QPushButton(text)
-        row.addWidget(b)
-        out.append(b)
-    return row, out
-
-
 # ---------------------------------------------------------------- Errors
 class ErrorsWindow(QWidget):
     """the Errors collection of the DBEngine: number, source, description"""
@@ -136,16 +126,18 @@ class ErrorsWindow(QWidget):
         super().__init__()
         self.vd = vd
         self.setWindowTitle("Errors")
-        lay = QVBoxLayout(self)
-        self.lst = QListWidget()
-        lay.addWidget(self.lst, 1)
-        row, (self.b_refresh, self.b_close) = _buttons("&Refresh", "&Close")
-        row.addStretch(1)
-        lay.addLayout(row)
+        P = self.P = C.Place(self, 442, 176, fixed=False)   # (VB6 oracle vb_errors.png)
+        self.lst = P.put(QListWidget(), 7, 5, 429, 134)
+        self.bar = P.put(QWidget(), 0, 149, 442, 27)
+        self.b_refresh = P.put(QPushButton("&Refresh"), 16, 3, 113, 22, self.bar)
+        self.b_close = P.put(QPushButton("&Close"), 136, 3, 113, 22, self.bar)
         self.b_refresh.clicked.connect(self.refresh)
         self.b_close.clicked.connect(lambda: _close(self))
-        self.resize(450, 205)
         self.fill(errs if errs is not None else vd.s.errors())
+
+    def resizeEvent(self, e):
+        _fit(self, 7, 5, 10)
+        super().resizeEvent(e)
 
     def fill(self, errs):
         self.lst.clear()
@@ -161,6 +153,13 @@ class ErrorsWindow(QWidget):
         self.fill(errs)
 
 
+def _fit(w, x, y, gap):
+    """Form_Resize: the list fills the window above the bar of the buttons"""
+    P = w.P
+    w.bar.setGeometry(0, w.height() - w.bar.height(), w.width(), w.bar.height())
+    w.lst.setGeometry(P.x(x), P.y(y), max(0, w.width() - 2 * P.x(x)), max(0, w.bar.y() - P.y(y) - P.y(gap)))
+
+
 def _close(w):
     p = w.parentWidget()
     (p if p is not None and p.inherits("QMdiSubWindow") else w).close()
@@ -174,23 +173,27 @@ class AttachmentsWindow(QWidget):
         super().__init__()
         self.vd = vd
         self.setWindowTitle("Attachments")
-        lay = QVBoxLayout(self)
-        self.lst = QListWidget()
+        P = self.P = C.Place(self, 405, 193, fixed=False)   # (VB6 oracle vb_attach.png)
+        self.lst = P.put(QListWidget(), 2, 1, 400, 160)
         self.lst.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
-        lay.addWidget(self.lst, 1)
-        row, (self.b_new, self.b_reattach, self.b_close) = _buttons("&New", "&ReAttach", "&Close")
-        lay.addLayout(row)
+        self.bar = P.put(QWidget(), 0, 166, 405, 27)
+        self.b_new = P.put(QPushButton("&New"), 8, 3, 121, 22, self.bar)
+        self.b_reattach = P.put(QPushButton("&ReAttach"), 144, 3, 123, 22, self.bar)
+        self.b_close = P.put(QPushButton("&Close"), 280, 3, 123, 22, self.bar)
         self.b_new.clicked.connect(self.new)
         self.b_reattach.clicked.connect(self.reattach)
         self.b_close.clicked.connect(lambda: _close(self))
         self.lst.itemDoubleClicked.connect(lambda it: self.refresh_link(it.text()))
-        self.resize(410, 225)
         try:
             for td in vd.s.db.each("TableDefs"):
                 if C.attached(td):
                     self.lst.addItem(self.line(td.get("Name"), td.get("SourceTableName"), td.get("Connect")))
         except RtError as e:
             vd.show_error(e)
+
+    def resizeEvent(self, e):
+        _fit(self, 2, 1, 5)
+        super().resizeEvent(e)
 
     @staticmethod
     def line(name, source, connect):
@@ -263,24 +266,23 @@ class NewAttachDialog(QDialog):
         self.vd, self.att = vd, attachments
         self.added = False
         self.setWindowTitle("New Attached Table")
-        g = QVBoxLayout(self)
+        P = C.Place(self, 283, 231)             # (VB6 oracle vb_newattach.png)
         self.name, self.database = QLineEdit(), QLineEdit()
         self.connect, self.table = QComboBox(), QComboBox()
         self.connect.addItems(ATTACH_KINDS)
+        self.connect.setEditable(True)
         self.table.setEditable(True)
-        for t, w in (("Attachment &Name:", self.name), ("&Database Name:", self.database),
-                     ("C&onnect String:", self.connect), ("&Table to Attach:", self.table)):
-            lb = QLabel(t)
-            lb.setBuddy(w)
-            g.addWidget(lb)
-            g.addWidget(w)
-        row = QHBoxLayout()
-        self.save_pwd, self.exclusive = QCheckBox("AttachSave&PWD"), QCheckBox("Attach&Exclusive")
-        row.addWidget(self.save_pwd)
-        row.addWidget(self.exclusive)
-        g.addLayout(row)
-        row, (self.b_attach, self.b_cancel) = _buttons("&Attach", "&Cancel")
-        g.addLayout(row)
+        for t, w, y, wl, y2, h in (("Attachment &Name: ", self.name, 7, 93, 24, 19),
+                                   ("&Database Name: ", self.database, 48, 83, 64, 19),
+                                   ("&Connect String: ", self.connect, 88, 78, 104, 21),
+                                   ("&Table to Attach: ", self.table, 128, 81, 144, 21)):
+            P.label(t, 8, y, wl, buddy=w)
+            P.put(w, 8, y2, 265, h)
+        self.save_pwd = P.put(QCheckBox("AttachSave&PWD"), 8, 168, 116, 15)
+        self.exclusive = P.put(QCheckBox("Attach&Exclusive"), 144, 168, 119, 15)
+        self.b_attach = P.put(QPushButton("&Attach"), 8, 192, 127, 29)
+        self.b_cancel = P.put(QPushButton("&Cancel"), 144, 192, 127, 29)
+        self.b_attach.setDefault(True)
         self.b_attach.setEnabled(False)
         self.name.textChanged.connect(self.changed)
         self.connect.currentIndexChanged.connect(self.changed)
@@ -333,24 +335,25 @@ class CopyStructureDialog(QDialog):
         super().__init__(vd)
         self.vd = vd
         self.setWindowTitle("Copy Structure")
-        g = QGridLayout(self)
-        g.addWidget(QLabel("Tables:"), 0, 0)
+        P = C.Place(self, 435, 220)             # (VB6 oracle vb_copystru.png)
         self.lst = QListWidget()
         self.lst.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        g.addWidget(self.lst, 1, 0, 7, 1)
-        g.addWidget(QLabel("Target Database:"), 0, 1)
+        self.lst.setSortingEnabled(True)
+        P.label(" Tables: ", 7, 7, 41)
+        P.put(self.lst, 7, 24, 185, 160)
         self.database = QLineEdit(vd.s.dbname)
-        g.addWidget(self.database, 1, 1)
-        g.addWidget(QLabel("Target Connect String:"), 2, 1)
+        P.label(" Target Database: ", 203, 7, 91)
+        P.put(self.database, 203, 28, 225, 19)
         self.connect = QPlainTextEdit()
-        self.connect.setMaximumHeight(40)
-        g.addWidget(self.connect, 3, 1)
-        self.c_indexes, self.c_data = QCheckBox("Copy Indexes"), QCheckBox("Copy Data")
-        g.addWidget(self.c_indexes, 4, 1)
-        g.addWidget(self.c_data, 5, 1)
-        g.addWidget(QLabel("(Note: Export is Faster)"), 6, 1)
-        row, (self.b_ok, self.b_close) = _buttons("&OK", "&Close")
-        g.addLayout(row, 7, 1)
+        P.label(" Target Connect String: ", 203, 56, 116)
+        P.put(self.connect, 203, 77, 225, 36)
+        self.c_indexes = P.put(QCheckBox("Copy Indexes"), 208, 120, 211, 17)
+        self.c_data = P.put(QCheckBox("Copy Data"), 208, 144, 209, 17)
+        self.c_indexes.setChecked(True)
+        P.label("(Note: Export is Faster)", 224, 160, 111)
+        self.b_ok = P.put(QPushButton("&OK"), 200, 182, 105, 25)
+        self.b_close = P.put(QPushButton("&Close"), 320, 182, 105, 25)
+        self.b_ok.setDefault(True)
         self.b_ok.clicked.connect(self.ok)
         self.b_close.clicked.connect(self.close_dialog)
         try:
@@ -410,20 +413,22 @@ class GlobalReplaceDialog(QDialog):
         super().__init__(vd)
         self.vd = vd
         self.setWindowTitle("Global Replace")
-        g = QGridLayout(self)
-        g.addWidget(QLabel("&Table:"), 0, 0)
-        g.addWidget(QLabel("&Field:"), 0, 1)
+        P = C.Place(self, 345, 257)             # (VB6 oracle vb_repl.png)
         self.tables, self.fields = QListWidget(), QListWidget()
-        g.addWidget(self.tables, 1, 0)
-        g.addWidget(self.fields, 1, 1)
-        g.addWidget(QLabel("&Replace With:"), 2, 0, 1, 2)
-        self.replace = QLineEdit()
-        g.addWidget(self.replace, 3, 0, 1, 2)
-        g.addWidget(QLabel("Cr&iteria:"), 4, 0, 1, 2)
-        self.criteria = QLineEdit()
-        g.addWidget(self.criteria, 5, 0, 1, 2)
-        row, (self.b_ok, self.b_cancel) = _buttons("&OK", "&Cancel")
-        g.addLayout(row, 6, 0, 1, 2)
+        self.tables.setSortingEnabled(True)
+        self.fields.setSortingEnabled(True)
+        P.label("&Table:", 16, 8, 30, buddy=self.tables)
+        P.put(self.tables, 16, 24, 153, 108)
+        P.label("&Field:", 176, 8, 26, buddy=self.fields)
+        P.put(self.fields, 176, 24, 153, 108)
+        self.replace, self.criteria = QLineEdit(), QLineEdit()
+        P.label("&Replace With:", 16, 136, 67, buddy=self.replace)
+        P.put(self.replace, 16, 152, 313, 19)
+        P.label("Cr&iteria:", 16, 176, 39, buddy=self.criteria)
+        P.put(self.criteria, 16, 192, 313, 19)
+        self.b_ok = P.put(QPushButton("&OK"), 32, 224, 137, 25)
+        self.b_cancel = P.put(QPushButton("&Cancel"), 176, 224, 137, 25)
+        self.b_ok.setDefault(True)
         self.b_ok.setEnabled(False)
         self.tables.currentTextChanged.connect(self.table_changed)
         self.fields.currentTextChanged.connect(self.enable)
@@ -494,15 +499,15 @@ class DataTypeDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(caption)
         self.kind = -1
-        g = QGridLayout(self)
-        g.addWidget(QLabel("Data Source:"), 0, 0)
+        P = C.Place(self, 307, 101)             # (VB6 oracle vb_datatype.png)
         self.lst = QListWidget()
         self.lst.addItems(DATA_TYPES)
         self.lst.setCurrentRow(0)
-        g.addWidget(self.lst, 1, 0, 2, 1)
-        ok, cancel = QPushButton("&OK"), QPushButton("&Cancel")
-        g.addWidget(ok, 1, 1)
-        g.addWidget(cancel, 2, 1)
+        P.label(" Data Source: ", 8, 4, 69)
+        P.put(self.lst, 8, 24, 193, 69)
+        ok = P.put(QPushButton("&OK"), 208, 24, 89, 25)
+        cancel = P.put(QPushButton("&Cancel"), 208, 64, 89, 25)
+        ok.setDefault(True)
         ok.clicked.connect(self.ok)
         cancel.clicked.connect(self.reject)
         self.lst.itemDoubleClicked.connect(lambda *_: self.ok())
@@ -517,16 +522,14 @@ class ImportExportDialog(QDialog):
         super().__init__(vd)
         self.vd = vd
         self.setWindowTitle("Import/Export")
-        g = QGridLayout(self)
-        self.b_import, self.b_close = QPushButton("&Import"), QPushButton("&Close")
-        self.b_export, self.b_export_sql = QPushButton("&Export Table(s)"), QPushButton("Export &SQL Results")
-        g.addWidget(self.b_import, 0, 0)
-        g.addWidget(self.b_close, 0, 1)
-        g.addWidget(self.b_export, 1, 0)
-        g.addWidget(self.b_export_sql, 1, 1)
+        P = C.Place(self, 315, 327)             # (VB6 oracle vb_impexp.png)
+        self.b_import = P.put(QPushButton("&Import"), 16, 8, 137, 25)
+        self.b_close = P.put(QPushButton("&Close"), 160, 8, 137, 25)
+        self.b_export = P.put(QPushButton("&Export Table(s)"), 16, 40, 137, 25)
+        self.b_export_sql = P.put(QPushButton("Export &SQL Results"), 160, 40, 137, 25)
         self.lst = QListWidget()
         self.lst.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        g.addWidget(self.lst, 2, 0, 1, 2)
+        P.put(self.lst, 8, 72, 298, 251)
         self.b_export.setEnabled(False)
         sql = vd.sqlwin.text.toPlainText() if vd.sqlwin is not None else ""
         self.b_export_sql.setEnabled(sql[:7].upper() == "SELECT ")
@@ -564,14 +567,13 @@ class ImportExportDialog(QDialog):
             return self.vd.answers.pop(0) if self.vd.answers else table
         d = QDialog(self)
         d.setWindowTitle("Export")
-        g = QGridLayout(d)
-        g.addWidget(QLabel(C.MSG[57] + table + " ->"), 0, 0)
-        e = QLineEdit(table)
-        g.addWidget(e, 1, 0)
-        g.addWidget(QLabel(C.MSG[58] + target), 2, 0)
-        ok, cancel = QPushButton("&OK"), QPushButton("&Cancel")
-        g.addWidget(ok, 0, 1)
-        g.addWidget(cancel, 1, 1)
+        P = C.Place(d, 330, 89)                 # (VB6 EXPNAME.FRM)
+        P.label(C.MSG[57] + table + " ->", 11, 8, 193)
+        e = P.put(QLineEdit(table), 11, 32, 193, 19)
+        P.label(C.MSG[58] + target, 11, 56, 193)
+        ok = P.put(QPushButton("&OK"), 232, 8, 89, 25)
+        cancel = P.put(QPushButton("&Cancel"), 232, 40, 89, 25)
+        ok.setDefault(True)
         ok.clicked.connect(d.accept)
         cancel.clicked.connect(d.reject)
         return e.text() if d.exec() else ""
@@ -709,15 +711,14 @@ class ImportExportDialog(QDialog):
             return self.import_table(kind, pick) if pick else False
         d = QDialog(self)
         d.setWindowTitle("Import Tables")
-        g = QGridLayout(d)
-        g.addWidget(QLabel("Tables In:" + (self.imp_db.get("Name") or "")), 0, 0)
-        lst = QListWidget()
+        P = C.Place(d, 432, 104)                # (VB6 IMPTBLS.FRM)
+        P.label(" Tables In:", 8, 8, 48)
+        lst = P.put(QListWidget(), 8, 32, 313, 64)
         lst.addItems(names)
-        g.addWidget(lst, 1, 0, 2, 1)
-        b_imp, b_close = QPushButton("&Import"), QPushButton("&Close")
+        b_imp = P.put(QPushButton("&Import"), 328, 32, 97, 25)
+        b_close = P.put(QPushButton("&Close"), 328, 72, 97, 25)
         b_imp.setEnabled(False)
-        g.addWidget(b_imp, 1, 1)
-        g.addWidget(b_close, 2, 1)
+        b_imp.setDefault(True)
         lst.itemClicked.connect(lambda *_: b_imp.setEnabled(True))
         b_imp.clicked.connect(lambda: lst.currentItem() and self.import_table(kind, lst.currentItem().text()))
         lst.itemDoubleClicked.connect(lambda it: self.import_table(kind, it.text()))

@@ -1,7 +1,7 @@
 """Data Form Designer of the Visual Data Manager (VB6 DFD.FRM): a form of the project with a Data control on a
 RecordSource and a label and a bound control for each field chosen, with Add / Delete / Refresh / Update / Close.
 VB6 puts an OLE container on a Binary field; OLE is not part of LinBASIC Studio, so a bound PictureBox."""
-from PyQt6.QtWidgets import QDialog, QGridLayout, QLabel, QLineEdit, QListWidget, QPushButton, QComboBox, QVBoxLayout
+from PyQt6.QtWidgets import QDialog, QLineEdit, QListWidget, QPushButton, QComboBox
 
 from ..rtobj import RtError
 from . import core as C
@@ -168,41 +168,35 @@ class DataFormDesigner(QDialog):
         self.rs = None
         self.rs_source = ""
         self.setWindowTitle("Data Form Designer")
-        g = QGridLayout(self)
-        g.addWidget(QLabel("Form Name (w/o Extension):"), 0, 0)
+        P = C.Place(self, 462, 247)             # (VB6 oracle vb_dfd.png)
         self.name = QLineEdit()
-        g.addWidget(self.name, 0, 1, 1, 2)
-        g.addWidget(QLabel("RecordSource:"), 1, 0)
+        P.label("Form Name (w/o Extension): ", 8, 8, 140)
+        P.put(self.name, 184, 8, 122, 19)
         self.source = QComboBox()
         self.source.setEditable(True)
-        g.addWidget(self.source, 1, 1, 1, 3)
-        g.addWidget(QLabel("Select a Table/QueryDef from the list or enter a SQL statement."), 2, 1, 1, 3)
-        g.addWidget(QLabel("Available Fields:"), 3, 0)
-        g.addWidget(QLabel("Included Fields:"), 3, 2)
+        P.label("RecordSource: ", 7, 36, 74)
+        P.put(self.source, 112, 32, 334, 21)
+        P.label("Select a Table/QueryDef from the list or enter a SQL statement.", 112, 56, 334, center=True)
+        P.line(8, 72, 452)
         self.all, self.sel = QListWidget(), QListWidget()
-        g.addWidget(self.all, 4, 0, 4, 1)
-        g.addWidget(self.sel, 4, 2, 4, 1)
-        mid = QVBoxLayout()
+        P.label("Available Fields: ", 8, 80, 80)
+        P.put(self.all, 8, 96, 179, 108)
+        P.label("Included Fields: ", 234, 80, 78)
+        P.put(self.sel, 234, 96, 179, 108)
         self.b_move = []
         for k, t in enumerate((">", ">>", "<<", "<")):
-            b = QPushButton(t)
-            b.setFixedWidth(34)
+            b = P.put(QPushButton(t), 194, 93 + 30 * k, 33, 25)
             b.clicked.connect(lambda _c=False, i=k: self.move_fields(i))
-            mid.addWidget(b)
             self.b_move.append(b)
-        g.addLayout(mid, 4, 1, 4, 1)
-        side = QVBoxLayout()
-        self.b_up, self.b_down = QPushButton("▲"), QPushButton("▼")
-        self.b_up.setFixedWidth(36)
-        self.b_down.setFixedWidth(36)
-        side.addStretch(1)
-        side.addWidget(self.b_up)
-        side.addWidget(self.b_down)
-        side.addStretch(1)
-        g.addLayout(side, 4, 3, 4, 1)
-        self.b_build, self.b_close = QPushButton("&Build the Form"), QPushButton("&Close")
-        g.addWidget(self.b_build, 8, 2)
-        g.addWidget(self.b_close, 8, 3)
+        self.b_up, self.b_down = QPushButton("\u25b2"), QPushButton("\u25bc")
+        for b in (self.b_up, self.b_down):         # (VB6: the black arrows of DFD.FRX)
+            f = b.font()
+            f.setPointSizeF(f.pointSizeF() * 1.8)
+            b.setFont(f)
+        P.put(self.b_up, 419, 114, 36, 36)
+        P.put(self.b_down, 419, 153, 36, 36)
+        self.b_build = P.put(QPushButton("&Build the Form"), 222, 215, 113, 25)
+        self.b_close = P.put(QPushButton("&Close"), 341, 215, 113, 25)
         self.b_up.clicked.connect(lambda: self.move_selected(-1))
         self.b_down.clicked.connect(lambda: self.move_selected(1))
         self.b_build.clicked.connect(self.build)

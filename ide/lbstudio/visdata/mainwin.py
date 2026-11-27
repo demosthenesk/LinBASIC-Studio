@@ -3,10 +3,9 @@ form, the transactions), its status bar, opening and closing a database, the rec
 import os
 
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QAction, QActionGroup, QBrush, QColor, QIcon, QPainter, QPen, QPixmap
+from PyQt6.QtGui import QActionGroup, QBrush, QColor, QIcon, QPainter, QPen, QPixmap
 from PyQt6.QtWidgets import (QMainWindow, QMdiArea, QMenu, QToolBar, QLabel, QFileDialog, QMessageBox, QInputDialog,
-                             QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QComboBox, QVBoxLayout, QListWidget,
-                             QHBoxLayout, QPushButton, QMdiSubWindow)
+                             QDialog, QLineEdit, QComboBox, QPushButton, QMdiSubWindow, QGroupBox)
 
 from ..rtobj import RtError
 from . import core as C
@@ -54,6 +53,25 @@ def _icon(kind):
     elif kind == "Commit":
         p.setBrush(QColor("#0000c0"))
         p.drawEllipse(2, 4, 11, 8)
+    elif kind == "VisData":                     # a database under a magnifying glass
+        p.setBrush(QColor("#00c0c0"))
+        p.drawRect(1, 5, 9, 9)
+        p.setBrush(QColor("#ffffff"))
+        p.drawEllipse(6, 1, 8, 8)
+        p.setPen(QPen(QColor("#000000"), 2))
+        p.drawLine(12, 9, 15, 14)
+    elif kind in ("SQL", "QRY"):                # the letters on a cyan card
+        p.fillRect(0, 1, 16, 14, QColor("#00ffff"))
+        p.setPen(QPen(QColor("#000080")))
+        f = p.font()
+        f.setPixelSize(9 if kind == "QRY" else 10)
+        f.setBold(True)
+        p.setFont(f)
+        p.drawText(pm.rect(), Qt.AlignmentFlag.AlignCenter, kind)
+        if kind == "QRY":
+            for y, c in ((13, "#ff0000"), (14, "#00c000")):
+                p.setPen(QPen(QColor(c)))
+                p.drawLine(0, y, 15, y)
     p.end()
     return QIcon(pm)
 
@@ -63,6 +81,7 @@ class VisDataWindow(QMainWindow):
         super().__init__()
         self.main = main
         self.setWindowTitle(TITLE)
+        self.setWindowIcon(_icon("VisData"))
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         prefs = dict(C.DEFAULT_PREFS)
         prefs.update(main.S.get("visdata", {}) or {})
@@ -323,12 +342,21 @@ class VisDataWindow(QMainWindow):
         sw.setWidget(w)
         sw.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         sw.setWindowTitle(w.windowTitle())
-        sw.setWindowIcon(w.windowIcon())
+        t = w.windowTitle()                     # the icon of the window, as VisData has it
+        sw.setWindowIcon(_icon("SQL" if t == "SQL Statement" else "QRY" if t == "Query Builder" else
+                               "Table" if t.startswith("Table:") else "VisData"))
         w.windowTitleChanged.connect(sw.setWindowTitle)
         self.mdi.addSubWindow(sw)
+        if w.minimumSize() == w.maximumSize():  # a fixed window of VisData (BorderStyle 3: no Min / Max)
+            sw.setWindowFlags(Qt.WindowType.SubWindow | Qt.WindowType.WindowTitleHint |
+                              Qt.WindowType.WindowSystemMenuHint | Qt.WindowType.WindowCloseButtonHint)
+            sw.adjustSize()
         if geom:
             sw.setGeometry(*geom)
         sw.show()
+        size = getattr(w, "vb_size", None)
+        if size is not None and not geom:       # the MDI window around the size of the form in VB6
+            sw.resize(size.width() + sw.width() - w.width(), size.height() + sw.height() - w.height())
         return sw
 
     def refresh_tables(self):
@@ -436,24 +464,39 @@ class VisDataWindow(QMainWindow):
 
     def odbc_logon(self):
         """the ODBC Logon of VisData: the Connect of a data source ("ODBC;DSN=...;"), "" = Cancel"""
-        from ..ocxpages import odbc_dsns
+        from ..ocxpages import odbc_dsns, odbc_drivers
         d = QDialog(self)
         d.setWindowTitle("ODBC Logon")
-        f = QFormLayout(d)
+        P = C.Place(d, 298, 212)                # (VB6 oracle vb_odbc.png)
+        fra = P.put(QGroupBox("Connect Values:"), 8, 8, 282, 161)
         dsn = QComboBox()
         dsn.setEditable(True)
-        dsn.addItems(odbc_dsns())
+        dsn.addItems(sorted(odbc_dsns(), key=str.upper))
+        dsn.setEditText("")
         uid, pwd, dbn, drv, srv = QLineEdit(), QLineEdit(), QLineEdit(), QComboBox(), QLineEdit()
         pwd.setEchoMode(QLineEdit.EchoMode.Password)
-        from ..ocxpages import odbc_drivers
-        drv.addItems([""] + odbc_drivers())
-        for t, w in (("&DSN:", dsn), ("&UID:", uid), ("&Password:", pwd), ("Data&base:", dbn), ("Dri&ver:", drv),
-                     ("&Server:", srv)):
-            f.addRow(t, w)
-        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        bb.accepted.connect(d.accept)
-        bb.rejected.connect(d.reject)
-        f.addRow(bb)
+        drv.addItems(sorted(odbc_drivers(), key=str.upper))
+        drv.setCurrentIndex(-1)
+        labels = []
+        for t, w, y, h in (("&DSN:", dsn, 16, 21), ("&UID:", uid, 40, 20), ("&Password:", pwd, 62, 20),
+                           ("Data&base:", dbn, 84, 20), ("Dri&ver:", drv, 106, 21), ("&Server:", srv, 129, 22)):
+            labels.append(P.label(t, 9, y + 3, 50, buddy=w, parent=fra))
+            P.put(w, 75, y, 201, h, fra)
+
+        def dsn_changed(text):
+            """cboDSNList_Change: Driver and Server for a connection without a DSN"""
+            on = not text or text == "(None)"
+            for w in (drv, srv, labels[4], labels[5]):
+                w.setEnabled(on)
+        dsn.editTextChanged.connect(dsn_changed)
+        dsn_changed("")
+        b_reg = P.put(QPushButton("&Register"), 8, 177, 96, 30)
+        b_ok = P.put(QPushButton("&OK"), 116, 177, 84, 30)
+        b_cancel = P.put(QPushButton("&Cancel"), 205, 177, 84, 30)
+        b_ok.setDefault(True)
+        b_ok.clicked.connect(d.accept)
+        b_cancel.clicked.connect(d.reject)
+        b_reg.clicked.connect(lambda: self.register_dsn(dsn.currentText().strip(), drv.currentText().strip()))
         if self.quiet:
             return self.answers.pop(0) if self.answers else ""
         if not d.exec():
@@ -467,6 +510,22 @@ class VisDataWindow(QMainWindow):
             if w.text().strip():
                 parts.append(f"{k}={w.text().strip()}")
         return ";".join(parts) + ";"
+
+    def register_dsn(self, dsn, driver):
+        """Register (ODBCLOGN.FRM): DBEngine.RegisterDatabase of the DSN with the driver chosen"""
+        if not dsn:
+            self.say("Please enter a DSN!")
+            return False
+        if not driver:
+            self.say("Please select a Driver!")
+            return False
+        try:
+            self.s.start()
+            self.s.dbe.call("RegisterDatabase", dsn, driver, False, "")
+        except RtError as e:
+            self.show_error(e)
+            return False
+        return True
 
     def new_mdb(self, version):
         """New... > Microsoft Access > Version 2.0 / 7.0 MDB...: a new database, opened"""
@@ -653,15 +712,18 @@ class VisDataWindow(QMainWindow):
     def workspace(self):
         d = QDialog(self)
         d.setWindowTitle("Login")
-        f = QFormLayout(d)
-        user, pwd = QLineEdit(self.s.username() if self.s.ws is not None else "admin"), QLineEdit()
+        P = C.Place(d, 188, 132)                # (VB6 oracle vb_login.png)
+        user, pwd = QLineEdit(), QLineEdit()
         pwd.setEchoMode(QLineEdit.EchoMode.Password)
-        f.addRow("&User Name:", user)
-        f.addRow("&Password:", pwd)
-        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        bb.accepted.connect(d.accept)
-        bb.rejected.connect(d.reject)
-        f.addRow(bb)
+        P.label("Login Name: ", 8, 8, 62)
+        P.put(user, 8, 24, 169, 19)
+        P.label("Password: ", 8, 48, 53)
+        P.put(pwd, 8, 64, 169, 19)
+        b_ok = P.put(QPushButton("&OK"), 8, 96, 81, 25)
+        b_cancel = P.put(QPushButton("&Cancel"), 96, 96, 81, 25)
+        b_ok.setDefault(True)
+        b_ok.clicked.connect(d.accept)
+        b_cancel.clicked.connect(d.reject)
         if self.quiet or not d.exec():
             return
         try:

@@ -37,6 +37,7 @@ typedef struct osrc {
     ddb *mx;                            /* a connection of its own to it (the schema of the copies) */
     otab *tabs; int ntabs;
     int trans;                          /* BeginTrans depth */
+    int stale;                          /* its data source registered again: a new connection for the next open */
 } osrc;
 static osrc **g_os; static int g_nos;
 static int g_stamp;                     /* a statement */
@@ -233,7 +234,8 @@ static void put_keys_as_given(jbuf *b, const char *out, const char *given)
 /* a data source by its Connect: connected once, its copies in a file of their own. 0 with the error raised */
 static osrc *osrc_open(const char *connect, const char *src)
 {
-    for (int i = 0; i < g_nos; i++) if (!strcmp(g_os[i]->key, connect) || !strcmp(g_os[i]->connect, connect)) return g_os[i];
+    for (int i = 0; i < g_nos; i++)
+        if (!g_os[i]->stale && (!strcmp(g_os[i]->key, connect) || !strcmp(g_os[i]->connect, connect))) return g_os[i];
     coll_clear_items(err_list());
     const char *cs = connect;
     if (!strncasecmp(cs, "ODBC;", 5)) cs += 5;
@@ -825,6 +827,21 @@ static void odbc_trans(ddb *d, int what)        /* 0 begin, 1 commit, 2 rollback
 }
 
 /* ---------------------------------------------------------------- OpenDatabase("", , , "ODBC;...") */
+/* DBEngine.RegisterDatabase: the sources of the data source named are not used again (VB6 d_dao7: the next
+ * OpenDatabase connects to what was registered) */
+static void odbc_forget_dsn(const char *dsn)
+{
+    size_t n = strlen(dsn);
+    for (int i = 0; i < g_nos; i++) {
+        const char *ks[2] = { g_os[i]->key, g_os[i]->connect };
+        for (int j = 0; j < 2; j++)
+            for (const char *p = ks[j]; p && (p = strcasestr(p, "DSN=")) != 0; p += 4)
+                if ((p == ks[j] || p[-1] == ';' || p[-1] == ' ') && !strncasecmp(p + 4, dsn, n) &&
+                    (p[4 + n] == ';' || p[4 + n] == 0))
+                    g_os[i]->stale = 1;
+    }
+}
+
 static vbobj odbc_db_open(dws *w, const char *connect, int ro)
 {
     osrc *o = osrc_open(connect, "DAO.Workspace");

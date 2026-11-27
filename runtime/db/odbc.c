@@ -10,8 +10,10 @@
 #include <stdint.h>
 #ifdef _WIN32
 #include <windows.h>
+#define strncasecmp _strnicmp
 #else
 #include <dlfcn.h>
+#include <strings.h>
 #endif
 #if defined(_WIN32) || (defined(__has_include) && __has_include(<sqlext.h>))
 #include <sql.h>
@@ -237,6 +239,94 @@ int lbo_endtran(lbo_conn *c, int commit)
 }
 
 /* the names of the drivers installed (one per line) */
+/* ---------------------------------------------------------------- DBEngine.RegisterDatabase
+ * a data source of the user: its driver (SQLWriteDSNToIni) and its attributes, "keyword=value" lines
+ * (SQLWritePrivateProfileString in ODBC.INI); the installer library of the system (Linux: unixODBC's
+ * libodbcinst.so.2, Windows: odbccp32.dll), loaded here. Without the driver's own setup dialog (Silent). */
+int lbo_register(const char *dsn, const char *driver, const char *attrs)
+{
+#ifdef _WIN32
+    HMODULE h = LoadLibraryW(L"odbccp32.dll");
+    if (!h) return 0;
+    BOOL (WINAPI *wdsn)(LPCWSTR, LPCWSTR);
+    BOOL (WINAPI *wpps)(LPCWSTR, LPCWSTR, LPCWSTR, LPCWSTR);
+    *(void **)&wdsn = (void *)GetProcAddress(h, "SQLWriteDSNToIniW");
+    *(void **)&wpps = (void *)GetProcAddress(h, "SQLWritePrivateProfileStringW");
+#else
+    void *h = dlopen("libodbcinst.so.2", RTLD_NOW | RTLD_GLOBAL);
+    if (!h) h = dlopen("libodbcinst.so", RTLD_NOW | RTLD_GLOBAL);
+    if (!h) h = dlopen("libiodbcinst.so.2", RTLD_NOW | RTLD_GLOBAL);
+    if (!h) return 0;
+    int (*wdsn)(const char *, const char *);
+    int (*wpps)(const char *, const char *, const char *, const char *);
+    *(void **)&wdsn = dlsym(h, "SQLWriteDSNToIni");
+    *(void **)&wpps = dlsym(h, "SQLWritePrivateProfileString");
+#endif
+    if (!wdsn || !wpps || !dsn || !*dsn || !driver || !*driver) return 0;
+    {   /* a driver of the system (VB6 d_dao7: a driver that is not there, 3146) */
+        char list[8192], *q;
+        if (lbo_drivers(list, sizeof list) == 0) {
+            size_t dn = strlen(driver);
+            int found = 0;
+            for (q = list; *q; ) {
+                char *e = strchr(q, '\n');
+                size_t n = e ? (size_t)(e - q) : strlen(q);
+                if (n == dn && !strncasecmp(q, driver, n)) { found = 1; break; }
+                q += n + (e ? 1 : 0);
+            }
+            if (!found) return 0;
+        }
+    }
+#ifdef _WIN32
+    SQLWCHAR *wd = wz(dsn), *wv = wz(driver);
+    int ok = wdsn((LPCWSTR)wd, (LPCWSTR)wv);
+    free(wv);
+#else
+    int ok = wdsn(dsn, driver);
+#endif
+    /* the attributes: lines (vbCr, vbLf) or ";" of keyword=value */
+    const char *p = attrs ? attrs : "";
+    while (ok && *p) {
+        size_t n = strcspn(p, "\r\n;");
+        if (n > 0) {
+            char *kv = (char *)malloc(n + 1);
+            memcpy(kv, p, n); kv[n] = 0;
+            char *eq = strchr(kv, '=');
+            if (eq) {
+                *eq = 0;
+                char *k = kv, *v = eq + 1;
+                while (*k == ' ') k++;
+#ifndef _WIN32
+                /* a file as App.Path & "\x.db" gives it (as the connection strings of ado_odbc.inc) */
+                if ((!strcasecmp(k, "Database") || !strcasecmp(k, "DBQ") || !strcasecmp(k, "DBNAME")) &&
+                    (strchr(v, '/') || (v[0] && v[1] == ':')))
+                    for (char *c = v; *c; c++) if (*c == '\\') *c = '/';
+#endif
+#ifdef _WIN32
+                SQLWCHAR *wk = wz(k), *wval = wz(v), *wf = wz("ODBC.INI");
+                ok = wpps((LPCWSTR)wd, (LPCWSTR)wk, (LPCWSTR)wval, (LPCWSTR)wf);
+                free(wk); free(wval); free(wf);
+#else
+                ok = wpps(dsn, k, v, "ODBC.INI");
+#endif
+            }
+            free(kv);
+        }
+        p += n;
+        if (*p) p++;
+    }
+#ifdef _WIN32
+    free(wd);
+#else
+    /* unixODBC keeps what it read of the files: the next connection reads the data source written now (its cache
+     * goes by the time of the file, in seconds: two registrations in a second, VB6 d_dao7) */
+    void (*clear)(void);
+    *(void **)&clear = dlsym(h, "__clear_ini_cache");
+    if (clear) clear();
+#endif
+    return ok ? 1 : 0;
+}
+
 int lbo_drivers(char *buf, int len)
 {
     buf[0] = 0;

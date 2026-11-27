@@ -27,6 +27,7 @@ int lbo_info_int(lbo_conn *c, int what, long *out);
 int lbo_autocommit(lbo_conn *c, int on);
 int lbo_endtran(lbo_conn *c, int commit);
 int lbo_drivers(char *buf, int len);
+int lbo_register(const char *dsn, const char *driver, const char *attrs);   /* DBEngine.RegisterDatabase */
 
 lbo_stmt *lbo_stmt_new(lbo_conn *c);
 void lbo_stmt_free(lbo_stmt *s);

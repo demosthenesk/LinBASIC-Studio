@@ -4,12 +4,13 @@ Edit, Delete, Close, Sort, Filter, Move, Find / Seek; Update, Cancel), with a Da
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, QLabel, QLineEdit,
                              QScrollArea, QScrollBar, QTableWidget, QTableWidgetItem, QComboBox, QDialog,
-                             QDialogButtonBox, QListWidget, QFormLayout, QAbstractItemView)
+                             QRadioButton, QListWidget, QAbstractItemView)
 
 from ..rtobj import RtError
 from . import core as C
 
 dbText, dbMemo = 10, 12
+FIELD_WIDTH = {1: 850, 2: 650, 3: 900, 4: 1100, 5: 1800, 6: 1800, 7: 2200, 8: 2000}   # twips
 
 
 def record_form(vd, rs, caption, table=False, source=""):
@@ -61,14 +62,18 @@ class RecordForm(QWidget):
             self.indexes = QComboBox()
             row.addWidget(self.indexes, 1)
             lay.addLayout(row)
-            try:
-                self.indexes.addItems([x.get("Name") for x in vd.s.db.get("TableDefs", source).each("Indexes")])
+            try:                                # Name:Fields:Unique|Non-Unique[:Primary] (TABLEOBJ.FRM)
+                from .dialogs import ix_fields
                 cur = rs.get("Index")
-                if cur:
-                    self.indexes.setCurrentText(cur)
+                for x in vd.s.db.get("TableDefs", source).each("Indexes"):
+                    t = x.get("Name") + ":" + ix_fields(x) + (":Unique" if x.get("Unique") else ":Non-Unique") + \
+                        (":Primary" if x.get("Primary") else "")
+                    self.indexes.addItem(t, x.get("Name"))
+                    if x.get("Name") == cur:
+                        self.indexes.setCurrentIndex(self.indexes.count() - 1)
             except RtError:
                 pass
-            self.indexes.currentTextChanged.connect(self.set_index)
+            self.indexes.currentIndexChanged.connect(lambda i: self.set_index(self.indexes.itemData(i)))
         self.change_buttons = QWidget()
         h = QHBoxLayout(self.change_buttons)
         h.setContentsMargins(0, 0, 0, 0)
@@ -81,7 +86,8 @@ class RecordForm(QWidget):
         self.change_buttons.hide()
         lay.addWidget(self.change_buttons)
         hdr = QHBoxLayout()
-        hdr.addWidget(QLabel("Field Name:"))
+        self.hdr_name = QLabel("Field NAme:" if table else "Field Name:")   # (as VB6 writes it, vb_tableform.png)
+        hdr.addWidget(self.hdr_name)
         hdr.addWidget(QLabel(" Value:" if datactl else (" Value  (F4=Zoom) " if table else " Value (F4=Zoom)")), 1)
         lay.addLayout(hdr)
         # -- the fields
@@ -104,12 +110,20 @@ class RecordForm(QWidget):
             ed.setReadOnly(True)
             if t == dbText and sz:
                 ed.setMaxLength(sz)
+            if t in FIELD_WIDTH:                # GetFieldWidth (VISDATA.BAS): a number or a date is narrower
+                ed.setFixedWidth(round(FIELD_WIDTH[t] / 15 * max(1.0, self.fontMetrics().horizontalAdvance(
+                    "ValidationText: ") / 75.0)))
             ed.textEdited.connect(lambda _t, k=i: self._dirty(k))
             self.fg.addWidget(lab, i, 0)
-            self.fg.addWidget(ed, i, 1)
+            self.fg.addWidget(ed, i, 1, alignment=Qt.AlignmentFlag.AlignLeft if t in FIELD_WIDTH else Qt.AlignmentFlag(0))
             self.labels.append(lab)
             self.edits.append(ed)
         self.fg.setRowStretch(len(self.fields), 1)
+        # Value over the values (lblFieldValue.Left = txtFieldData(0).Left)
+        fm = self.fontMetrics()
+        w0 = max([fm.horizontalAdvance(lb.text()) for lb in self.labels] + [fm.horizontalAdvance(self.hdr_name.text())])
+        sp = self.fg.horizontalSpacing()
+        self.hdr_name.setFixedWidth(w0 + self.fg.contentsMargins().left() + (sp if sp >= 0 else 6) + 2)
         self.dirty = set()
         # -- the position
         bottom = QHBoxLayout()
@@ -120,8 +134,8 @@ class RecordForm(QWidget):
                 bottom.addWidget(b)
                 self.b[t] = b
         else:
-            self.scroll = QScrollBar(Qt.Orientation.Horizontal)
-            bottom.addWidget(self.scroll, 2)
+            self.hscroll = QScrollBar(Qt.Orientation.Horizontal)
+            bottom.addWidget(self.hscroll, 2)
         self.status = QLabel("")
         bottom.addWidget(self.status, 1)
         if datactl or table:
@@ -168,15 +182,15 @@ class RecordForm(QWidget):
         if "ch:Cancel" in b:
             b["ch:Cancel"].clicked.connect(self.cancel)
         if not self.datactl and not self.table:
-            self.scroll.valueChanged.connect(self.scrolled)
+            self.hscroll.valueChanged.connect(self.scrolled)
 
     # ---------------------------------------------------------------- showing
     def set_scroll(self):
-        if hasattr(self, "scroll"):
-            self.scroll.blockSignals(True)
-            self.scroll.setRange(0, max(0, self.nrows - 1))
-            self.scroll.setValue(0)
-            self.scroll.blockSignals(False)
+        if hasattr(self, "hscroll"):
+            self.hscroll.blockSignals(True)
+            self.hscroll.setRange(0, max(0, self.nrows - 1))
+            self.hscroll.setValue(0)
+            self.hscroll.blockSignals(False)
 
     def display(self):
         """DisplayCurrentRecord: the values, "row/rows", (BOF) / (EOF), [Not Updatable]"""
@@ -223,8 +237,8 @@ class RecordForm(QWidget):
         self.change_buttons.setVisible(on)
         for e in self.edits:
             e.setReadOnly(not on)
-        if hasattr(self, "scroll"):
-            self.scroll.setEnabled(not on)
+        if hasattr(self, "hscroll"):
+            self.hscroll.setEnabled(not on)
 
     def write_fields(self):
         """the changed values into the record (txtFieldData_LostFocus)"""
@@ -388,21 +402,22 @@ class RecordForm(QWidget):
         self.display()
 
     def find(self):
-        """Find: a field, an operator and a value (FIND.FRM); FindFirst"""
+        """Find: a field, an operator and a value (FIND.FRM); FindFirst, FindNext, FindPrevious or FindLast"""
         d = FindDialog(self, [f[0] for f in self.fields])
         vals = self.vd.answers.pop(0) if self.vd.quiet and self.vd.answers else None
         if vals is None:
             if self.vd.quiet or not d.exec():
                 return
             vals = d.values()
-        i, op, expr = vals
+        i, op, expr = vals[:3]
+        how = vals[3] if len(vals) > 3 else "FindFirst"
         n, t, _sz = self.fields[i]
         name = n if " " not in n else f"[{n}]"
         crit = f"{name} {op} '{expr}'" if t in (dbText, dbMemo) else \
             (f"{name} {op} #{expr}#" if t == 8 else f"{name} {op} {expr}")
         try:
             bm = self.rs.get("Bookmark")
-            self.rs.call("FindFirst", crit)
+            self.rs.call(how, crit)
             if self.rs.get("NoMatch"):
                 self.vd.say("Record Not Found", "warn")
                 self.rs.let("Bookmark", bm)
@@ -414,21 +429,10 @@ class RecordForm(QWidget):
         """Seek of a Table type Recordset (SEEK.FRM): an operator and the value of the index"""
         vals = self.vd.answers.pop(0) if self.vd.quiet and self.vd.answers else None
         if vals is None:
-            d = QDialog(self)
-            d.setWindowTitle("Seek")
-            f = QFormLayout(d)
-            op = QComboBox()
-            op.addItems(["=", ">", ">=", "<", "<="])
-            val = QLineEdit()
-            f.addRow("&Operator:", op)
-            f.addRow("&Value:", val)
-            bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-            bb.accepted.connect(d.accept)
-            bb.rejected.connect(d.reject)
-            f.addRow(bb)
+            d = SeekDialog(self)
             if self.vd.quiet or not d.exec():
                 return
-            vals = (op.currentText(), val.text())
+            vals = d.values()
         try:
             bm = self.rs.get("Bookmark")
             self.rs.call("Seek", vals[0], vals[1])
@@ -457,33 +461,70 @@ class RecordForm(QWidget):
 
 
 class FindDialog(QDialog):
-    """FIND.FRM: Field to Search, Operator, Value or Expression"""
+    """Find Record (FIND.FRM): Fields, Operators, Value or Expression; FindFirst / FindNext / FindPrevious /
+    FindLast"""
     OPS = ["=", "<>", ">=", "<=", ">", "<", "Like"]
+    HOW = ["FindFirst", "FindNext", "FindPrevious", "FindLast"]
 
     def __init__(self, parent, fields):
         super().__init__(parent)
         self.setWindowTitle("Find Record")
-        v = QVBoxLayout(self)
-        v.addWidget(QLabel("Field to Search:"))
-        self.lst = QListWidget()
+        P = C.Place(self, 363, 162)             # (VB6 oracle vb_find.png)
+        self.lst, self.op, self.expr = QListWidget(), QListWidget(), QLineEdit()
+        P.label("&Fields: ", 16, 8, 34, buddy=self.lst)
+        P.put(self.lst, 16, 24, 113, 95)
+        P.label("&Operators: ", 136, 8, 56, buddy=self.op)
+        P.put(self.op, 136, 24, 64, 95)
+        P.label("&Value or Expression: ", 208, 8, 101, buddy=self.expr)
+        P.put(self.expr, 208, 24, 137, 19)
         self.lst.addItems(fields)
         self.lst.setCurrentRow(0)
-        v.addWidget(self.lst)
-        v.addWidget(QLabel("Operator:"))
-        self.op = QListWidget()
         self.op.addItems(self.OPS)
         self.op.setCurrentRow(0)
-        v.addWidget(self.op)
-        v.addWidget(QLabel("Value or Expression:"))
-        self.expr = QLineEdit()
-        v.addWidget(self.expr)
-        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        bb.accepted.connect(self.accept)
-        bb.rejected.connect(self.reject)
-        v.addWidget(bb)
+        self.how = []
+        for k, t in enumerate(self.HOW):
+            r = P.put(QRadioButton(t), 208, 48 + 16 * k, 137, 17)
+            self.how.append(r)
+        self.how[0].setChecked(True)
+        self.b_ok = P.put(QPushButton("&OK"), 40, 128, 113, 25)
+        self.b_cancel = P.put(QPushButton("&Cancel"), 192, 128, 113, 25)
+        self.b_ok.setDefault(True)
+        self.b_ok.setEnabled(False)
+        self.expr.textChanged.connect(lambda t: self.b_ok.setEnabled(bool(t)))
+        self.b_ok.clicked.connect(self.accept)
+        self.b_cancel.clicked.connect(self.reject)
 
     def values(self):
-        return self.lst.currentRow(), self.OPS[self.op.currentRow()], self.expr.text()
+        how = next(t for r, t in zip(self.how, self.HOW) if r.isChecked())
+        return self.lst.currentRow(), self.OPS[self.op.currentRow()], self.expr.text(), how
+
+
+class SeekDialog(QDialog):
+    """Seek Parameters (SEEK.FRM): the operator and the value of the index"""
+    OPS = ["=", ">=", "<=", ">", "<"]
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setWindowTitle("Seek Parameters")
+        P = C.Place(self, 226, 130)             # (VB6 oracle vb_seek.png)
+        P.label("Operator: ", 8, 8, 51)
+        self.ops = []
+        for t, x, w in zip(self.OPS, (8, 48, 96, 144, 184), (33, 41, 41, 33, 33)):
+            self.ops.append(P.put(QRadioButton(t), x, 24, w, 17))
+        self.ops[0].setChecked(True)
+        self.val = QLineEdit()
+        P.label("&Value: ", 8, 48, 33, buddy=self.val)
+        P.put(self.val, 8, 64, 209, 19)
+        self.b_ok = P.put(QPushButton("&OK"), 8, 96, 97, 25)
+        self.b_cancel = P.put(QPushButton("&Cancel"), 120, 96, 97, 25)
+        self.b_ok.setDefault(True)
+        self.b_ok.setEnabled(False)
+        self.val.textChanged.connect(lambda t: self.b_ok.setEnabled(bool(t)))
+        self.b_ok.clicked.connect(self.accept)
+        self.b_cancel.clicked.connect(self.reject)
+
+    def values(self):
+        return next(t for r, t in zip(self.ops, self.OPS) if r.isChecked()), self.val.text()
 
 
 class GridForm(QWidget):

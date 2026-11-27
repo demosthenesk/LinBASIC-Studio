@@ -18,6 +18,9 @@ WINE_KNOWN = {
     'd_odbc1': "Wine's odbc32 gives the SQLite ODBC driver of Linux, whose text columns are narrow (adVarChar 200 / "
                "adLongVarChar 201, SQL_VARCHAR 129); the driver of Windows gives them wide (202 / 203 / 130) as VB6 "
                "shows (on Linux LinBASIC makes them wide: odbc_wide)",
+    'd_dao7': "RegisterDatabase writes the data source where Windows keeps it (odbccp32: the registry, without a "
+              "Driver of Windows there); Wine's odbc32 gives the connections to unixODBC of Linux, which reads its own "
+              "odbc.ini, so the data source is not found (on Linux LinBASIC writes it to unixODBC's odbc.ini)",
 }
 
 
