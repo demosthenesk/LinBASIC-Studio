@@ -46,6 +46,7 @@ def ide():
     paths.set_config_dir(os.path.join(work, "config"))
     paths.ensure_user_files()
     settings.init()
+    settings.S["dark_mode"] = "light"            # the pictures in the light theme, whatever the system's
     from PyQt6.QtWidgets import QApplication, QMessageBox
     app = QApplication(sys.argv[:1])
     QMessageBox.information = lambda *a, **k: None
@@ -83,13 +84,18 @@ def ide():
     w.open_project(project("Hello"))
     f = w.open_designer(w.project.module("frmHello"))
     c = next((x for x in f.root.walk() if getattr(x, "name", "") == "cmdSay"), None)
+    settle()                                    # (the Project Explorer is filled after the project opens)
     if c is not None:
-        f.select_control(c)
+        f.select_control(c)                     # the Properties window shows the button
     shot(w, "ide-designer.png")
 
     # the controls of the .ocx libraries in the designer
     w.open_project(project("Chart"))
-    w.open_designer(w.project.module("frmChart"))
+    f = w.open_designer(w.project.module("frmChart"))
+    settle()
+    c = next((x for x in f.root.walk() if getattr(x, "name", "") == "chtSales"), None)
+    if c is not None:
+        f.select_control(c)
     shot(w, "ide-designer-ocx.png")
 
     # the code window: the Object and Procedure boxes, IntelliSense after a dot

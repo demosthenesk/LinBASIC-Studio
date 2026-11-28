@@ -9,7 +9,7 @@ import copy
 import os
 
 from PyQt6.QtCore import Qt, QPoint, QRect, QSize, pyqtSignal, QMimeData, QTimer
-from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QPalette, QPolygon, QKeySequence
+from PyQt6.QtGui import QPainter, QPainterPath, QColor, QPen, QBrush, QFont, QPalette, QPolygon, QKeySequence
 from PyQt6.QtWidgets import (QWidget, QScrollArea, QPushButton, QLabel, QLineEdit, QPlainTextEdit, QCheckBox,
                              QRadioButton, QComboBox, QListWidget, QGroupBox, QFrame, QScrollBar, QApplication,
                              QMessageBox, QRubberBand, QToolButton, QGridLayout, QSizePolicy, QStyleFactory,
@@ -2463,12 +2463,17 @@ def tool_icon(cls, size=24):
     elif cls == "PictureBox":
         p.setBrush(QColor("#FFFFFF")); p.drawRect(r)
         p.setBrush(QColor("#4A90D9")); p.drawPolygon(QPolygon([QPoint(5, 17), QPoint(11, 10), QPoint(19, 17)]))
-    elif cls == "Label":
-        f = QFont(); f.setPixelSize(16); f.setBold(True); p.setFont(f); p.drawText(QRect(0, 0, size, size), Qt.AlignmentFlag.AlignCenter, "A")
+    elif cls == "Label":                       # (a light edge: seen on the dark theme too)
+        f = QFont(); f.setPixelSize(16); f.setBold(True)
+        path = QPainterPath(); path.addText(0, 0, f, "A")
+        b = path.boundingRect()
+        path.translate((size - b.width()) / 2 - b.x(), (size - b.height()) / 2 - b.y())
+        p.strokePath(path, QPen(QColor("#F0F0F0"), 3)); p.fillPath(path, QColor("#303030"))
     elif cls == "TextBox":
         p.setBrush(QColor("#FFFFFF")); p.drawRect(r)
         f = QFont(); f.setPixelSize(10); p.setFont(f); p.drawText(r, Qt.AlignmentFlag.AlignCenter, "ab|")
     elif cls == "Frame":
+        p.setPen(QPen(QColor("#F0F0F0"), 3)); p.drawRect(r.adjusted(0, 3, 0, 0)); p.setPen(QPen(QColor("#303030"), 1))
         p.drawRect(r.adjusted(0, 3, 0, 0)); p.fillRect(QRect(6, 5, 9, 6), QColor("#F0F0F0"))
         f = QFont(); f.setPixelSize(8); p.setFont(f); p.drawText(QRect(6, 3, 12, 8), Qt.AlignmentFlag.AlignCenter, "xy")
     elif cls == "CommandButton":
@@ -2499,6 +2504,7 @@ def tool_icon(cls, size=24):
     elif cls == "Shape":
         p.setBrush(QColor("#E05050")); p.drawRect(QRect(3, 9, 10, 10)); p.setBrush(QColor("#5080E0")); p.drawEllipse(QRect(10, 4, 11, 11))
     elif cls == "Line":
+        p.setPen(QPen(QColor("#F0F0F0"), 4)); p.drawLine(4, 19, 20, 5)
         p.setPen(QPen(QColor("#000000"), 2)); p.drawLine(4, 19, 20, 5)
     elif cls == "Image":
         p.setBrush(QColor("#9AD0F5")); p.drawRect(r); p.setBrush(QColor("#3A8F3A")); p.drawPolygon(QPolygon([QPoint(4, 18), QPoint(10, 11), QPoint(14, 15), QPoint(16, 13), QPoint(20, 18)]))
