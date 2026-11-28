@@ -608,6 +608,7 @@ or when you replaced it.
   * several databases, and several `Database` objects of the same file in one program, work as in VB6
 * **Opened read-only:** `OpenDatabase(file, , True)` never writes the file.
 * **The `.lbdb` files:**
+  * next to `Data.mdb.lbdb` there is also an empty `Data.mdb.lbdb-journal`, the journal of SQLite
   * you can delete them when no program has the database open; they are made again from the `.mdb`
   * do not ship them with your program, and do not keep them in version control (`*.lbdb` belongs in
     `.gitignore`)
