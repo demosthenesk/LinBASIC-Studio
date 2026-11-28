@@ -71,4 +71,4 @@ if "PyQt6" not in _sys.modules:
         _qt5_as_qt6()
 
 APP_NAME = "LinBASIC Studio"
-VERSION = "1.1.1"
+VERSION = "1.1.2"

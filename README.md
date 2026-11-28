@@ -2,8 +2,8 @@
 
 **A Visual Basic 6 compatible development environment for Linux and Windows.**
 
-> **1.1.1** fixes Enter on a CommandButton that has the focus, and the Default and Cancel buttons of the
-> forms (Enter / Esc). **1.1.0** reads and writes Access `.mdb` files itself (Jet 3 and Jet 4): tables, indexes, relations,
+> **1.1.2** fixes Enter on a CommandButton that has the focus, and the Default and Cancel buttons of the
+> forms (Enter / Esc), also in the Windows programs (1.1.1 had the fix only on Linux). **1.1.0** reads and writes Access `.mdb` files itself (Jet 3 and Jet 4): tables, indexes, relations,
 > queries, properties, passwords and every sort order of Jet 4 go back into the `.mdb` file, which Access
 > and VB6 can still open (see [Databases](#databases)). 1.0.0 was the first stable release, with the
 > wizards and add-ins of VB6, portable packages, the help of the programs, the Data View, the Query
@@ -165,10 +165,10 @@ Each zip also has `README.md`, `LICENSE` and `licenses/`, the licenses of the th
 it carries. The AppImage runs on Ubuntu 24.04 and other current x86-64 Linux distributions:
 
 ```sh
-unzip LinBASIC-Studio-1.1.1-linux-x86_64.zip
-cd LinBASIC-Studio-1.1.1-linux-x86_64
-chmod +x LinBASIC-Studio-1.1.1-x86_64.AppImage
-./LinBASIC-Studio-1.1.1-x86_64.AppImage
+unzip LinBASIC-Studio-1.1.2-linux-x86_64.zip
+cd LinBASIC-Studio-1.1.2-linux-x86_64
+chmod +x LinBASIC-Studio-1.1.2-x86_64.AppImage
+./LinBASIC-Studio-1.1.2-x86_64.AppImage
 ```
 
 ## Quick start
@@ -185,9 +185,9 @@ chmod +x LinBASIC-Studio-1.1.1-x86_64.AppImage
 **On the command line**
 
 ```sh
-./LinBASIC-Studio-1.1.1-x86_64.AppImage --lbvc examples/Hello/Hello.vbp -o hello                        # Linux
+./LinBASIC-Studio-1.1.2-x86_64.AppImage --lbvc examples/Hello/Hello.vbp -o hello                        # Linux
 ./hello
-./LinBASIC-Studio-1.1.1-x86_64.AppImage --lbvc examples/Notepad/Notepad.vbp --target win64 -o out/Notepad.exe   # Windows
+./LinBASIC-Studio-1.1.2-x86_64.AppImage --lbvc examples/Notepad/Notepad.vbp --target win64 -o out/Notepad.exe   # Windows
 ```
 
 A program with forms gets `libvbforms.so` next to it and uses the Qt 6 of the computer when it runs on
@@ -200,7 +200,7 @@ Documents folder or a USB stick (not *Program Files*), and start `LinBASIC Studi
 installed, and the settings stay in the `settings` folder next to it.
 
 ```
-LinBASIC-Studio-1.1.1-win64\
+LinBASIC-Studio-1.1.2-win64\
   LinBASIC Studio.exe   the IDE
   lbvc.cmd              the compiler:  lbvc MyProject.vbp -o MyProject.exe
   python\               Python 3.8 with PyQt5 and QScintilla (the IDE)
