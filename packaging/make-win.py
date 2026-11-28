@@ -172,8 +172,6 @@ def main():
             if os.path.exists(os.path.join(SRC, f)):
                 shutil.copy(os.path.join(SRC, f), dest)
         shutil.copytree(os.path.join(SRC, "licenses"), os.path.join(dest, "licenses"))   # the third parties
-        shutil.copy(os.path.join(SRC, "runtime", "db", "mdb", "COPYING.LIB"),
-                    os.path.join(dest, "licenses", "libmdb-COPYING.LIB"))
     size = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(dest) for f in fs)
     print(f"{dest}  ({size / 1048576:.0f} MB)")
 

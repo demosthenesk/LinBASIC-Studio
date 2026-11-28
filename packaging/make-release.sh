@@ -32,7 +32,6 @@ pack() {   # pack <os tag> : zips $tmp/<name>-<tag>/ into $out/<name>-<tag>.zip
   local dir="$name-$1"
   cp "$src/README.md" "$src/LICENSE" "$src/RUNTIME-EXCEPTION" "$tmp/$dir/"
   rm -rf "$tmp/$dir/licenses" && cp -r "$src/licenses" "$tmp/$dir/licenses"
-  cp "$src/runtime/db/mdb/COPYING.LIB" "$tmp/$dir/licenses/libmdb-COPYING.LIB"
   chmod -R a+rX "$tmp/$dir"                 # (files copied by some tools are 0600)
   (cd "$tmp" && zip -qr9 "$out/$dir.zip" "$dir")
   echo "  $dir.zip"

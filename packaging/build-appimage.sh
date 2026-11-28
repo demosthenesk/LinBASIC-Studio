@@ -129,7 +129,6 @@ done
 find "$SHARE" -name '__pycache__' -prune -exec rm -rf {} +
 cp "$SRC/LICENSE" "$SRC/RUNTIME-EXCEPTION" "$SRC/README.md" "$SHARE/"
 cp -a "$SRC/licenses" "$SHARE/"
-cp "$SRC/runtime/db/mdb/COPYING.LIB" "$SHARE/licenses/libmdb-COPYING.LIB"
 cp "$SP"/pyqt6_qt6-*.dist-info/LICENSE "$SHARE/licenses/Qt6-of-PyQt6-LICENSE.txt" 2>/dev/null || true
 
 # --------------------------------------------- host libraries not on the excludelist
