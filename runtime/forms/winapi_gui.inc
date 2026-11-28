@@ -76,9 +76,9 @@ static bool vk_is_down(int vk)
     case 1: return mb & Qt::LeftButton;
     case 2: return mb & Qt::RightButton;
     case 4: return mb & Qt::MiddleButton;
-    case 0x10: case 0xA0: case 0xA1: return km & Qt::ShiftModifier;
-    case 0x11: case 0xA2: case 0xA3: return km & Qt::ControlModifier;
-    case 0x12: case 0xA4: case 0xA5: return km & Qt::AltModifier;
+    case 0x10: case 0xA0: case 0xA1: return (km | held_synth) & Qt::ShiftModifier;
+    case 0x11: case 0xA2: case 0xA3: return (km | held_synth) & Qt::ControlModifier;
+    case 0x12: case 0xA4: case 0xA5: return (km | held_synth) & Qt::AltModifier;
     }
     return vk > 0 && vk < 256 && vk_state[vk];
 }
@@ -113,8 +113,9 @@ static vb_i64 u_keybd_event(vb_i32 argc, vb_dllarg *a)
                   vk == 32 ? Qt::Key_Space : vk == 0x10 ? Qt::Key_Shift : vk == 0x11 ? Qt::Key_Control : vk == 0x12 ? Qt::Key_Alt :
                   vk >= 0x25 && vk <= 0x28 ? Qt::Key_Left + (vk - 0x25) : vk >= 0x70 && vk <= 0x7F ? Qt::Key_F1 + (vk - 0x70) : 0;
         if (!key) return;
-        QString text = (vk >= 'A' && vk <= 'Z') ? QString(QChar(vk + 32)) : (vk >= '0' && vk <= '9') || vk == 32 ? QString(QChar(vk)) : QString();
-        QKeyEvent ev(flags & 2 ? QEvent::KeyRelease : QEvent::KeyPress, key, Qt::NoModifier, flags & 2 ? QString() : text);
+        Qt::KeyboardModifiers hm = held_mods();    /* (its own Shift / Ctrl / Alt is held from the event on: KeyFilter) */
+        QString text = (vk >= 'A' && vk <= 'Z') ? QString(QChar((hm & Qt::ShiftModifier) ? vk : vk + 32)) : (vk >= '0' && vk <= '9') || vk == 32 ? QString(QChar(vk)) : QString();
+        QKeyEvent ev(flags & 2 ? QEvent::KeyRelease : QEvent::KeyPress, key, hm, flags & 2 ? QString() : text);
         QCoreApplication::sendEvent(f, &ev);
     });
     return 0;

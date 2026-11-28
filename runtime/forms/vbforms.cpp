@@ -2224,6 +2224,7 @@ static bool mouse_event(QObject *obj, QMouseEvent *me)
 
 /* the keys a user types go through the same way */
 static void key_track(QKeyEvent *ke, bool down);   /* GetAsyncKeyState (winapi_gui.inc) */
+static Qt::KeyboardModifiers held_synth;      /* Shift / Ctrl / Alt held: from their key events (KeyFilter) */
 class KeyFilter : public QObject {
 protected:
     bool eventFilter(QObject *obj, QEvent *e) override
@@ -2232,8 +2233,15 @@ protected:
         if (et == QEvent::MouseButtonPress || et == QEvent::MouseButtonRelease || et == QEvent::MouseButtonDblClick || et == QEvent::MouseMove)
             return mouse_event(obj, static_cast<QMouseEvent *>(e));
         if (et == QEvent::WhatsThis || et == QEvent::QueryWhatsThis) return help_whatsthis_event(obj, e);
+        if (et == QEvent::ApplicationDeactivate) held_synth = Qt::NoModifier;   /* (a key released elsewhere) */
         if (bypass || (et != QEvent::KeyPress && et != QEvent::KeyRelease)) return false;
         if (!static_cast<QKeyEvent *>(e)->isAutoRepeat()) key_track(static_cast<QKeyEvent *>(e), et == QEvent::KeyPress);
+        {                                       /* the Shift / Ctrl / Alt held: SendKeys goes with them (send_one) */
+            int k = static_cast<QKeyEvent *>(e)->key();
+            Qt::KeyboardModifier mk = k == Qt::Key_Shift ? Qt::ShiftModifier : k == Qt::Key_Control ? Qt::ControlModifier
+                                    : k == Qt::Key_Alt ? Qt::AltModifier : Qt::NoModifier;
+            if (mk != Qt::NoModifier) { if (et == QEvent::KeyPress) held_synth |= mk; else held_synth &= ~Qt::KeyboardModifiers(mk); }
+        }
         if (et == QEvent::KeyPress && static_cast<QKeyEvent *>(e)->key() == Qt::Key_F1)   /* F1 in an open menu */
             if (auto *mn = qobject_cast<QMenu *>(obj)) if (help_menu_f1(mn)) return true;
         if (obj != QApplication::focusWidget()) return false;
@@ -2316,8 +2324,20 @@ static bool to_modal(int key, int mods, const QString &text, bool down, bool up)
     return true;
 }
 
-static void send_one(const SKey &k, int mods)
+/* the Shift / Ctrl / Alt the user holds (or keybd_event: winapi_gui.inc): the keys of SendKeys go with them, as on
+ * Windows -- Shift+Enter in a TextBox whose KeyPress sends {TAB} moves back, "ab" is typed "AB" (VB6 oracle
+ * tests/forms/f_shiftsend; Discord: MudCalc) */
+static Qt::KeyboardModifiers held_mods() { return held_synth; }
+static int held_bits()
 {
+    Qt::KeyboardModifiers h = held_mods();
+    return ((h & Qt::ShiftModifier) ? 1 : 0) | ((h & Qt::ControlModifier) ? 2 : 0) | ((h & Qt::AltModifier) ? 4 : 0);
+}
+static void send_one(const SKey &k0, int mods)
+{
+    SKey k = k0;
+    mods |= held_bits();
+    if ((mods & 1) && k.text.size() == 1 && k.text[0] >= 'a' && k.text[0] <= 'z') k.text = k.text.toUpper();
     if (to_modal(k.key, mods, k.text, true, true)) return;
     FormState *st = key_target_form();
     if (!st) return;

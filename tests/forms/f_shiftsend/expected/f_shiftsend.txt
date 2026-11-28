@@ -1,0 +1,31 @@
+text1 gotfocus
+step 1 active Text1
+text2 gotfocus
+step 2 active Text2
+text2 keydown 16 shift 1
+step 3 active Text2
+text2 keydown 13 shift 1
+text2 keypress 13
+text1 gotfocus
+step 4 active Text1
+step 5 active Text1
+step 6 active Text1
+text3 gotfocus
+step 7 active Text3
+text3 keydown 16 shift 1
+step 8 active Text3
+text3 keydown 65 shift 1
+text3 keypress 65
+text3 keydown 66 shift 1
+text3 keypress 66
+step 9 active Text3
+step 10 active Text3
+text3 [AB]
+step 11 active Text3
+text2 gotfocus
+step 12 active Text2
+text2 keydown 13 shift 0
+text2 keypress 13
+text3 gotfocus
+step 13 active Text3
+step 14 active Text3
