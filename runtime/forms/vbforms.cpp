@@ -2012,10 +2012,32 @@ static vb_i32 ctl_helpid(Ctl *c, const char *name);
 static void dlg_showhelp(Ctl *c);
 static void msgbox_help();
 
+/* the button of a form whose Default / Cancel is True (enabled and shown), or none */
+static Ctl *form_button(FormState *st, const char *prop)
+{
+    for (vbobj o : st->ctls) {
+        Ctl *c = C(o);
+        if (!c || c->kind != K_COMMAND || c->form != st) continue;
+        auto it = c->misc.find(prop);
+        vb_i32 on = it != c->misc.end() ? it->second : (c->def ? (vb_i32)propn(c->def->props, prop[0] == 'd' ? "Default" : "Cancel", 0) : 0);
+        if (on && c->w && c->w->isEnabled() && c->w->isVisible()) return c;
+    }
+    return nullptr;
+}
+static int key_swallowed;                       /* Enter / Esc a button took: its KeyUp is not an event either */
+
 /* one key: the VB6 events, then what the control does with what is left of the key */
 static void key_down(FormState *st, int key, Qt::KeyboardModifiers m, const QString &text, int vk, bool rep = false)
 {
     if (vk == 9 && !(m & (Qt::ControlModifier | Qt::AltModifier))) { tab_move(st, (m & Qt::ShiftModifier) || key == Qt::Key_Backtab); return; }
+    /* Enter clicks the CommandButton that has the focus, else the Default button; Esc the Cancel button. Then the
+     * key is no event at all, not even of the form with KeyPreview (VB6 oracle tests/forms/f_enterbtn; Discord:
+     * MudCalc, Enter on a focused button did nothing) */
+    if ((vk == 13 || vk == 27) && !(m & (Qt::ControlModifier | Qt::AltModifier))) {
+        Ctl *fc = st->focus ? C(st->focus) : nullptr;
+        Ctl *b = vk == 13 && fc && fc->kind == K_COMMAND && fc->w && fc->w->isEnabled() ? fc : form_button(st, vk == 13 ? "default" : "cancel");
+        if (b) { key_swallowed = vk; fire_ctl(b, "click"); return; }
+    }
     if ((m & Qt::AltModifier) && !(m & Qt::ControlModifier) && text.size() == 1 && text[0].isLetterOrNumber()
         && uctl_access_key(st, text[0].toLower().unicode())) return;
     if ((m & Qt::AltModifier) && !(m & Qt::ControlModifier) && key >= Qt::Key_A && key <= Qt::Key_Z
@@ -2047,6 +2069,7 @@ static void key_down(FormState *st, int key, Qt::KeyboardModifiers m, const QStr
 static void key_up(FormState *st, int key, Qt::KeyboardModifiers m, const QString &text, int vk)
 {
     if (vk == 9 && !(m & (Qt::ControlModifier | Qt::AltModifier))) return;
+    if (vk == key_swallowed) { key_swallowed = 0; return; }
     Ctl *c = st->focus ? C(st->focus) : nullptr;
     QWidget *w = c ? focus_widget(c) : (QWidget *)st->canvas.data();
     QPointer<QWidget> pw(w);
@@ -3433,6 +3456,8 @@ static vbvar ctl_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
         vb_i32 cur = it != c->misc.end() ? it->second : (c->def ? (vb_i32)propn(c->def->props, n == "default" ? "Default" : "Cancel", 0) : 0);
         if (!set) return vb_v_bool(cur ? -1 : 0);
         c->misc[n] = vb_v2bool(val) ? -1 : 0;
+        if (vb_v2bool(val) && c->kind == K_COMMAND && c->form)    /* one Default / Cancel button on a form */
+            for (vbobj o : c->form->ctls) { Ctl *d = C(o); if (d && d != c && d->kind == K_COMMAND) d->misc[n] = 0; }
         if (n == "default") if (auto *b = qobject_cast<QPushButton *>(c->w.data())) { b->setDefault(vb_v2bool(val) != 0); b->setAutoDefault(vb_v2bool(val) != 0); }
         return vb_v_empty();
     }

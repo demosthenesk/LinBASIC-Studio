@@ -1,0 +1,74 @@
+text1 gotfocus
+step 1 active Text1
+text2 gotfocus
+step 2 active Text2
+text2 keydown 49
+text2 keypress 49
+text2 keyup 49
+text2 keydown 48
+text2 keypress 48
+text2 keyup 48
+text2 keydown 48
+text2 keypress 48
+text2 keyup 48
+text2 keydown 13
+text2 keypress 13
+text2 keyup 13
+text2 lostfocus
+command1 gotfocus
+step 3 active Command1
+step 4 active Command1
+command1 click [100]
+step 5 active Command1
+step 6 active Command1
+command1 lostfocus
+command2 gotfocus
+step 7 active Command2
+command2 click
+step 8 active Command2
+step 9 active Command2
+step 10 active Command2
+command2 click
+step 11 active Command2
+step 12 active Command2
+text3 gotfocus
+step 13 active Text3
+command3 click (default)
+step 14 active Text3
+step 15 active Text3
+command4 click (cancel)
+step 16 active Text3
+step 17 active Text3
+text3 lostfocus
+command1 gotfocus
+step 18 active Command1
+command1 click [100]
+step 19 active Command1
+step 20 active Command1
+command1 lostfocus
+text3 gotfocus
+step 21 active Text3
+command3 click (default)
+step 22 active Text3
+step 23 active Text3
+form keydown 88
+text3 keydown 88
+form keypress 120
+text3 keypress 120
+form keyup 88
+text3 keyup 88
+command4 click (cancel)
+step 24 active Text3
+step 25 active Text3
+text3 lostfocus
+text2 gotfocus
+step 26 active Text2
+command3 click (default)
+step 27 active Text2
+step 28 active Text2
+text2 lostfocus
+command2 gotfocus
+step 29 active Command2
+command2 click
+step 30 active Command2
+step 31 active Command2
