@@ -177,19 +177,20 @@ def license_files(csrc, target, icu=False, appimage=False):
            (os.path.join(SRC_ROOT, 'LICENSE'), 'GPL-3.0.txt')]
     if uses_forms(csrc):
         out.append((os.path.join(lic, 'LGPL-3.0.txt'), 'LGPL-3.0.txt'))
+        out.append((os.path.join(lic, 'LGPL-2.1.txt'), 'LGPL-2.1.txt'))      # CHMLib (the .chm help), linked in
         if target in TARGETS:
             out += [(os.path.join(lic, 'GCC-Runtime-Library-Exception-3.1.txt'), 'GCC-Runtime-Library-Exception-3.1.txt'),
                     (os.path.join(lic, 'winpthreads-MIT.txt'), 'winpthreads-MIT.txt')]
     if icu:
         out.append((os.path.join(lic, 'ICU-Unicode.txt'), 'ICU-Unicode.txt'))
     if appimage:
-        out.append((os.path.join(lic, 'LGPL-2.1.txt'), 'LGPL-2.1.txt'))
+        if not uses_forms(csrc):
+            out.append((os.path.join(lic, 'LGPL-2.1.txt'), 'LGPL-2.1.txt'))
         _, rtf = appimage_tools()
         if rtf and os.path.exists(rtf + '.LICENSE'):
             out.append((rtf + '.LICENSE', 'AppImage-runtime-LICENSE.txt'))
     if uses_db(csrc):
-        out += [(os.path.join(lic, 'SQLite-public-domain.txt'), 'SQLite-public-domain.txt'),
-                (os.path.join(lic, 'LGPL-2.1.txt'), 'LGPL-2.1.txt')]
+        out += [(os.path.join(lic, 'SQLite-public-domain.txt'), 'SQLite-public-domain.txt')]
     for s, _ in out:
         if not os.path.exists(s):
             raise SystemExit(f"lbvc: {s} not found (the licenses that go with a program: LinBASIC Studio is "
@@ -204,7 +205,8 @@ def license_note(csrc, target, title, qt_libs=(), appimage=False):
              'the program may be given to others under terms of its author\'s choice.']
     if uses_forms(csrc):
         lines += ['', 'Forms: Qt (The Qt Company), LGPL-3.0 (licenses/LGPL-3.0.txt, licenses/GPL-3.0.txt), as shared',
-                  'libraries that can be replaced. Source: https://download.qt.io/archive/qt/']
+                  'libraries that can be replaced. Source: https://download.qt.io/archive/qt/',
+                  'The .chm help: CHMLib (Jed Wing), LGPL-2.1 (licenses/LGPL-2.1.txt), linked in.']
         if target in TARGETS:
             lines += ['The C++ runtime of mingw-w64 that Qt needs: libstdc++ / libgcc (GPL-3.0 with the GCC Runtime',
                       'Library Exception 3.1), winpthreads (MIT).']
@@ -214,8 +216,7 @@ def license_note(csrc, target, title, qt_libs=(), appimage=False):
                       'xcb / xkbcommon libraries MIT/X11, double-conversion and pcre2 BSD, md4c MIT, libb2 CC0:']
             lines += ['  ' + n for n in qt_libs]
     if uses_db(csrc):
-        lines += ['', 'DAO / ADO: SQLite (public domain) and libmdb of MDB Tools (LGPL-2.1), linked in. Source of',
-                  'libmdb: https://github.com/mdbtools/mdbtools']
+        lines += ['', 'DAO / ADO: SQLite (public domain), linked in.']
     if appimage:
         lines += ['', 'The AppImage: its runtime is of the AppImage project (https://github.com/AppImage/type2-runtime,',
                   'MIT; it contains libfuse, LGPL-2.1, licenses/LGPL-2.1.txt, squashfuse BSD-2-Clause and zstd BSD).']

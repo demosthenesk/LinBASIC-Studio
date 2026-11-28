@@ -1,0 +1,434 @@
+== jet4 made
+version 4.0
+table Items attr=0 count=5 vr=S'[B]<250' vt=S'B too big' desc=S'the items'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=S'Item name' dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byCurDt p=False u=False r=False in=True f=False : +Cur +Dt
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name, Cur | FROM Items | WHERE Cur > 10 | ORDER BY Name; | 
+query qCount type=0 timeout=60
+  sql SELECT ItemID, Count(*) AS N, Sum(Qty) AS Total | FROM Lines | GROUP BY ItemID | HAVING Count(*) > 0; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  L1 S6'item 1' S100'AAAAAAAAAAAAAAAAAAAAAAAA..' BF B40 I-200 L100000 C14.5 Si.3333333 Do-1.5E+20 D1910-01-01 01:07:11 L2:0126 L3000:01080F161D242B32.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066201}}'
+  L2 S10'item <3B1><3B2><3A9> <20AC>' S1600'BBBBBBBBBBBBBBBBBBBBBBBB..' BT B80 I-100 L200000 C29 Si.6666667 Do-3E+20 D1930-02-02 02:14:22 L3:02274C L6000:020910171E252C33.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066202}}'
+  L3 S6'item 3' S3100'CCCCCCCCCCCCCCCCCCCCCCCC..' BF B120 I0 L300000 C21.75 Si1 Do-4.5E+20 D1950-03-03 03:21:33 L4:03284D72 L9000:030A11181F262D34.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066203}}'
+  L5 S6'item 5' S6100'EEEEEEEEEEEEEEEEEEEEEEEE..' BF B200 I200 L500000 C36.25 Si1.666667 Do-7.5E+20 D1990-05-05 05:35:55 L6:052A4F7499BE L15000:050C131A21282F36.. Null
+  L6 S6'item 6' Null BT Null Null Null Null Null Null Null Null Null Null
+-- Lines
+  cols: LineID/4 ItemID/4 Qty/4 Txt/10
+  L1 L1 L3 S'line 1.1'
+  L2 L2 L3 S'line 2.1'
+  L3 L2 L5 S'line 2.2'
+  L4 L3 L3 S'line 3.1'
+  L5 L3 L5 S'line 3.2'
+  L6 L3 L6 S'line 3.3'
+  L11 L5 L3 S'line 5.1'
+  L12 L5 L5 S'line 5.2'
+  L13 L5 L6 S'line 5.3'
+  L14 L5 L8 S'line 5.4'
+  L15 L5 L10 S'line 5.5'
+  rows 11
+-- qParam 6
+  cols: Name/10 Qty/4
+  S'item 5' L10
+  S'item 5' L8
+  S'item 3' L6
+  S'item 5' L6
+  rows 4
+  ! T3 ok: 0  []
+  ! T3 field N: 0  []
+  ! T3 field S: 0  []
+  ! T3 table: 0  []
+  ! T3 null: 0  []
+  ! Items field L: 0  []
+  ! Items table: 0  []
+  ! T3 recordset: 3317 One or more values are prohibited by the validation rule 'Between 1 And 9' set for 'T3.N'.  Enter a value that the expression for this field can accept. [DAO.Recordset]
+== jet4 changed
+version 4.0
+table Items attr=0 count=6 vr=S'[B]<250' vt=S'B too big' desc=S'the items (changed)'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Extra type=10 size=10 attr=2 req=False zl=False pos=14 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+table T2 attr=0 count=2 vr=S'' vt=S'' desc=-
+  field K type=10 size=5 attr=2 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field D type=8 size=8 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field M type=12 size=0 attr=2 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byD p=False u=False r=False in=False f=False : +D
+  index T2Key p=True u=True r=True in=False f=False : +K
+table T3 attr=0 count=2 vr=S'[N]<>5' vt=S'' desc=-
+  field N type=4 size=4 attr=1 req=False zl=False pos=0 def=S'' vr=S'Between 1 And 9' vt=S'' cap=- dec=-
+  field S type=10 size=10 attr=2 req=False zl=False pos=1 def=S'' vr=S'Like 'a*'' vt=S'must start with a' cap=- dec=-
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name | FROM Items | WHERE Cur > 20; | 
+query qNew type=0 timeout=60
+  sql SELECT DISTINCT Qty | FROM Lines | ORDER BY Qty; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  L1 S6'item 1' S100'AAAAAAAAAAAAAAAAAAAAAAAA..' BF B40 I-200 L100000 C14.5 Si.3333333 Do-1.5E+20 D1910-01-01 01:07:11 L2:0126 L3000:01080F161D242B32.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066201}}' S2'e1'
+  L2 S10'item <3B1><3B2><3A9> <20AC>' S1600'BBBBBBBBBBBBBBBBBBBBBBBB..' BT B80 I-100 L200000 C29 Si.6666667 Do-3E+20 D1930-02-02 02:14:22 L3:02274C L6000:020910171E252C33.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066202}}' S2'e2'
+  L3 S6'item 3' S3100'CCCCCCCCCCCCCCCCCCCCCCCC..' BF B120 I0 L300000 C21.75 Si1 Do-4.5E+20 D1950-03-03 03:21:33 L4:03284D72 L9000:030A11181F262D34.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066203}}' S2'e3'
+  L5 S6'item 5' S6100'EEEEEEEEEEEEEEEEEEEEEEEE..' BF B200 I200 L500000 C36.25 Si1.666667 Do-7.5E+20 D1990-05-05 05:35:55 L6:052A4F7499BE L15000:050C131A21282F36.. Null S2'e5'
+  L6 S6'item 6' Null BT Null Null Null Null Null Null Null Null Null Null S2'e6'
+  L7 S6'item 7' Null BT Null Null Null C99 Null Null Null Null Null Null Null
+-- Lines
+  cols: LineID/4 ItemID/4 Qty/4 Txt/10
+  L1 L1 L3 S'line 1.1'
+  L2 L2 L3 S'line 2.1'
+  L3 L2 L5 S'line 2.2'
+  L4 L3 L3 S'line 3.1'
+  L5 L3 L5 S'line 3.2'
+  L6 L3 L6 S'line 3.3'
+  L11 L5 L3 S'line 5.1'
+  L12 L5 L5 S'line 5.2'
+  L13 L5 L6 S'line 5.3'
+  L14 L5 L8 S'line 5.4'
+  L15 L5 L10 S'line 5.5'
+  rows 11
+-- qParam 6
+  cols: Name/10 Qty/4
+  S'item 5' L10
+  S'item 5' L8
+  S'item 3' L6
+  S'item 5' L6
+  rows 4
+-- T2
+  cols: K/10 D/8 M/12
+  S'a' D2001-02-03 04:05:06 S'memo a'
+  S'b' Null Null
+  rows 2
+== jet4 compacted
+version 4.0
+table Items attr=0 count=6 vr=S'[B]<250' vt=S'B too big' desc=S'the items (changed)'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Extra type=10 size=10 attr=2 req=False zl=False pos=14 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+table T2 attr=0 count=2 vr=S'' vt=S'' desc=-
+  field K type=10 size=5 attr=2 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field D type=8 size=8 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field M type=12 size=0 attr=2 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byD p=False u=False r=False in=False f=False : +D
+  index T2Key p=True u=True r=True in=False f=False : +K
+table T3 attr=0 count=2 vr=S'[N]<>5' vt=S'' desc=-
+  field N type=4 size=4 attr=1 req=False zl=False pos=0 def=S'' vr=S'Between 1 And 9' vt=S'' cap=- dec=-
+  field S type=10 size=10 attr=2 req=False zl=False pos=1 def=S'' vr=S'Like 'a*'' vt=S'must start with a' cap=- dec=-
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name | FROM Items | WHERE Cur > 20; | 
+query qNew type=0 timeout=60
+  sql SELECT DISTINCT Qty | FROM Lines | ORDER BY Qty; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  items L6 C200.5
+  ! compact onto a file: 3204 Database already exists. [DAO.DbEngine]
+== jet3 made
+version 3.0
+table Items attr=0 count=5 vr=S'[B]<250' vt=S'B too big' desc=S'the items'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=S'Item name' dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byCurDt p=False u=False r=False in=True f=False : +Cur +Dt
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name, Cur | FROM Items | WHERE Cur > 10 | ORDER BY Name; | 
+query qCount type=0 timeout=60
+  sql SELECT ItemID, Count(*) AS N, Sum(Qty) AS Total | FROM Lines | GROUP BY ItemID | HAVING Count(*) > 0; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  L1 S6'item 1' S100'AAAAAAAAAAAAAAAAAAAAAAAA..' BF B40 I-200 L100000 C14.5 Si.3333333 Do-1.5E+20 D1910-01-01 01:07:11 L2:0126 L3000:01080F161D242B32.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066201}}'
+  L2 S9'item caf<3B9>' S1600'BBBBBBBBBBBBBBBBBBBBBBBB..' BT B80 I-100 L200000 C29 Si.6666667 Do-3E+20 D1930-02-02 02:14:22 L3:02274C L6000:020910171E252C33.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066202}}'
+  L3 S6'item 3' S3100'CCCCCCCCCCCCCCCCCCCCCCCC..' BF B120 I0 L300000 C21.75 Si1 Do-4.5E+20 D1950-03-03 03:21:33 L4:03284D72 L9000:030A11181F262D34.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066203}}'
+  L5 S6'item 5' S6100'EEEEEEEEEEEEEEEEEEEEEEEE..' BF B200 I200 L500000 C36.25 Si1.666667 Do-7.5E+20 D1990-05-05 05:35:55 L6:052A4F7499BE L15000:050C131A21282F36.. Null
+  L6 S6'item 6' Null BT Null Null Null Null Null Null Null Null Null Null
+-- Lines
+  cols: LineID/4 ItemID/4 Qty/4 Txt/10
+  L1 L1 L3 S'line 1.1'
+  L2 L2 L3 S'line 2.1'
+  L3 L2 L5 S'line 2.2'
+  L4 L3 L3 S'line 3.1'
+  L5 L3 L5 S'line 3.2'
+  L6 L3 L6 S'line 3.3'
+  L11 L5 L3 S'line 5.1'
+  L12 L5 L5 S'line 5.2'
+  L13 L5 L6 S'line 5.3'
+  L14 L5 L8 S'line 5.4'
+  L15 L5 L10 S'line 5.5'
+  rows 11
+-- qParam 6
+  cols: Name/10 Qty/4
+  S'item 5' L10
+  S'item 5' L8
+  S'item 3' L6
+  S'item 5' L6
+  rows 4
+  ! T3 ok: 0  []
+  ! T3 field N: 0  []
+  ! T3 field S: 0  []
+  ! T3 table: 0  []
+  ! T3 null: 0  []
+  ! Items field L: 0  []
+  ! Items table: 0  []
+  ! T3 recordset: 3317 One or more values are prohibited by the validation rule 'Between 1 And 9' set for 'T3.N'.  Enter a value that the expression for this field can accept. [DAO.Recordset]
+== jet3 changed
+version 3.0
+table Items attr=0 count=6 vr=S'[B]<250' vt=S'B too big' desc=S'the items (changed)'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Extra type=10 size=10 attr=2 req=False zl=False pos=14 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+table T2 attr=0 count=2 vr=S'' vt=S'' desc=-
+  field K type=10 size=5 attr=2 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field D type=8 size=8 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field M type=12 size=0 attr=2 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byD p=False u=False r=False in=False f=False : +D
+  index T2Key p=True u=True r=True in=False f=False : +K
+table T3 attr=0 count=2 vr=S'[N]<>5' vt=S'' desc=-
+  field N type=4 size=4 attr=1 req=False zl=False pos=0 def=S'' vr=S'Between 1 And 9' vt=S'' cap=- dec=-
+  field S type=10 size=10 attr=2 req=False zl=False pos=1 def=S'' vr=S'Like 'a*'' vt=S'must start with a' cap=- dec=-
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name | FROM Items | WHERE Cur > 20; | 
+query qNew type=0 timeout=60
+  sql SELECT DISTINCT Qty | FROM Lines | ORDER BY Qty; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  L1 S6'item 1' S100'AAAAAAAAAAAAAAAAAAAAAAAA..' BF B40 I-200 L100000 C14.5 Si.3333333 Do-1.5E+20 D1910-01-01 01:07:11 L2:0126 L3000:01080F161D242B32.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066201}}' S2'e1'
+  L2 S9'item caf<3B9>' S1600'BBBBBBBBBBBBBBBBBBBBBBBB..' BT B80 I-100 L200000 C29 Si.6666667 Do-3E+20 D1930-02-02 02:14:22 L3:02274C L6000:020910171E252C33.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066202}}' S2'e2'
+  L3 S6'item 3' S3100'CCCCCCCCCCCCCCCCCCCCCCCC..' BF B120 I0 L300000 C21.75 Si1 Do-4.5E+20 D1950-03-03 03:21:33 L4:03284D72 L9000:030A11181F262D34.. S'{guid {6B29FC40-CA47-1067-B31D-00DD01066203}}' S2'e3'
+  L5 S6'item 5' S6100'EEEEEEEEEEEEEEEEEEEEEEEE..' BF B200 I200 L500000 C36.25 Si1.666667 Do-7.5E+20 D1990-05-05 05:35:55 L6:052A4F7499BE L15000:050C131A21282F36.. Null S2'e5'
+  L6 S6'item 6' Null BT Null Null Null Null Null Null Null Null Null Null S2'e6'
+  L7 S6'item 7' Null BT Null Null Null C99 Null Null Null Null Null Null Null
+-- Lines
+  cols: LineID/4 ItemID/4 Qty/4 Txt/10
+  L1 L1 L3 S'line 1.1'
+  L2 L2 L3 S'line 2.1'
+  L3 L2 L5 S'line 2.2'
+  L4 L3 L3 S'line 3.1'
+  L5 L3 L5 S'line 3.2'
+  L6 L3 L6 S'line 3.3'
+  L11 L5 L3 S'line 5.1'
+  L12 L5 L5 S'line 5.2'
+  L13 L5 L6 S'line 5.3'
+  L14 L5 L8 S'line 5.4'
+  L15 L5 L10 S'line 5.5'
+  rows 11
+-- qParam 6
+  cols: Name/10 Qty/4
+  S'item 5' L10
+  S'item 5' L8
+  S'item 3' L6
+  S'item 5' L6
+  rows 4
+-- T2
+  cols: K/10 D/8 M/12
+  S'a' D2001-02-03 04:05:06 S'memo a'
+  S'b' Null Null
+  rows 2
+== jet3 compacted
+version 3.0
+table Items attr=0 count=6 vr=S'[B]<250' vt=S'B too big' desc=S'the items (changed)'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Extra type=10 size=10 attr=2 req=False zl=False pos=14 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+table T2 attr=0 count=2 vr=S'' vt=S'' desc=-
+  field K type=10 size=5 attr=2 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field D type=8 size=8 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field M type=12 size=0 attr=2 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byD p=False u=False r=False in=False f=False : +D
+  index T2Key p=True u=True r=True in=False f=False : +K
+table T3 attr=0 count=2 vr=S'[N]<>5' vt=S'' desc=-
+  field N type=4 size=4 attr=1 req=False zl=False pos=0 def=S'' vr=S'Between 1 And 9' vt=S'' cap=- dec=-
+  field S type=10 size=10 attr=2 req=False zl=False pos=1 def=S'' vr=S'Like 'a*'' vt=S'must start with a' cap=- dec=-
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name | FROM Items | WHERE Cur > 20; | 
+query qNew type=0 timeout=60
+  sql SELECT DISTINCT Qty | FROM Lines | ORDER BY Qty; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  items L6 C200.5
+== jet3 other version
+version 4.0
+table Items attr=0 count=6 vr=S'[B]<250' vt=S'B too big' desc=S'the items (changed)'
+  field ID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Name type=10 size=40 attr=2 req=True zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Notes type=12 size=0 attr=2 req=False zl=True pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Flag type=1 size=1 attr=1 req=False zl=False pos=3 def=S'True' vr=S'' vt=S'' cap=- dec=-
+  field B type=2 size=1 attr=1 req=False zl=False pos=4 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field I type=3 size=2 attr=1 req=False zl=False pos=5 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field L type=4 size=4 attr=1 req=False zl=False pos=6 def=S'' vr=S'>=0' vt=S'not negative' cap=- dec=-
+  field Cur type=5 size=8 attr=1 req=False zl=False pos=7 def=S'' vr=S'' vt=S'' cap=- dec=B2
+  field Sng type=6 size=4 attr=1 req=False zl=False pos=8 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dbl type=7 size=8 attr=1 req=False zl=False pos=9 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Dt type=8 size=8 attr=1 req=False zl=False pos=10 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Bin type=9 size=6 attr=2 req=False zl=False pos=11 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Ole type=11 size=0 attr=2 req=False zl=False pos=12 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field G type=15 size=16 attr=1 req=False zl=False pos=13 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Extra type=10 size=10 attr=2 req=False zl=False pos=14 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byName p=False u=True r=False in=False f=False : -Name
+  index PrimaryKey p=True u=True r=True in=False f=False : +ID
+table Lines attr=0 count=11 vr=S'' vt=S'' desc=-
+  field LineID type=4 size=4 attr=17 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field ItemID type=4 size=4 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Qty type=4 size=4 attr=1 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field Txt type=10 size=20 attr=2 req=False zl=False pos=3 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index ItemLines p=False u=False r=False in=False f=True : +ItemID
+  index LinesKey p=True u=True r=True in=False f=False : +LineID
+table T2 attr=0 count=2 vr=S'' vt=S'' desc=-
+  field K type=10 size=5 attr=2 req=False zl=False pos=0 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field D type=8 size=8 attr=1 req=False zl=False pos=1 def=S'' vr=S'' vt=S'' cap=- dec=-
+  field M type=12 size=0 attr=2 req=False zl=False pos=2 def=S'' vr=S'' vt=S'' cap=- dec=-
+  index byD p=False u=False r=False in=False f=False : +D
+  index T2Key p=True u=True r=True in=False f=False : +K
+table T3 attr=0 count=2 vr=S'[N]<>5' vt=S'' desc=-
+  field N type=4 size=4 attr=1 req=False zl=False pos=0 def=S'' vr=S'Between 1 And 9' vt=S'' cap=- dec=-
+  field S type=10 size=10 attr=2 req=False zl=False pos=1 def=S'' vr=S'Like 'a*'' vt=S'must start with a' cap=- dec=-
+relation ItemLines Items -> Lines attr=4096 : ID=ItemID
+query qBig type=0 timeout=60
+  sql SELECT Name | FROM Items | WHERE Cur > 20; | 
+query qNew type=0 timeout=60
+  sql SELECT DISTINCT Qty | FROM Lines | ORDER BY Qty; | 
+query qParam type=0 timeout=60
+  sql PARAMETERS pMin Long; | SELECT Items.Name, Lines.Qty | FROM Items INNER JOIN Lines ON Items.ID = Lines.ItemID | WHERE Lines.Qty >= [pMin] | ORDER BY Lines.Qty DESC , Items.Name; | 
+query qUpd type=48 timeout=60
+  sql UPDATE Lines SET Qty = Qty + 1 | WHERE Qty < 5; | 
+  items L6 C200.5
+  ! compact onto a file: 3204 Database already exists. [DAO.DbEngine]

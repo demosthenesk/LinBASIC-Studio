@@ -1,0 +1,53 @@
+== made
+rel R1 P -> C1 attr=1 K>K
+rel R2 P -> C2 attr=0 K>K
+rel R3 P -> C3 attr=2 K>K
+index C1.PK primary=True unique=True foreign=False required=True fields: ID
+index C1.R1 primary=False unique=True foreign=True required=False fields: K
+index C2.PK primary=True unique=True foreign=False required=True fields: ID
+index C2.R2 primary=False unique=False foreign=True required=False fields: K
+index C3.PK primary=True unique=True foreign=False required=True fields: ID
+index P.PK primary=True unique=True foreign=False required=True fields: K
+  INSERT INTO C1 VALUES (1, 1) -> 0
+  INSERT INTO C1 VALUES (2, 1) -> 3022
+  INSERT INTO C1 VALUES (3, 2) -> 0
+  INSERT INTO C1 VALUES (4, Null) -> 0
+  INSERT INTO C1 VALUES (5, Null) -> 0
+  UPDATE C1 SET K = 1 WHERE ID = 3 -> 3022
+  UPDATE C1 SET K = 1 WHERE ID = 1 -> 0
+  INSERT INTO C2 VALUES (1, 1) -> 0
+  INSERT INTO C2 VALUES (2, 1) -> 0
+  INSERT INTO C2 VALUES (3, 7) -> 3201
+  INSERT INTO C3 VALUES (1, 1) -> 0
+  INSERT INTO C3 VALUES (2, 9) -> 0
+  C1: L1/L1 L3/L2 L4/Null L5/Null
+  C2: L1/L1 L2/L1
+  C3: L1/L1 L2/L9
+== read again
+rel R1 P -> C1 attr=1 K>K
+rel R2 P -> C2 attr=0 K>K
+rel R3 P -> C3 attr=2 K>K
+index C1.PK primary=True unique=True foreign=False required=True fields: ID
+index C1.R1 primary=False unique=True foreign=True required=False fields: K
+index C2.PK primary=True unique=True foreign=False required=True fields: ID
+index C2.R2 primary=False unique=False foreign=True required=False fields: K
+index C3.PK primary=True unique=True foreign=False required=True fields: ID
+index P.PK primary=True unique=True foreign=False required=True fields: K
+  INSERT INTO C1 VALUES (6, 2) -> 3022
+  INSERT INTO C1 VALUES (7, 3) -> 3201
+  DELETE FROM P WHERE K = 2 -> 3200
+  INSERT INTO C3 VALUES (3, 8) -> 0
+  INSERT INTO C1 VALUES (8, 2) -> 0
+  C1: L1/L1 L3/L2 L4/Null L5/Null L8/L2
+  C3: L1/L1 L2/L9 L3/L8
+== after deleting R1
+rel R2 P -> C2 attr=0 K>K
+rel R3 P -> C3 attr=2 K>K
+index C1.PK primary=True unique=True foreign=False required=True fields: ID
+index C2.PK primary=True unique=True foreign=False required=True fields: ID
+index C2.R2 primary=False unique=False foreign=True required=False fields: K
+index C3.PK primary=True unique=True foreign=False required=True fields: ID
+index P.PK primary=True unique=True foreign=False required=True fields: K
+== unions read again
+QU1: SELECT K FROM P|UNION SELECT K FROM C2;|
+QU2: SELECT K FROM P UNION ALL SELECT K FROM C2|ORDER BY K;|

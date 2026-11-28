@@ -76,9 +76,14 @@ typedef struct ddb {
     int (*remote)(void *ctx, struct drs *r, int op);
     void *remote_ctx;
     /* the other databases its SQL and its linked tables name: attached as "lbext1" ... */
-    struct { char *file; void *odbc; } ext[DAO_MAXEXT];   /* odbc: an ODBC data source (the copies of its tables) */
+    struct { char *file; void *odbc; long long sz, mt; } ext[DAO_MAXEXT];   /* odbc: an ODBC data source (the copies of
+                                                         * its tables); sz, mt: the copy of a Jet file when attached */
     int next;
     void *odbc;                         /* a database of an ODBC data source (daoodbc.inc): its copies are this file */
+    char *jetfile;                      /* a Jet file: the .mdb its copy (file) is written back to (mdbexport.c) */
+    long long jetbase;                  /* the changes of the copy (sqlite3_total_changes64) when last written */
+    char *jetpw;                        /* its password (NewPassword needs it and an exclusive Open) */
+    int exclusive;
 } ddb;
 
 typedef struct dfld dfld;
@@ -102,6 +107,7 @@ struct dfld {
     char *defval, *vrule, *vtext, *foreign, *stable, *sfield;
     int col;                            /* FK_RS: the column */
     int dataupd;                        /* FK_QD: DataUpdatable */
+    int numps;                          /* Decimal: precision | scale << 8 (0: 18, 0) */
 };
 
 typedef struct dix {
@@ -148,6 +154,7 @@ typedef struct rcol {
     int updatable, required, allowzero;
     char *defval;
     int autoinc;
+    int numps;                          /* Decimal: precision | scale << 8 (0: 18, 0) */
 } rcol;
 typedef struct rrow { vbvar *v; sqlite3_int64 rid; int del; } rrow;
 typedef struct rdata { int refs; rrow *r; int n, cap; } rdata;
@@ -220,6 +227,10 @@ int schema_add_field(ddb *d, const char *table, dfld *f);
 int schema_drop_field(ddb *d, const char *table, const char *field);
 int schema_create_index(ddb *d, const char *table, dix *ix);
 int schema_drop_index(ddb *d, const char *table, const char *index);
+int schema_drop_relation(ddb *d, const char *name);
+void dao_db_order(ddb *d, int *lcid, int *jet4);     /* its sort order: LCID, Jet 4 or 3 */
+int schema_drop_triggers(ddb *d);
+int schema_set_meta(ddb *d, const char *table, const char *field, const char *col, const char *text, int ival, int rebuild);
 int schema_create_relation(ddb *d, drel *r);
 int schema_ddl(ddb *d, jsql *q);              /* CREATE TABLE ... from SQL */
 void schema_list_tables(ddb *d, dcoll *c);
@@ -274,10 +285,11 @@ void dao_querydef_init(vbobj o);
 void dao_field_settype(dfld *f, int type);
 
 /* dao.c, for ADO */
-vbobj dao_open_path(const char *path, int ro);
+vbobj dao_open_path(const char *path, int ro, const char *pwd);   /* pwd: the password of a Jet file, or 0 */
 vbobj dao_memory_db(void);
 int dao_execute_qd(ddb *d, const char *sql, vbobj qd, long *affected);
 void dao_db_close(vbobj o);
+void dao_db_export(vbobj o);                  /* a Jet file written again from its copy, if it changed */
 int dao_translate(ddb *d, const char *sql, jsql *j, const char *const *params);
 void dao_translate_hooks(ddb *d, int on);   /* other databases, linked tables (dao.c) */
 

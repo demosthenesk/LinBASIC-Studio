@@ -781,7 +781,11 @@ static int cn_open(acn *c)
     char *mode = cs_get(cs, "Mode");
     int ro = (c->mode == 1) || (mode && !strncasecmp(mode, "read", 4) && !strcasestr(mode, "write"));
     free(mode);
-    vbobj d = dao_open_path(path, ro);
+    /* the password of a Jet file: Jet OLEDB:Database Password (the ODBC driver of Access: PWD) */
+    char *pwd = cs_get(cs, "Jet OLEDB:Database Password");
+    if (!pwd) pwd = cs_get(cs, "PWD");
+    vbobj d = dao_open_path(path, ro, pwd);
+    free(pwd);
     if (dao_failed(c, 0) || !d) { free(path); free(prov); return -1; }
     vb_oaddref(d);
     c->db = d;
@@ -978,6 +982,7 @@ static vbvar cn_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
         else snprintf(sp, sizeof sp, "ROLLBACK TO adotrans%d; RELEASE adotrans%d", c->trans, c->trans);
         sqlite3_exec(DB(c->db)->db, sp, 0, 0, 0);
         c->trans--;
+        if (!c->trans && name[0] == 'c') dao_db_export(c->db);   /* committed: a Jet file written */
         return vb_v_empty();
     }
     if (!strcmp(name, "openschema")) return cn_openschema(c, argc, argv);
@@ -2071,8 +2076,9 @@ static vbvar fld_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbv
     if (!strcmp(name, "type")) return vb_v_l(ado_type(r, c));
     if (!strcmp(name, "definedsize")) return vb_v_l(defined_size(r, c));
     if (!strcmp(name, "attributes")) return vb_v_l(field_attrs(r, c));
-    if (!strcmp(name, "precision")) return vb_v_byte((vb_u8)((r->odbc || r->exact) && c < r->ndefs ? r->defs[c].prec : precision_of(ado_type(r, c))));
-    if (!strcmp(name, "numericscale")) return vb_v_byte((vb_u8)((r->odbc || r->exact) && c < r->ndefs ? r->defs[c].scale : 255));
+    int dec = !((r->odbc || r->exact) && c < r->ndefs) && ado_type(r, c) == adNumeric && v->cols[c].numps;   /* a Decimal of the file: its own (d_jetdec) */
+    if (!strcmp(name, "precision")) return vb_v_byte((vb_u8)(dec ? v->cols[c].numps & 0xFF : (r->odbc || r->exact) && c < r->ndefs ? r->defs[c].prec : precision_of(ado_type(r, c))));
+    if (!strcmp(name, "numericscale")) return vb_v_byte((vb_u8)(dec ? (v->cols[c].numps >> 8) & 0xFF : (r->odbc || r->exact) && c < r->ndefs ? r->defs[c].scale : 255));
     if (!strcmp(name, "actualsize")) {
         vbvar x;
         if (cur_value(r, c, &x)) return vb_v_empty();

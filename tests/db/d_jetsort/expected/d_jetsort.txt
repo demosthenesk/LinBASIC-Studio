@@ -1,0 +1,66 @@
+  ! rows general: 3075 Syntax error in string in query expression ''ae'. [DAO.Database]
+== general
+-- session CollatingOrder=1033 field=1033
+  index: abcd ABCD <E6> b coop co-op Co-op e E <E9> ee z
+  order by: abcd ABCD <E6> b coop co-op Co-op e E <E9> ee z
+  seek found 12 missing:
+  'ch' > 'h': 1
+-- read again CollatingOrder=1033 field=1033
+  index: abcd ABCD <E6> b coop co-op Co-op e E <E9> ee z
+  order by: abcd ABCD <E6> b coop co-op Co-op e E <E9> ee z
+  seek found 12 missing:
+== czech
+-- session CollatingOrder=1029 field=1029
+  index: caaa <10D>aa haa cha Chaa iaaa raaa <159>aa saa <161>aa
+  order by: caaa <10D>aa haa cha Chaa iaaa raaa <159>aa saa <161>aa
+  seek found 10 missing:
+  'ch' > 'h': 8
+-- read again CollatingOrder=1029 field=1029
+  index: caaa <10D>aa haa cha Chaa iaaa raaa <159>aa saa <161>aa
+  order by: caaa <10D>aa haa cha Chaa iaaa raaa <159>aa saa <161>aa
+  seek found 10 missing:
+== greek
+-- session CollatingOrder=1032 field=1032
+  index: aaaa <391><3B1><3B1> <3AC><3B1><3B1> <3B1><3B2><3B3> <3B2><3B1><3B1> <3C3> <3C2> <3C9><3B1><3B1> <3CE><3B1><3B1>
+  order by: aaaa <391><3B1><3B1> <3AC><3B1><3B1> <3B1><3B2><3B3> <3B2><3B1><3B1> <3C3> <3C2> <3C9><3B1><3B1> <3CE><3B1><3B1>
+  seek found 9 missing:
+  'ch' > 'h': 8
+-- read again CollatingOrder=1032 field=1032
+  index: aaaa <391><3B1><3B1> <3AC><3B1><3B1> <3B1><3B2><3B3> <3B2><3B1><3B1> <3C3> <3C2> <3C9><3B1><3B1> <3CE><3B1><3B1>
+  order by: aaaa <391><3B1><3B1> <3AC><3B1><3B1> <3B1><3B2><3B3> <3B2><3B1><3B1> <3C3> <3C2> <3C9><3B1><3B1> <3CE><3B1><3B1>
+  seek found 9 missing:
+== slovenian
+-- session CollatingOrder=1060 field=1060
+  index: ca <10D>aa <107>a da sa <161>a za <17E>a
+  order by: ca <10D>aa <107>a da sa <161>a za <17E>a
+  seek found 8 missing:
+  'ch' > 'h': 4
+-- read again CollatingOrder=1060 field=1060
+  index: ca <10D>aa <107>a da sa <161>a za <17E>a
+  order by: ca <10D>aa <107>a da sa <161>a za <17E>a
+  seek found 8 missing:
+== japanese
+-- session CollatingOrder=1041 field=1041
+  index: a <3041> <3042> <304B> <30AB> <304C> <304B><30FC> <304B><304B> <304B><309D> <6F22>
+  order by: a <3041> <3042> <304B> <30AB> <304C> <304B><30FC> <304B><304B> <304B><309D> <6F22>
+  seek found 10 missing:
+  'ch' > 'h': 9
+-- read again CollatingOrder=1041 field=1041
+  index: a <3041> <3042> <304B> <30AB> <304C> <304B><30FC> <304B><304B> <304B><309D> <6F22>
+  order by: a <3041> <3042> <304B> <30AB> <304C> <304B><30FC> <304B><304B> <304B><309D> <6F22>
+  seek found 10 missing:
+== danish
+-- session CollatingOrder=1030 field=1030
+  index: a z <E6> <F8> aa AA <E5>b
+  order by: a z <E6> <F8> aa AA <E5>b
+  seek found 7 missing:
+  'ch' > 'h': 6
+-- read again CollatingOrder=1030 field=1030
+  index: a z <E6> <F8> aa AA <E5>b
+  order by: a z <E6> <F8> aa AA <E5>b
+  seek found 7 missing:
+== general compacted into czech
+-- compacted CollatingOrder=1029 field=1029
+  index: caaa <10D>aa haa cha Chaa iaaa raaa <159>aa saa <161>aa
+  order by: caaa <10D>aa haa cha Chaa iaaa raaa <159>aa saa <161>aa
+  seek found 10 missing:

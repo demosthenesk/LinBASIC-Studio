@@ -1,0 +1,15 @@
+== made
+table LT attr=1073741824 connect=;DATABASE=<dir>\lsrc.mdb source=T fields=2
+  rows: L1/S'one' L2/S'two' L3/S'three'
+table Own attr=0 connect= source= fields=2
+  rows: L5/S'own'
+== source
+table T attr=0 connect= source= fields=2
+  rows: L1/S'one' L2/S'two' L3/S'three'
+table U attr=0 connect= source= fields=2
+  rows: S'x'/L10
+== changed
+table LU attr=1073741824 connect=;DATABASE=<dir>\lsrc.mdb source=U fields=2
+  rows: S'x'/L10
+table Own attr=0 connect= source= fields=2
+  rows: L5/S'own'

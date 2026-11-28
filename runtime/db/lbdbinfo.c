@@ -418,8 +418,26 @@ int main(int argc, char **argv)
         vb_init(1, argv);
         return ado_info(argc, argv);
     }
+    if (argc >= 4 && !strcmp(argv[1], "-import")) {   /* a Jet file into a LinBASIC database: -import FILE.mdb OUT */
+        vb_init(1, argv);
+        char err[512] = "";
+        if (mdb_import(argv[2], argv[3], err, sizeof err)) { fprintf(stderr, "%s\n", err); return 1; }
+        if (*err) fprintf(stderr, "warning: %s\n", err);
+        return 0;
+    }
+    if (argc >= 4 && !strcmp(argv[1], "-export")) {   /* a LinBASIC database as a Jet file: -export DB FILE.mdb */
+        vb_init(1, argv);
+        sqlite3 *s;
+        if (sqlite3_open_v2(argv[2], &s, SQLITE_OPEN_READWRITE, 0) != SQLITE_OK) { fprintf(stderr, "%s\n", sqlite3_errmsg(s)); return 1; }
+        jet_register(s);
+        char err[512];
+        int r = mdb_export(s, argv[3], err, sizeof err);
+        if (*err) fprintf(stderr, "%s\n", err);
+        sqlite3_close(s);
+        return r ? 1 : 0;
+    }
     if (argc < 2) {
-        fprintf(stderr, "usage: lbdbinfo FILE [SOURCE]\n");
+        fprintf(stderr, "usage: lbdbinfo FILE [SOURCE] | -import FILE.mdb OUT | -export DB FILE.mdb\n");
         return 2;
     }
     const char *file = argv[1];

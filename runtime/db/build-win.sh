@@ -1,6 +1,6 @@
 #!/bin/sh
 # build-win.sh - runtime/<target>/libvbdb.a for Windows with mingw-w64: DAO / ADO over SQLite, the
-# Jet .mdb import (libmdb of mdbtools, LGPL, without iconv: Windows code pages are read by libmdb itself)
+# Jet .mdb files read and written (jetread.c, jetwrite.c)
 #   ./build-win.sh win64 | win32
 cd "$(dirname "$0")" || exit 1
 case "$1" in
@@ -18,15 +18,12 @@ if [ ! -f $OBJ/sqlite3.o ] || [ sqlite/sqlite3.c -nt $OBJ/sqlite3.o ] || [ "$(ca
     $CC -O2 -w $SQLITE_FLAGS -c sqlite/sqlite3.c -o $OBJ/sqlite3.o || exit 1
     echo "$SQLITE_FLAGS" > $OBJ/sqlite3.flags
 fi
-MDB_FLAGS="-DTLS=__thread -D_GNU_SOURCE -DHAVE_VASPRINTF=1"
-for f in mdb/*.c; do
-    o=$OBJ/mdb_$(basename $f .c).o
-    if [ ! -f $o ] || [ $f -nt $o ] || [ mdb/mdbtools.h -nt $o ]; then
-        $CC -O2 -w $MDB_FLAGS -Imdb -c $f -o $o || exit 1
-    fi
+rm -f $OBJ/mdb_*.o                              # (libmdb of mdbtools: no longer used)
+for f in jetread jetwrite jetsort jetprops jetquery jetnew jetcp; do
+    $CC -O2 -g0 -w -I.. -c $f.c -o $OBJ/$f.o || exit 1
 done
-for f in jetsql dao daoschema daors mdbimport ado bind odbc; do
-    $CC -O2 -g0 -w $SQLITE_FLAGS -I.. -Imdb -c $f.c -o $OBJ/$f.o || exit 1
+for f in jetsql dao daoschema daors mdbimport mdbexport ado bind odbc; do
+    $CC -O2 -g0 -w $SQLITE_FLAGS -I.. -c $f.c -o $OBJ/$f.o || exit 1
 done
 rm -f $OUT && $T-ar rcs $OUT $OBJ/*.o
 echo "runtime/$1/libvbdb.a built"

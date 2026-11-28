@@ -6,14 +6,22 @@
  * Copyright (C) 2026 Demosthenes Koptsis.
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 #include "daoint.h"
+#include "mdbjet.h"                            /* (the Jet files: mdbexport.c, jetread.c, jetwrite.c) */
 #include "../vbos.h"
 #include "odbc.h"                              /* (RegisterDatabase; daoodbc.inc) */
 static void odbc_forget_dsn(const char *dsn);   /* daoodbc.inc */
 #include <ctype.h>
 #include <sys/stat.h>
+#include <utime.h>
 #ifndef _WIN32
 #include <dirent.h>
 #endif
+
+static int db_export(ddb *d);
+static void jet_track(ddb *d);
+static void jet_compact(const char *a, const char *b, int compact, int opts, const char *locale);
+static char *jet_copy_path(const char *file);
+static int jet_pw_ok(const char *file, const char *connect, char **pw_out);
 
 const char *dao_src = "DAO.Database";
 
@@ -21,7 +29,34 @@ const char *dao_src = "DAO.Database";
 int dao_missing(vb_i32 argc, vbvar *argv, int i) { return i >= argc || vb_ismissing(argv[i]); }
 char *dao_str(vbvar v) { vbs s = vb_v2s(v); return vb_errpend ? (char *)"" : vb_stoutf8(s); }
 char *dao_strdup_v(vbvar v) { return strdup(dao_str(v)); }
-vbvar dao_vstr(const char *s) { return vb_v_s(vb_sfromutf8(s ? s : "")); }
+/* the sort order of a database (CollatingOrder): its file's (MSysLB_Props SortLCID), General 1033 */
+static int db_sort(ddb *d);
+void dao_db_order(ddb *d, int *lcid, int *jet4)
+{
+    *lcid = d ? db_sort(d) : 0x409;
+    *jet4 = !d || d->version != 30;
+}
+static int db_sort(ddb *d)
+{
+    int v = 1033;
+    sqlite3_stmt *st = 0;
+    if (d && d->db && !d->closed && sqlite3_prepare_v2(d->db, "SELECT value FROM MSysLB_Props WHERE name = 'SortLCID'", -1, &st, 0) == SQLITE_OK) {
+        if (sqlite3_step(st) == SQLITE_ROW && sqlite3_column_int(st, 0)) v = sqlite3_column_int(st, 0);
+        sqlite3_finalize(st);
+    }
+    return v;
+}
+vbvar dao_vstr(const char *s)
+{
+    size_t l = s ? strlen(s) : 0;
+    if (l >= 2 && !memcmp(s + l - 2, JET_NUL, 2)) {       /* a text Jet keeps with a NUL at its end: shown with it */
+        char *c = strndup(s, l - 2);
+        vbvar v = vb_v_s(vb_scat(vb_sfromutf8(c), vb_chrw(0)));
+        free(c);
+        return v;
+    }
+    return vb_v_s(vb_sfromutf8(s ? s : ""));
+}
 vbvar dao_retobj(vbobj o) { return vb_vtmp(vb_v_obj(o)); }
 static vb_i32 along(vb_i32 argc, vbvar *argv, int i, vb_i32 d) { return dao_missing(argc, argv, i) ? d : vb_v2l(argv[i]); }
 static char *sdup(const char *s) { return s ? strdup(s) : 0; }
@@ -69,6 +104,8 @@ int jet_sqlite_error(sqlite3 *db, int rc, char *msg, int cap)
             case 3316: snprintf(msg, (size_t)cap, "Index or primary key cannot contain a Null value."); n = 3058; break;
             case 3201: snprintf(msg, (size_t)cap, "You cannot add or change a record because a related record is required in table '%s'.", arg); break;
             case 3200: snprintf(msg, (size_t)cap, "The record cannot be deleted or changed because table '%s' includes related records.", arg); break;
+            case 33160: snprintf(msg, (size_t)cap, "%s", arg); n = 3316; break;   /* a validation rule's ValidationText */
+            case 3022: snprintf(msg, (size_t)cap, "The changes you requested to the table were not successful because they would create duplicate values in the index, primary key, or relationship.  Change the data in the field or fields that contain duplicate data, remove the index, or redefine the index to permit duplicate entries and try again."); break;
             default: snprintf(msg, (size_t)cap, "%s", arg);
             }
             return n;
@@ -385,13 +422,7 @@ static vbvar coll_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vb
         case C_TABLEDEFS: r = ((ddb *)c->owner)->odbc ? dao_odbc_drop_table((ddb *)c->owner, obj_name(c->items[i]))
                                                        : schema_drop_table((ddb *)c->owner, obj_name(c->items[i])); break;
         case C_QUERYDEFS: r = schema_drop_query((ddb *)c->owner, obj_name(c->items[i])); break;
-        case C_RELATIONS: {
-            ddb *dd = (ddb *)c->owner;
-            jbuf s = { 0 };
-            jb_s(&s, "DELETE FROM MSysLB_Relations WHERE name = "); jb_qstr(&s, obj_name(c->items[i]), -1);
-            r = dao_exec(dd, s.p);
-            jb_free(&s);
-            break; }
+        case C_RELATIONS: r = schema_drop_relation((ddb *)c->owner, obj_name(c->items[i])); break;
         case C_FIELDS: {
             dtd *t = (dtd *)c->owner;
             if (t->appended) r = DB(t->db)->odbc ? dao_odbc_drop_field(DB(t->db), t->name, obj_name(c->items[i])) : schema_drop_field(DB(t->db), t->name, obj_name(c->items[i]));
@@ -488,15 +519,24 @@ static vbvar engine_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, 
         return vb_v_empty();
     }
     if (!strcmp(name, "compactdatabase") || !strcmp(name, "repairdatabase")) {
-        /* a SQLite file: VACUUM INTO the new name, or nothing */
+        /* a Jet file: written again (jetwrite.c), to the new name or in its place; a SQLite file: VACUUM INTO the new
+         * name, or nothing */
         char *src = argc > 0 ? dao_str(argv[0]) : "";
-        if (name[0] == 'c' && argc > 1) {
-            char a[1024], b[1024];
-            snprintf(a, sizeof a, "%s", src); snprintf(b, sizeof b, "%s", dao_str(argv[1]));
+        char a[1024], b[1024];
+        snprintf(a, sizeof a, "%s", src); snprintf(b, sizeof b, "%s", name[0] == 'c' && argc > 1 ? dao_str(argv[1]) : src);
 #ifndef _WIN32
-            for (char *p = a; *p; p++) if (*p == '\\') *p = '/';
-            for (char *p = b; *p; p++) if (*p == '\\') *p = '/';
+        for (char *p = a; *p; p++) if (*p == '\\') *p = '/';
+        for (char *p = b; *p; p++) if (*p == '\\') *p = '/';
 #endif
+        if (mdb_is_jet(a)) {
+            int opts = name[0] == 'c' && argc > 3 && !dao_missing(argc, argv, 3) ? (int)vb_v2l(argv[3]) : 0;
+            char *pwc = strdup(name[0] == 'c' && argc > 4 && !dao_missing(argc, argv, 4) ? dao_str(argv[4]) : "");
+            if (!jet_pw_ok(a, pwc, 0)) dao_raise(3031, "DAO.DbEngine", "Not a valid password.");
+            else jet_compact(a, b, name[0] == 'c', opts, name[0] == 'c' && argc > 2 && !dao_missing(argc, argv, 2) ? dao_str(argv[2]) : "");
+            free(pwc);
+            return vb_v_empty();
+        }
+        if (name[0] == 'c' && argc > 1) {
             sqlite3 *db;
             if (sqlite3_open_v2(a, &db, SQLITE_OPEN_READONLY, 0) == SQLITE_OK) {
                 jbuf s = { 0 };
@@ -556,6 +596,8 @@ static int ws_trans(dws *w, int what)
         odbc_trans(d, what);                    /* and the data sources of ODBC it uses */
     }
     w->trans += what ? -1 : 1;
+    if (what == 1 && w->trans == 0)             /* committed: the Jet files written */
+        for (int i = 0; i < w->dbs->n; i++) db_export((ddb *)vb_oid(w->dbs->items[i]));
     return 0;
 }
 
@@ -692,6 +734,27 @@ static int db_connect(ddb *d, const char *file, int ro, int create)
     return SQLITE_OK;
 }
 
+/* the order of texts of the connection: the sort order of the database (ORDER BY, =, its indexes as Jet's); a copy
+ * whose indexes were made in another order made again (REINDEX) */
+static void db_order(ddb *d)
+{
+    int lcid = 0x409, keys = 0;
+    sqlite3_stmt *st = 0;
+    if (sqlite3_prepare_v2(d->db, "SELECT name, value FROM MSysLB_Props WHERE name IN ('SortLCID', 'Collation')", -1, &st, 0) == SQLITE_OK) {
+        while (sqlite3_step(st) == SQLITE_ROW) {
+            const char *n = (const char *)sqlite3_column_text(st, 0), *v = (const char *)sqlite3_column_text(st, 1);
+            if (n && v && !strcmp(n, "SortLCID") && atoi(v)) lcid = atoi(v);
+            if (n && v && !strcmp(n, "Collation") && !strcmp(v, "keys1")) keys = 1;
+        }
+        sqlite3_finalize(st);
+    }
+    jet_collation(d->db, d->version == 30 ? 0x409 : lcid, d->version != 30, mdb_codepage());
+    if (!keys && !d->ro) {
+        sqlite3_exec(d->db, "REINDEX NOCASE", 0, 0, 0);
+        sqlite3_exec(d->db, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('Collation', 'keys1')", 0, 0, 0);
+    }
+}
+
 static void read_version(ddb *d)
 {
     sqlite3_stmt *st = 0;
@@ -699,6 +762,7 @@ static void read_version(ddb *d)
         if (sqlite3_step(st) == SQLITE_ROW) d->version = (int)(atof((const char *)sqlite3_column_text(st, 0)) * 10 + 0.5);
         sqlite3_finalize(st);
     }
+    if (d->version) db_order(d);
 }
 
 static vbobj db_create(dws *w, const char *path, const char *locale, int options)
@@ -710,19 +774,57 @@ static vbobj db_create(dws *w, const char *path, const char *locale, int options
         dao_raise(3204, "DAO.Workspace", "Database already exists.");
         return 0;
     }
+    /* a Jet file (as Jet makes it), the program working on its SQLite copy next to it */
     ddb *d = db_new(w, path);
-    int rc = db_connect(d, file, 0, 1);
-    free(file);
+    char *copy = jet_copy_path(file);
+    remove(copy);
+    int rc = db_connect(d, copy, 0, 1);
+    free(copy);
     if (rc != SQLITE_OK) {
+        free(file);
         vb_orelease((vbobj)d);
         dao_raise(3044, "DAO.Workspace", "'%s' isn't a valid path.  Make sure that the path name is spelled correctly and that you are connected to the server on which the file resides.", path);
         return 0;
     }
-    d->version = (options & 32) ? 30 : (options & 16) ? 30 : 40;      /* dbVersion30 = 32, dbVersion40 = 64 */
+    d->version = (options & (1 | 8 | 16 | 32)) ? 30 : 40;     /* dbVersion10 1, 11 8, 20 16, 30 32; dbVersion40 64 */
     schema_init(d);
     char sql[200];
     snprintf(sql, sizeof sql, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('Version', '%d.0')", d->version / 10);
     sqlite3_exec(d->db, sql, 0, 0, 0);
+    /* the locale: ";LANGID=0x0408;CP=1253;COUNTRY=0" (the sort order of a Jet 4 file: its keys), ";pwd=..." */
+    char pwd[64] = "";
+    int lcid = 0;
+    for (const char *p = locale ? locale : ""; *p; ) {
+        const char *e = strchr(p, ';');
+        int n = e ? (int)(e - p) : (int)strlen(p);
+        if (n > 7 && !strncasecmp(p, "LANGID=", 7)) lcid = (int)strtol(p + 7, 0, 0);
+        else if (n >= 4 && !strncasecmp(p, "pwd=", 4)) snprintf(pwd, sizeof pwd, "%.*s", n - 4, p + 4);
+        if (!e) break;
+        p = e + 1;
+    }
+    if (lcid && lcid != 0x409 && d->version == 40) {
+        snprintf(sql, sizeof sql, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('SortLCID', '%d')", lcid);
+        sqlite3_exec(d->db, sql, 0, 0, 0);
+    }
+    db_order(d);
+    if (*pwd) {
+        sqlite3_stmt *st = 0;
+        if (sqlite3_prepare_v2(d->db, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('Password', ?1)", -1, &st, 0) == SQLITE_OK) {
+            sqlite3_bind_text(st, 1, pwd, -1, SQLITE_STATIC);
+            sqlite3_step(st);
+        }
+        sqlite3_finalize(st);
+    }
+    d->jetfile = file;
+    d->jetbase = -1;
+    d->jetpw = strdup(pwd);
+    d->exclusive = 1;                           /* (a new database is open exclusively: NewPassword works) */
+    if (db_export(d)) {
+        vb_orelease((vbobj)d);
+        dao_raise(3044, "DAO.Workspace", "'%s' isn't a valid path.  Make sure that the path name is spelled correctly and that you are connected to the server on which the file resides.", path);
+        return 0;
+    }
+    jet_track(d);
     d->tds->loaded = 0;
     coll_add(w->dbs, (vbobj)d);
     vb_orelease((vbobj)d);
@@ -749,6 +851,150 @@ static char *jet_sqlite_copy(const char *file)
         if (mdb_import(file, copy, err, sizeof err)) { free(copy); return 0; }
     }
     return copy;
+}
+
+/* ---------------------------------------------------------------- the Jet file written back
+ * The program changes the copy; the .mdb is written again from it (mdbexport.c) when the database is closed, when the
+ * outermost transaction is committed and when the program ends. The copy then is as new as the file (not imported
+ * again). A copy that could not be written keeps the changes (it is newer than the file: the next Open uses it). */
+static long long file_mtime(const char *p, long long *sz)
+{
+    struct stat st;
+    if (stat(p, &st)) { *sz = -1; return -1; }
+    *sz = (long long)st.st_size;
+#ifdef __linux__
+    return (long long)st.st_mtim.tv_sec * 1000000000LL + st.st_mtim.tv_nsec;
+#else
+    return (long long)st.st_mtime * 1000000000LL;
+#endif
+}
+static void copy_touch(const char *copy) { utime(copy, 0); }
+
+static int db_export(ddb *d)
+{
+    if (!d->jetfile || d->ro || !d->db || d->closed || !sqlite3_get_autocommit(d->db)) return 0;
+    if (sqlite3_total_changes64(d->db) == d->jetbase) return 0;
+    char err[512];
+    int r = mdb_export(d->db, d->jetfile, err, sizeof err);
+    if (r) fprintf(stderr, "LinBASIC: %s was not written: %s (the changes are kept in %s)\n", d->jetfile, err, d->file);
+    else {
+        if (*err) fprintf(stderr, "LinBASIC: %s: %s\n", d->jetfile, err);
+        d->jetbase = sqlite3_total_changes64(d->db);
+        copy_touch(d->file);
+    }
+    return r;
+}
+
+/* the copies of other Jet files the SQL changed (IN 'file', linked tables), after the database closed */
+static void ext_export(ddb *d)
+{
+    for (int i = 0; i < d->next; i++) {
+        const char *f = d->ext[i].file;
+        size_t n = f ? strlen(f) : 0;
+        if (d->ext[i].odbc || n < 6 || strcmp(f + n - 5, ".lbdb")) continue;
+        long long sz, mt = file_mtime(f, &sz);
+        if (mt == d->ext[i].mt && sz == d->ext[i].sz) continue;
+        char *mdb = strndup(f, n - 5);
+        sqlite3 *s = 0;
+        if (mdb_is_jet(mdb) && sqlite3_open_v2(f, &s, SQLITE_OPEN_READWRITE, 0) == SQLITE_OK) {
+            jet_register(s);
+            char err[512];
+            if (mdb_export(s, mdb, err, sizeof err)) fprintf(stderr, "LinBASIC: %s was not written: %s\n", mdb, err);
+            else copy_touch(f);
+        }
+        sqlite3_close(s);
+        free(mdb);
+        d->ext[i].mt = file_mtime(f, &d->ext[i].sz);
+    }
+}
+
+/* the open databases of Jet files, written at the program's end (exit) */
+static ddb **jet_dbs; static int jet_ndbs;
+static void jet_at_end(void)
+{
+    for (int i = 0; i < jet_ndbs; i++) { db_export(jet_dbs[i]); ext_export(jet_dbs[i]); }
+}
+static void jet_track(ddb *d)
+{
+    static int hooked;
+    if (!hooked) { atexit(jet_at_end); hooked = 1; }
+    jet_dbs = realloc(jet_dbs, sizeof(ddb *) * (size_t)(jet_ndbs + 1));
+    jet_dbs[jet_ndbs++] = d;
+}
+static void jet_untrack(ddb *d)
+{
+    for (int i = 0; i < jet_ndbs; i++) if (jet_dbs[i] == d) { jet_dbs[i] = jet_dbs[--jet_ndbs]; return; }
+}
+
+/* CompactDatabase / RepairDatabase of a Jet file: read and written whole (as compact as Jet writes it); another
+ * version (dbVersion30 / 40 in the options) through a copy written as a new file of that version */
+/* LANGID and pwd of a locale argument (";LANGID=0x0408;CP=1253;COUNTRY=0;pwd=x"): *lcid 0 / *pwd "" when not there */
+static void locale_parts(const char *locale, int *lcid, char *pwd, int cap, int *haspwd)
+{
+    *lcid = 0; *pwd = 0; *haspwd = 0;
+    for (const char *p = locale ? locale : ""; *p; ) {
+        const char *e = strchr(p, ';');
+        int n = e ? (int)(e - p) : (int)strlen(p);
+        if (n > 7 && !strncasecmp(p, "LANGID=", 7)) *lcid = (int)strtol(p + 7, 0, 0);
+        else if (n >= 4 && !strncasecmp(p, "pwd=", 4)) { snprintf(pwd, (size_t)cap, "%.*s", n - 4, p + 4); *haspwd = 1; }
+        if (!e) break;
+        p = e + 1;
+    }
+}
+
+static void jet_compact(const char *a, const char *b, int compact, int opts, const char *locale)
+{
+    for (int i = 0; i < jet_ndbs; i++) if (jet_dbs[i]->jetfile && !strcmp(jet_dbs[i]->jetfile, a)) db_export(jet_dbs[i]);
+    char err[512];
+    if (compact && file_exists(b)) { dao_raise(3204, "DAO.DbEngine", "Database already exists."); return; }
+    int ver = mdb_is_jet(a), want = opts & (1 | 8 | 16 | 32) ? 3 : opts & 64 ? 4 : ver;
+    if (ver == 4 && want == 3) {                /* Jet 4 into an older format: never (VB6 oracle d_jetdec) */
+        dao_raise(3301, "DAO.DbEngine", "Cannot perform this operation; features in this version are not available in databases with older formats.");
+        return;
+    }
+    int lcid, haspwd;
+    char npw[64];
+    locale_parts(locale, &lcid, npw, sizeof npw, &haspwd);
+    if (want == ver && !lcid && !haspwd) {
+        jdb *db = jet_read(a, mdb_codepage(), err, sizeof err);
+        if (!db || jet_write(db, b, err, sizeof err)) {
+            jet_free(db);
+            dao_raise(3049, "DAO.DbEngine", "Can't open database '%s'.  It may not be a database that your application recognizes, or the file may be corrupt.", a);
+            return;
+        }
+        jet_free(db);
+        return;
+    }
+    char *tmp = malloc(strlen(b) + 16);
+    sprintf(tmp, "%s.lbdb.part", b);
+    int r = mdb_import(a, tmp, err, sizeof err);
+    if (!r) {
+        sqlite3 *s = 0;
+        r = sqlite3_open_v2(tmp, &s, SQLITE_OPEN_READWRITE, 0) != SQLITE_OK;
+        if (!r) {
+            jet_register(s);
+            sqlite3_exec(s, want == 3 ? "UPDATE MSysLB_Props SET value = '3.0' WHERE name = 'Version'" : "UPDATE MSysLB_Props SET value = '4.0' WHERE name = 'Version'", 0, 0, 0);
+            /* another sort order (the keys of the new file follow it), a new password */
+            if (lcid) {
+                char q[120];
+                snprintf(q, sizeof q, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('SortLCID', '%d')", lcid);
+                sqlite3_exec(s, q, 0, 0, 0);
+            }
+            if (haspwd) {
+                sqlite3_stmt *st = 0;
+                if (sqlite3_prepare_v2(s, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('Password', ?1)", -1, &st, 0) == SQLITE_OK) {
+                    sqlite3_bind_text(st, 1, npw, -1, SQLITE_STATIC);
+                    sqlite3_step(st);
+                }
+                sqlite3_finalize(st);
+            }
+            r = mdb_export(s, b, err, sizeof err);
+        }
+        sqlite3_close(s);
+    }
+    remove(tmp);
+    free(tmp);
+    if (r) dao_raise(3049, "DAO.DbEngine", "Can't open database '%s'.  It may not be a database that your application recognizes, or the file may be corrupt.", a);
 }
 
 #include "daoodbc.inc"
@@ -786,6 +1032,38 @@ static char *connect_db(const char *c)
     }
     return strdup("");
 }
+/* PWD= of a Connect (malloc; "" none) */
+static char *connect_pwd(const char *c)
+{
+    const char *p = c;
+    while (p && *p) {
+        while (*p == ';' || *p == ' ') p++;
+        if (!strncasecmp(p, "pwd", 3)) {
+            const char *q = p + 3;
+            while (*q == ' ') q++;
+            if (*q == '=') {
+                q++;
+                const char *e = strchr(q, ';');
+                return strndup(q, e ? (size_t)(e - q) : strlen(q));
+            }
+        }
+        p = strchr(p, ';');
+    }
+    return strdup("");
+}
+/* a Jet file with a password: the one of the Connect, or 3031 */
+static int jet_pw_ok(const char *file, const char *connect, char **pw_out)
+{
+    char pw[128];
+    if (pw_out) *pw_out = 0;
+    if (mdb_password(file, pw, sizeof pw)) return 1;
+    char *want = connect_pwd(connect);
+    int ok = !*pw || !strcmp(pw, want);
+    free(want);
+    if (ok && pw_out) *pw_out = strdup(pw);
+    return ok;
+}
+
 static int full_path(const char *p, char out[4096])
 {
 #ifdef _WIN32
@@ -888,7 +1166,9 @@ int dao_ext_schema(ddb *d, const char *path, const char *connect, int *err, char
         snprintf(msg, (size_t)cap, "The Microsoft Jet database engine cannot open the file '%s'.  It is already opened exclusively by another user, or you need permission to view its data.", path);
         return -1;
     }
-    d->ext[d->next++].file = strdup(real);
+    d->ext[d->next].file = strdup(real);
+    d->ext[d->next].mt = file_mtime(real, &d->ext[d->next].sz);
+    d->next++;
     return n;
 }
 int dao_ext_link(ddb *d, const char *connect, int *err, char *msg, int cap)
@@ -934,7 +1214,6 @@ void dao_translate_hooks(ddb *d, int on)
 
 static vbobj db_open(dws *w, const char *path, int exclusive, int ro, const char *connect)
 {
-    (void)exclusive;
     char kind[64];
     connect_kind(connect, kind, sizeof kind);
     if (!strcasecmp(kind, "ODBC")) return odbc_db_open(w, connect, ro);   /* a data source of ODBC (daoodbc.inc) */
@@ -957,6 +1236,13 @@ static vbobj db_open(dws *w, const char *path, int exclusive, int ro, const char
     if (f) { if (fread(head, 1, 16, f) < 16) head[0] = 0; fclose(f); }
     char *use = file;
     int jet = mdb_is_jet(file);
+    char *jetpw = 0;
+    if (jet && !jet_pw_ok(file, connect, &jetpw)) {
+        free(file);
+        vb_orelease((vbobj)d);
+        dao_raise(3031, "DAO.Workspace", "Not a valid password.");
+        return 0;
+    }
     if (jet) {
         /* a Jet file: read through its SQLite copy (made again when the .mdb is newer) */
         char *copy = jet_sqlite_copy(file);
@@ -984,6 +1270,15 @@ static vbobj db_open(dws *w, const char *path, int exclusive, int ro, const char
     }
     if (!ro) schema_init(d);
     if (!jet) read_version(d);
+    else db_order(d);                           /* (before jetbase: its REINDEX is not a change of the file) */
+    if (jet && !ro) {
+        d->jetfile = native_path(path);
+        d->jetbase = sqlite3_total_changes64(d->db);
+        d->jetpw = jetpw; jetpw = 0;
+        d->exclusive = exclusive;
+        jet_track(d);
+    }
+    free(jetpw);
     coll_add(w->dbs, (vbobj)d);
     vb_orelease((vbobj)d);
     return (vbobj)d;
@@ -994,9 +1289,13 @@ static void db_close(ddb *d)
     if (d->closed) return;
     while (d->rss->n) rs_close((drs *)vb_oid(d->rss->items[0]));
     if (d->trans) sqlite3_exec(d->db, "ROLLBACK", 0, 0, 0);
+    if (!sqlite3_get_autocommit(d->db)) sqlite3_exec(d->db, "ROLLBACK", 0, 0, 0);   /* (a transaction not committed) */
+    db_export(d);
     sqlite3_close_v2(d->db);
     d->db = 0;
     d->closed = 1;
+    ext_export(d);
+    jet_untrack(d);
     dws *w = (dws *)d->ws;
     if (w) for (int i = 0; i < w->dbs->n; i++) if (vb_oid(w->dbs->items[i]) == (vbobj)d) { vb_oaddref((vbobj)d); coll_remove(w->dbs, i); vb_orelease((vbobj)d); break; }
 }
@@ -1004,8 +1303,13 @@ static void db_close(ddb *d)
 static void db_clear(vbobj o)
 {
     ddb *d = (ddb *)o;
-    if (!d->closed && d->db) { sqlite3_close_v2(d->db); d->db = 0; }
-    free(d->name); free(d->file); free(d->connect);
+    if (!d->closed && d->db) {
+        db_export(d);
+        sqlite3_close_v2(d->db); d->db = 0;
+        ext_export(d);
+    }
+    jet_untrack(d);
+    free(d->name); free(d->file); free(d->connect); free(d->jetfile); free(d->jetpw);
     for (int i = 0; i < d->next; i++) free(d->ext[i].file);
     d->next = 0;
     if (d->tds) vb_orelease((vbobj)d->tds);
@@ -1211,9 +1515,13 @@ static int db_execute(ddb *d, const char *sql, int options, vbobj qd, long *affe
 
 /* ---------------------------------------------------------------- for ADO (ado.c) */
 /* a database file opened as DAO opens it: the Database (borrowed: Workspaces(0).Databases keeps it) or 0 */
-vbobj dao_open_path(const char *path, int ro)
+vbobj dao_open_path(const char *path, int ro, const char *pwd)
 {
-    return db_open((dws *)vb_oid(dao_workspace0()), path, 0, ro, "");
+    jbuf c = { 0 };
+    if (pwd && *pwd) { jb_s(&c, ";PWD="); jb_s(&c, pwd); }
+    vbobj d = db_open((dws *)vb_oid(dao_workspace0()), path, 0, ro, c.p ? c.p : "");
+    jb_free(&c);
+    return d;
 }
 /* a database in memory (a recordset of ADO without a connection): an owned reference */
 vbobj dao_memory_db(void)
@@ -1229,6 +1537,7 @@ int dao_execute_qd(ddb *d, const char *sql, vbobj qd, long *affected)
     return db_execute(d, sql, dbFailOnError, qd, affected);
 }
 void dao_db_close(vbobj o) { db_close((ddb *)vb_oid(o)); }
+void dao_db_export(vbobj o) { db_export((ddb *)vb_oid(o)); }
 
 static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbvar *argv, int *found)
 {
@@ -1268,7 +1577,7 @@ static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
     if (!strcmp(name, "version")) { char v[8]; snprintf(v, sizeof v, "%d.0", d->version / 10); return dao_vstr(v); }
     if (!strcmp(name, "recordsaffected")) return vb_v_l((vb_i32)d->affected);
     if (!strcmp(name, "transactions")) return vb_v_bool(-1);
-    if (!strcmp(name, "collatingorder")) return vb_v_l(1033);
+    if (!strcmp(name, "collatingorder")) return vb_v_l(db_sort(d));
     if (!strcmp(name, "querytimeout")) return vb_v_i(60);
     if (!strcmp(name, "replicaid") || !strcmp(name, "designmasterid")) return dao_vstr("");
     if (!strcmp(name, "close")) { db_close(d); return vb_v_empty(); }
@@ -1342,7 +1651,31 @@ static vbvar db_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, vbva
         return v;
     }
     if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
-    if (!strcmp(name, "newpassword") || !strcmp(name, "makereplica") || !strcmp(name, "synchronize") || !strcmp(name, "populatepartial")) return vb_v_empty();
+    if (!strcmp(name, "newpassword")) {
+        /* NewPassword Old, New of a Jet file: an exclusive Open, the old one, at most 20 characters (VB6 oracle
+         * d_jetpw); written to the file at once */
+        if (!d->jetfile || d->closed) return vb_v_empty();
+        char *old = strdup(argc > 0 ? dao_str(argv[0]) : ""), *nw = strdup(argc > 1 ? dao_str(argv[1]) : "");
+        uint16_t *w;
+        int n = jet_utf8_to_utf16(nw, &w);
+        free(w);
+        if (!d->exclusive) dao_raise(3621, "DAO.Database", "Cannot change password on a shared open database.");
+        else if (strcmp(old, d->jetpw ? d->jetpw : "") || n > 20) dao_raise(3031, "DAO.Database", "Not a valid password.");
+        else {
+            sqlite3_stmt *st = 0;
+            if (sqlite3_prepare_v2(d->db, "INSERT OR REPLACE INTO MSysLB_Props VALUES ('Password', ?1)", -1, &st, 0) == SQLITE_OK) {
+                sqlite3_bind_text(st, 1, nw, -1, SQLITE_STATIC);
+                sqlite3_step(st);
+            }
+            sqlite3_finalize(st);
+            free(d->jetpw); d->jetpw = strdup(nw);
+            d->jetbase = -1;
+            db_export(d);
+        }
+        free(old); free(nw);
+        return vb_v_empty();
+    }
+    if (!strcmp(name, "makereplica") || !strcmp(name, "synchronize") || !strcmp(name, "populatepartial")) return vb_v_empty();
     *found = 0;
     return vb_v_empty();
 }
@@ -1457,7 +1790,12 @@ static vbvar tabledef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
     }
     if (!strcmp(name, "connect") || !strcmp(name, "sourcetablename") || !strcmp(name, "validationrule") || !strcmp(name, "validationtext")) {
         char **p = name[0] == 'c' ? &t->connect : name[0] == 's' ? &t->srcname : name[10] == 'r' ? &t->vrule : &t->vtext;
-        if (set) { free(*p); *p = dao_strdup_v(argv[argc - 1]); return vb_v_empty(); }
+        if (set) {
+            free(*p); *p = dao_strdup_v(argv[argc - 1]);
+            if (name[0] == 'v' && t->appended && t->db && !DB(t->db)->closed && !DB(t->db)->odbc)   /* kept in the database (and its .mdb) */
+                schema_set_meta(DB(t->db), t->name, 0, name[10] == 'r' ? "vrule" : "vtext", *p ? *p : "", 0, 0);
+            return vb_v_empty();
+        }
         return dao_vstr(*p);
     }
     if (!strcmp(name, "datecreated")) return vb_v_date(t->created);
@@ -1465,6 +1803,7 @@ static vbvar tabledef_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc
     if (!strcmp(name, "conflicttable")) return dao_vstr("");
     if (!strcmp(name, "createfield")) {
         int type = along(argc, argv, 1, 0);
+        if (type == dbDecimal) { dao_raise(3259, "DAO.Field", "Invalid field data type."); return vb_v_empty(); }   /* (DAO 3.6: d_jetdec) */
         dfld *f = field_new(FK_TABLE, 0, dao_missing(argc, argv, 0) ? "" : dao_str(argv[0]), type, along(argc, argv, 2, 0));
         vbvar v = dao_retobj((vbobj)f);
         vb_orelease((vbobj)f);
@@ -1539,7 +1878,7 @@ static vbvar field_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
         if (!strcmp(name, "ordinalposition")) return vb_v_i((vb_i16)f->col);
         if (!strcmp(name, "defaultvalue")) return dao_vstr(c->defval ? c->defval : "");
         if (!strcmp(name, "validationrule") || !strcmp(name, "validationtext") || !strcmp(name, "foreignname")) return dao_vstr("");
-        if (!strcmp(name, "collatingorder")) return vb_v_l(1033);
+        if (!strcmp(name, "collatingorder")) return vb_v_l(r->db ? db_sort(DB(r->db)) : 1033);
         if (!strcmp(name, "fieldsize")) {
             int err; vbvar v = rs_field_value(r, f->col, &err);
             if (err) return vb_v_empty();
@@ -1585,11 +1924,29 @@ static vbvar field_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
         return vb_v_l(f->attrs);
     }
     if (!strcmp(name, "required")) { if (set) { f->required = vb_v2bool(argv[argc - 1]) != 0; return vb_v_empty(); } return vb_v_bool(f->required ? -1 : 0); }
-    if (!strcmp(name, "allowzerolength")) { if (set) { f->allowzero = vb_v2bool(argv[argc - 1]) != 0; return vb_v_empty(); } return vb_v_bool(f->allowzero == 1 ? -1 : 0); }
+    dtd *ft = appended && f->owner ? (dtd *)f->owner : 0;     /* an appended field's table: a change kept in the database */
+    int keep = ft && ft->appended && ft->db && !DB(ft->db)->closed && !DB(ft->db)->odbc && !(ft->attrs & (dbAttachedTable | dbAttachedODBC));
+    if (!strcmp(name, "allowzerolength")) {
+        if (set) {
+            f->allowzero = vb_v2bool(argv[argc - 1]) != 0;
+            if (keep) schema_set_meta(DB(ft->db), ft->name, f->name, "allowzero", 0, f->allowzero, 0);
+            return vb_v_empty();
+        }
+        return vb_v_bool(f->allowzero == 1 ? -1 : 0);
+    }
     if (!strcmp(name, "ordinalposition")) { if (set) { f->ord = vb_v2l(argv[argc - 1]); return vb_v_empty(); } return vb_v_i((vb_i16)f->ord); }
     if (!strcmp(name, "defaultvalue") || !strcmp(name, "validationrule") || !strcmp(name, "validationtext") || !strcmp(name, "foreignname")) {
         char **p = name[0] == 'd' ? &f->defval : name[0] == 'f' ? &f->foreign : name[10] == 'r' ? &f->vrule : &f->vtext;
-        if (set) { free(*p); *p = dao_strdup_v(argv[argc - 1]); return vb_v_empty(); }
+        if (set) {
+            free(*p); *p = dao_strdup_v(argv[argc - 1]);
+            if (keep && name[0] == 'v' && name[10] == 'r' && **p) {   /* Jet keeps it with a NUL at its end (d_jetrule) */
+                size_t l = strlen(*p);
+                *p = realloc(*p, l + sizeof JET_NUL);
+                memcpy(*p + l, JET_NUL, sizeof JET_NUL);
+            }
+            if (keep && name[0] != 'f') schema_set_meta(DB(ft->db), ft->name, f->name, name[0] == 'd' ? "defval" : name[10] == 'r' ? "vrule" : "vtext", *p ? *p : "", 0, name[0] == 'd');
+            return vb_v_empty();
+        }
         return dao_vstr(*p);
     }
     if (f->fk == FK_QD && !strcmp(name, "sourcetable")) return dao_vstr(f->stable);
@@ -1600,7 +1957,10 @@ static vbvar field_member(vbobj o, const char *name, vb_i32 kind, vb_i32 argc, v
     }
     if (!strcmp(name, "sourcefield")) return dao_vstr(f->fk == FK_TABLE ? f->name : "");
     if (!strcmp(name, "dataupdatable")) return vb_v_bool(f->fk == FK_QD && f->dataupd ? -1 : 0);
-    if (!strcmp(name, "collatingorder")) return vb_v_l(1033);
+    if (!strcmp(name, "collatingorder")) {
+        dtd *ot = f->fk == FK_TABLE && f->owner ? (dtd *)f->owner : 0;
+        return vb_v_l(ot && ot->db ? db_sort(DB(ot->db)) : 1033);
+    }
     if (!strcmp(name, "value")) { dao_raise(3219, "DAO.Field", "Invalid operation."); return vb_v_empty(); }
     if (!strcmp(name, "createproperty")) return prop_create(o, argc, argv);
     if (!strcmp(name, "properties")) return props_get(o, kind, argc, argv);

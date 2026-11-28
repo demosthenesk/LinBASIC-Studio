@@ -717,7 +717,7 @@ On Ubuntu 24.04:
 ```sh
 sudo apt install build-essential qt6-base-dev python3-pyqt6 python3-pyqt6.qsci zip
 sh runtime/build.sh            # runtime/libvbrt.a
-sh runtime/db/build.sh         # runtime/libvbdb.a (SQLite, libmdb)
+sh runtime/db/build.sh         # runtime/libvbdb.a (SQLite, the Jet .mdb files)
 sh runtime/forms/build.sh      # runtime/forms/libvbforms.a and libvbforms.so (Qt 6)
 python3 compiler/lbvc.py examples/Hello/Hello.vbp -o hello
 ide/run.sh examples/Hello/Hello.vbp            # the IDE from the source tree
@@ -776,7 +776,7 @@ runtime/           the runtime (C): libvbrt (language, VBA, files, Declare and t
                    Scripting, MCI, MSComm, the debugger's end), forms/ (libvbforms, C++ and Qt: forms,
                    controls, .ocx controls, user controls, Data Report, the GUI Windows API, the
                    help of the programs with CHMLib in forms/chm and the .hlp reader forms/hlp.inc),
-                   db/ (libvbdb: DAO, ADO, ODBC, data binding, SQLite, libmdb)
+                   db/ (libvbdb: DAO, ADO, ODBC, data binding, SQLite, Jet .mdb files)
 ide/lbstudio/      the IDE (Python, PyQt6 + QScintilla; the editor of Linpad++)
 data/vb6/          the VB6 object model recovered by REA (type libraries, IDE menus, error messages)
 examples/          the example projects (see Examples above)
@@ -803,13 +803,13 @@ compiler are GPL without the exception.
 The third-party software LinBASIC Studio carries, with its licenses, is listed in
 [licenses/](licenses/README.md):
 
-* the Tiny C Compiler, SQLite and libmdb of MDB Tools
+* the Tiny C Compiler, SQLite and CHMLib
 * Python, Qt, PyQt and QScintilla
 * the editor of Linpad++
 
-A program that uses DAO or ADO contains libmdb (LGPL-2.0-or-later). If you give such a program to
-others, give them, or offer, the C source of your program (`lbvc -C`) or its object files, so that
-they can link it again with a changed libmdb.
+A program with forms that shows .chm help contains CHMLib (LGPL-2.1-or-later). If you give such a
+program to others, give them, or offer, the C source of your program (`lbvc -C`) or its object files,
+so that they can link it again with a changed CHMLib.
 
 LinBASIC Studio is an independent project. It is not affiliated with or endorsed by Microsoft, and it
 contains no VB6 or other Microsoft program, type library, help or documentation file. The

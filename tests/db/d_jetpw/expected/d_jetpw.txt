@@ -1,0 +1,42 @@
+== pw4
+  ! new password: 0  []
+  ! open -: 3031 Not a valid password. [DAO.Workspace]
+  ! open ;pwd=wrong: 3031 Not a valid password. [DAO.Workspace]
+  ! open ;pwd=secret1: 3031 Not a valid password. [DAO.Workspace]
+  ! open ;pwd=Secret1: 0  []
+  rows L1
+  ! open ;PWD=Secret1;: 0  []
+  rows L1
+  ! new password, shared: 3621 Cannot change password on a shared open database. [DAO.Database]
+  ! open exclusive: 0  []
+  ! new password, wrong old one: 3031 Not a valid password. [DAO.Database]
+  ! new password, 21 characters: 3031 Not a valid password. [DAO.Database]
+  ! new password, 20 characters: 0  []
+  ! open ;pwd=Ab_12345678901234567: 0  []
+  rows L2
+  ! open ;pwd=Ab_1234567890123456: 3031 Not a valid password. [DAO.Workspace]
+  ! no password: 0  []
+  ! open -: 0  []
+  rows L2
+  ! compact: 0  []
+== pw3
+  ! new password: 0  []
+  ! open -: 3031 Not a valid password. [DAO.Workspace]
+  ! open ;pwd=wrong: 3031 Not a valid password. [DAO.Workspace]
+  ! open ;pwd=secret1: 3031 Not a valid password. [DAO.Workspace]
+  ! open ;pwd=Secret1: 0  []
+  rows L1
+  ! open ;PWD=Secret1;: 0  []
+  rows L1
+  ! new password, shared: 3621 Cannot change password on a shared open database. [DAO.Database]
+  ! open exclusive: 0  []
+  ! new password, wrong old one: 3031 Not a valid password. [DAO.Database]
+  ! new password, 21 characters: 3031 Not a valid password. [DAO.Database]
+  ! new password, 20 characters: 0  []
+  ! open ;pwd=Ab_12345678901234567: 0  []
+  rows L2
+  ! open ;pwd=Ab_1234567890123456: 3031 Not a valid password. [DAO.Workspace]
+  ! no password: 0  []
+  ! open -: 0  []
+  rows L2
+  ! compact: 0  []

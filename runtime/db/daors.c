@@ -5,6 +5,7 @@
  * Copyright (C) 2026 Demosthenes Koptsis.
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 #include "daoint.h"
+#include "jetfile.h"                           /* (strndup on Windows) */
 #include <ctype.h>
 
 #define RS(o) ((drs *)vb_oid(o))
@@ -235,11 +236,47 @@ static void base_schema(drs *r, int on)
     schema_qualify(on && r->bext > 0 ? q : 0);
 }
 
+/* the tables the statement names (its words that are tables): a column without a table is looked for in them first */
+static char **ct_tabs; static int ct_ntabs;
+static void ct_scan(ddb *d, const char *sql)
+{
+    for (int i = 0; i < ct_ntabs; i++) free(ct_tabs[i]);
+    free(ct_tabs); ct_tabs = 0; ct_ntabs = 0;
+    sqlite3_stmt *st = 0;
+    if (!sql || sqlite3_prepare_v2(d->db, "SELECT name FROM MSysLB_Tables WHERE name = ?1", -1, &st, 0) != SQLITE_OK) return;
+    const char *p = sql;
+    char q = 0;
+    while (*p) {
+        const char *w = 0; int n = 0;
+        if (*p == '\'' || *p == '"') { q = *p++; while (*p && *p != q) p++; if (*p) p++; continue; }
+        if (*p == '[') { w = ++p; while (*p && *p != ']') p++; n = (int)(p - w); if (*p) p++; }
+        else if (isalpha((unsigned char)*p) || *p == '_' || (unsigned char)*p >= 0x80) {
+            w = p; while (isalnum((unsigned char)*p) || *p == '_' || (unsigned char)*p >= 0x80) p++; n = (int)(p - w);
+        } else { p++; continue; }
+        sqlite3_bind_text(st, 1, w, n, SQLITE_TRANSIENT);
+        if (sqlite3_step(st) == SQLITE_ROW) {
+            int dup = 0;
+            for (int i = 0; i < ct_ntabs; i++) if (strlen(ct_tabs[i]) == (size_t)n && !strncasecmp(ct_tabs[i], w, (size_t)n)) dup = 1;
+            if (!dup) { ct_tabs = realloc(ct_tabs, sizeof(char *) * (size_t)(ct_ntabs + 1)); ct_tabs[ct_ntabs++] = strndup(w, (size_t)n); }
+        }
+        sqlite3_reset(st);
+    }
+    sqlite3_finalize(st);
+}
 static int coltype(void *ctx, const char *qual, const char *col)
 {
     ddb *d = ctx;
     sqlite3_stmt *st = 0;
     int t = 0;
+    if (!qual)
+        for (int i = 0; i < ct_ntabs && !t; i++) {
+            if (sqlite3_prepare_v2(d->db, "SELECT type FROM MSysLB_Fields WHERE tbl = ?1 AND name = ?2", -1, &st, 0) != SQLITE_OK) break;
+            sqlite3_bind_text(st, 1, ct_tabs[i], -1, SQLITE_STATIC);
+            sqlite3_bind_text(st, 2, col, -1, SQLITE_STATIC);
+            if (sqlite3_step(st) == SQLITE_ROW) t = sqlite3_column_int(st, 0);
+            sqlite3_finalize(st);
+            if (t) return t;
+        }
     if (qual && sqlite3_prepare_v2(d->db, "SELECT type FROM MSysLB_Fields WHERE tbl = ?1 AND name = ?2", -1, &st, 0) == SQLITE_OK) {
         sqlite3_bind_text(st, 1, qual, -1, SQLITE_STATIC);
         sqlite3_bind_text(st, 2, col, -1, SQLITE_STATIC);
@@ -257,6 +294,7 @@ static int coltype(void *ctx, const char *qual, const char *col)
 int dao_translate(ddb *d, const char *sql, jsql *j, const char *const *params)
 {
     jet_coltype_fn = coltype; jet_coltype_ctx = d;
+    ct_scan(d, sql);
     dao_translate_hooks(d, 1);
     int r = jet_translate(sql, j, params);
     dao_translate_hooks(d, 0);
@@ -588,14 +626,30 @@ static int need_current(drs *r, const char *src)
     return 0;
 }
 
+/* DAO shows a GUID as Jet gives it: {guid {xxxxxxxx-xxxx-...}} (VB6 oracle d_jet); the database keeps {xxxxxxxx-...} */
+static vbvar guid_shown(vbvar v)
+{
+    if (v.vt != VT_BSTR || v.u.s.len != 38 || v.u.s.p[0] != '{') return v;
+    char b[64];
+    snprintf(b, sizeof b, "{guid %s}", vb_stoutf8(v.u.s));
+    return dao_vstr(b);
+}
+static char *guid_stored(const char *s)       /* "{guid {x}}" -> "{x}" (malloc) */
+{
+    size_t n = strlen(s);
+    if (n > 8 && !strncasecmp(s, "{guid ", 6) && s[n - 1] == '}') return strndup(s + 6, n - 7);
+    return strdup(s);
+}
+
 vbvar rs_field_value(drs *r, int col, int *err)
 {
     *err = 0;
     if (r->closed) { dao_raise(3420, "DAO.Field", "Object invalid or no longer set."); *err = 1; return vb_v_empty(); }
     if (col < 0 || col >= r->ncols) { dao_raise(3265, "DAO.Fields", "Item not found in this collection."); *err = 1; return vb_v_empty(); }
-    if (r->editmode && r->ebuf) return vb_vtmp(r->ebuf[col]);
+    int guid = r->cols[col].type == dbGUID;
+    if (r->editmode && r->ebuf) return guid ? guid_shown(r->ebuf[col]) : vb_vtmp(r->ebuf[col]);
     if (!alive(r, r->cur)) { dao_raise(3021, "DAO.Field", "No current record."); *err = 1; return vb_v_empty(); }
-    return vb_vtmp(r->d->r[r->cur].v[col]);
+    return guid ? guid_shown(r->d->r[r->cur].v[col]) : vb_vtmp(r->d->r[r->cur].v[col]);
 }
 
 /* a value as the type of the column; 0 or the Jet error */
@@ -618,9 +672,19 @@ static int convert(rcol *c, vbvar v, vbvar *out)
         break; }
     case dbCurrency: *out = vb_v_c(vb_v2c(v)); break;
     case dbSingle: *out = vb_v_f(vb_v2f(v)); break;
-    case dbDouble: case dbDecimal: case dbFloat: case dbNumeric: *out = vb_v_d(vb_v2d(v)); break;
+    case dbDouble: case dbFloat: *out = vb_v_d(vb_v2d(v)); break;
+    case dbDecimal: case dbNumeric: {          /* exact: a Variant Decimal; more decimals than the field's scale: 3759 */
+        *out = vb_cdec(v);
+        if (vb_errpend && !save) break;
+        if (vb_dec_cmp(vb_dec_round(*out, (c->numps >> 8) & 0xFF), *out) != 0) return 3759;
+        break; }
     case dbDate: *out = vb_v_date(vb_v2date(v)); break;
-    case dbText: case dbMemo: case dbGUID: *out = vb_v_s(vb_v2s(v)); break;
+    case dbText: case dbMemo: *out = vb_v_s(vb_v2s(v)); break;
+    case dbGUID: {
+        char *g = guid_stored(vb_stoutf8(vb_v2s(v)));
+        *out = dao_vstr(g);
+        free(g);
+        break; }
     }
     if (vb_errpend && !save) { vb_err_clear_pending(); return 3421; }
     if (c->type == dbText && c->size > 0 && out->vt == VT_BSTR && out->u.s.len > c->size) return 3163;
@@ -638,6 +702,7 @@ int rs_field_let(drs *r, int col, vbvar v)
     int e = convert(c, v, &cv);
     if (e == 3421) { dao_raise(3421, "DAO.Field", "Data type conversion error."); return -1; }
     if (e == 3349) { dao_raise(3349, "DAO.Field", "Numeric field overflow."); return -1; }
+    if (e == 3759) { dao_raise(3759, "DAO.Field", "Scaling of decimal value resulted in data truncation."); return -1; }
     if (e == 3163) { dao_raise(3163, "DAO.Field", "The field is too small to accept the amount of data you attempted to add.  Try inserting or pasting less data."); return -1; }
     vb_vset(&r->ebuf[col], cv);
     r->edirty[col] = 1;
@@ -898,6 +963,12 @@ static int bookmark_row(drs *r, vbvar v)
 
 /* ---------------------------------------------------------------- values compared as Jet does */
 static int numeric_vt(int vt) { return vt == VT_I2 || vt == VT_I4 || vt == VT_R4 || vt == VT_R8 || vt == VT_CY || vt == VT_BOOL || vt == VT_UI1 || vt == VT_DATE; }
+static int vc_lcid = 0x409, vc_jet4 = 1;      /* the sort order texts are compared in (the table's database) */
+static void vcmp_order(drs *r)
+{
+    vc_lcid = 0x409; vc_jet4 = 1;
+    if (r && r->db) dao_db_order(DB(r->db), &vc_lcid, &vc_jet4);
+}
 static int vcmp(vbvar a, vbvar b)
 {
     int an = a.vt == VT_NULL || a.vt == VT_EMPTY, bn = b.vt == VT_NULL || b.vt == VT_EMPTY;
@@ -916,7 +987,9 @@ static int vcmp(vbvar a, vbvar b)
         r = -vcmp(b, a);
     } else {
         vbs x = vb_v2s(a), y = vb_v2s(b);
-        r = vb_scmp(x, y, 1);
+        char *xs = strdup(vb_stoutf8(x)), *ys = strdup(vb_stoutf8(y));
+        r = jet_compare_text(vc_lcid, vc_jet4, xs, ys);     /* as the index orders them (d_jetsort) */
+        free(xs); free(ys);
         r = r < 0 ? -1 : r > 0;
     }
     vb_release(m);
@@ -936,6 +1009,7 @@ static int sort_cmp(const void *pa, const void *pb)
 }
 static void sort_by_index(drs *r)
 {
+    vcmp_order(r);
     sort_rs = r;
     qsort(r->d->r, (size_t)r->d->n, sizeof(rrow), sort_cmp);
     r->mirror_ok = 0;
@@ -996,6 +1070,7 @@ static int do_seek(drs *r, vb_i32 argc, vbvar *argv)
     else { dao_raise(3001, SRC, "Invalid argument."); return -1; }
     int nk = argc - 1 < r->nix ? argc - 1 : r->nix;
     if (r->editmode) edit_clear(r);
+    vcmp_order(r);
     int found = -1;
     if (kind <= 2) {
         for (int i = 0; i < r->d->n && found < 0; i++) {

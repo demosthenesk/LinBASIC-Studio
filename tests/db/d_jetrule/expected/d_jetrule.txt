@@ -1,0 +1,33 @@
+props: S zl=False A vr='>0\0' A vt='A must be positive' D vr='>Now()\0' B def='5' R vr='[B]<100' R vt='B too big'
+== session
+  R: L1/L-5/L1/past/S'' L2/L-6/L200/past/S'x'
+  UPDATE R SET B = 11 WHERE ID = 1 -> 0 
+  Edit B of 1 = 13 -> 0 
+  Edit B of 2 = 12 -> 0 
+  UPDATE R SET A = A WHERE ID = 1 -> 3316 A must be positive
+  UPDATE R SET S = S WHERE ID = 1 -> 3315 Field 'R.S' cannot be a zero-length string.
+  UPDATE R SET S = '' WHERE ID = 2 -> 3315 Field 'R.S' cannot be a zero-length string.
+  INSERT INTO R (ID, A, B, D) VALUES (10, -1, 1, Now() + 10) -> 3316 A must be positive
+  INSERT INTO R (ID, A, B, D) VALUES (11, 1, 1, Now() - 10) -> 3317 One or more values are prohibited by the validation rule '>Now()' set for 'R.D'.  Enter a value that the expression for this field can accept.
+  INSERT INTO R (ID, A, B, D) VALUES (12, 1, 1, Now() + 10) -> 0 
+  INSERT INTO R (ID, A, B, D) VALUES (13, Null, Null, Null) -> 0 
+  INSERT INTO R (ID, A, B, D) VALUES (14, 5, 150, Null) -> 3316 B too big
+  UPDATE R SET A = -7 WHERE ID = 12 -> 3316 A must be positive
+  R: L1/L-5/L13/past/S'' L2/L-6/L12/past/S'x' L12/L1/L1/future/Null L13/Null/Null/Null/Null
+== read again
+props: S zl=False A vr='>0\0' A vt='A must be positive' D vr='>Now()\0' B def='5' R vr='[B]<100' R vt='B too big'
+  R: L1/L-5/L13/past/S'' L2/L-6/L12/past/S'x' L12/L1/L1/future/Null L13/Null/Null/Null/Null
+  DELETE FROM R WHERE ID >= 10 -> 0 
+  UPDATE R SET B = 11 WHERE ID = 1 -> 0 
+  Edit B of 1 = 13 -> 0 
+  Edit B of 2 = 12 -> 0 
+  UPDATE R SET A = A WHERE ID = 1 -> 3316 A must be positive
+  UPDATE R SET S = S WHERE ID = 1 -> 3315 Field 'R.S' cannot be a zero-length string.
+  UPDATE R SET S = '' WHERE ID = 2 -> 3315 Field 'R.S' cannot be a zero-length string.
+  INSERT INTO R (ID, A, B, D) VALUES (10, -1, 1, Now() + 10) -> 3316 A must be positive
+  INSERT INTO R (ID, A, B, D) VALUES (11, 1, 1, Now() - 10) -> 3317 One or more values are prohibited by the validation rule '>Now()' set for 'R.D'.  Enter a value that the expression for this field can accept.
+  INSERT INTO R (ID, A, B, D) VALUES (12, 1, 1, Now() + 10) -> 0 
+  INSERT INTO R (ID, A, B, D) VALUES (13, Null, Null, Null) -> 0 
+  INSERT INTO R (ID, A, B, D) VALUES (14, 5, 150, Null) -> 3316 B too big
+  UPDATE R SET A = -7 WHERE ID = 12 -> 3316 A must be positive
+  R: L1/L-5/L13/past/S'' L2/L-6/L12/past/S'x' L12/L1/L1/future/Null L13/Null/Null/Null/Null

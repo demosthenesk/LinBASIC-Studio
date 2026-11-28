@@ -18,8 +18,8 @@ Third-party parts (the list, and the full text of each license, is in licenses/)
   * IDE editor, styles and language files: Linpad++ (GPL-3.0, same author), which
     uses Notepad++ data files (GPL).
   * Database runtime (runtime/db, linked only into programs that use DAO or ADO):
-    SQLite 3 (public domain) and libmdb of MDB Tools (LGPL-2.0-or-later,
-    runtime/db/mdb/COPYING.LIB).
+    SQLite 3 (public domain). The reader and writer of .mdb files (runtime/db/jet*.c,
+    mdbimport.c, mdbexport.c) are LinBASIC Studio's own runtime code.
   * Programs that use ADO over ODBC load the driver manager (unixODBC on Linux,
     odbc32.dll on Windows) and the ODBC drivers of the system when they run; programs
     that use MCI on Linux load GStreamer of the system. None of them is part of

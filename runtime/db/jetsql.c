@@ -9,6 +9,7 @@
  * Copyright (C) 2026 Demosthenes Koptsis.
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 #include "vbdb.h"
+#include "jetfile.h"
 #include <ctype.h>
 #include <wctype.h>
 #include <stdint.h>
@@ -1225,6 +1226,12 @@ static int parse_column_def(ps *p, jsql *q)
     int ai;
     c.type = jet_type_name(k->s, k->n, &ai);
     if (!c.type) { free(c.name); return -1; }
+    /* DAO's SQL: no DECIMAL (3292), NUMERIC a Double (VB6 oracle d_jetdec); ADO's (ANSI): DECIMAL(p, s) */
+    int numeric89 = 0;
+    if (c.type == dbDecimal && !jet_ansi) {
+        if (k->n == 7 && !strncasecmp(k->s, "numeric", 7)) { c.type = dbDouble; numeric89 = 1; }
+        else { fail(p, 3292, "Syntax error in field definition."); free(c.name); return -1; }
+    }
     p->i++;
     if (ai) c.attrs |= dbAutoIncrField;
     if (c.type == dbText) c.size = 255;
@@ -1232,11 +1239,13 @@ static int parse_column_def(ps *p, jsql *q)
     if (acceptop(p, "(")) {
         tok *nk = cur(p);
         if (nk->k != T_NUM) { free(c.name); return -1; }
-        int v = atoi(nk->s);
+        int v = atoi(nk->s), v2 = 0;
         p->i++;
-        if (acceptop(p, ",")) { if (cur(p)->k == T_NUM) p->i++; }
+        if (acceptop(p, ",")) { if (cur(p)->k == T_NUM) { v2 = atoi(cur(p)->s); p->i++; } }
         if (!acceptop(p, ")")) { free(c.name); return -1; }
         if (c.type == dbText || c.type == dbBinary) c.size = v;
+        if (c.type == dbDecimal) c.numps = (v & 0xFF) | (v2 & 0xFF) << 8;
+        else if (numeric89) { free(c.name); return -1; }             /* NUMERIC(10, 2) of DAO: 3290 */
         if (ai) {}                              /* COUNTER(seed, step): ignored */
     }
     for (;;) {
@@ -1290,7 +1299,10 @@ static int parse_ddl(ps *p, jsql *q)
             q->kind = J_CREATE_INDEX;
             q->unique = uniq;
             char **names; int *desc, n;
-            if (parse_name(p, &q->index) < 0 || !accept(p, "on") || parse_name(p, &q->table) < 0 ||
+            /* the index's name may be a word of SQL (CREATE INDEX IS ON T: VB6 oracle d_jetsort) */
+            tok *ik = cur(p);
+            if ((ik->k == T_ID && !kw(ik, "on")) || ik->k == T_QID) { q->index = dupn(ik->s, ik->n); p->i++; }
+            if (!q->index || !accept(p, "on") || parse_name(p, &q->table) < 0 ||
                 parse_name_list(p, &names, &desc, &n) < 0) goto bad_index;
             q->cols = calloc((size_t)n, sizeof(jcol));
             for (int i = 0; i < n; i++) { q->cols[i].name = names[i]; q->cols[i].attrs = desc[i] ? dbDescending : 0; }
@@ -1557,6 +1569,25 @@ done:
     return 0;
 }
 
+/* the text Jet quotes for a string not closed: its expression, from after the last "," or "(" to the end (the text
+   ends at a Chr(0): INSERT INTO T VALUES (11, 'ae<0>') -> 'ae, d_jetsort) */
+static void open_string_expr(const char *s, char *out, int cap)
+{
+    int start = 0, open = -1;
+    char q = 0;
+    for (int i = 0; s[i]; i++) {
+        char c = s[i];
+        if (q) {
+            if (c == q) { if (s[i + 1] == q) i++; else q = 0; }
+        } else if (c == '\'' || c == '"') { q = c; open = i; }
+        else if (c == '[') { while (s[i + 1] && s[i + 1] != ']') i++; }
+        else if (c == ',' || c == '(') start = i + 1;
+    }
+    if (!q) { snprintf(out, (size_t)cap, "%s", s); return; }
+    while (start < open && isspace((unsigned char)s[start])) start++;
+    snprintf(out, (size_t)cap, "%s", s + start);
+}
+
 int jet_ansi;                                   /* ADO (Jet OLE DB): LIKE with % and _ */
 int jet_translate(const char *jet, jsql *q, const char *const *params)
 {
@@ -1566,7 +1597,8 @@ int jet_translate(const char *jet, jsql *q, const char *const *params)
     p.nt = tokenize(jet, &p.t, err, sizeof err);
     if (p.nt < 0) {
         q->err = 3075;
-        snprintf(q->errmsg, sizeof q->errmsg, "Syntax error in string in query expression '%s'.", jet);
+        char ex[256]; open_string_expr(jet, ex, sizeof ex);
+        snprintf(q->errmsg, sizeof q->errmsg, "Syntax error in string in query expression '%s'.", ex);
         return -1;
     }
     p.nt++;                                     /* the T_END */
@@ -1738,7 +1770,11 @@ vbvar jet_value(sqlite3_value *sv, int dtype)
         break; }
     case SQLITE_FLOAT: v = vb_v_d(sqlite3_value_double(sv)); break;
     case SQLITE_TEXT: v = text_value(sqlite3_value_text(sv), sqlite3_value_bytes(sv)); break;
-    case SQLITE_BLOB: v = blob_value(sqlite3_value_blob(sv), sqlite3_value_bytes(sv)); break;
+    case SQLITE_BLOB:
+        /* a Decimal of a Jet file with more digits than a Double holds: its text, kept as a blob (mdbimport.c) */
+        if (dtype == dbDecimal || dtype == dbNumeric) v = text_value(sqlite3_value_blob(sv), sqlite3_value_bytes(sv));
+        else v = blob_value(sqlite3_value_blob(sv), sqlite3_value_bytes(sv));
+        break;
     default: v = vb_v_null();
     }
     vb_i32 save = vb_errpend;
@@ -1779,7 +1815,18 @@ int jet_bind(sqlite3_stmt *st, int i, vbvar v, int dtype)
             (dtype == dbLong && (r < -2147483648.0 || r > 2147483647.0))) return 3349;
         sqlite3_bind_int64(st, i, (sqlite3_int64)r);
         break; }
-    case dbCurrency: case dbSingle: case dbDouble: case dbFloat: case dbDecimal: case dbNumeric: {
+    case dbDecimal: case dbNumeric: {           /* exact, as the import keeps it: up to 15 digits a number, more the text */
+        vbvar dv = vb_cdec(v);
+        if (vb_errpend && !save) { vb_err_clear_pending(); return 3421; }
+        char t[100];
+        vb_dec_text(dv, 0, t);
+        int nd = 0;
+        for (const char *q = t; *q; q++) if (isdigit((unsigned char)*q)) nd++;
+        for (const char *q = t; *q == '-' || *q == '0' || *q == '.'; q++) if (*q == '0') nd--;
+        if (nd <= 15) sqlite3_bind_text(st, i, t, -1, SQLITE_TRANSIENT);
+        else sqlite3_bind_blob(st, i, t, (int)strlen(t), SQLITE_TRANSIENT);
+        break; }
+    case dbCurrency: case dbSingle: case dbDouble: case dbFloat: {
         double d = vb_v2d(v);
         if (vb_errpend && !save) { vb_err_clear_pending(); return 3421; }
         if (dtype == dbCurrency) d = vb_cy2d(vb_ccur(d));
@@ -2085,10 +2132,81 @@ static int jet_weight(int c)
 }
 
 /* the text order of Jet ("General"): without case; the hyphen and the apostrophe do not count */
+/* the comparison of texts as Jet orders them (ORDER BY, =, <, its indexes): by the keys of the sort order of the
+ * database (jetsort.c; Jet 4 in its LCID, Jet 3 General); plain letters, digits and spaces in General directly
+ * (VB6 oracle tests/db/d_jetsort) */
+typedef struct jcoll { int lcid, jet4, cp; } jcoll;
+static jcoll coll_general = { 0x409, 1, 1252 };
+static int plain_text(const unsigned char *x, int n)
+{
+    for (int i = 0; i < n; i++) if (!isalnum(x[i]) && x[i] != ' ') return 0;
+    return 1;
+}
+static int plain_weight(int c) { return c == ' ' ? 0 : isdigit(c) ? 1 + (c - '0') : 20 + (tolower(c) - 'a'); }
+static void coll_key(jcoll *co, jkey *k, const unsigned char *x, int n)
+{
+    uint16_t *w = malloc(sizeof(uint16_t) * (size_t)(n + 1));
+    int m = 0;
+    for (int i = 0; i < n; ) {                  /* UTF-8 -> UTF-16 */
+        unsigned c = x[i];
+        int l = c < 0x80 ? 1 : c < 0xE0 ? 2 : c < 0xF0 ? 3 : 4;
+        if (i + l > n) l = n - i;
+        if (l == 2) c = (c & 0x1F) << 6 | (x[i + 1] & 0x3F);
+        else if (l == 3) c = (c & 0x0F) << 12 | (x[i + 1] & 0x3F) << 6 | (x[i + 2] & 0x3F);
+        else if (l == 4) { c = (c & 0x07) << 18 | (x[i + 1] & 0x3F) << 12 | (x[i + 2] & 0x3F) << 6 | (x[i + 3] & 0x3F); c = 0xFFFD; }
+        w[m++] = (uint16_t)c;
+        i += l;
+    }
+    if (co->jet4) {
+        jet_sort_lcid(co->lcid);
+        jet_text_key(k, (const unsigned char *)w, m * 2, 1);
+        jet_sort_lcid(0x409);
+    } else {
+        unsigned char *b = malloc((size_t)m * 2 + 1);
+        int bn = jet_utf16_to_cp(co->cp, w, m, b);
+        jet_text_key(k, b, bn, 0);
+        free(b);
+    }
+    free(w);
+}
+static int jet_collate_old(const unsigned char *x, int an, const unsigned char *y, int bn);
 static int jet_collate(void *u, int an, const void *a, int bn, const void *b)
 {
-    (void)u;
+    jcoll *co = u ? u : &coll_general;
     const unsigned char *x = a, *y = b;
+    if (an && bn && x[0] == JDATE_MARK && y[0] == JDATE_MARK) return jet_collate_old(x, an, y, bn);
+    if (co->jet4 && co->lcid == 0x409 && plain_text(x, an) && plain_text(y, bn)) {
+        while (an > 0 && x[an - 1] == ' ') an--;
+        while (bn > 0 && y[bn - 1] == ' ') bn--;
+        for (int i = 0; i < an && i < bn; i++) {
+            int wx = plain_weight(x[i]), wy = plain_weight(y[i]);
+            if (wx != wy) return wx < wy ? -1 : 1;
+        }
+        return an == bn ? 0 : an < bn ? -1 : 1;
+    }
+    jkey ka = { 0 }, kb = { 0 };
+    coll_key(co, &ka, x, an);
+    coll_key(co, &kb, y, bn);
+    int n = ka.n < kb.n ? ka.n : kb.n, r = memcmp(ka.p, kb.p, (size_t)n);
+    if (!r) r = ka.n == kb.n ? 0 : ka.n < kb.n ? -1 : 1;
+    free(ka.p); free(kb.p);
+    return r < 0 ? -1 : r > 0;
+}
+/* two texts (UTF-8) compared as Jet orders them in a sort order (a table's index: Seek, MoveNext) */
+int jet_compare_text(int lcid, int jet4, const char *a, const char *b)
+{
+    jcoll co = { lcid ? lcid : 0x409, jet4, 1252 };
+    return jet_collate(&co, (int)strlen(a), a, (int)strlen(b), b);
+}
+/* the sort order of a database's connection: its LCID (Jet 4), Jet 3 */
+void jet_collation(sqlite3 *db, int lcid, int jet4, int cp)
+{
+    jcoll *co = malloc(sizeof *co);
+    co->lcid = lcid ? lcid : 0x409; co->jet4 = jet4; co->cp = cp ? cp : 1252;
+    sqlite3_create_collation_v2(db, "NOCASE", SQLITE_UTF8, co, jet_collate, free);
+}
+static int jet_collate_old(const unsigned char *x, int an, const unsigned char *y, int bn)
+{
     int i = 0, j = 0;
     while (an > 0 && x[an - 1] == ' ') an--;    /* Jet: trailing spaces do not count ('a ' = 'a') */
     while (bn > 0 && y[bn - 1] == ' ') bn--;

@@ -5,20 +5,33 @@
  * Copyright (C) 2026 Demosthenes Koptsis.
  * GPL-3.0-or-later WITH the LinBASIC Studio Runtime Library Exception (RUNTIME-EXCEPTION). */
 #include "daoint.h"
+#include "jetquery.h"
+#include "jetprops.h"
 #include <ctype.h>
 
 static const char *const META =
     "CREATE TABLE IF NOT EXISTS MSysLB_Tables (name TEXT PRIMARY KEY COLLATE NOCASE, attrs INT DEFAULT 0, seq INT DEFAULT 0,"
     " created TEXT, updated TEXT, vrule TEXT, vtext TEXT, srcname TEXT, connect TEXT);"
     "CREATE TABLE IF NOT EXISTS MSysLB_Fields (tbl TEXT COLLATE NOCASE, name TEXT COLLATE NOCASE, ord INT, type INT,"
-    " size INT, attrs INT, required INT, allowzero INT, defval TEXT, vrule TEXT, vtext TEXT, PRIMARY KEY (tbl, name));"
+    " size INT, attrs INT, required INT, allowzero INT, defval TEXT, vrule TEXT, vtext TEXT, misc INT, PRIMARY KEY (tbl, name));"
     "CREATE TABLE IF NOT EXISTS MSysLB_Indexes (tbl TEXT COLLATE NOCASE, name TEXT COLLATE NOCASE, fields TEXT,"
     " isprimary INT, isunique INT, required INT, ignorenulls INT, isforeign INT, ord INT, PRIMARY KEY (tbl, name));"
     "CREATE TABLE IF NOT EXISTS MSysLB_Relations (name TEXT PRIMARY KEY COLLATE NOCASE, tbl TEXT, ftbl TEXT, fields TEXT, attrs INT);"
     "CREATE TABLE IF NOT EXISTS MSysLB_Queries (name TEXT PRIMARY KEY COLLATE NOCASE, sql TEXT, type INT, created TEXT, updated TEXT);"
     "CREATE TABLE IF NOT EXISTS MSysLB_Props (name TEXT PRIMARY KEY COLLATE NOCASE, value TEXT);";
 
-int schema_init(ddb *d) { return dao_exec(d, META); }
+int schema_init(ddb *d)
+{
+    int r = dao_exec(d, META);
+    /* a copy made before MSysLB_Fields had misc (a Decimal's precision | scale << 8) */
+    sqlite3_stmt *st = 0;
+    if (!r && sqlite3_prepare_v2(d->db, "SELECT 1 FROM pragma_table_info('MSysLB_Fields') WHERE name = 'misc'", -1, &st, 0) == SQLITE_OK) {
+        int has = sqlite3_step(st) == SQLITE_ROW;
+        sqlite3_finalize(st);
+        if (!has) r = dao_exec(d, "ALTER TABLE MSysLB_Fields ADD COLUMN misc INT");
+    }
+    return r;
+}
 static sqlite3_int64 seq_of(ddb *d, const char *table);
 static void seq_set(ddb *d, const char *table, sqlite3_int64 n);
 
@@ -413,7 +426,7 @@ int schema_create_link(ddb *d, dtd *t)
 
 int schema_field_info(ddb *d, const char *table, const char *field, rcol *out)
 {
-    sqlite3_stmt *st = prep(d, "SELECT name, ord, type, size, attrs, required, allowzero, defval FROM MSysLB_Fields WHERE tbl = ?1 AND name = ?2");
+    sqlite3_stmt *st = prep(d, "SELECT name, ord, type, size, attrs, required, allowzero, defval, IFNULL(misc, 0) FROM MSysLB_Fields WHERE tbl = ?1 AND name = ?2");
     if (!st) return 0;
     sqlite3_bind_text(st, 1, table, -1, SQLITE_STATIC);
     sqlite3_bind_text(st, 2, field, -1, SQLITE_STATIC);
@@ -427,6 +440,7 @@ int schema_field_info(ddb *d, const char *table, const char *field, rcol *out)
         free(out->defval);
         out->defval = strdup(col_text(st, 7));
         out->autoinc = (out->attrs & dbAutoIncrField) != 0;
+        out->numps = sqlite3_column_int(st, 8);
         r = 1;
     }
     sqlite3_finalize(st);
@@ -442,13 +456,13 @@ int schema_text_size(ddb *d, const char *table, const char *field)
 }
 
 /* ---------------------------------------------------------------- the SQLite table from the schema */
-typedef struct mfield { char *name; int type, size, attrs, required, allowzero; char *defval, *vrule; } mfield;
+typedef struct mfield { char *name; int type, size, attrs, required, allowzero; char *defval, *vrule, *vtext; } mfield;
 typedef struct mindex { char *name; char *fields; int primary, unique, required, ignorenulls, foreign; } mindex;
 
 static int load_meta(ddb *d, const char *table, mfield **fs, int *nf, mindex **is, int *ni)
 {
     *fs = 0; *nf = 0; *is = 0; *ni = 0;
-    sqlite3_stmt *st = prep(d, "SELECT name, type, size, attrs, required, allowzero, defval, vrule FROM MSysLB_Fields WHERE tbl = ?1 ORDER BY ord");
+    sqlite3_stmt *st = prep(d, "SELECT name, type, size, attrs, required, allowzero, defval, vrule, vtext FROM MSysLB_Fields WHERE tbl = ?1 ORDER BY ord");
     if (!st) return -1;
     sqlite3_bind_text(st, 1, table, -1, SQLITE_STATIC);
     while (sqlite3_step(st) == SQLITE_ROW) {
@@ -457,7 +471,9 @@ static int load_meta(ddb *d, const char *table, mfield **fs, int *nf, mindex **i
         f->name = strdup(col_text(st, 0));
         f->type = sqlite3_column_int(st, 1); f->size = sqlite3_column_int(st, 2); f->attrs = sqlite3_column_int(st, 3);
         f->required = sqlite3_column_int(st, 4); f->allowzero = sqlite3_column_int(st, 5);
-        f->defval = strdup(col_text(st, 6)); f->vrule = strdup(col_text(st, 7));
+        f->defval = strdup(col_text(st, 6)); f->vrule = strdup(col_text(st, 7)); f->vtext = strdup(col_text(st, 8));
+        size_t l = strlen(f->vrule);            /* (the NUL Jet may keep at its end: not part of the rule) */
+        if (l >= 2 && !memcmp(f->vrule + l - 2, JET_NUL, 2)) f->vrule[l - 2] = 0;
     }
     sqlite3_finalize(st);
     st = prep(d, "SELECT name, fields, isprimary, isunique, required, ignorenulls, isforeign FROM MSysLB_Indexes WHERE tbl = ?1 ORDER BY ord");
@@ -475,7 +491,7 @@ static int load_meta(ddb *d, const char *table, mfield **fs, int *nf, mindex **i
 }
 static void free_meta(mfield *fs, int nf, mindex *is, int ni)
 {
-    for (int i = 0; i < nf; i++) { free(fs[i].name); free(fs[i].defval); free(fs[i].vrule); }
+    for (int i = 0; i < nf; i++) { free(fs[i].name); free(fs[i].defval); free(fs[i].vrule); free(fs[i].vtext); }
     for (int i = 0; i < ni; i++) { free(is[i].name); free(is[i].fields); }
     free(fs); free(is);
 }
@@ -493,6 +509,71 @@ static int default_sql(const char *dv, jbuf *out)
     jb_s(out, " DEFAULT ("); jb_put(out, e.p, e.n); jb_s(out, ")");
     jb_free(&e);
     return 1;
+}
+
+/* ValidationRule: a CHECK whose name is Jet's error (3317) and its text (VB6 oracle d_jet). A field's rule is said of
+ * the field ("Between 1 And 9", ">=0 And <100", "Like 'a*'"): each part that begins with an operator gets the field
+ * before it. A rule SQL cannot say is left out (not checked) */
+static int word_at(const char *p, const char *w)
+{
+    size_t n = strlen(w);
+    return !strncasecmp(p, w, n) && !isalnum((unsigned char)p[n]) && p[n] != '_';
+}
+static void rule_part(jbuf *out, const char *field, const char *p, int n)
+{
+    while (n > 0 && isspace((unsigned char)*p)) { p++; n--; }
+    while (n > 0 && isspace((unsigned char)p[n - 1])) n--;
+    if (n <= 0) return;
+    int op = strchr("<>=", *p) || word_at(p, "Between") || word_at(p, "In") || word_at(p, "Like") || word_at(p, "Is") ||
+             (word_at(p, "Not") && (word_at(p + 3 + strspn(p + 3, " "), "Between") || word_at(p + 3 + strspn(p + 3, " "), "In") ||
+                                    word_at(p + 3 + strspn(p + 3, " "), "Like")));
+    char br[300];
+    snprintf(br, sizeof br, "[%s]", field);
+    jb_s(out, "(");
+    if (op) { jb_s(out, br); jb_s(out, " "); jb_put(out, p, n); }
+    else if (strstr(p, br) && (int)(strstr(p, br) - p) < n) jb_put(out, p, n);
+    else { jb_s(out, br); jb_s(out, " = ("); jb_put(out, p, n); jb_s(out, ")"); }
+    jb_s(out, ")");
+}
+static void field_rule(const char *field, const char *rule, jbuf *out)
+{
+    const char *p = rule, *start = rule;
+    int depth = 0, between = 0;
+    char q = 0;
+    while (*p) {
+        if (q) { if (*p == q) q = 0; p++; continue; }
+        if (*p == '"' || *p == '\'' || *p == '#') { q = *p == '#' ? '#' : *p; p++; continue; }
+        if (*p == '[') { q = ']'; p++; continue; }
+        if (*p == '(') depth++;
+        if (*p == ')') depth--;
+        if (!depth && (p == rule || !isalnum((unsigned char)p[-1]))) {
+            if (word_at(p, "Between")) between = 1;
+            int and = word_at(p, "And"), or = word_at(p, "Or");
+            if (and && between) { between = 0; p += 3; continue; }
+            if ((and || or) && p > start) {
+                rule_part(out, field, start, (int)(p - start));
+                jb_s(out, and ? " And " : " Or ");
+                p += and ? 3 : 2;
+                start = p;
+                continue;
+            }
+        }
+        p++;
+    }
+    rule_part(out, field, start, (int)(p - start));
+}
+/* a rule as a trigger statement: RAISE when the row (NEW, its columns by name) breaks it; Jet's error: 3316 with the
+ * ValidationText, 3317 with its own text when there is none (VB6 oracle d_jetrule). A rule SQL cannot say is left out */
+static void rule_raise(jbuf *out, const char *jet, const char *text, const char *deftext, const jbuf *newcols)
+{
+    jbuf e = { 0 };
+    char err[200];
+    if (jet_expr(jet, &e, 1, err, sizeof err)) { jb_free(&e); return; }
+    jbuf m = { 0 };
+    if (text && *text) jb_f(&m, "LB33160 %s", text); else jb_f(&m, "LB3317 %s", deftext);
+    jb_s(out, " SELECT RAISE(ABORT, "); jb_qstr(out, m.p, -1); jb_s(out, ") WHERE (SELECT NOT (");
+    jb_put(out, e.p, e.n); jb_s(out, ") FROM (SELECT "); jb_put(out, newcols->p, newcols->n); jb_s(out, "));");
+    jb_free(&m); jb_free(&e);
 }
 
 static void split_fields(const char *s, char ***names, int **desc, int *n)
@@ -529,12 +610,8 @@ static int make_table_sql(ddb *d, const char *table, const char *as_name, jbuf *
         else jb_f(out, " %s", jet_type_decl(f->type, 0, buf, sizeof buf));
         if (f->required) jb_s(out, " NOT NULL");
         if (!default_sql(f->defval, out) && f->type == dbBoolean) jb_s(out, " DEFAULT 0");
-        if (!f->allowzero && (f->type == dbText || f->type == dbMemo)) {
-            jb_s(out, " CONSTRAINT "); jbuf cn = { 0 }; jb_f(&cn, "LB3315 %s.%s", table, f->name);
-            jb_qid(out, cn.p, -1); jb_free(&cn);
-            jb_s(out, " CHECK ("); jb_qid(out, f->name, -1); jb_s(out, " <> '')");
-        }
     }
+    /* (AllowZeroLength and the validation rules: triggers, table_triggers) */
     for (int i = 0; i < ni; i++) {
         if (!is[i].primary && !is[i].required) continue;
         char **names; int *desc, n;
@@ -585,6 +662,68 @@ static void table_triggers(ddb *d, const char *table, jbuf *out)
         jb_s(out, " BEGIN"); jb_put(out, cut.p, cut.n); jb_s(out, " END;");
     }
     jb_free(&cut);
+
+    /* AllowZeroLength and the validation rules, as Jet checks them (VB6 oracle d_jetrule): a field's when a value is
+     * written to it (an UPDATE that sets it, even to the value it has; a new row), the table's on every row written;
+     * the rows already there are not checked (a rule set after them, a file's old rows) */
+    jbuf newcols = { 0 };                       /* NEW."a" AS "a", ...: the rule's columns by name */
+    for (int i = 0; i < nf; i++) {
+        if (i) jb_s(&newcols, ", ");
+        jb_s(&newcols, "NEW."); jb_qid(&newcols, fs[i].name, -1); jb_s(&newcols, " AS "); jb_qid(&newcols, fs[i].name, -1);
+    }
+    char *trule = 0, *ttext = 0;
+    sqlite3_stmt *tr = prep(d, "SELECT IFNULL(vrule, ''), IFNULL(vtext, '') FROM MSysLB_Tables WHERE name = ?1");
+    if (tr) {
+        sqlite3_bind_text(tr, 1, table, -1, SQLITE_STATIC);
+        if (sqlite3_step(tr) == SQLITE_ROW && *col_text(tr, 0)) { trule = strdup(col_text(tr, 0)); ttext = strdup(col_text(tr, 1)); }
+        sqlite3_finalize(tr);
+    }
+    jbuf tstmt = { 0 };
+    if (trule) {
+        jbuf def = { 0 };
+        jb_f(&def, "One or more values are prohibited by the validation rule '%s' set for '%s'.  Enter a value that the expression for this field can accept.", trule, table);
+        rule_raise(&tstmt, trule, ttext, def.p, &newcols);
+        jb_free(&def);
+    }
+    jbuf ins = { 0 };
+    char **fstmt = calloc((size_t)(nf + 1), sizeof(char *));
+    for (int i = 0; i < nf; i++) {
+        mfield *f = &fs[i];
+        jbuf st = { 0 };
+        if (!f->allowzero && (f->type == dbText || f->type == dbMemo)) {
+            jbuf m = { 0 }; jb_f(&m, "LB3315 %s.%s", table, f->name);
+            jb_s(&st, " SELECT RAISE(ABORT, "); jb_qstr(&st, m.p, -1); jb_s(&st, ") WHERE NEW."); jb_qid(&st, f->name, -1); jb_s(&st, " = '';");
+            jb_free(&m);
+        }
+        if (f->vrule && *f->vrule) {
+            jbuf ex = { 0 }, def = { 0 };
+            field_rule(f->name, f->vrule, &ex);
+            jb_f(&def, "One or more values are prohibited by the validation rule '%s' set for '%s.%s'.  Enter a value that the expression for this field can accept.", f->vrule, table, f->name);
+            rule_raise(&st, ex.p, f->vtext, def.p, &newcols);
+            jb_free(&ex); jb_free(&def);
+        }
+        if (st.n) { jb_put(&ins, st.p, st.n); fstmt[i] = strdup(st.p); }
+        jb_free(&st);
+    }
+    if (tstmt.n) jb_put(&ins, tstmt.p, tstmt.n);
+    if (ins.n) {
+        jb_s(out, "CREATE TRIGGER "); { jbuf nm = { 0 }; jb_f(&nm, "lbt:%s:vi", table); jb_qid(out, nm.p, -1); jb_free(&nm); }
+        jb_s(out, " BEFORE INSERT ON "); jb_qid(out, table, -1); jb_s(out, " BEGIN"); jb_put(out, ins.p, ins.n); jb_s(out, " END;");
+    }
+    /* an UPDATE: the table's rule, then each field's (SQLite fires the triggers made last first) */
+    if (tstmt.n) {
+        jb_s(out, "CREATE TRIGGER "); { jbuf nm = { 0 }; jb_f(&nm, "lbt:%s:vt", table); jb_qid(out, nm.p, -1); jb_free(&nm); }
+        jb_s(out, " BEFORE UPDATE ON "); jb_qid(out, table, -1); jb_s(out, " BEGIN"); jb_put(out, tstmt.p, tstmt.n); jb_s(out, " END;");
+    }
+    for (int i = nf - 1; i >= 0; i--) {
+        if (!fstmt[i]) continue;
+        jb_s(out, "CREATE TRIGGER "); { jbuf nm = { 0 }; jb_f(&nm, "lbt:%s:v%d", table, i); jb_qid(out, nm.p, -1); jb_free(&nm); }
+        jb_s(out, " BEFORE UPDATE OF "); jb_qid(out, fs[i].name, -1); jb_s(out, " ON "); jb_qid(out, table, -1);
+        jb_s(out, " BEGIN"); jb_s(out, fstmt[i]); jb_s(out, " END;");
+        free(fstmt[i]);
+    }
+    free(fstmt); free(trule); free(ttext);
+    jb_free(&ins); jb_free(&tstmt); jb_free(&newcols);
     free_meta(fs, nf, is, ni);
 }
 
@@ -623,6 +762,24 @@ static void relation_triggers(ddb *d, jbuf *out)
             jb_put(out, match_new_child.p, match_new_child.n);
             jb_s(out, ") BEGIN SELECT RAISE(ABORT, "); jbuf m = { 0 }; jb_f(&m, "LB3201 %s", pt); jb_qstr(out, m.p, -1); jb_free(&m);
             jb_s(out, "); END;");
+        }
+        if (attrs & dbRelationUnique) {         /* one-to-one: the foreign key is unique among the child's rows (Jet's unique index) */
+            jbuf same = { 0 };
+            for (int i = 0; i < n; i++) {
+                if (i) jb_s(&same, " AND ");
+                jb_qid(&same, fk[i], -1); jb_s(&same, " = NEW."); jb_qid(&same, fk[i], -1);
+            }
+            for (int w = 0; w < 2; w++) {
+                jb_s(out, "CREATE TRIGGER ");
+                jbuf nm = { 0 }; jb_f(&nm, "lbr:%s:u%d", name, w); jb_qid(out, nm.p, -1); jb_free(&nm);
+                jb_s(out, w ? " BEFORE UPDATE ON " : " BEFORE INSERT ON "); jb_qid(out, ct, -1);
+                jb_s(out, " WHEN "); jb_put(out, child_nonnull.p, child_nonnull.n);
+                jb_s(out, " AND EXISTS (SELECT 1 FROM "); jb_qid(out, ct, -1); jb_s(out, " WHERE ");
+                jb_put(out, same.p, same.n);
+                if (w) jb_s(out, " AND rowid <> NEW.rowid");
+                jb_s(out, ") BEGIN SELECT RAISE(ABORT, "); jb_qstr(out, "LB3022 ", -1); jb_s(out, "); END;");
+            }
+            jb_free(&same);
         }
         /* the parent: deleting or changing the key of a row with related rows */
         jb_s(out, "CREATE TRIGGER ");
@@ -726,7 +883,7 @@ static int build_table(ddb *d, const char *table, int rebuild)
 
 static int meta_insert_field(ddb *d, const char *table, dfld *f, int ord)
 {
-    sqlite3_stmt *st = prep(d, "INSERT INTO MSysLB_Fields (tbl, name, ord, type, size, attrs, required, allowzero, defval, vrule, vtext) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)");
+    sqlite3_stmt *st = prep(d, "INSERT INTO MSysLB_Fields (tbl, name, ord, type, size, attrs, required, allowzero, defval, vrule, vtext, misc) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)");
     if (!st) return dao_raise_sqlite(d, sqlite3_errcode(d->db), "DAO.Fields");
     int attrs = f->attrs;
     if (f->type == dbText || f->type == dbMemo || f->type == dbBinary || f->type == dbLongBinary) attrs = (attrs & ~dbFixedField) | dbVariableField;
@@ -743,6 +900,7 @@ static int meta_insert_field(ddb *d, const char *table, dfld *f, int ord)
     sqlite3_bind_text(st, 9, f->defval ? f->defval : "", -1, SQLITE_STATIC);
     sqlite3_bind_text(st, 10, f->vrule ? f->vrule : "", -1, SQLITE_STATIC);
     sqlite3_bind_text(st, 11, f->vtext ? f->vtext : "", -1, SQLITE_STATIC);
+    if (f->numps) sqlite3_bind_int(st, 12, f->numps); else sqlite3_bind_null(st, 12);
     int rc = sqlite3_step(st);
     sqlite3_finalize(st);
     if (rc != SQLITE_DONE) return dao_raise_sqlite(d, rc, "DAO.Fields");
@@ -777,14 +935,16 @@ static int meta_insert_index(ddb *d, const char *table, dix *ix, int ord)
     if (rc != SQLITE_DONE) return dao_raise_sqlite(d, rc, "DAO.Indexes");
     return 0;
 }
-static int meta_insert_table(ddb *d, const char *name, int attrs)
+static int meta_insert_table(ddb *d, const char *name, int attrs, const char *vrule, const char *vtext)
 {
-    sqlite3_stmt *st = prep(d, "INSERT INTO MSysLB_Tables (name, attrs, seq, created, updated) VALUES (?1, ?2, 0, ?3, ?3)");
+    sqlite3_stmt *st = prep(d, "INSERT INTO MSysLB_Tables (name, attrs, seq, created, updated, vrule, vtext) VALUES (?1, ?2, 0, ?3, ?3, ?4, ?5)");
     if (!st) return dao_raise_sqlite(d, sqlite3_errcode(d->db), "DAO.TableDefs");
     char t[24]; date_text(now_date(), t);
     sqlite3_bind_text(st, 1, name, -1, SQLITE_STATIC);
     sqlite3_bind_int(st, 2, attrs);
     sqlite3_bind_text(st, 3, t, -1, SQLITE_STATIC);
+    sqlite3_bind_text(st, 4, vrule ? vrule : "", -1, SQLITE_STATIC);
+    sqlite3_bind_text(st, 5, vtext ? vtext : "", -1, SQLITE_STATIC);
     int rc = sqlite3_step(st);
     sqlite3_finalize(st);
     if (rc != SQLITE_DONE) return dao_raise_sqlite(d, rc, "DAO.TableDefs");
@@ -808,7 +968,7 @@ int schema_create_table(ddb *d, dtd *t)
     if (t->fields->n == 0) { dao_raise(3264, "DAO.TableDefs", "No field defined--cannot append TableDef or Index."); return 3264; }
     int r = begin(d);
     if (r) return r;
-    r = meta_insert_table(d, t->name, t->attrs);
+    r = meta_insert_table(d, t->name, t->attrs, t->vrule, t->vtext);
     for (int i = 0; !r && i < t->fields->n; i++) r = meta_insert_field(d, t->name, (dfld *)t->fields->items[i], i);
     for (int i = 0; !r && i < t->indexes->n; i++) {
         dix *ix = (dix *)t->indexes->items[i];
@@ -970,6 +1130,60 @@ int schema_drop_index(ddb *d, const char *table, const char *index)
     return end(d, r);
 }
 
+/* a property of an appended field (field set) or table (field 0) changed: kept in the schema, the table's triggers
+ * made again (ValidationRule, ValidationText, AllowZeroLength: Jet does not check the rows already there, d_jetrule),
+ * the table made again for DefaultValue (rebuild) */
+int schema_set_meta(ddb *d, const char *table, const char *field, const char *col, const char *text, int ival, int rebuild)
+{
+    jbuf s = { 0 };
+    jb_s(&s, field ? "UPDATE MSysLB_Fields SET " : "UPDATE MSysLB_Tables SET "); jb_s(&s, col);
+    jb_s(&s, field ? " = ?1 WHERE tbl = ?2 AND name = ?3" : " = ?1 WHERE name = ?2");
+    sqlite3_stmt *st = prep(d, s.p);
+    jb_free(&s);
+    if (!st) return dao_raise_sqlite(d, sqlite3_errcode(d->db), "DAO.Field");
+    int r = begin(d);
+    if (r) { sqlite3_finalize(st); return r; }
+    if (text) sqlite3_bind_text(st, 1, text, -1, SQLITE_STATIC); else sqlite3_bind_int(st, 1, ival);
+    sqlite3_bind_text(st, 2, table, -1, SQLITE_STATIC);
+    if (field) sqlite3_bind_text(st, 3, field, -1, SQLITE_STATIC);
+    int rc = sqlite3_step(st);
+    sqlite3_finalize(st);
+    if (rc != SQLITE_DONE) r = dao_raise_sqlite(d, rc, "DAO.Field");
+    if (!r) r = rebuild ? build_table(d, table, 1) : regen_triggers(d);
+    return end(d, r);
+}
+
+/* Relations.Delete: the relation, the index Jet made on its foreign fields, its triggers */
+int schema_drop_relation(ddb *d, const char *name)
+{
+    char *ftbl = 0;
+    sqlite3_stmt *st = prep(d, "SELECT ftbl FROM MSysLB_Relations WHERE name = ?1");
+    if (st) {
+        sqlite3_bind_text(st, 1, name, -1, SQLITE_STATIC);
+        if (sqlite3_step(st) == SQLITE_ROW) ftbl = strdup(col_text(st, 0));
+        sqlite3_finalize(st);
+    }
+    int r = begin(d);
+    if (r) { free(ftbl); return r; }
+    jbuf s = { 0 };
+    jb_s(&s, "DELETE FROM MSysLB_Relations WHERE name = "); jb_qstr(&s, name, -1);
+    r = dao_exec(d, s.p);
+    jb_free(&s);
+    if (!r && ftbl) {
+        st = prep(d, "SELECT 1 FROM MSysLB_Indexes WHERE tbl = ?1 AND name = ?2 AND isforeign = 1");
+        int there = 0;
+        if (st) {
+            sqlite3_bind_text(st, 1, ftbl, -1, SQLITE_STATIC); sqlite3_bind_text(st, 2, name, -1, SQLITE_STATIC);
+            there = sqlite3_step(st) == SQLITE_ROW;
+            sqlite3_finalize(st);
+        }
+        if (there) r = schema_drop_index(d, ftbl, name);
+    }
+    if (!r) r = regen_triggers(d);
+    free(ftbl);
+    return end(d, r);
+}
+
 int schema_create_relation(ddb *d, drel *rl)
 {
     char pt[256], ct[256];
@@ -998,10 +1212,11 @@ int schema_create_relation(ddb *d, drel *rl)
         if (rc == SQLITE_CONSTRAINT) { dao_raise(3012, "DAO.Relations", "Relationship '%s' already exists.", rl->name); r = 3012; }
         else if (rc != SQLITE_DONE) r = dao_raise_sqlite(d, rc, "DAO.Relations");
     }
-    /* Jet makes an index on the foreign fields, named as the relation */
-    if (!r) {
+    /* Jet makes an index on the foreign fields, named as the relation (none for one not enforced: d_jetrel) */
+    if (!r && !(rl->attrs & dbRelationDontEnforce)) {
         dix *ix = index_new(0, rl->name);
         ix->foreign = 1;
+        ix->unique = (rl->attrs & dbRelationUnique) != 0;     /* one-to-one */
         for (int i = 0; i < rl->fields->n; i++) {
             dfld *f = (dfld *)rl->fields->items[i];
             dfld *g = field_new(FK_INDEX, (vbobj)ix, f->foreign && *f->foreign ? f->foreign : f->name, 0, 0);
@@ -1045,6 +1260,7 @@ int schema_ddl(ddb *d, jsql *q)
         for (int i = 0; i < q->ncols; i++) {
             jcol *c = &q->cols[i];
             dfld *f = field_new(FK_TABLE, (vbobj)t, c->name, c->type, c->size);
+            f->numps = c->numps;
             f->attrs |= c->attrs;
             f->required = c->notnull;
             f->allowzero = 2;               /* SQL DDL: AllowZeroLength reads False, "" is allowed (no property) */
@@ -1126,11 +1342,12 @@ int schema_ddl(ddb *d, jsql *q)
         if (schema_has_table(d, q->table, real, sizeof real) != 1) { dao_raise(3371, "DAO.Database", "Cannot find table or constraint."); return 3371; }
         jcol *c = &q->cols[0];
         dfld *f = field_new(FK_TABLE, 0, c->name, c->type, c->size);
+        f->numps = c->numps;
         f->attrs |= c->attrs; f->required = c->notnull; f->allowzero = 2;
         int r;
         if (q->unique == -1) {                  /* ALTER COLUMN */
             jbuf s = { 0 };
-            jb_s(&s, "UPDATE MSysLB_Fields SET type = "); jb_f(&s, "%d, size = %d, required = %d WHERE tbl = ", c->type, f->size, c->notnull);
+            jb_s(&s, "UPDATE MSysLB_Fields SET type = "); jb_f(&s, "%d, size = %d, required = %d, misc = %d WHERE tbl = ", c->type, f->size, c->notnull, f->numps);
             jb_qstr(&s, real, -1); jb_s(&s, " AND name = "); jb_qstr(&s, c->name, -1);
             r = begin(d);
             if (!r) r = dao_exec(d, s.p);
@@ -1422,9 +1639,34 @@ void schema_counter_bump(ddb *d, const char *table)
 
 /* ---------------------------------------------------------------- saved queries */
 /* Jet keeps the text of a query with a line break before each clause and a ; at the end */
+static int has_union(const char *sql)
+{
+    int depth = 0;
+    char q = 0;
+    for (const char *p = sql; *p; p++) {
+        if (q) { if (*p == q) q = 0; continue; }
+        if (*p == '\'' || *p == '"') { q = *p; continue; }
+        if (*p == '[') { q = ']'; continue; }
+        if (*p == '(') depth++;
+        else if (*p == ')') depth--;
+        else if (!depth && (p == sql || !isalnum((unsigned char)p[-1])) && !strncasecmp(p, "UNION", 5) && !isalnum((unsigned char)p[5]) && p[5] != '_')
+            return 1;
+    }
+    return 0;
+}
 char *jet_pretty_sql(const char *sql)
 {
     static const char *const KW[] = { "FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "UNION", 0 };
+    if (has_union(sql)) {                       /* a union query as Jet shows it: its parts as written (d_jetrel) */
+        char err[200];
+        int n = 0, qt = 0;
+        jqrow *rows = jq_compile(sql, &n, err, sizeof err);
+        if (rows) {
+            char *t = jq_text(rows, n, &qt);
+            jq_free(rows, n);
+            if (t) return t;
+        }
+    }
     jbuf b = { 0 };
     const char *s = sql;
     while (*s && isspace((unsigned char)*s)) s++;
@@ -1546,6 +1788,19 @@ int schema_build_all(ddb *d)
         free(names[i]);
     }
     free(names);
+    return r;
+}
+/* the triggers dropped (an import fills the tables as the file has them; schema_after_import makes them again) */
+int schema_drop_triggers(ddb *d)
+{
+    jbuf drop = { 0 };
+    sqlite3_stmt *st = prep(d, "SELECT name FROM sqlite_master WHERE type = 'trigger' AND (name LIKE 'lbt:%' OR name LIKE 'lbr:%')");
+    if (st) {
+        while (sqlite3_step(st) == SQLITE_ROW) { jb_s(&drop, "DROP TRIGGER "); jb_qid(&drop, col_text(st, 0), -1); jb_s(&drop, ";"); }
+        sqlite3_finalize(st);
+    }
+    int r = drop.n ? dao_exec(d, drop.p) : 0;
+    jb_free(&drop);
     return r;
 }
 int schema_after_import(ddb *d)

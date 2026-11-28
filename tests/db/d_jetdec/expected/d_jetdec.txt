@@ -1,0 +1,33 @@
+  ! DAO DDL DECIMAL(28,4): 3292 Syntax error in field definition. [DAO.Database]
+  ! DAO DDL DECIMAL: 3292 Syntax error in field definition. [DAO.Database]
+  ! DAO DDL NUMERIC: 0  []
+  ! DAO DDL NUMERIC(10,2): 3290 Syntax error in CREATE TABLE statement. [DAO.Database]
+D3.X type=7 size=8
+  ! DAO CreateField dbDecimal: 3259 Invalid field data type. [DAO.Field]
+== ADO made
+  ado ID type=3 prec=10 scale=255
+  ado X type=131 prec=28 scale=4
+  ado Y type=131 prec=10 scale=2
+X type=20 size=16
+  ! addnew 4: 3759 Scaling of decimal value resulted in data truncation. [DAO.Field]
+== session
+  L1 M1234567899.1234 M12.5
+  L2 M-.0001 M-99999999.99
+  L3 M7 M8
+  L4 M98765.25 Null
+  sum=M1234666671.3733 max=M1234567899.1234 n=L4
+  big: L1 L4
+== read again
+  L1 M1234567899.1234 M12.5
+  L2 M-.0001 M-99999999.99
+  L3 M7 M8
+  L4 M98765.25 Null
+  sum=M1234666671.3733 max=M1234567899.1234 n=L4
+  big: L1 L4
+  ado ID type=3 prec=10 scale=255
+  ado X type=131 prec=28 scale=4
+  ado Y type=131 prec=10 scale=2
+== to Jet 3
+  ! decimal database to Jet 3: 3301 Cannot perform this operation; features in this version are not available in databases with older formats. [DAO.DbEngine]
+  ! plain database to Jet 3: 3301 Cannot perform this operation; features in this version are not available in databases with older formats. [DAO.DbEngine]
+plain3 there=False

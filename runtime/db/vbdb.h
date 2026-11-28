@@ -38,6 +38,7 @@ enum { J_SELECT = 1, J_INSERT, J_UPDATE, J_DELETE, J_CREATE_TABLE, J_CREATE_INDE
 
 typedef struct jcol {                   /* a column of CREATE TABLE / ALTER TABLE ADD */
     char *name; int type, size, attrs, notnull;
+    int numps;                          /* DECIMAL(p, s) (ADO): p | s << 8 */
     int pk, unique;                     /* a column constraint */
     char *cname;                        /* its name */
     char *ref_table, *ref_col;          /* REFERENCES */
@@ -79,6 +80,9 @@ extern int jet_ansi;                    /* set by ADO: LIKE with % and _ (ANSI-9
 void jsql_free(jsql *q);
 /* a criteria (Filter, FindFirst) or an expression: SQLite text, in a boolean context or not */
 int jet_expr(const char *jet, jbuf *out, int boolean, char *errmsg, int errcap);
+/* the text order of a connection (the collation NOCASE): the sort order of its database (Jet 4 LCID; Jet 3) */
+void jet_collation(sqlite3 *db, int lcid, int jet4, int cp);
+int jet_compare_text(int lcid, int jet4, const char *a, const char *b);
 /* the type of a Jet DDL type name (TEXT, LONG ...): dbText ..., 0 if unknown; *autoinc for COUNTER */
 int jet_type_name(const char *s, int n, int *autoinc);
 int jet_is_function(const char *name);
@@ -112,6 +116,8 @@ extern const char *dao_src;             /* "DAO.Database" ... the Source of the 
 /* ---------------------------------------------------------------- .mdb */
 int mdb_is_jet(const char *path);       /* 3 or 4 for a Jet file, 0 otherwise */
 int mdb_import(const char *mdb, const char *sqlite_path, char *err, int cap);
+/* a LinBASIC database written as the Jet file (made new when there is none); err: why not, or a warning */
+int mdb_export(sqlite3 *s, const char *path, char *err, int cap);
 /* the schema tables of a LinBASIC database (dao.c) */
 int dao_schema_create(sqlite3 *db);
 

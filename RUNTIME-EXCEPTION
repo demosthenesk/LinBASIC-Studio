@@ -16,7 +16,7 @@ libvbrt, libvbforms and libvbdb, that is the files in the folder runtime/ of
 LinBASIC Studio that bear this notice, with their header files (such as vbrt.h)
 and the files made from them (generated .inc files, object files, static and
 shared libraries: .a, .so, .dll, .def). Software of other authors that is in
-that folder (SQLite, libmdb of MDB Tools, the Tiny C Compiler and its headers,
+that folder (SQLite, the Tiny C Compiler and its headers,
 Qt) is not part of the Runtime Library and keeps its own license.
 
 "Compiler Output" means the C source, object files and executables that the
@@ -39,7 +39,7 @@ under terms of your choice, even if the Program would otherwise be a work
 based on the Runtime Library under the GPLv3. You do not have to release the
 source of your Independent Modules or license them under the GPLv3, provided
 that the terms you choose are consistent with the licenses of the other
-software the Program contains (for example the LGPL of Qt and of libmdb, see
+software the Program contains (for example the LGPL of Qt and of CHMLib, see
 licenses/README.md).
 
 The Compiler Output is not covered by the GPLv3 because it was produced by
