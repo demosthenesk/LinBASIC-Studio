@@ -23,6 +23,8 @@ they did on Windows: the same events in the same order, the same numbers and dat
   LinBASIC Studio, so nothing else has to be installed.
 * **`libvbrt`, the runtime:** the VB6 language and the VBA library, forms and controls on Qt, the
   controls of the common `.ocx` libraries, DAO and ADO databases, files, printing and multimedia.
+* **Access databases:** `.mdb` files of Jet 3 and Jet 4 are read and written by LinBASIC Studio itself,
+  with their tables, indexes, relations, queries and sort orders (see [Databases](#databases)).
 * **Windows programs:** the same project becomes a Windows `.exe` (32-bit or 64-bit) that runs on
   Windows 7 to 11 without installing anything.
 * **Runs on Windows too:** portable 32-bit and 64-bit editions of the IDE and the compiler for
@@ -358,8 +360,8 @@ pictures are LinBASIC Studio's own.
   (properties, methods, events mapped to its controls) and its property pages.
 * **Data Object Wizard:** classes that are a source of data from the commands of a Data Environment,
   and user controls bound to them (single record, ListBox, ComboBox, DataGrid).
-* **Visual Data Manager:** the VisData of VB6 (Add-Ins → Visual Data Manager): Access databases (the
-  SQLite files of LinBASIC Studio) and ODBC sources; the Database Window with properties, tables, indexes
+* **Visual Data Manager:** the VisData of VB6 (Add-Ins → Visual Data Manager): Access `.mdb` databases
+  (Jet 3 and Jet 4) and ODBC sources; the Database Window with properties, tables, indexes
   and queries; the SQL Statement window; record forms (Table, Dynaset, Snapshot; with or without a Data
   control, or a grid) with Find and Seek; Table Structure (Add Field, Add Index, Print Structure); Copy
   Structure, Query Builder, Data Form Designer (a form added to the project), Global Replace,
@@ -501,32 +503,200 @@ The whole VB6 language is compiled:
 
 ## Databases
 
-* **DAO 3.51 / 3.6:** DBEngine, Workspace, Database, TableDef, Field, Index, Relation, QueryDef,
-  Recordset (Table, Dynaset, Snapshot, ForwardOnly; Seek, Find, Bookmark, transactions), with the
-  error numbers of Jet.
-* **Jet databases:** an Access 97 / 2000 `.mdb` is imported once into a SQLite file next to it,
-  with its tables, indexes, relations and queries. The SQL of Jet is translated to the SQL of
-  SQLite.
+LinBASIC Studio reads and writes the Access database files of VB6 (`.mdb`) itself. It does not
+need Microsoft's Jet, DAO or ADO DLLs, on Linux or on Windows. A program opens a `.mdb` file with
+DAO, ADO, RDO or a Data control as it did in VB6. Changes go back into the same `.mdb` file, so
+Access, VB6 and other programs can still open it.
+
+* [Access .mdb files](#access-mdb-files)
+* [How a .mdb file is opened and saved](#how-a-mdb-file-is-opened-and-saved)
+* [What you should know](#what-you-should-know)
+* [Sort orders and international text](#sort-orders-and-international-text)
+* [The object libraries](#the-object-libraries)
+* [Other databases: ODBC and linked tables](#other-databases-odbc-and-linked-tables)
+* [Databases in the IDE](#databases-in-the-ide)
+* [Database limits](#database-limits)
+
+### Access .mdb files
+
+| Format | Made by | In DAO |
+|---|---|---|
+| Jet 3 | Access 97, VB5 / VB6 | `dbVersion30` |
+| Jet 4 | Access 2000, 2002 and 2003, VB6 with DAO 3.6 | `dbVersion40` (the default of `CreateDatabase`) |
+
+Everything in the file is read, and what the program changes is written back the way Jet writes it:
+
+* **Tables:**
+  * every field type of Jet: Yes/No, Byte, Integer, Long, AutoNumber, Currency, Single, Double,
+    Date/Time, Text, Memo, OLE Object (Long Binary), Replication ID (GUID) and Decimal
+  * the field properties: Required, AllowZeroLength, DefaultValue, ValidationRule and ValidationText,
+    OrdinalPosition, and the next AutoNumber value
+* **Indexes:** primary keys, unique indexes, IgnoreNulls and Required, fields in descending order, and
+  several fields in one index.
+* **Relations:** enforced or not, Cascade Update and Cascade Delete, one-to-many and one-to-one.
+* **Queries (QueryDefs):**
+  * select, action (append, update, delete, make-table), union and parameter queries, with their
+    joins, sorting and grouping
+  * a query that is changed or new is stored in the layout Jet uses (`MSysQueries`), so Access shows it
+    in its designer
+* **Properties:** the properties of the database, tables, fields, indexes and queries. This includes
+  the ones Access keeps (Description, Caption, Format, Input Mask, Column Width …) and your own
+  (`CreateProperty`).
+* **Validation rules:** checked when Jet checks them. A field rule is checked when a value is written
+  to that field. A table rule is checked for every new or changed row. A broken rule gives error 3316
+  with your ValidationText, or 3317 with the text of Jet.
+* **Passwords and encryption:**
+  * a database password (`;pwd=` in `OpenDatabase` and `CreateDatabase`, `NewPassword`)
+  * an encrypted file (`dbEncrypt`) stays encrypted when it is written
+* **Access objects:**
+  * the forms, reports, macros, modules and pages of Access stay in the file unchanged, so Access can
+    still use them
+  * a VB program cannot run them, in VB6 or in LinBASIC Studio
+* **Linked tables:** links to tables of other `.mdb` files are kept and used, and new links can be made
+  (`TableDef.Connect`, `SourceTableName`).
+* **New and compacted files:**
+  * `CreateDatabase` makes a real Jet file, Jet 4 or (with `dbVersion30`) Jet 3, with the sort order of
+    its locale (`dbLangGeneral`, `dbLangGreek` …) and an optional password
+  * `CompactDatabase` and `RepairDatabase` write the file again: compacted, in another sort order, with
+    another password, or as Jet 4. Jet 4 → Jet 3 gives error 3301, as in VB6
+* **Jet SQL:**
+  * the SQL of Jet, with its functions, `*` and `?` in `LIKE` (`%` and `_` with ADO), `#dates#` and
+    parameters
+  * `CREATE TABLE`, `ALTER TABLE`, `CREATE INDEX`, `DROP` and `SELECT … INTO` through
+    `Database.Execute`
+  * the errors are the error numbers and messages of Jet
+
+These were checked against VB6 with DAO 3.6. 72 real databases from Planet Source Code were opened,
+changed in every query and written back. Jet then read the same tables, rows, indexes, relations,
+queries and properties as in the original file, and compacted it without errors.
+
+### How a .mdb file is opened and saved
+
+When a program opens `Data.mdb`, the runtime reads it into a **working copy** next to it, named
+`Data.mdb.lbdb`. This is an SQLite file. The program works on the copy, and the runtime writes
+`Data.mdb` again from the copy:
+
+* when the database is closed (`db.Close` in DAO, `cn.Close` in ADO)
+* when the outermost transaction is committed (`CommitTrans`)
+* when the program ends
+
+The `.mdb` file is written only if something changed. It is written to a temporary file first and
+then put in place of the old one, so a failed write never leaves half a file.
+
+The next time the database is opened, the copy is used as it is, so opening is fast. If the `.mdb` is
+newer than the copy, the copy is made again. This happens when Access or another program changed it,
+or when you replaced it.
+
+### What you should know
+
+* **The folder of the `.mdb` must be writable:** the working copy is made next to the file. A
+  database in a read-only folder gives error 3343. On Windows this includes *Program Files*. Keep
+  the data next to the program in a folder you can write to, such as the portable folder, or in the
+  user's documents.
+* **Close your databases:** `db.Close` (or `Set db = Nothing` after `Close`) writes the file at once.
+  Without it, the file is written when the program ends normally.
+* **If the program is killed or crashes:** the changes stay in the working copy, and the program uses
+  them the next time. They reach the `.mdb` file with the next change that is written.
+* **If the `.mdb` cannot be written:** for example, when it is read-only or locked by another program.
+  The changes are kept in the working copy, and the program prints a line on its error output:
+  `LinBASIC: Data.mdb was not written: … (the changes are kept in Data.mdb.lbdb)`.
+* **One program at a time:**
+  * a `.mdb` file is not shared between programs that change it at the same time, as it is on a Jet
+    network share
+  * there is no record locking between programs, and no `.ldb` lock file is made
+  * several databases, and several `Database` objects of the same file in one program, work as in VB6
+* **Opened read-only:** `OpenDatabase(file, , True)` never writes the file.
+* **The `.lbdb` files:**
+  * you can delete them when no program has the database open; they are made again from the `.mdb`
+  * do not ship them with your program, and do not keep them in version control (`*.lbdb` belongs in
+    `.gitignore`)
+* **Paths from Windows programs:**
+  * on Linux, file names are found whatever their case (`biblio.mdb` finds `BIBLIO.MDB`), and
+    backslashes work
+  * a Windows path that does not exist (`C:\Program Files\…\NWind.mdb`) finds the file of that name
+    next to the program
+* **Databases of LinBASIC Studio 1.0.0 and earlier:** those versions made SQLite files, also with the
+  name `.mdb`. They still open and work as before.
+* **The sample databases of VB6** (BIBLIO.MDB, NWIND.MDB) are Microsoft's and are not part of LinBASIC
+  Studio. Copy them from your own VB6 if your programs need them.
+
+### Sort orders and international text
+
+* **Jet 4:**
+  * a database has a sort order, set by the locale of `CreateDatabase` (`dbLangGeneral`,
+    `dbLangGreek`, `dbLangCzech`, `dbLangJapanese` …)
+  * all 33 sort orders of Jet 4 were measured on Jet itself: the index keys written into the file,
+    `ORDER BY`, comparisons in SQL, `Seek`, and the order of a table-type Recordset with an `Index`
+  * this includes the letters a language sorts in its own way (Czech *ch*, Spanish *ll*, Danish
+    *aa*, Hungarian *cs* …), accents, Japanese kana, Thai, and the characters Jet ignores
+  * `CollatingOrder` gives the order of the database and its fields
+* **Jet 3:**
+  * the texts are in the code page of the system, as Jet stores them
+  * a Jet 3 database in a sort order other than General is written in General order, as
+    `CompactDatabase … dbLangGeneral` does; its texts stay as they are
+* **Unicode:** Jet 4 texts are Unicode. Unicode compression is used for the fields that have it, as
+  in Access.
+
+### The object libraries
+
+* **DAO 3.51 / 3.6:**
+  * DBEngine, Workspace, Database, TableDef, Field, Index, Relation, QueryDef, Parameter, Property,
+    Container and Document
+  * Recordset: Table, Dynaset, Snapshot and ForwardOnly; Seek, Find, Bookmark, Filter, Sort, Clone,
+    transactions
+  * the error numbers of Jet
 * **ADO 2.x:**
-  * Connection, Recordset (server and client cursors, disconnected and fabricated, Filter, Sort,
-    Find, events), Command and Parameters
-  * the Jet OLE DB provider, ODBC (MSDASQL: SQL Server, MySQL / MariaDB, PostgreSQL, Oracle, SQLite…
-    through unixODBC on Linux and odbc32.dll on Windows) and MSDataShape (hierarchical recordsets)
+  * Connection, Recordset (server and client cursors, disconnected and fabricated, Filter, Sort, Find,
+    events), Command and Parameters, Field and Property
+  * a `.mdb` file opens through `Provider=Microsoft.Jet.OLEDB.4.0` (or 3.51), with
+    `Jet OLEDB:Database Password`
+  * the Access ODBC driver (`DRIVER={Microsoft Access Driver (*.mdb)};DBQ=…`) opens it too
+  * the errors are the HRESULTs and native errors of the Jet provider
+  * ADO can make `DECIMAL(p, s)` fields with Jet SQL in ANSI mode; DAO cannot, as in VB6
 * **RDO 2.0:** rdoEngine, rdoEnvironment, rdoConnection, rdoQuery, rdoResultset and their
-  collections, over the same ODBC drivers, with the error numbers of RDO.
-* **Data binding:** the Data control, the ADO Data Control, bound controls and the
-  BindingCollection, with the DataFormat of the controls (StdDataFormat: number, currency, date,
-  boolean, picture and custom formats, the Format / UnFormat events).
-* **Data Environment and Data Report:** commands, hierarchies and aggregates, and the report
-  sections. A report can be previewed, printed to PDF, and exported to HTML or text.
-* **The database files:** the databases of LinBASIC Studio are SQLite files, also when their name ends
-  in `.mdb`; what Jet knows and SQLite does not (the DAO field types, Required, AllowZeroLength,
-  validation rules, indexes, relations, queries) is kept in the `MSysLB_*` tables. Make and change
-  them with the Visual Data Manager, DAO (`CreateTableDef`, `CreateField`, `CreateIndex`) or Jet SQL
-  (`CREATE TABLE`, `CREATE INDEX` through `Database.Execute`), so that they have the rules of Jet.
-* **DAO over ODBC and other databases:** `OpenDatabase` of an ODBC source, linked tables (Access and
-  ODBC), pass-through queries, `RegisterDatabase`, and other databases in Jet SQL (`[;database=path].t`,
-  `IN 'path'`). The ISAM formats of Jet (dBASE, FoxPro, Paradox, Excel, Text) give error 3170.
+  collections, over ODBC, with the error numbers of RDO.
+* **Data binding:**
+  * the Data control, the ADO Data Control, the RemoteData control, bound controls and the
+    BindingCollection
+  * DBGrid, DataGrid, DBList / DBCombo, DataList / DataCombo, MSHFlexGrid and DataRepeater
+  * the DataFormat of the controls (StdDataFormat: number, currency, date, boolean, picture and custom
+    formats, the Format / UnFormat events)
+* **Data Environment and Data Report:** commands, hierarchies (MSDataShape) and aggregates, and the
+  report sections. A report can be previewed, printed to PDF, and exported to HTML or text.
+
+### Other databases: ODBC and linked tables
+
+* **ODBC:** ADO (MSDASQL), RDO and DAO (`OpenDatabase` of an ODBC source, `RegisterDatabase`)
+  reach SQL Server, MySQL / MariaDB, PostgreSQL, Oracle, SQLite and other ODBC databases. They go
+  through unixODBC on Linux and odbc32.dll on Windows; install the driver of your database.
+* **Pass-through queries** and **ODBC linked tables** of a `.mdb` run on the ODBC source.
+* **Other `.mdb` files in Jet SQL:** `SELECT … FROM [;database=other.mdb].T` and `IN 'other.mdb'`. A
+  file changed this way is written back too.
+
+### Databases in the IDE
+
+The database tools of the IDE work through the same runtime as the programs, so they read and write
+`.mdb` files the same way. These are the Visual Data Manager, the Data View, the Query Designer, the
+Data Form Wizard, the Data Object Wizard, the Data Environment designer, and the DataSource / DataField
+lists of the Properties window. A database you change in the Visual Data Manager is a `.mdb` file
+that Access opens.
+
+### Database limits
+
+* **Crosstab queries:**
+  * `TRANSFORM … PIVOT` is kept in the file, but running it gives error 3001
+* **Not supported:**
+  * the workgroup security of Jet (`SYSTEM.MDW`, users, groups and permissions)
+  * the ISAM formats of Jet (dBASE, FoxPro, Paradox, Excel, Text), which give error 3170 ("Couldn't
+    find installable ISAM")
+  * replication: `MakeReplica` and `Synchronize` do nothing
+* **Access 2007 and later** `.accdb` files (the ACE engine) are not a format of VB6 and are not
+  supported.
+* **ODBC linked tables:** the flags LinBASIC Studio writes for a new ODBC link (`Connect = "ODBC;…"`
+  on a TableDef) follow Access. They could not be checked against VB6, because the Jet of the test
+  machine refuses these links. Links that Access made are kept as they are.
+* **Size:** a `.mdb` file can be up to 2 GB, the limit of Jet. Writing it needs about as much memory
+  as the largest table holds. A 150 MB database is written in about one second.
 
 ## Windows API
 
@@ -706,8 +876,9 @@ network and no access to your desktop session or your screen.
   Shift+F1 and WhatsThisMode do the same.
 * **Reports** follow the fonts of the computer, so an exported report has the text of VB6's but
   not always its page breaks.
-* **Not supported by the database runtime:** the crosstab queries (`TRANSFORM … PIVOT`), the ISAM
-  formats of Jet and its workgroup security (`SYSTEM.MDW`, Groups / Users).
+* **Databases:** crosstab queries (`TRANSFORM … PIVOT`) do not run, and the ISAM formats of Jet and
+  its workgroup security (`SYSTEM.MDW`, Groups / Users) are not supported. A `.mdb` file is not shared
+  between programs that change it at the same time. See [Database limits](#database-limits).
 * **The IDE is in English only.**
 
 ## Building from source
